@@ -113,7 +113,7 @@ Add iPad-friendly calculator-style keyboard for text input questions.
 
 ---
 
-### ✅ Phase 3: Auto Level-Up System
+### ✅ Phase 3: Auto Power-Up System
 **Status**: Complete
 **Priority**: HIGH
 **Completed**: October 2025
@@ -149,14 +149,58 @@ Automatically offer progression to next difficulty after consecutive correct ans
 - PowerUpButton component with smooth slide-in/slide-out animations
 - Streak display shows ⭐ for 1 correct, 🔥 with hot styling for 2+ correct
 - Power-up button appears after 800ms delay when 3-streak achieved
-- Level-up celebration overlay with rotation animation (3 seconds)
+- Power-up celebration overlay with rotation animation (3 seconds)
 - Seamless question regeneration at new level for remaining questions
-- Streak continues after level-up (can level up multiple times)
+- **Streak resets to 0 after power-up activation** (requires 3 more for next power-up)
 - Session data includes leveledUp flag and finalLevel
 - Fully accessible with keyboard navigation and reduced motion support
 - Responsive design optimized for tablets
 
 **Files**: `src/core/streakTracker.js`, `src/ui/powerUpButton.js`, `styles/powerup.css`, `PHASE3_TESTING.md`
+
+---
+
+### ✅ Phase 3.5: Module Completion System
+**Status**: Complete
+**Priority**: MEDIUM
+**Completed**: October 2025
+
+Track student progress and provide visual feedback when modules are mastered.
+
+**Requirements**:
+- [x] Track correct answers per level per module
+- [x] Detect completion (3+ correct at all 4 levels)
+- [x] Show completion celebration prompt
+- [x] Visual badges on completed modules
+- [x] localStorage persistence
+- [x] Allow continued practice after completion
+
+**Completion Criteria**:
+- Student must answer 3+ questions correctly at EACH difficulty level (1, 2, 3, 4)
+- When all levels complete, celebration prompt appears
+- Student can mark module as "complete" or continue practicing
+- Completed modules show ✅ badge on setup screen
+- Students can still practice completed modules anytime
+
+**User Flow**:
+1. Student practices a module and gets 3+ correct at Level 1
+2. Student powers up to Level 2, gets 3+ correct
+3. Student powers up to Level 3, gets 3+ correct
+4. Student powers up to Level 4, gets 3+ correct
+5. Completion prompt appears: "Module Complete! 🎊"
+6. Student chooses to mark as complete or continue practicing
+7. Setup screen shows ✅ badge on completed module
+
+**Implementation Details**:
+- ModuleProgress singleton tracks correct answers per level per module
+- localStorage persistence (key: `mathsPractice_moduleProgress`)
+- ModuleCompletionPrompt component shows celebration overlay
+- Completion badges integrated into setup screen topic cards
+- Completed modules highlighted with subtle green gradient
+- Progress tracked across sessions
+- Can reset individual module progress
+
+**Files**: `src/core/moduleProgress.js`, `src/ui/moduleCompletionPrompt.js`, `styles/completion.css`, `PHASE3.5_TESTING.md`
 
 ---
 
@@ -459,7 +503,8 @@ Add a real-time statistics panel for students to track their performance during 
 | v0.1.0 | Jan 2025 | Phase 0 | Initial release with core functionality |
 | v0.2.0 | Jan 2025 | Phase 0, 1 | Added question deduplication system |
 | v0.3.0 | Oct 2025 | Phase 0, 1, 2 | On-screen keyboard for touch devices |
-| v0.4.0 | Oct 2025 | Phase 0, 1, 2, 3 | Auto level-up system with streak tracking |
+| v0.4.0 | Oct 2025 | Phase 0, 1, 2, 3 | Auto power-up system with streak tracking |
+| v0.4.1 | Oct 2025 | Phase 0-3.5 | Module completion tracking & badges |
 | v1.0.0 | TBD | Phase 0-6 | Full student experience (planned) |
 | v1.1.0 | TBD | Phase 0-8 | Student stats + teacher dashboard (planned) |
 

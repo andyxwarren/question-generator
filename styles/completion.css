@@ -1,0 +1,342 @@
+/**
+ * Module Completion Styles
+ *
+ * Styling for module completion prompts and badges.
+ * Part of Phase 3.5: Module Completion System
+ */
+
+/* ===== COMPLETION OVERLAY ===== */
+.completion-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+.completion-overlay.fade-out {
+    animation: fadeOut 0.3s ease;
+}
+
+.completion-card {
+    background: white;
+    padding: 50px 40px;
+    border-radius: 30px;
+    text-align: center;
+    max-width: 500px;
+    animation: scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.completion-celebration {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: bounce 1s ease-in-out;
+}
+
+.completion-card h2 {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    margin-bottom: 20px;
+}
+
+.completion-module-icon {
+    font-size: 80px;
+    margin: 20px 0;
+}
+
+.completion-module-name {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 20px;
+}
+
+.completion-message {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.completion-note {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 30px;
+}
+
+/* Completion buttons */
+.completion-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.completion-btn {
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.completion-btn.primary {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.completion-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.completion-btn.primary:active {
+    transform: translateY(0);
+}
+
+.completion-btn.secondary {
+    background: white;
+    color: var(--color-text);
+    border: 2px solid var(--color-border);
+}
+
+.completion-btn.secondary:hover {
+    background: var(--color-bg);
+    border-color: var(--color-primary);
+}
+
+/* Success message after marking complete */
+.completion-success {
+    padding: 20px;
+}
+
+.completion-success-icon {
+    font-size: 100px;
+    margin-bottom: 20px;
+    animation: rotate 0.8s ease-in-out;
+}
+
+.completion-success h2 {
+    color: #10b981;
+    margin-bottom: 12px;
+}
+
+.completion-success p {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+}
+
+/* ===== COMPLETION BADGES ===== */
+.completion-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 2rem;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+    animation: badgePop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border: 3px solid white;
+}
+
+/* Completed module card styling */
+.topic-card.completed {
+    border: 2px solid #10b981;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    position: relative;
+}
+
+.topic-card.completed .topic-name {
+    color: #059669;
+    font-weight: 600;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    25% {
+        transform: translateY(-20px);
+    }
+    50% {
+        transform: translateY(0);
+    }
+    75% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg) scale(0);
+    }
+    to {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
+@keyframes badgePop {
+    0% {
+        transform: scale(0) rotate(0deg);
+    }
+    60% {
+        transform: scale(1.2) rotate(10deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes badgeGlow {
+    0%, 100% {
+        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(255, 215, 0, 0.8);
+    }
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+    .completion-card {
+        padding: 40px 30px;
+        max-width: 90%;
+    }
+
+    .completion-celebration {
+        font-size: 60px;
+    }
+
+    .completion-module-icon {
+        font-size: 60px;
+    }
+
+    .completion-card h2 {
+        font-size: 2rem;
+    }
+
+    .completion-module-name {
+        font-size: 1.5rem;
+    }
+
+    .completion-message {
+        font-size: 1rem;
+    }
+
+    .completion-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .completion-btn {
+        width: 100%;
+    }
+
+    .completion-badge {
+        width: 45px;
+        height: 45px;
+        font-size: 1.75rem;
+        top: 6px;
+        right: 6px;
+    }
+}
+
+/* Phone landscape */
+@media (max-width: 480px) and (orientation: landscape) {
+    .completion-card {
+        padding: 30px 20px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .completion-celebration {
+        font-size: 50px;
+        margin-bottom: 10px;
+    }
+
+    .completion-module-icon {
+        font-size: 50px;
+        margin: 10px 0;
+    }
+}
+
+/* ===== ACCESSIBILITY ===== */
+.completion-btn:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .completion-overlay,
+    .completion-card,
+    .completion-celebration,
+    .completion-success-icon,
+    .completion-badge {
+        animation: none !important;
+    }
+
+    .completion-btn {
+        transition: none !important;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .completion-btn.primary {
+        border: 3px solid #059669;
+    }
+
+    .completion-btn.secondary {
+        border-width: 3px;
+    }
+
+    .topic-card.completed {
+        border-width: 3px;
+    }
+}

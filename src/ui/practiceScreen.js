@@ -2,13 +2,16 @@
  * Practice Screen Component
  *
  * Handles question display, answer collection, and progress tracking.
- * Includes streak tracking and auto level-up system (Phase 3).
+ * Includes streak tracking and auto power-up system (Phase 3).
+ * Tracks module completion progress (Phase 3.5).
  */
 
 import validator from '../core/validator.js';
 import OnScreenKeyboard from './onScreenKeyboard.js';
 import streakTracker from '../core/streakTracker.js';
 import powerUpButton from './powerUpButton.js';
+import moduleProgress from '../core/moduleProgress.js';
+import moduleCompletionPrompt from './moduleCompletionPrompt.js';
 
 class PracticeScreen {
     constructor() {
@@ -244,6 +247,8 @@ class PracticeScreen {
         // Update score
         if (result.isCorrect) {
             this.score.correct++;
+            // Track correct answer for module progress (Phase 3.5)
+            moduleProgress.recordCorrectAnswer(this.currentModule, this.currentLevel);
         } else {
             this.score.incorrect++;
         }
@@ -259,8 +264,18 @@ class PracticeScreen {
         // Show power-up button if available (not at max level)
         if (streakStatus.justUnlocked && this.currentLevel < 4) {
             setTimeout(() => {
-                powerUpButton.show(() => this.handleLevelUp());
+                powerUpButton.show(() => this.handlePowerUp());
             }, 800); // Brief delay for better UX
+        }
+
+        // At Level 4 with 3-streak: offer to complete module and end session
+        if (streakStatus.justUnlocked && this.currentLevel === 4) {
+            // Check if module would be complete
+            if (moduleProgress.isModuleComplete(this.currentModule)) {
+                setTimeout(() => {
+                    this.showLevel4CompletionOffer();
+                }, 800);
+            }
         }
 
         // Hide power-up button if streak was lost
@@ -368,7 +383,8 @@ class PracticeScreen {
         const status = streakTracker.getStatus();
         const streak = status.currentStreak;
 
-        if (streak === 0) {
+        // Only show streak when 2+ correct (a real streak!)
+        if (streak < 2) {
             container.innerHTML = '';
             return;
         }
@@ -378,25 +394,25 @@ class PracticeScreen {
 
         container.innerHTML = `
             <div class="streak-display ${hotClass}">
-                <span class="streak-icon">${isHot ? '🔥' : '⭐'}</span>
+                <span class="streak-icon">🔥</span>
                 <span class="streak-count">${streak} in a row!</span>
             </div>
         `;
     }
 
     /**
-     * Handle level-up when power-up is activated
+     * Handle power-up when power-up button is activated
      */
-    handleLevelUp() {
+    handlePowerUp() {
         // Consume the power-up
         streakTracker.consumePowerUp();
 
-        // Mark that we leveled up
+        // Mark that we powered up
         this.leveledUp = true;
         const newLevel = Math.min(this.currentLevel + 1, 4);
 
         // Show celebration overlay
-        this.showLevelUpOverlay(this.currentLevel, newLevel);
+        this.showPowerUpOverlay(this.currentLevel, newLevel);
 
         // After celebration, continue with new level questions
         setTimeout(() => {
@@ -405,17 +421,17 @@ class PracticeScreen {
     }
 
     /**
-     * Show level-up celebration overlay
+     * Show power-up celebration overlay
      */
-    showLevelUpOverlay(oldLevel, newLevel) {
+    showPowerUpOverlay(oldLevel, newLevel) {
         const overlay = document.createElement('div');
-        overlay.className = 'level-up-overlay';
+        overlay.className = 'power-up-overlay';
         overlay.innerHTML = `
-            <div class="level-up-card">
-                <div class="level-up-icon">🎉</div>
-                <h2>Level Up!</h2>
+            <div class="power-up-card">
+                <div class="power-up-icon">🎉</div>
+                <h2>Power Up!</h2>
                 <p>Level ${oldLevel} → Level ${newLevel}</p>
-                <p class="level-up-subtitle">Get ready for harder questions!</p>
+                <p class="power-up-subtitle">Get ready for harder questions!</p>
             </div>
         `;
         document.body.appendChild(overlay);
@@ -462,11 +478,102 @@ class PracticeScreen {
     }
 
     /**
+     * Show Level 4 completion offer (3-streak at max level)
+     */
+    showLevel4CompletionOffer() {
+        // Get module info
+        import('../curriculum/modules.js').then(({ MODULES }) => {
+            const module = MODULES[this.currentModule];
+            if (!module) return;
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'level4-completion-overlay';
+            overlay.innerHTML = `
+                <div class="level4-completion-card">
+                    <div class="level4-completion-icon">🏆</div>
+                    <h2>Outstanding!</h2>
+                    <p class="level4-completion-message">
+                        You've got 3 in a row at the highest level!
+                    </p>
+                    <p class="level4-completion-module">
+                        ${module.icon} ${module.name}
+                    </p>
+                    <p class="level4-completion-note">
+                        You've mastered this module. Would you like to complete it now?
+                    </p>
+                    <div class="level4-completion-actions">
+                        <button class="level4-completion-btn primary" id="level4CompleteBtn">
+                            🏆 Complete Module
+                        </button>
+                        <button class="level4-completion-btn secondary" id="level4ContinueBtn">
+                            Keep Practicing
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            // Animate in
+            setTimeout(() => overlay.classList.add('visible'), 10);
+
+            // Handle Complete button
+            const completeBtn = overlay.querySelector('#level4CompleteBtn');
+            completeBtn.addEventListener('click', () => {
+                this.confirmLevel4Completion(overlay);
+            });
+
+            // Handle Continue button
+            const continueBtn = overlay.querySelector('#level4ContinueBtn');
+            continueBtn.addEventListener('click', () => {
+                this.cancelLevel4Completion(overlay);
+            });
+        });
+    }
+
+    /**
+     * Confirm Level 4 completion and end session
+     */
+    confirmLevel4Completion(overlay) {
+        // Remove overlay
+        overlay.classList.remove('visible');
+        setTimeout(() => {
+            if (overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+            }
+        }, 300);
+
+        // Mark module as complete
+        moduleProgress.markModuleComplete(this.currentModule);
+
+        // End the session
+        this.finish();
+    }
+
+    /**
+     * Cancel Level 4 completion and continue
+     */
+    cancelLevel4Completion(overlay) {
+        // Remove overlay
+        overlay.classList.remove('visible');
+        setTimeout(() => {
+            if (overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+            }
+        }, 300);
+    }
+
+    /**
      * Finish practice session
      */
     finish() {
         const endTime = Date.now();
         const timeSpent = Math.floor((endTime - this.startTime) / 1000); // seconds
+
+        // Check if module just became complete (Phase 3.5)
+        const moduleComplete = moduleProgress.isModuleComplete(this.currentModule);
+        const alreadyMarkedComplete = moduleProgress.getProgress(this.currentModule).completed;
 
         const sessionData = {
             questions: this.questions,
@@ -474,8 +581,26 @@ class PracticeScreen {
             timeSpent: timeSpent,
             totalQuestions: this.questions.length,
             leveledUp: this.leveledUp,
-            finalLevel: this.currentLevel
+            finalLevel: this.currentLevel,
+            moduleComplete: moduleComplete
         };
+
+        // Show module completion prompt if just completed
+        if (moduleComplete && !alreadyMarkedComplete) {
+            // Import module info
+            import('../curriculum/modules.js').then(({ MODULES }) => {
+                const module = MODULES[this.currentModule];
+                if (module) {
+                    setTimeout(() => {
+                        moduleCompletionPrompt.show(
+                            this.currentModule,
+                            module.name,
+                            module.icon
+                        );
+                    }, 500); // Brief delay after results screen
+                }
+            });
+        }
 
         // Dispatch custom event
         const event = new CustomEvent('practiceComplete', {

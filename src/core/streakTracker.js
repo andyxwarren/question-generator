@@ -2,7 +2,7 @@
  * Streak Tracker Module
  *
  * Tracks consecutive correct answers and determines when power-up is available.
- * Integrates with the auto level-up system (Phase 3).
+ * Integrates with the auto power-up system (Phase 3).
  */
 
 class StreakTracker {
@@ -57,12 +57,12 @@ class StreakTracker {
     }
 
     /**
-     * Consume the power-up (when level-up is accepted)
-     * Keeps current streak but removes power-up availability
+     * Consume the power-up (when power-up is accepted)
+     * Resets streak to 0 and removes power-up availability
      */
     consumePowerUp() {
+        this.currentStreak = 0;
         this.powerUpAvailable = false;
-        // Don't reset streak - continues building
     }
 
     /**

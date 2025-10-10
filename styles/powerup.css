@@ -1,7 +1,7 @@
 /**
  * Power-Up and Streak Styles
  *
- * Animations and styling for the auto level-up system (Phase 3)
+ * Animations and styling for the auto power-up system (Phase 3)
  */
 
 /* ===== POWER-UP BUTTON ===== */
@@ -113,8 +113,227 @@
     animation: flame 0.5s ease-in-out infinite;
 }
 
-/* ===== LEVEL-UP OVERLAY ===== */
-.level-up-overlay {
+/* ===== POWER-UP CONFIRMATION DIALOG ===== */
+.power-up-confirmation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2100;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.power-up-confirmation-overlay.visible {
+    opacity: 1;
+}
+
+.power-up-confirmation-card {
+    background: white;
+    padding: 40px 35px;
+    border-radius: 24px;
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.power-up-confirmation-overlay.visible .power-up-confirmation-card {
+    transform: scale(1);
+}
+
+.power-up-confirmation-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: bounce 0.6s ease-in-out;
+}
+
+.power-up-confirmation-card h2 {
+    font-size: 2rem;
+    color: var(--color-primary);
+    margin-bottom: 16px;
+}
+
+.power-up-confirmation-message {
+    font-size: 1.25rem;
+    color: var(--color-text);
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.power-up-confirmation-note {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+    margin-bottom: 28px;
+}
+
+.power-up-confirmation-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.power-up-confirmation-btn {
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    min-width: 140px;
+}
+
+.power-up-confirmation-btn.primary {
+    background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.power-up-confirmation-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+}
+
+.power-up-confirmation-btn.primary:active {
+    transform: translateY(0);
+}
+
+.power-up-confirmation-btn.secondary {
+    background: white;
+    color: var(--color-text);
+    border: 2px solid var(--color-border);
+}
+
+.power-up-confirmation-btn.secondary:hover {
+    background: var(--color-bg);
+    border-color: var(--color-primary);
+}
+
+/* ===== LEVEL 4 COMPLETION DIALOG ===== */
+.level4-completion-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2100;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.level4-completion-overlay.visible {
+    opacity: 1;
+}
+
+.level4-completion-card {
+    background: white;
+    padding: 40px 35px;
+    border-radius: 24px;
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.level4-completion-overlay.visible .level4-completion-card {
+    transform: scale(1);
+}
+
+.level4-completion-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: rotate 0.8s ease-in-out;
+}
+
+.level4-completion-card h2 {
+    font-size: 2rem;
+    color: #10b981;
+    margin-bottom: 16px;
+}
+
+.level4-completion-message {
+    font-size: 1.25rem;
+    color: var(--color-text);
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.level4-completion-module {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 12px;
+}
+
+.level4-completion-note {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+    margin-bottom: 28px;
+}
+
+.level4-completion-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.level4-completion-btn {
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    min-width: 140px;
+}
+
+.level4-completion-btn.primary {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.level4-completion-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.level4-completion-btn.primary:active {
+    transform: translateY(0);
+}
+
+.level4-completion-btn.secondary {
+    background: white;
+    color: var(--color-text);
+    border: 2px solid var(--color-border);
+}
+
+.level4-completion-btn.secondary:hover {
+    background: var(--color-bg);
+    border-color: var(--color-primary);
+}
+
+/* ===== POWER-UP CELEBRATION OVERLAY ===== */
+.power-up-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -128,7 +347,7 @@
     animation: fadeIn 0.3s ease;
 }
 
-.level-up-card {
+.power-up-card {
     background: white;
     padding: 60px 40px;
     border-radius: 30px;
@@ -137,25 +356,25 @@
     animation: scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-.level-up-icon {
+.power-up-icon {
     font-size: 100px;
     margin-bottom: 20px;
     animation: rotate 1s ease-in-out;
 }
 
-.level-up-card h2 {
+.power-up-card h2 {
     font-size: 2.5rem;
     color: var(--color-primary);
     margin-bottom: 16px;
 }
 
-.level-up-card p {
+.power-up-card p {
     font-size: 1.5rem;
     color: var(--color-text);
     margin-bottom: 12px;
 }
 
-.level-up-subtitle {
+.power-up-subtitle {
     font-size: 1rem;
     color: var(--color-text-secondary);
 }
@@ -246,21 +465,75 @@
         font-size: 1.5rem;
     }
 
-    .level-up-card {
+    .power-up-card {
         padding: 40px 30px;
         max-width: 90%;
     }
 
-    .level-up-icon {
+    .power-up-icon {
         font-size: 80px;
     }
 
-    .level-up-card h2 {
+    .power-up-card h2 {
         font-size: 2rem;
     }
 
-    .level-up-card p {
+    .power-up-card p {
         font-size: 1.25rem;
+    }
+
+    /* Confirmation dialog responsive */
+    .power-up-confirmation-card {
+        padding: 35px 25px;
+    }
+
+    .power-up-confirmation-icon {
+        font-size: 60px;
+    }
+
+    .power-up-confirmation-card h2 {
+        font-size: 1.75rem;
+    }
+
+    .power-up-confirmation-message {
+        font-size: 1.125rem;
+    }
+
+    .power-up-confirmation-actions {
+        flex-direction: column;
+    }
+
+    .power-up-confirmation-btn {
+        width: 100%;
+    }
+
+    /* Level 4 completion dialog responsive */
+    .level4-completion-card {
+        padding: 35px 25px;
+    }
+
+    .level4-completion-icon {
+        font-size: 60px;
+    }
+
+    .level4-completion-card h2 {
+        font-size: 1.75rem;
+    }
+
+    .level4-completion-message {
+        font-size: 1.125rem;
+    }
+
+    .level4-completion-module {
+        font-size: 1.25rem;
+    }
+
+    .level4-completion-actions {
+        flex-direction: column;
+    }
+
+    .level4-completion-btn {
+        width: 100%;
     }
 }
 
@@ -272,7 +545,7 @@
         padding: 12px 20px;
     }
 
-    .level-up-card {
+    .power-up-card {
         padding: 30px 20px;
     }
 }
@@ -283,20 +556,44 @@
     outline-offset: 4px;
 }
 
+.power-up-confirmation-btn:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
+.level4-completion-btn:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
     .power-up-btn,
     .power-up-icon,
     .streak-display,
-    .level-up-overlay,
-    .level-up-card,
-    .level-up-icon {
+    .power-up-overlay,
+    .power-up-card,
+    .power-up-icon,
+    .power-up-confirmation-overlay,
+    .power-up-confirmation-card,
+    .power-up-confirmation-icon,
+    .level4-completion-overlay,
+    .level4-completion-card,
+    .level4-completion-icon {
         animation: none !important;
         transition: none !important;
     }
 
     .power-up-btn.visible {
         transform: translateY(0) scale(1);
+    }
+
+    .power-up-confirmation-overlay.visible .power-up-confirmation-card {
+        transform: scale(1);
+    }
+
+    .level4-completion-overlay.visible .level4-completion-card {
+        transform: scale(1);
     }
 }
 

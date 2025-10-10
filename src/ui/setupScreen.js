@@ -7,6 +7,7 @@
 import { MODULES, getModule } from '../curriculum/modules.js';
 import questionEngine from '../core/questionEngine.js';
 import questionHistory from '../core/questionHistory.js';
+import moduleProgress from '../core/moduleProgress.js';
 
 class SetupScreen {
     constructor() {
@@ -25,6 +26,11 @@ class SetupScreen {
         this.container = container;
         this.render();
         this.attachEventListeners();
+
+        // Listen for module completion events (Phase 3.5)
+        document.addEventListener('moduleCompleted', () => {
+            this.refreshTopics();
+        });
     }
 
     /**
@@ -94,14 +100,21 @@ class SetupScreen {
      * Render topic cards
      */
     renderTopics() {
-        return Object.values(MODULES).map(module => `
-            <div class="topic-card ${module.id === this.selectedModule ? 'selected' : ''}" data-module="${module.id}">
-                <div class="topic-icon">${module.icon}</div>
-                <div class="topic-name">${module.name}</div>
-                <div class="topic-desc">${module.description}</div>
-                <div class="topic-meta">${module.yearGroup}</div>
-            </div>
-        `).join('');
+        return Object.values(MODULES).map(module => {
+            const isCompleted = moduleProgress.getProgress(module.id).completed;
+            const completedClass = isCompleted ? 'completed' : '';
+            const selectedClass = module.id === this.selectedModule ? 'selected' : '';
+
+            return `
+                <div class="topic-card ${selectedClass} ${completedClass}" data-module="${module.id}">
+                    ${isCompleted ? '<div class="completion-badge">🏆</div>' : ''}
+                    <div class="topic-icon">${module.icon}</div>
+                    <div class="topic-name">${module.name}</div>
+                    <div class="topic-desc">${module.description}</div>
+                    <div class="topic-meta">${module.yearGroup}</div>
+                </div>
+            `;
+        }).join('');
     }
 
     /**
@@ -359,6 +372,25 @@ class SetupScreen {
         // If we restored a previous selection, update the start button
         if (this.selectedModule) {
             this.updateStartButton();
+        }
+    }
+
+    /**
+     * Refresh topic cards (Phase 3.5 - for module completion badges)
+     */
+    refreshTopics() {
+        const topicGrid = this.container.querySelector('#topicGrid');
+        if (topicGrid) {
+            topicGrid.innerHTML = this.renderTopics();
+
+            // Re-attach click listeners for topic cards
+            const topicCards = this.container.querySelectorAll('.topic-card');
+            topicCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const moduleId = card.dataset.module;
+                    this.selectTopic(moduleId);
+                });
+            });
         }
     }
 }
