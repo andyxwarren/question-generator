@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A production-ready interactive mathematics practice application for UK Key Stage 1 & 2 students (ages 5-11). Pure JavaScript/HTML/CSS with ES6 modules, no external dependencies. Currently implements Phase 0 (core functionality), Phase 1 (question deduplication), and Phase 2 (on-screen keyboard).
+A production-ready interactive mathematics practice application for UK Key Stage 1 & 2 students (ages 5-11). Pure JavaScript/HTML/CSS with ES6 modules, no external dependencies. Currently implements Phase 0 (core functionality), Phase 1 (question deduplication), Phase 2 (on-screen keyboard), and Phase 3 (auto level-up system).
 
 **Key Features**:
 - Parameter-based architecture generates unlimited unique questions at 4 difficulty levels
 - Touch-optimized on-screen keyboard for iPad/tablet use
+- Auto level-up system with streak tracking and animated power-up button
 
 ## Running the Application
 
@@ -56,12 +57,14 @@ src/
 ├── core/
 │   ├── questionEngine.js   # Registry pattern: registers generators, orchestrates generation
 │   ├── questionHistory.js  # Deduplication: fingerprints + localStorage persistence
+│   ├── streakTracker.js    # Streak tracking for level-up system (Phase 3)
 │   └── validator.js        # Answer validation logic
 └── ui/
     ├── setupScreen.js       # Setup screen component (module/level selection)
     ├── practiceScreen.js    # Practice screen component (question display/interaction)
     ├── resultsScreen.js     # Results screen component (score summary)
     ├── onScreenKeyboard.js  # Touch-optimized keyboard for text input (Phase 2)
+    ├── powerUpButton.js     # Animated level-up button component (Phase 3)
     └── app.js               # Main initialization and event coordination
 ```
 
@@ -147,6 +150,46 @@ The `onScreenKeyboard.js` component provides a touch-optimized calculator-style 
 
 **Lifecycle**: Created in `practiceScreen.attachAnswerListeners()`, destroyed in `showQuestion()` cleanup.
 
+### Auto Level-Up System (Phase 3)
+
+The streak tracking and auto level-up system rewards students for consecutive correct answers:
+
+1. **Streak Tracking** (`streakTracker.js`): Singleton that tracks consecutive correct answers
+   - Increments on correct answer, resets on incorrect
+   - Requires 3 consecutive correct to unlock power-up
+   - Continues counting after power-up (can level up multiple times)
+   - Session-based (resets when new practice session starts)
+
+2. **Streak Display**: Shows in practice screen header
+   - Hidden when streak = 0
+   - ⭐ icon for 1 correct answer
+   - 🔥 icon with "hot" gradient styling for 2+ correct answers
+   - Updates immediately after each answer
+
+3. **Power-Up Button** (`powerUpButton.js`): Animated button that appears after 3-streak
+   - Appears in bottom-right corner with slide-in animation
+   - Pulsing animation to draw attention
+   - Click shows confirmation dialog
+   - Burst animation on activation
+   - Automatically hidden if streak is lost or at max level (Level 4)
+
+4. **Level-Up Flow**:
+   - Student gets 3 correct → power-up button appears (800ms delay)
+   - Click button → confirmation dialog
+   - Accept → celebration overlay (3 seconds) → new questions at higher level
+   - Decline → button remains, session continues at current level
+   - Questions regenerated for remaining count at new level
+
+5. **Session Data**: Results include `leveledUp` flag and `finalLevel` for tracking progression
+
+**When active**: Automatically tracks all answers during practice. Power-up only available when not at max level (Level 4).
+
+**Integration points**:
+- `practiceScreen.js`: Calls `streakTracker.recordAnswer()` in `submitAnswer()`
+- `practiceScreen.js`: Shows/hides power-up button based on streak status
+- `practiceScreen.js`: Handles level-up via `handleLevelUp()` → `transitionToNewLevel()`
+- `app.js`: Passes `moduleId` and `level` to `practiceScreen.init()` for level tracking
+
 ## Development Guidelines
 
 ### Adding a New Module
@@ -180,6 +223,10 @@ Before committing changes:
 - [ ] Test on tablet/iPad if possible (responsive design critical)
 - [ ] Verify on-screen keyboard appears on touch devices (Phase 2)
 - [ ] Verify native keyboard works on desktop (Phase 2)
+- [ ] Verify streak tracking increments and resets correctly (Phase 3)
+- [ ] Verify power-up button appears after 3 correct answers (Phase 3)
+- [ ] Verify level-up flow works smoothly (Phase 3)
+- [ ] Verify streak display shows correct icons and styling (Phase 3)
 - [ ] Verify localStorage persistence (cooldown settings, history)
 - [ ] Check browser console for errors
 - [ ] Test with question count = 1, 5, 10, 20
@@ -219,7 +266,7 @@ engine.setCooldown(48); // hours
 
 ## Current Implementation Status
 
-### ✅ Complete (Phases 0, 1, 2)
+### ✅ Complete (Phases 0, 1, 2, 3)
 - 4 curriculum modules (Counting, Number Bonds, Multiplication, Fractions)
 - 4 difficulty levels per module
 - Question generation engine with parameter system
@@ -233,9 +280,12 @@ engine.setCooldown(48); // hours
 - **Touch-optimized on-screen keyboard** (Phase 2)
 - **Haptic feedback on touch devices** (Phase 2)
 - **Automatic touch device detection** (Phase 2)
+- **Streak tracking for consecutive correct answers** (Phase 3)
+- **Animated power-up button after 3-streak** (Phase 3)
+- **Auto level-up system with celebration overlay** (Phase 3)
+- **Streak display with hot state (🔥 icon)** (Phase 3)
 
 ### 🔜 Planned (Future Phases)
-- Phase 3: Auto level-up system (after 3 consecutive correct)
 - Phase 4: Enhanced question types (drag-drop, matching, true/false)
 - Phase 5: Hints system (progressive 3-level hints)
 - Phase 6: Progress persistence (track student progress over time)
@@ -260,6 +310,7 @@ See `docs/engineering_doc.md` for detailed implementation plans for future phase
 - `QUICKSTART.md` - Quick testing guide
 - `PHASE1_TESTING.md` - Detailed deduplication testing scenarios
 - `PHASE2_TESTING.md` - On-screen keyboard testing guide
+- `PHASE3_TESTING.md` - Auto level-up system testing guide
 - `docs/engineering_doc.md` - Complete technical specifications and future phase designs
 - `docs/curriculum_params.md` - Framework for defining difficulty parameters
 - `docs/module_examples.md` - Examples of question generation patterns

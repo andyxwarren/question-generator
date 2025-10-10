@@ -36,6 +36,9 @@ class App {
         this.containers.practice = document.getElementById('practiceScreen');
         this.containers.results = document.getElementById('resultsScreen');
 
+        // Make questionEngine globally available for Phase 3 level-up
+        window.questionEngine = questionEngine;
+
         // Initialize setup screen
         this.setupScreen.init(this.containers.setup);
 
@@ -89,8 +92,8 @@ class App {
             return;
         }
 
-        // Initialize and show practice screen
-        this.practiceScreen.init(this.containers.practice, questions);
+        // Initialize and show practice screen (with moduleId and level for Phase 3)
+        this.practiceScreen.init(this.containers.practice, questions, moduleId, level);
         this.showScreen('practice');
     }
 

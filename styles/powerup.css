@@ -1,0 +1,312 @@
+/**
+ * Power-Up and Streak Styles
+ *
+ * Animations and styling for the auto level-up system (Phase 3)
+ */
+
+/* ===== POWER-UP BUTTON ===== */
+.power-up-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1001;
+
+    /* Appearance */
+    padding: 20px 30px;
+    background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.5);
+    cursor: pointer;
+
+    /* Typography */
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    font-weight: 700;
+
+    /* Initial state */
+    transform: translateY(150px) scale(0.8);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.power-up-btn.visible {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.power-up-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6);
+    animation: none;
+}
+
+.power-up-btn:active {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.power-up-btn.animate-out {
+    transform: translateY(150px) scale(0.5);
+    opacity: 0;
+}
+
+.power-up-btn.activating {
+    animation: burst 0.5s ease-out;
+}
+
+/* Power-up button content */
+.power-up-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.power-up-icon {
+    font-size: 2rem;
+    animation: glow 1.5s ease-in-out infinite;
+}
+
+.power-up-text {
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.power-up-subtitle {
+    font-size: 0.875rem;
+    opacity: 0.95;
+}
+
+/* ===== STREAK DISPLAY ===== */
+.streak-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--color-bg);
+    border: 2px solid var(--color-border);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.streak-display.hot {
+    background: linear-gradient(135deg, #ff6b6b, #ffd700);
+    border-color: #ff6b6b;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+}
+
+.streak-icon {
+    font-size: 1.25rem;
+}
+
+.streak-count {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.streak-display.hot .streak-icon {
+    animation: flame 0.5s ease-in-out infinite;
+}
+
+/* ===== LEVEL-UP OVERLAY ===== */
+.level-up-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+.level-up-card {
+    background: white;
+    padding: 60px 40px;
+    border-radius: 30px;
+    text-align: center;
+    max-width: 500px;
+    animation: scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.level-up-icon {
+    font-size: 100px;
+    margin-bottom: 20px;
+    animation: rotate 1s ease-in-out;
+}
+
+.level-up-card h2 {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    margin-bottom: 16px;
+}
+
+.level-up-card p {
+    font-size: 1.5rem;
+    color: var(--color-text);
+    margin-bottom: 12px;
+}
+
+.level-up-subtitle {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.05);
+    }
+}
+
+@keyframes glow {
+    0%, 100% {
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+    }
+    50% {
+        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 1));
+    }
+}
+
+@keyframes burst {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-10px) scale(1.2);
+        box-shadow: 0 20px 50px rgba(255, 215, 0, 0.8);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes flame {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-2px) rotate(-5deg);
+    }
+    75% {
+        transform: translateY(-2px) rotate(5deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg) scale(0);
+    }
+    to {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+    .power-up-btn {
+        bottom: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        font-size: 1rem;
+    }
+
+    .power-up-icon {
+        font-size: 1.5rem;
+    }
+
+    .level-up-card {
+        padding: 40px 30px;
+        max-width: 90%;
+    }
+
+    .level-up-icon {
+        font-size: 80px;
+    }
+
+    .level-up-card h2 {
+        font-size: 2rem;
+    }
+
+    .level-up-card p {
+        font-size: 1.25rem;
+    }
+}
+
+/* Phone landscape */
+@media (max-width: 480px) and (orientation: landscape) {
+    .power-up-btn {
+        bottom: 10px;
+        right: 10px;
+        padding: 12px 20px;
+    }
+
+    .level-up-card {
+        padding: 30px 20px;
+    }
+}
+
+/* ===== ACCESSIBILITY ===== */
+.power-up-btn:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 4px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .power-up-btn,
+    .power-up-icon,
+    .streak-display,
+    .level-up-overlay,
+    .level-up-card,
+    .level-up-icon {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .power-up-btn.visible {
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .power-up-btn {
+        border: 3px solid white;
+    }
+
+    .streak-display.hot {
+        border-width: 3px;
+    }
+}

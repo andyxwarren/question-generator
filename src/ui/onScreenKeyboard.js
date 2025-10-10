@@ -3,25 +3,29 @@
  *
  * Provides a touch-optimized calculator-style keyboard for text input questions.
  * Only appears on touch devices; desktop users get native keyboard.
+ *
+ * Uses internal value storage to avoid readonly input conflicts on mobile devices.
  */
 
 class OnScreenKeyboard {
     constructor() {
         this.element = null;
-        this.inputElement = null;
+        this.displayElement = null;  // Custom display div (not a real input)
+        this.currentValue = '';      // Internal value storage
         this.isActive = false;
         this.submitCallback = null;
     }
 
     /**
      * Create and return keyboard DOM element
-     * @param {HTMLInputElement} inputElement - The input element to attach to
+     * @param {HTMLElement} displayElement - The display element to show typed value
      * @param {Function} onSubmit - Callback function when submit is pressed
      * @returns {HTMLElement} Keyboard element
      */
-    create(inputElement, onSubmit) {
-        this.inputElement = inputElement;
+    create(displayElement, onSubmit) {
+        this.displayElement = displayElement;
         this.submitCallback = onSubmit;
+        this.currentValue = '';  // Reset value
 
         // Create keyboard container
         this.element = document.createElement('div');
@@ -62,6 +66,9 @@ class OnScreenKeyboard {
         // Attach event listeners
         this.attachHandlers();
 
+        // Initialize display
+        this.updateDisplay();
+
         return this.element;
     }
 
@@ -69,8 +76,8 @@ class OnScreenKeyboard {
      * Attach event listeners to keyboard keys
      */
     attachHandlers() {
-        // Use event delegation for better performance
-        this.element.addEventListener('click', (e) => {
+        // Handle key press (works for both mouse and touch)
+        const handleKeyPress = (e) => {
             const key = e.target.closest('.key');
             if (!key) return;
 
@@ -91,9 +98,15 @@ class OnScreenKeyboard {
             } else if (key.dataset.value) {
                 this.handleInput(key.dataset.value);
             }
-        });
+        };
 
-        // Prevent default touch behaviors
+        // Use touchend for touch devices (click doesn't fire when touchstart has preventDefault)
+        this.element.addEventListener('touchend', handleKeyPress, { passive: false });
+
+        // Also handle click for desktop/mouse devices
+        this.element.addEventListener('click', handleKeyPress);
+
+        // Prevent scrolling and text selection on touch
         this.element.addEventListener('touchstart', (e) => {
             e.preventDefault();
         }, { passive: false });
@@ -104,38 +117,42 @@ class OnScreenKeyboard {
      * @param {string} value - The value to input
      */
     handleInput(value) {
-        if (!this.inputElement) return;
-
-        const currentValue = this.inputElement.value;
+        console.log('handleInput called with:', value); // DEBUG
 
         // Validation rules
         if (value === '.') {
             // Only allow one decimal point
-            if (currentValue.includes('.')) return;
+            if (this.currentValue.includes('.')) {
+                console.log('Decimal rejected - already exists'); // DEBUG
+                return;
+            }
         }
 
         if (value === '-') {
             // Only allow minus at the beginning
-            if (currentValue.length > 0) return;
+            if (this.currentValue.length > 0) {
+                console.log('Minus rejected - not at beginning'); // DEBUG
+                return;
+            }
         }
 
-        // Append value
-        this.inputElement.value += value;
+        // Update internal value
+        this.currentValue += value;
+        console.log('New value:', this.currentValue); // DEBUG
 
-        // Trigger input event for any listeners
-        this.inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+        // Update display
+        this.updateDisplay();
     }
 
     /**
      * Handle backspace key
      */
     handleBackspace() {
-        if (!this.inputElement) return;
+        // Remove last character from internal value
+        this.currentValue = this.currentValue.slice(0, -1);
 
-        this.inputElement.value = this.inputElement.value.slice(0, -1);
-
-        // Trigger input event
-        this.inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+        // Update display
+        this.updateDisplay();
     }
 
     /**
@@ -147,12 +164,60 @@ class OnScreenKeyboard {
         }
 
         // Also dispatch a custom event
-        if (this.inputElement) {
-            this.inputElement.dispatchEvent(new CustomEvent('keyboardSubmit', {
+        if (this.displayElement) {
+            this.displayElement.dispatchEvent(new CustomEvent('keyboardSubmit', {
                 bubbles: true,
-                detail: { value: this.inputElement.value }
+                detail: { value: this.currentValue }
             }));
         }
+    }
+
+    /**
+     * Update the display element with current value
+     */
+    updateDisplay() {
+        console.log('updateDisplay called, currentValue:', this.currentValue); // DEBUG
+
+        if (!this.displayElement) {
+            console.error('displayElement is null!'); // DEBUG
+            return;
+        }
+
+        if (this.currentValue === '') {
+            // Show placeholder or empty state
+            this.displayElement.textContent = '';
+            this.displayElement.classList.add('empty');
+            console.log('Display cleared (empty)'); // DEBUG
+        } else {
+            this.displayElement.textContent = this.currentValue;
+            this.displayElement.classList.remove('empty');
+            console.log('Display updated to:', this.displayElement.textContent); // DEBUG
+        }
+    }
+
+    /**
+     * Get the current typed value
+     * @returns {string} Current value
+     */
+    getValue() {
+        return this.currentValue;
+    }
+
+    /**
+     * Clear the current value
+     */
+    clearValue() {
+        this.currentValue = '';
+        this.updateDisplay();
+    }
+
+    /**
+     * Set a value programmatically
+     * @param {string} value - Value to set
+     */
+    setValue(value) {
+        this.currentValue = String(value);
+        this.updateDisplay();
     }
 
     /**
@@ -227,7 +292,8 @@ class OnScreenKeyboard {
             this.element.parentNode.removeChild(this.element);
         }
         this.element = null;
-        this.inputElement = null;
+        this.displayElement = null;
+        this.currentValue = '';
         this.submitCallback = null;
         this.isActive = false;
     }

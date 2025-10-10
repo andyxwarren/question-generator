@@ -1,11 +1,14 @@
 /**
  * Practice Screen Component
  *
- * Handles question display, answer collection, and progress tracking
+ * Handles question display, answer collection, and progress tracking.
+ * Includes streak tracking and auto level-up system (Phase 3).
  */
 
 import validator from '../core/validator.js';
 import OnScreenKeyboard from './onScreenKeyboard.js';
+import streakTracker from '../core/streakTracker.js';
+import powerUpButton from './powerUpButton.js';
 
 class PracticeScreen {
     constructor() {
@@ -19,20 +22,31 @@ class PracticeScreen {
         this.container = null;
         this.currentAnswer = null;
         this.keyboard = null; // On-screen keyboard instance
+        this.currentModule = null; // Current module ID (for level-up)
+        this.currentLevel = null; // Current difficulty level (for level-up)
+        this.leveledUp = false; // Track if student leveled up this session
     }
 
     /**
      * Initialize the practice screen
      * @param {HTMLElement} container - Container element
      * @param {Array} questions - Array of question objects
+     * @param {string} moduleId - Current module ID
+     * @param {number} level - Current difficulty level
      */
-    init(container, questions) {
+    init(container, questions, moduleId, level) {
         this.container = container;
         this.questions = questions;
         this.currentIndex = 0;
         this.score = { correct: 0, incorrect: 0 };
         this.startTime = Date.now();
         this.currentAnswer = null;
+        this.currentModule = moduleId;
+        this.currentLevel = level;
+        this.leveledUp = false;
+
+        // Reset streak tracker for new session
+        streakTracker.resetSession();
 
         this.render();
         this.showQuestion();
@@ -58,6 +72,7 @@ class PracticeScreen {
                         <div class="score-value" id="incorrectCount">0</div>
                         <div class="score-label">Incorrect</div>
                     </div>
+                    <div id="streakDisplayContainer"></div>
                 </div>
             </div>
 
@@ -127,19 +142,32 @@ class PracticeScreen {
                 </div>
             `;
         } else if (question.type === 'text_input') {
-            // Add inputmode="none" for touch devices to prevent native keyboard
-            // Add readonly for touch devices to prevent cursor/selection issues
             const isTouchDevice = OnScreenKeyboard.isTouchDevice();
-            return `
-                <input type="text"
-                       class="text-input"
-                       id="textAnswer"
-                       placeholder="Type your answer here"
-                       autocomplete="off"
-                       ${isTouchDevice ? 'inputmode="none" readonly' : ''}>
-                <button class="submit-btn" id="submitBtn">Submit Answer</button>
-                <div id="keyboardContainer"></div>
-            `;
+
+            if (isTouchDevice) {
+                // Use custom display div for touch devices (avoids readonly conflicts)
+                return `
+                    <div class="keyboard-display"
+                         id="textAnswer"
+                         role="textbox"
+                         aria-label="Answer input"
+                         tabindex="0"
+                         data-placeholder="Tap keyboard to enter answer">
+                    </div>
+                    <button class="submit-btn" id="submitBtn">Submit Answer</button>
+                    <div id="keyboardContainer"></div>
+                `;
+            } else {
+                // Use native input for desktop
+                return `
+                    <input type="text"
+                           class="text-input"
+                           id="textAnswer"
+                           placeholder="Type your answer here"
+                           autocomplete="off">
+                    <button class="submit-btn" id="submitBtn">Submit Answer</button>
+                `;
+            }
         }
         return '';
     }
@@ -157,40 +185,45 @@ class PracticeScreen {
                 });
             });
         } else if (question.type === 'text_input') {
-            const textInput = this.container.querySelector('#textAnswer');
+            const textAnswer = this.container.querySelector('#textAnswer');
             const submitBtn = this.container.querySelector('#submitBtn');
-            const keyboardContainer = this.container.querySelector('#keyboardContainer');
+            const isTouchDevice = OnScreenKeyboard.isTouchDevice();
 
-            // Submit handler
+            // Submit handler - gets value from keyboard or input depending on device
             const handleSubmit = () => {
-                this.submitAnswer(textInput.value);
+                const answer = isTouchDevice
+                    ? this.keyboard.getValue()  // Get from keyboard internal value
+                    : textAnswer.value;         // Get from native input
+                this.submitAnswer(answer);
             };
 
             submitBtn.addEventListener('click', handleSubmit);
 
-            textInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    handleSubmit();
-                }
-            });
-
-            // Initialize on-screen keyboard for touch devices
-            if (OnScreenKeyboard.isTouchDevice()) {
+            if (isTouchDevice) {
+                // Initialize on-screen keyboard for touch devices
+                const keyboardContainer = this.container.querySelector('#keyboardContainer');
                 this.keyboard = new OnScreenKeyboard();
-                const keyboardElement = this.keyboard.create(textInput, handleSubmit);
+                const keyboardElement = this.keyboard.create(textAnswer, handleSubmit);
                 keyboardContainer.appendChild(keyboardElement);
                 this.keyboard.show();
 
                 // Listen for keyboard submit event
-                textInput.addEventListener('keyboardSubmit', handleSubmit);
+                textAnswer.addEventListener('keyboardSubmit', handleSubmit);
 
-                // Allow clicking on input to focus (even though readonly)
-                textInput.addEventListener('click', () => {
-                    textInput.focus();
+                // Allow clicking on display to focus
+                textAnswer.addEventListener('click', () => {
+                    textAnswer.focus();
                 });
             } else {
+                // Desktop: use native input with Enter key support
+                textAnswer.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        handleSubmit();
+                    }
+                });
+
                 // Focus input for desktop
-                textInput.focus();
+                textAnswer.focus();
             }
         }
     }
@@ -208,15 +241,32 @@ class PracticeScreen {
         const question = this.questions[this.currentIndex];
         const result = validator.validate(question, answer);
 
+        // Update score
         if (result.isCorrect) {
             this.score.correct++;
         } else {
             this.score.incorrect++;
         }
 
-        this.showFeedback(result);
+        // Track streak (Phase 3)
+        const streakStatus = streakTracker.recordAnswer(result.isCorrect);
+
+        this.showFeedback(result, streakStatus);
         this.disableAnswerInputs();
         this.updateProgress();
+        this.updateStreakDisplay();
+
+        // Show power-up button if available (not at max level)
+        if (streakStatus.justUnlocked && this.currentLevel < 4) {
+            setTimeout(() => {
+                powerUpButton.show(() => this.handleLevelUp());
+            }, 800); // Brief delay for better UX
+        }
+
+        // Hide power-up button if streak was lost
+        if (streakStatus.lostPowerUp) {
+            powerUpButton.hide();
+        }
     }
 
     /**
@@ -309,6 +359,109 @@ class PracticeScreen {
     }
 
     /**
+     * Update streak display in header
+     */
+    updateStreakDisplay() {
+        const container = this.container.querySelector('#streakDisplayContainer');
+        if (!container) return;
+
+        const status = streakTracker.getStatus();
+        const streak = status.currentStreak;
+
+        if (streak === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        const isHot = streakTracker.isHotStreak();
+        const hotClass = isHot ? 'hot' : '';
+
+        container.innerHTML = `
+            <div class="streak-display ${hotClass}">
+                <span class="streak-icon">${isHot ? '🔥' : '⭐'}</span>
+                <span class="streak-count">${streak} in a row!</span>
+            </div>
+        `;
+    }
+
+    /**
+     * Handle level-up when power-up is activated
+     */
+    handleLevelUp() {
+        // Consume the power-up
+        streakTracker.consumePowerUp();
+
+        // Mark that we leveled up
+        this.leveledUp = true;
+        const newLevel = Math.min(this.currentLevel + 1, 4);
+
+        // Show celebration overlay
+        this.showLevelUpOverlay(this.currentLevel, newLevel);
+
+        // After celebration, continue with new level questions
+        setTimeout(() => {
+            this.transitionToNewLevel(newLevel);
+        }, 3000);
+    }
+
+    /**
+     * Show level-up celebration overlay
+     */
+    showLevelUpOverlay(oldLevel, newLevel) {
+        const overlay = document.createElement('div');
+        overlay.className = 'level-up-overlay';
+        overlay.innerHTML = `
+            <div class="level-up-card">
+                <div class="level-up-icon">🎉</div>
+                <h2>Level Up!</h2>
+                <p>Level ${oldLevel} → Level ${newLevel}</p>
+                <p class="level-up-subtitle">Get ready for harder questions!</p>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        // Remove overlay after animation
+        setTimeout(() => {
+            if (overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+            }
+        }, 3000);
+    }
+
+    /**
+     * Transition to new difficulty level
+     */
+    transitionToNewLevel(newLevel) {
+        // Update current level
+        this.currentLevel = newLevel;
+
+        // Calculate how many questions remain
+        const questionsRemaining = this.questions.length - (this.currentIndex + 1);
+
+        // Generate new questions at higher level
+        const questionEngine = window.questionEngine; // Access global instance
+        if (!questionEngine) {
+            console.error('Question engine not available');
+            return;
+        }
+
+        const newQuestions = questionEngine.generate(
+            this.currentModule,
+            newLevel,
+            questionsRemaining
+        );
+
+        // Replace remaining questions with new level questions
+        this.questions = [
+            ...this.questions.slice(0, this.currentIndex + 1),
+            ...newQuestions
+        ];
+
+        // Continue to next question (which will be at new level)
+        this.nextQuestion();
+    }
+
+    /**
      * Finish practice session
      */
     finish() {
@@ -319,7 +472,9 @@ class PracticeScreen {
             questions: this.questions,
             score: this.score,
             timeSpent: timeSpent,
-            totalQuestions: this.questions.length
+            totalQuestions: this.questions.length,
+            leveledUp: this.leveledUp,
+            finalLevel: this.currentLevel
         };
 
         // Dispatch custom event
