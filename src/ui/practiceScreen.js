@@ -4,6 +4,7 @@
  * Handles question display, answer collection, and progress tracking.
  * Includes streak tracking and auto power-up system (Phase 3).
  * Tracks module completion progress (Phase 3.5).
+ * Integrates with StorageManager for detailed session tracking (Phase 4).
  */
 
 import validator from '../core/validator.js';
@@ -12,6 +13,7 @@ import streakTracker from '../core/streakTracker.js';
 import powerUpButton from './powerUpButton.js';
 import moduleProgress from '../core/moduleProgress.js';
 import moduleCompletionPrompt from './moduleCompletionPrompt.js';
+import storageManager from '../core/storageManager.js';
 
 class PracticeScreen {
     constructor() {
@@ -28,6 +30,10 @@ class PracticeScreen {
         this.currentModule = null; // Current module ID (for level-up)
         this.currentLevel = null; // Current difficulty level (for level-up)
         this.leveledUp = false; // Track if student leveled up this session
+
+        // Phase 4: Session tracking
+        this.sessionId = null; // Current session ID
+        this.questionStartTime = null; // Time when current question was shown
     }
 
     /**
@@ -50,6 +56,21 @@ class PracticeScreen {
 
         // Reset streak tracker for new session
         streakTracker.resetSession();
+
+        // Phase 4: Create session if student is selected
+        const currentStudent = storageManager.getCurrentStudent();
+        if (currentStudent) {
+            this.sessionId = storageManager.createSession(
+                currentStudent.id,
+                moduleId,
+                level,
+                questions.length
+            );
+            console.log(`✓ Session tracking enabled for: ${currentStudent.name}`);
+        } else {
+            this.sessionId = null;
+            console.log('ℹ No student selected - session tracking disabled');
+        }
 
         this.render();
         this.showQuestion();
@@ -97,6 +118,9 @@ class PracticeScreen {
     showQuestion() {
         const question = this.questions[this.currentIndex];
         this.currentAnswer = null;
+
+        // Phase 4: Record question start time for response time tracking
+        this.questionStartTime = Date.now();
 
         // Clean up previous keyboard if exists
         if (this.keyboard) {
@@ -244,6 +268,11 @@ class PracticeScreen {
         const question = this.questions[this.currentIndex];
         const result = validator.validate(question, answer);
 
+        // Phase 4: Calculate response time
+        const responseTimeMs = this.questionStartTime
+            ? Date.now() - this.questionStartTime
+            : null;
+
         // Update score
         if (result.isCorrect) {
             this.score.correct++;
@@ -255,6 +284,20 @@ class PracticeScreen {
 
         // Track streak (Phase 3)
         const streakStatus = streakTracker.recordAnswer(result.isCorrect);
+
+        // Phase 4: Record question result in session
+        if (this.sessionId) {
+            storageManager.recordQuestionResult(this.sessionId, {
+                correct: result.isCorrect,
+                timeMs: responseTimeMs,
+                question: question.text,
+                answer: answer,
+                type: question.type
+            });
+
+            // Update best streak
+            storageManager.updateBestStreak(this.sessionId, streakStatus.currentStreak);
+        }
 
         this.showFeedback(result, streakStatus);
         this.disableAnswerInputs();
@@ -410,6 +453,11 @@ class PracticeScreen {
         // Mark that we powered up
         this.leveledUp = true;
         const newLevel = Math.min(this.currentLevel + 1, 4);
+
+        // Phase 4: Record power-up in session
+        if (this.sessionId) {
+            storageManager.recordPowerUp(this.sessionId);
+        }
 
         // Show celebration overlay
         this.showPowerUpOverlay(this.currentLevel, newLevel);
@@ -575,11 +623,30 @@ class PracticeScreen {
         const moduleComplete = moduleProgress.isModuleComplete(this.currentModule);
         const alreadyMarkedComplete = moduleProgress.getProgress(this.currentModule).completed;
 
+        // Calculate final score
+        const totalQuestions = this.score.correct + this.score.incorrect;
+        const percentage = totalQuestions > 0
+            ? Math.round((this.score.correct / totalQuestions) * 100)
+            : 0;
+
+        const finalScore = {
+            correct: this.score.correct,
+            total: totalQuestions,
+            percentage: percentage
+        };
+
+        // Phase 4: Complete session in storage
+        if (this.sessionId) {
+            const completedEarly = (this.currentIndex + 1 < this.questions.length); // Level 4 early completion
+            storageManager.completeSession(this.sessionId, finalScore, completedEarly);
+            console.log(`✓ Session completed: ${finalScore.correct}/${finalScore.total} (${finalScore.percentage}%)`);
+        }
+
         const sessionData = {
             questions: this.questions,
             score: this.score,
             timeSpent: timeSpent,
-            totalQuestions: this.questions.length,
+            totalQuestions: totalQuestions, // Use actual attempted count, not generated count
             leveledUp: this.leveledUp,
             finalLevel: this.currentLevel,
             moduleComplete: moduleComplete

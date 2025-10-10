@@ -1,13 +1,17 @@
 /**
  * Setup Screen Component
  *
- * Handles topic selection, difficulty level, and practice session configuration
+ * Handles topic selection, difficulty level, and practice session configuration.
+ * Integrates with student management and progress tracking (Phase 4).
  */
 
 import { MODULES, getModule } from '../curriculum/modules.js';
 import questionEngine from '../core/questionEngine.js';
 import questionHistory from '../core/questionHistory.js';
 import moduleProgress from '../core/moduleProgress.js';
+import storageManager from '../core/storageManager.js';
+import studentSelector from './studentSelector.js';
+import progressDisplay from './progressDisplay.js';
 
 class SetupScreen {
     constructor() {
@@ -42,6 +46,8 @@ class SetupScreen {
                 <h1>Maths Practice</h1>
                 <p class="subtitle">Choose your topic and difficulty to start practicing!</p>
             </div>
+
+            ${this.renderStudentSection()}
 
             <div class="setup-section">
                 <h2 class="section-title">📚 Choose a Topic</h2>
@@ -94,6 +100,71 @@ class SetupScreen {
                 Start Practice
             </button>
         `;
+    }
+
+    /**
+     * Render student selection section (Phase 4)
+     */
+    renderStudentSection() {
+        const currentStudent = storageManager.getCurrentStudent();
+
+        if (currentStudent) {
+            const stats = storageManager.getStudentStats(currentStudent.id);
+
+            return `
+                <div class="student-info-section">
+                    <div class="student-info-card">
+                        <div class="student-info-main">
+                            <div class="student-avatar">👤</div>
+                            <div class="student-details">
+                                <div class="student-display-name">${this.escapeHtml(currentStudent.name)}</div>
+                                ${currentStudent.yearGroup ? `<div class="student-display-year">${this.escapeHtml(currentStudent.yearGroup)}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="student-info-stats">
+                            <div class="student-stat">
+                                <span class="stat-value">${stats.totalSessions}</span>
+                                <span class="stat-label">Sessions</span>
+                            </div>
+                            <div class="student-stat">
+                                <span class="stat-value">${stats.overallAccuracy}%</span>
+                                <span class="stat-label">Accuracy</span>
+                            </div>
+                            <div class="student-stat">
+                                <span class="stat-value">${stats.completedModules}/4</span>
+                                <span class="stat-label">Complete</span>
+                            </div>
+                        </div>
+                        <div class="student-info-actions">
+                            <button class="student-action-link" id="changeStudentBtn">Change Student</button>
+                            <button class="student-action-link" id="viewProgressBtn">View Progress</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            return `
+                <div class="student-info-section">
+                    <div class="student-prompt-card">
+                        <div class="student-prompt-icon">👥</div>
+                        <div class="student-prompt-content">
+                            <h3>Track Your Progress</h3>
+                            <p>Select a student profile to track practice sessions and performance over time.</p>
+                        </div>
+                        <button class="student-prompt-btn" id="selectStudentBtn">Select Student</button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    /**
+     * Escape HTML to prevent XSS
+     */
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     /**
@@ -163,6 +234,28 @@ class SetupScreen {
      * Attach event listeners
      */
     attachEventListeners() {
+        // Phase 4: Student selector buttons
+        const selectStudentBtn = this.container.querySelector('#selectStudentBtn');
+        if (selectStudentBtn) {
+            selectStudentBtn.addEventListener('click', () => {
+                this.showStudentSelector();
+            });
+        }
+
+        const changeStudentBtn = this.container.querySelector('#changeStudentBtn');
+        if (changeStudentBtn) {
+            changeStudentBtn.addEventListener('click', () => {
+                this.showStudentSelector();
+            });
+        }
+
+        const viewProgressBtn = this.container.querySelector('#viewProgressBtn');
+        if (viewProgressBtn) {
+            viewProgressBtn.addEventListener('click', () => {
+                this.showProgressDashboard();
+            });
+        }
+
         // Topic selection
         const topicCards = this.container.querySelectorAll('.topic-card');
         topicCards.forEach(card => {
@@ -392,6 +485,105 @@ class SetupScreen {
                 });
             });
         }
+    }
+
+    /**
+     * Show student selector dialog (Phase 4)
+     */
+    showStudentSelector() {
+        studentSelector.show((studentId) => {
+            // Refresh student section when student is selected
+            this.render();
+            this.attachEventListeners();
+
+            // Restore previous selections
+            if (this.selectedModule) {
+                const topicCards = this.container.querySelectorAll('.topic-card');
+                topicCards.forEach(card => {
+                    card.classList.toggle('selected', card.dataset.module === this.selectedModule);
+                });
+                this.updateStartButton();
+            }
+
+            const levelCards = this.container.querySelectorAll('.level-card');
+            levelCards.forEach(card => {
+                card.classList.toggle('selected', parseInt(card.dataset.level) === this.selectedLevel);
+            });
+
+            // Optionally show recommended level for selected module
+            if (this.selectedModule) {
+                const currentStudent = storageManager.getCurrentStudent();
+                if (currentStudent) {
+                    const recommendedLevel = storageManager.getRecommendedLevel(
+                        currentStudent.id,
+                        this.selectedModule
+                    );
+
+                    if (recommendedLevel !== this.selectedLevel) {
+                        this.showLevelRecommendation(recommendedLevel);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Show progress dashboard (Phase 4)
+     */
+    showProgressDashboard() {
+        progressDisplay.show();
+    }
+
+    /**
+     * Show level recommendation notification (Phase 4)
+     */
+    showLevelRecommendation(recommendedLevel) {
+        const levelNames = {
+            1: 'Beginning',
+            2: 'Developing',
+            3: 'Meeting',
+            4: 'Exceeding'
+        };
+
+        const message = `💡 Based on your recent performance, we recommend Level ${recommendedLevel} (${levelNames[recommendedLevel]}) for this module.`;
+
+        // Create temporary notification
+        const notification = document.createElement('div');
+        notification.className = 'level-recommendation-notification';
+        notification.innerHTML = `
+            <div class="recommendation-content">
+                <span class="recommendation-icon">💡</span>
+                <span class="recommendation-text">${message}</span>
+                <button class="recommendation-apply-btn" data-level="${recommendedLevel}">
+                    Apply Recommendation
+                </button>
+                <button class="recommendation-dismiss-btn">×</button>
+            </div>
+        `;
+
+        this.container.insertBefore(notification, this.container.firstChild);
+
+        // Auto-dismiss after 10 seconds
+        const autoDismiss = setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 10000);
+
+        // Apply button
+        const applyBtn = notification.querySelector('.recommendation-apply-btn');
+        applyBtn.addEventListener('click', () => {
+            clearTimeout(autoDismiss);
+            this.selectLevel(recommendedLevel);
+            notification.remove();
+        });
+
+        // Dismiss button
+        const dismissBtn = notification.querySelector('.recommendation-dismiss-btn');
+        dismissBtn.addEventListener('click', () => {
+            clearTimeout(autoDismiss);
+            notification.remove();
+        });
     }
 }
 
