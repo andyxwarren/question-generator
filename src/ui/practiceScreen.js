@@ -5,6 +5,7 @@
  */
 
 import validator from '../core/validator.js';
+import OnScreenKeyboard from './onScreenKeyboard.js';
 
 class PracticeScreen {
     constructor() {
@@ -17,6 +18,7 @@ class PracticeScreen {
         this.startTime = null;
         this.container = null;
         this.currentAnswer = null;
+        this.keyboard = null; // On-screen keyboard instance
     }
 
     /**
@@ -78,6 +80,12 @@ class PracticeScreen {
         const question = this.questions[this.currentIndex];
         this.currentAnswer = null;
 
+        // Clean up previous keyboard if exists
+        if (this.keyboard) {
+            this.keyboard.destroy();
+            this.keyboard = null;
+        }
+
         const questionCard = this.container.querySelector('#questionCard');
         questionCard.innerHTML = `
             <div class="question-type">${this.getQuestionTypeLabel(question.type)}</div>
@@ -119,13 +127,18 @@ class PracticeScreen {
                 </div>
             `;
         } else if (question.type === 'text_input') {
+            // Add inputmode="none" for touch devices to prevent native keyboard
+            // Add readonly for touch devices to prevent cursor/selection issues
+            const isTouchDevice = OnScreenKeyboard.isTouchDevice();
             return `
                 <input type="text"
                        class="text-input"
                        id="textAnswer"
                        placeholder="Type your answer here"
-                       autocomplete="off">
+                       autocomplete="off"
+                       ${isTouchDevice ? 'inputmode="none" readonly' : ''}>
                 <button class="submit-btn" id="submitBtn">Submit Answer</button>
+                <div id="keyboardContainer"></div>
             `;
         }
         return '';
@@ -146,19 +159,39 @@ class PracticeScreen {
         } else if (question.type === 'text_input') {
             const textInput = this.container.querySelector('#textAnswer');
             const submitBtn = this.container.querySelector('#submitBtn');
+            const keyboardContainer = this.container.querySelector('#keyboardContainer');
 
-            submitBtn.addEventListener('click', () => {
+            // Submit handler
+            const handleSubmit = () => {
                 this.submitAnswer(textInput.value);
-            });
+            };
+
+            submitBtn.addEventListener('click', handleSubmit);
 
             textInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    this.submitAnswer(textInput.value);
+                    handleSubmit();
                 }
             });
 
-            // Focus input
-            textInput.focus();
+            // Initialize on-screen keyboard for touch devices
+            if (OnScreenKeyboard.isTouchDevice()) {
+                this.keyboard = new OnScreenKeyboard();
+                const keyboardElement = this.keyboard.create(textInput, handleSubmit);
+                keyboardContainer.appendChild(keyboardElement);
+                this.keyboard.show();
+
+                // Listen for keyboard submit event
+                textInput.addEventListener('keyboardSubmit', handleSubmit);
+
+                // Allow clicking on input to focus (even though readonly)
+                textInput.addEventListener('click', () => {
+                    textInput.focus();
+                });
+            } else {
+                // Focus input for desktop
+                textInput.focus();
+            }
         }
     }
 
@@ -242,6 +275,11 @@ class PracticeScreen {
 
         const submitBtn = this.container.querySelector('#submitBtn');
         if (submitBtn) submitBtn.disabled = true;
+
+        // Disable on-screen keyboard if active
+        if (this.keyboard) {
+            this.keyboard.disable();
+        }
     }
 
     /**

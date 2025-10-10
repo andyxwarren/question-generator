@@ -1,0 +1,35 @@
+Sure — here’s a concise Windows-specific version in **Markdown**:
+
+````markdown
+## Access Your Local `http-server` from Your Phone (Windows)
+
+1. **Find Your IP Address**
+   - Open PowerShell and run:
+     ```bash
+     ipconfig
+     ```
+   - Note your **IPv4 Address** (e.g. `192.168.1.5`).
+   - Actual address: `192.168.68.71`
+
+2. **Start the Server**
+   ```bash
+   npx http-server -p 8000
+````
+
+3. **Allow Firewall Access**
+
+   * If prompted, click **Allow access** for private networks.
+
+4. **Open on Your Phone**
+
+   * Connect your phone to the **same Wi-Fi**.
+   * Open a browser and visit:
+
+     ```
+     http://192.168.68.71:8000
+     ```
+
+     *(Use your own IP address from step 1.)*
+
+```
+```

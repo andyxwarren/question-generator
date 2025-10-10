@@ -404,6 +404,11 @@
     background: var(--color-primary-dark);
 }
 
+/* Keyboard container */
+#keyboardContainer {
+    /* Container for on-screen keyboard - hidden on desktop */
+}
+
 /* Feedback */
 .feedback-area {
     margin-top: var(--spacing-md);

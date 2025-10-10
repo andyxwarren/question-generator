@@ -4,9 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A production-ready interactive mathematics practice application for UK Key Stage 1 & 2 students (ages 5-11). Pure JavaScript/HTML/CSS with ES6 modules, no external dependencies. Currently implements Phase 0 (core functionality) and Phase 1 (question deduplication).
+A production-ready interactive mathematics practice application for UK Key Stage 1 & 2 students (ages 5-11). Pure JavaScript/HTML/CSS with ES6 modules, no external dependencies. Currently implements Phase 0 (core functionality), Phase 1 (question deduplication), and Phase 2 (on-screen keyboard).
 
-**Key Feature**: Parameter-based architecture generates unlimited unique questions at 4 difficulty levels across 4 curriculum modules.
+**Key Features**:
+- Parameter-based architecture generates unlimited unique questions at 4 difficulty levels
+- Touch-optimized on-screen keyboard for iPad/tablet use
 
 ## Running the Application
 
@@ -56,10 +58,11 @@ src/
 │   ├── questionHistory.js  # Deduplication: fingerprints + localStorage persistence
 │   └── validator.js        # Answer validation logic
 └── ui/
-    ├── setupScreen.js      # Setup screen component (module/level selection)
-    ├── practiceScreen.js   # Practice screen component (question display/interaction)
-    ├── resultsScreen.js    # Results screen component (score summary)
-    └── app.js              # Main initialization and event coordination
+    ├── setupScreen.js       # Setup screen component (module/level selection)
+    ├── practiceScreen.js    # Practice screen component (question display/interaction)
+    ├── resultsScreen.js     # Results screen component (score summary)
+    ├── onScreenKeyboard.js  # Touch-optimized keyboard for text input (Phase 2)
+    └── app.js               # Main initialization and event coordination
 ```
 
 ### Design Patterns
@@ -129,6 +132,21 @@ generate(moduleId, level, count) {
 }
 ```
 
+### On-Screen Keyboard (Phase 2)
+
+The `onScreenKeyboard.js` component provides a touch-optimized calculator-style keyboard for text input questions:
+
+1. **Touch Detection**: Automatically detects touch devices using `matchMedia` and Navigator API
+2. **Keyboard Layout**: 3×4 grid with 0-9, decimal (.), minus (−), division (÷), backspace (⌫), submit (✓)
+3. **Input Validation**: Prevents multiple decimals, minus only at start
+4. **Haptic Feedback**: 10ms vibration on key press (iOS/supported devices)
+5. **Native Keyboard Suppression**: Uses `inputmode="none"` and `readonly` to prevent native keyboard
+6. **Desktop Compatibility**: Hidden on desktop; native keyboard works normally
+
+**When to use**: Automatically instantiated for text_input questions on touch devices. Desktop users get native keyboard.
+
+**Lifecycle**: Created in `practiceScreen.attachAnswerListeners()`, destroyed in `showQuestion()` cleanup.
+
 ## Development Guidelines
 
 ### Adding a New Module
@@ -160,6 +178,8 @@ Before committing changes:
 - [ ] Verify question deduplication works (generate multiple sessions)
 - [ ] Check answer validation for both correct and incorrect answers
 - [ ] Test on tablet/iPad if possible (responsive design critical)
+- [ ] Verify on-screen keyboard appears on touch devices (Phase 2)
+- [ ] Verify native keyboard works on desktop (Phase 2)
 - [ ] Verify localStorage persistence (cooldown settings, history)
 - [ ] Check browser console for errors
 - [ ] Test with question count = 1, 5, 10, 20
@@ -199,7 +219,7 @@ engine.setCooldown(48); // hours
 
 ## Current Implementation Status
 
-### ✅ Complete (Phase 0 & Phase 1)
+### ✅ Complete (Phases 0, 1, 2)
 - 4 curriculum modules (Counting, Number Bonds, Multiplication, Fractions)
 - 4 difficulty levels per module
 - Question generation engine with parameter system
@@ -207,18 +227,20 @@ engine.setCooldown(48); // hours
 - Answer validation
 - Three-screen UI (Setup → Practice → Results)
 - Responsive design (tablet-optimized)
-- **Question deduplication with configurable cooldown**
-- **localStorage persistence for history**
-- **History statistics and management UI**
+- **Question deduplication with configurable cooldown** (Phase 1)
+- **localStorage persistence for history** (Phase 1)
+- **History statistics and management UI** (Phase 1)
+- **Touch-optimized on-screen keyboard** (Phase 2)
+- **Haptic feedback on touch devices** (Phase 2)
+- **Automatic touch device detection** (Phase 2)
 
 ### 🔜 Planned (Future Phases)
-- Phase 2: On-screen keyboard (iPad-friendly number pad)
 - Phase 3: Auto level-up system (after 3 consecutive correct)
 - Phase 4: Enhanced question types (drag-drop, matching, true/false)
 - Phase 5: Hints system (progressive 3-level hints)
-- Phase 6: Timer system (optional countdown)
-- Phase 7: Progress persistence (track student progress over time)
-- Phase 8: Teacher dashboard (aggregate class data)
+- Phase 6: Progress persistence (track student progress over time)
+- Phase 7: Teacher dashboard (aggregate class data)
+- Phase 8: User stats panel (real-time performance tracking)
 
 See `docs/engineering_doc.md` for detailed implementation plans for future phases.
 
@@ -234,8 +256,10 @@ See `docs/engineering_doc.md` for detailed implementation plans for future phase
 ## Documentation
 
 - `README.md` - User-facing overview and features
+- `ROADMAP.md` - Product roadmap and development phases
 - `QUICKSTART.md` - Quick testing guide
 - `PHASE1_TESTING.md` - Detailed deduplication testing scenarios
+- `PHASE2_TESTING.md` - On-screen keyboard testing guide
 - `docs/engineering_doc.md` - Complete technical specifications and future phase designs
 - `docs/curriculum_params.md` - Framework for defining difficulty parameters
 - `docs/module_examples.md` - Examples of question generation patterns
