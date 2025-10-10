@@ -2,7 +2,7 @@
 ## UK Maths Practice Application
 
 **Last Updated**: 2025-10-10
-**Current Status**: Phase 3 Complete ✅
+**Current Status**: Phase 3.5 Complete ✅
 
 ---
 
@@ -204,87 +204,13 @@ Track student progress and provide visual feedback when modules are mastered.
 
 ---
 
-### 🔜 Phase 4: Enhanced Question Types
+### 🔜 Phase 4: Progress Persistence
 **Status**: Planned
-**Priority**: MEDIUM
-**Target**: Q2 2025
+**Priority**: 🔴 CRITICAL (Required for Phase 5)
+**Target**: Next 2-3 weeks
+**Estimated Effort**: 2 weeks
 
-Add interactive question formats beyond multiple choice and text input.
-
-**New Question Types**:
-1. [ ] **Drag-and-Drop Ordering**
-   - Drag items to arrange in sequence
-   - Visual feedback during drag
-   - Drop zones highlight on hover
-
-2. [ ] **Select Multiple (Checkboxes)**
-   - Click all correct answers
-   - Visual selection state
-   - Submit button to check
-
-3. [ ] **True/False**
-   - Large TRUE/FALSE buttons
-   - Single click to answer
-
-4. [ ] **Matching Pairs**
-   - Two columns of items
-   - Drag or click to match
-
-5. [ ] **Number Line Click**
-   - Visual number line with range
-   - Click to place answer
-   - Tolerance for near-correct
-
-**Deliverables**:
-- [ ] `QuestionTypes` registry system
-- [ ] Handler for each question type (render + validate)
-- [ ] Updated generators to produce new types
-- [ ] Touch-optimized interactions
-- [ ] CSS styling for interactive elements
-
-**Files**: `src/ui/questionTypes/`, `src/core/questionTypeRegistry.js`
-
----
-
-### 🔜 Phase 5: Hints System
-**Status**: Planned
-**Priority**: MEDIUM
-**Target**: Q2 2025
-
-Provide progressive hints to help struggling students without giving away the answer.
-
-**Requirements**:
-- [ ] 0-3 hints per question
-- [ ] Progressive unlock (hint 1 → 2 → 3)
-- [ ] Hint button showing available/used count
-- [ ] Revealed hints stay visible
-- [ ] Hint types: strategy, visual, breakdown, range
-- [ ] Score reduction: 10% per hint used
-- [ ] Auto-generate hints based on question type and difficulty
-
-**Hint Progression Example**:
-- Hint 1: "Think about what operation you need"
-- Hint 2: "Try breaking the number into parts"
-- Hint 3: "The answer is between 40 and 50"
-
-**Deliverables**:
-- [ ] `HintSystem` module with getNextHint(), reset(), calculateScoreModifier()
-- [ ] `HintButton` component
-- [ ] Hint generation function per question type
-- [ ] Hint display area in question card
-- [ ] Modified scoring system
-- [ ] Results screen shows hints used
-
-**Files**: `src/core/hintSystem.js`, `src/ui/hintButton.js`
-
----
-
-### 🔜 Phase 6: Progress Persistence
-**Status**: Planned
-**Priority**: HIGH
-**Target**: Q2 2025
-
-Save student progress locally without requiring a database or login.
+Save student progress locally without requiring a database or login. **This is the foundation for the adaptive learning system.**
 
 **Requirements**:
 - [ ] Save all practice sessions to localStorage
@@ -297,6 +223,8 @@ Save student progress locally without requiring a database or login.
 - [ ] Optional student identifier (name/number)
 - [ ] Recommend appropriate level based on history
 - [ ] Automatic cleanup of old data (>30 days)
+- [ ] Track performance metrics per session (accuracy, response time, hints used)
+- [ ] Store historical trend data for adaptive system
 
 **Data Structure**:
 ```javascript
@@ -312,111 +240,371 @@ Save student progress locally without requiring a database or login.
       incorrect: number,
       hintsUsed: number,
       timeSpent: seconds,
-      leveledUp: boolean
+      leveledUp: boolean,
+      averageResponseTime: seconds,
+      streakBroken: number,
+      adjustmentsMade: array
     }
   ],
   stats: {
     totalSessions: number,
     totalQuestions: number,
     averageAccuracy: float,
-    currentLevelByModule: {...}
+    currentLevelByModule: {...},
+    accuracyTrend: float,  // NEW: for adaptive system
+    performanceWindow: []   // NEW: last 3 sessions per module
   }
 }
 ```
 
 **Deliverables**:
-- [ ] `StorageManager` module
-- [ ] `ProgressDisplay` component
-- [ ] Integration with setup screen (recommendations)
-- [ ] Integration with practice screen (auto-save)
-- [ ] Export/import UI
+- [ ] `StorageManager` module with CRUD operations
+- [ ] `ProgressDisplay` component for setup screen
+- [ ] Integration with setup screen (show recent activity)
+- [ ] Integration with practice screen (auto-save after session)
+- [ ] Export/import UI with JSON download/upload
+- [ ] Data migration system for schema updates
+- [ ] Performance metrics tracking (foundation for Phase 5)
+
+**Validation Criteria**:
+- Sessions persist across browser restarts
+- localStorage usage stays under 2MB
+- Export/import works correctly
+- Data cleanup removes entries >30 days old
+- No data corruption or loss
 
 **Files**: `src/core/storageManager.js`, `src/ui/progressDisplay.js`
 
+**Dependencies**: None (foundation phase)
+
+**Enables**: Phase 5 (Adaptive System), Phase 9 (Teacher Dashboard), Phase 8 (Stats Panel)
+
 ---
 
-### 🔜 Phase 7: Teacher Dashboard
+### 🔜 Phase 5: Adaptive Difficulty Engine
 **Status**: Planned
-**Priority**: LOW
-**Target**: Q3 2025
+**Priority**: 🔴 CRITICAL
+**Target**: Immediately after Phase 4 (3-4 weeks)
+**Estimated Effort**: 3-4 weeks
 
-Simple teacher view to see class progress without authentication system.
+**Revolutionary feature:** Continuously measure student ability and adapt question difficulty in real-time to maintain optimal challenge level. Provides intelligent support for struggling students (counterbalance to power-up system).
+
+**Core Concept**: Zone of Proximal Development (ZPD)
+- Students advancing quickly → Power-up system (existing)
+- Students struggling → Adaptive step-down (new)
+- Most students → Natural progression (no intervention)
 
 **Requirements**:
-- [ ] Separate HTML page (`teacher-dashboard.html`)
-- [ ] File upload to import student session JSON files
-- [ ] Aggregate multiple students' data
-- [ ] Display class statistics
-- [ ] Display per-student progress
-- [ ] Display per-module performance
-- [ ] Export combined class report
-- [ ] No database or server required
-- [ ] Works entirely in browser
 
-**Dashboard Views**:
-1. **Class Overview**
-   - Total students, sessions, average accuracy
+**1. Performance Monitoring**
+- [ ] Real-time confidence score calculation (0-100)
+- [ ] Track accuracy, response time, hints used, streak breaks
+- [ ] Calculate performance trends over last 3 sessions
+- [ ] Detect struggling patterns (accuracy <50%, 3+ consecutive errors)
+- [ ] Monitor session completion rate
 
-2. **Student Table**
-   - Each student's sessions, questions, accuracy
-   - Current level per module
-   - Last activity date
+**2. Difficulty Mapping System**
+- [ ] Create cross-curriculum difficulty matrix
+- [ ] Map equivalent skills across year groups
+- [ ] Define smooth transition paths (e.g., Y2L1 struggling → Y1L4)
+- [ ] Implement difficulty scoring algorithm
+- [ ] Support for future curriculum expansion
 
-3. **Module Performance**
-   - Most/least practiced topics
-   - Average accuracy per topic
-   - Common difficulty levels
+**3. Adaptive Decision Engine**
+- [ ] Analyze performance after 5+ questions
+- [ ] Calculate confidence score using weighted factors:
+  - Accuracy (35%)
+  - Response time (15%)
+  - Hints used (20%)
+  - Consistency trend (15%)
+  - Streak quality (15%)
+- [ ] Generate recommendations with reasoning
+- [ ] Determine adjustment type (down/maintain/up)
+- [ ] Find optimal easier level for struggling students
+
+**4. User Interface Components**
+- [ ] Confidence meter display (visual progress bar)
+- [ ] Adaptive suggestion modal with child-friendly language
+- [ ] "Recommended Level" badges on setup screen
+- [ ] Learning pathway visualization showing progression
+- [ ] Settings for enabling/disabling adaptive suggestions
+
+**5. Intervention Logic**
+- [ ] Silent monitoring during questions 1-5
+- [ ] Trigger suggestion after question 5 if struggling
+- [ ] Student choice: accept adjustment or continue
+- [ ] Seamless transition to easier questions
+- [ ] Track adjustment in session data
+- [ ] Re-offer original level once confidence rebuilds (>70%)
+
+**Trigger Conditions**:
+
+| Confidence | Accuracy | Hints Used | Consecutive Errors | Action |
+|------------|----------|------------|-------------------|--------|
+| < 30 | < 30% | > 80% | 4+ | Immediate suggestion |
+| 30-40 | 30-50% | 50-80% | 3+ | Suggestion after Q5 |
+| 40-65 | 50-65% | 30-50% | 2 | Monitor, offer hints |
+| 65-85 | 65-85% | < 30% | 0-1 | Optimal zone ✓ |
+| > 85 | > 85% | < 20% | 0 | Power-up eligible |
+
+**Adaptive Workflow**:
+1. **Detection Phase** (Q1-Q5): Silent monitoring
+2. **Analysis Phase** (after Q5): Calculate confidence, determine need
+3. **Intervention Phase**: Show suggestion modal if struggling
+4. **Transition Phase**: Adjust difficulty if accepted
+5. **Recovery Phase**: Offer return to original level when ready
+
+**Data Structure Extensions**:
+```javascript
+{
+  adaptiveProfile: {
+    moduleConfidence: {
+      'counting': {
+        currentYear: 2,
+        currentLevel: 1,
+        targetYear: 2,
+        targetLevel: 1,
+        confidenceScore: 35,
+        lastAdjustment: timestamp,
+        adjustmentHistory: [
+          {
+            date: timestamp,
+            from: { year: 2, level: 1 },
+            to: { year: 1, level: 4 },
+            reason: 'accuracy-below-threshold',
+            studentChoice: 'accepted'
+          }
+        ],
+        performanceWindow: [
+          { date, accuracy, confidence }
+        ]
+      }
+    },
+    learningPreferences: {
+      acceptsAdaptiveSuggestions: boolean,
+      hintsUsagePattern: 'rare' | 'moderate' | 'frequent',
+      responseTimePattern: 'fast' | 'moderate' | 'slow',
+      optimalSessionLength: number
+    },
+    teacherOverrides: {
+      'counting': { minYear: 1, minLevel: 3 }
+    }
+  }
+}
+```
 
 **Deliverables**:
-- [ ] `teacher-dashboard.html`
-- [ ] `TeacherDashboard` module
-- [ ] Session reporter in main app (download JSON after completion)
-- [ ] Dashboard UI with tables and charts
-- [ ] Export combined class report
+- [ ] `AdaptiveDifficultyEngine` class with confidence calculation
+- [ ] Difficulty matrix JSON with skill mappings
+- [ ] Performance metrics tracker integrated with practice screen
+- [ ] `ConfidenceMeter` UI component
+- [ ] `AdaptiveSuggestionModal` UI component
+- [ ] `LearningPathwayVisualization` component
+- [ ] Integration with StorageManager for persistence
+- [ ] Teacher override controls for minimum difficulty
+- [ ] Comprehensive unit tests for decision algorithm
+- [ ] A/B testing framework preparation
 
-**Files**: `teacher-dashboard.html`, `src/teacher/dashboard.js`
+**Validation Criteria**:
+- Confidence score accurately reflects performance
+- Suggestions appear only when genuinely struggling
+- Smooth transitions preserve session flow
+- No false positives (unnecessary adjustments)
+- Student agency maintained (always optional)
+- Positive framing in all messaging
+- Recovery path clearly communicated
+
+**Success Metrics**:
+- Reduced session abandonment rate
+- Improved average accuracy after adjustment
+- High adjustment acceptance rate (>60%)
+- Successful return to target level rate (>50%)
+- Increased sustained engagement
+
+**Educational Psychology Foundations**:
+- Zone of Proximal Development (Vygotsky)
+- Mastery Learning (Bloom)
+- Growth Mindset (Dweck)
+- Formative Assessment principles
+
+**Files**: 
+- `src/core/adaptiveDifficultyEngine.js`
+- `src/core/difficultyMatrix.js`
+- `src/core/performanceAnalyzer.js`
+- `src/ui/confidenceMeter.js`
+- `src/ui/adaptiveSuggestionModal.js`
+- `src/ui/learningPathway.js`
+- `styles/adaptive.css`
+- `PHASE5_TESTING.md`
+
+**Dependencies**: 
+- Phase 4 (Progress Persistence) - REQUIRED
+- Phase 3 (Power-up System) - Integration point
+- Phase 6 (Hints System) - Complementary feature
+
+**Enables**: True personalized learning experience
 
 ---
 
-### 🆕 Phase 8: User Stats Panel
+### 🔜 Phase 6: Hints System
 **Status**: Planned
-**Priority**: MEDIUM
-**Target**: Q3 2025
+**Priority**: 🟡 HIGH
+**Target**: After Phase 5 (2-3 weeks)
+**Estimated Effort**: 2 weeks
 
-Add a real-time statistics panel for students to track their performance during and after practice sessions.
+Provide progressive hints to help struggling students without giving away the answer. **Complements adaptive system by providing in-question support.**
 
 **Requirements**:
-- [ ] **Live Stats During Practice**
-  - Current streak counter (🔥 icon when 3+)
-  - Current accuracy percentage
-  - Questions remaining
-  - Time elapsed (optional toggle)
-  - Current difficulty level indicator
+- [ ] 0-3 hints per question
+- [ ] Progressive unlock (hint 1 → 2 → 3)
+- [ ] Hint button showing available/used count
+- [ ] Revealed hints stay visible
+- [ ] Hint types: strategy, visual, breakdown, range
+- [ ] Score reduction: 10% per hint used (-30% max)
+- [ ] Auto-generate hints based on question type and difficulty
+- [ ] Track hint usage patterns for adaptive system
 
-- [ ] **Expandable Stats Panel**
-  - Compact mode: shows only key metrics (streak, accuracy)
-  - Expanded mode: shows detailed breakdown
-  - Slide-in/slide-out animation
-  - Position: top-right corner (collapsed) or sidebar (expanded)
+**Hint Progression Example**:
+- Hint 1: "Think about what operation you need"
+- Hint 2: "Try breaking the number into parts"
+- Hint 3: "The answer is between 40 and 50"
 
-- [ ] **Session Statistics**
-  - Questions attempted vs. remaining
-  - Correct/incorrect breakdown with visual progress bar
-  - Average time per question
-  - Hints used count
-  - Level-ups achieved during session
+**Integration with Adaptive System**:
+- High hint usage (>50%) contributes to lower confidence score
+- Adaptive system may suggest easier level if hints consistently needed
+- Hints remain available even after adaptive adjustment
 
-- [ ] **Historical Comparison** (requires Phase 6)
-  - "Previous best" comparison for this module/level
-  - Trend indicator (improving/declining)
-  - Personal records (highest streak, best accuracy)
+**Deliverables**:
+- [ ] `HintSystem` module with getNextHint(), reset(), calculateScoreModifier()
+- [ ] `HintButton` component with progressive unlock UI
+- [ ] Hint generation function per question type
+- [ ] Hint display area in question card with fade-in animation
+- [ ] Modified scoring system with hint penalties
+- [ ] Results screen shows hints used with friendly messaging
+- [ ] Integration with adaptive confidence calculation
 
-- [ ] **Visual Design**
-  - Clean, non-distracting design
-  - Color-coded metrics (green for good, amber for okay, red for struggling)
-  - Icons for quick recognition
-  - Responsive sizing for tablets
-  - Toggle to hide/show during practice (minimize distraction)
+**Validation Criteria**:
+- Hints unlock sequentially (cannot skip)
+- Score correctly reduces by 10% per hint
+- Hints appropriate for difficulty level
+- UI clearly shows available vs. used hints
+- Results accurately reflect hint usage
+
+**Files**: `src/core/hintSystem.js`, `src/ui/hintButton.js`, `styles/hints.css`
+
+**Dependencies**: Phase 4 (for hint tracking), Phase 5 (for integration)
+
+---
+
+### 🔜 Phase 7: Enhanced Question Types
+**Status**: Planned
+**Priority**: 🟡 MEDIUM
+**Target**: Q2 2025 (after Phase 6)
+**Estimated Effort**: 3-4 weeks
+
+Add interactive question formats beyond multiple choice and text input to increase engagement and match diverse learning styles.
+
+**New Question Types** (Implementation Order):
+
+1. [ ] **True/False** (Week 1 - Quick Win)
+   - Large TRUE/FALSE buttons
+   - Single click to answer
+   - Visual feedback on selection
+   - Good for conceptual understanding
+
+2. [ ] **Drag-and-Drop Ordering** (Week 2 - High Engagement)
+   - Drag items to arrange in sequence
+   - Visual feedback during drag
+   - Drop zones highlight on hover
+   - Touch-optimized with large hit areas
+   - Haptic feedback on successful drop
+
+3. [ ] **Select Multiple (Checkboxes)** (Week 2-3)
+   - Click all correct answers
+   - Visual selection state
+   - Submit button to check
+   - Partial credit option
+
+4. [ ] **Number Line Click** (Week 3)
+   - Visual number line with range
+   - Click to place answer
+   - Tolerance for near-correct (±1)
+   - Visual feedback on placement
+
+5. [ ] **Matching Pairs** (Week 4)
+   - Two columns of items
+   - Drag or click to match
+   - Progressive reveal
+   - More complex implementation
+
+**Deliverables**:
+- [ ] `QuestionTypeRegistry` system for extensibility
+- [ ] Handler for each question type (render + validate)
+- [ ] Updated generators to produce new question types
+- [ ] Touch-optimized interactions with haptic feedback
+- [ ] CSS styling for interactive elements
+- [ ] Accessibility features (keyboard navigation, screen reader)
+- [ ] Mobile-responsive design for all types
+- [ ] Animation library for drag/drop feedback
+
+**Integration Points**:
+- Works with existing hint system
+- Compatible with adaptive difficulty engine
+- Generates varied questions for deduplication
+- Tracks interaction patterns for analytics
+
+**Files**: `src/ui/questionTypes/`, `src/core/questionTypeRegistry.js`, `styles/question-types.css`
+
+**Dependencies**: None (independent feature)
+
+---
+
+### 🔜 Phase 8: User Stats Panel
+**Status**: Planned
+**Priority**: 🟡 MEDIUM
+**Target**: Q3 2025
+**Estimated Effort**: 2 weeks
+
+Add real-time statistics panel for students to track performance during and after practice sessions.
+
+**Requirements**:
+
+**Live Stats During Practice:**
+- [ ] Current streak counter (🔥 icon when 3+)
+- [ ] Current accuracy percentage
+- [ ] Questions remaining
+- [ ] Time elapsed (optional toggle)
+- [ ] Current difficulty level indicator
+- [ ] Confidence score (from Phase 5)
+
+**Expandable Stats Panel:**
+- [ ] Compact mode: shows only key metrics (streak, accuracy)
+- [ ] Expanded mode: shows detailed breakdown
+- [ ] Slide-in/slide-out animation
+- [ ] Position: top-right corner (collapsed) or sidebar (expanded)
+- [ ] Non-obstructive design
+
+**Session Statistics:**
+- [ ] Questions attempted vs. remaining with visual progress
+- [ ] Correct/incorrect breakdown with progress bar
+- [ ] Average time per question
+- [ ] Hints used count with icon indicators
+- [ ] Level-ups achieved during session
+- [ ] Confidence trend (rising/falling indicator)
+
+**Historical Comparison:**
+- [ ] "Previous best" comparison for this module/level
+- [ ] Trend indicator (improving/declining with arrow)
+- [ ] Personal records (highest streak, best accuracy)
+- [ ] "You're doing better than last time! 📈"
+
+**Visual Design:**
+- [ ] Clean, non-distracting design
+- [ ] Color-coded metrics (green=good, amber=okay, red=struggling)
+- [ ] Icons for quick recognition
+- [ ] Responsive sizing for tablets
+- [ ] Toggle to hide/show during practice
+- [ ] Smooth 60fps animations
 
 **User Flow**:
 1. Practice session starts → stats panel appears in compact mode
@@ -431,68 +619,206 @@ Add a real-time statistics panel for students to track their performance during 
 - [ ] Integration with practice screen
 - [ ] Integration with results screen
 - [ ] CSS animations for panel transitions
-- [ ] localStorage integration for historical data (Phase 6 dependency)
+- [ ] localStorage integration for historical data
 - [ ] Settings toggle to enable/disable panel
 - [ ] Accessibility features (keyboard navigation, screen reader support)
+- [ ] Reduced motion support for animations
 
 **Validation Criteria**:
-- Stats update immediately after each answer
+- Stats update immediately after each answer (<100ms)
 - Panel does not obstruct question content
-- Smooth animations (60fps)
+- Smooth animations (60fps target)
 - Works on both desktop and tablet
-- Historical comparisons accurate (if Phase 6 complete)
+- Historical comparisons accurate
 - Toggle persists across sessions
+- No performance impact on question rendering
 
-**Files**: `src/ui/statsPanel.js`, `src/core/sessionStats.js`
+**Files**: `src/ui/statsPanel.js`, `src/core/sessionStats.js`, `styles/stats-panel.css`
 
-**Dependencies**:
-- Phase 3 (streak tracking)
-- Phase 5 (hints used tracking)
-- Phase 6 (historical data - optional enhancement)
+**Dependencies**: 
+- Phase 3 (streak tracking) - Required
+- Phase 6 (hints used tracking) - Required
+- Phase 4 (historical data) - Required
+- Phase 5 (confidence score) - Recommended
 
 ---
 
-## Future Considerations
+### 🔜 Phase 9: Teacher Dashboard
+**Status**: Planned
+**Priority**: 🟢 LOW
+**Target**: Q3 2025
+**Estimated Effort**: 4 weeks
+
+Simple teacher view to see class progress without authentication system. **Browser-based aggregation only, no server required.**
+
+**Requirements**:
+- [ ] Separate HTML page (`teacher-dashboard.html`)
+- [ ] File upload to import student session JSON files
+- [ ] Aggregate multiple students' data
+- [ ] Display class statistics
+- [ ] Display per-student progress
+- [ ] Display per-module performance
+- [ ] Export combined class report (PDF/CSV)
+- [ ] No database or server required
+- [ ] Works entirely in browser
+- [ ] Show adaptive adjustment patterns
+- [ ] Identify students needing intervention
+
+**Dashboard Views**:
+
+**1. Class Overview**
+- Total students, sessions, average accuracy
+- Most/least practiced topics
+- Average time per session
+- Class-wide confidence trends
+
+**2. Student Table**
+- Each student's sessions, questions, accuracy
+- Current level per module
+- Last activity date
+- Confidence scores per module
+- Adaptive adjustments made
+- Students at risk (flagged red if struggling)
+
+**3. Module Performance**
+- Most/least practiced topics
+- Average accuracy per topic
+- Common difficulty levels
+- Hint usage patterns
+- Adaptive adjustment frequency
+
+**4. Intervention Alerts**
+- Students with accuracy <50% (past 3 sessions)
+- Students with declining confidence trends
+- Students with frequent adaptive adjustments
+- Students who haven't practiced in 7+ days
+
+**Deliverables**:
+- [ ] `teacher-dashboard.html` standalone page
+- [ ] `TeacherDashboard` module with data aggregation
+- [ ] Session reporter in main app (download JSON after completion)
+- [ ] Dashboard UI with tables and interactive charts (Chart.js)
+- [ ] Student comparison visualization
+- [ ] Export combined class report functionality
+- [ ] Print-friendly report layout
+- [ ] Filter and search functionality
+
+**Validation Criteria**:
+- Correctly aggregates data from multiple JSON files
+- Charts render accurately
+- Export contains all relevant data
+- No student data leaves browser
+- Works offline after initial load
+
+**Files**: `teacher-dashboard.html`, `src/teacher/dashboard.js`, `src/teacher/aggregator.js`, `styles/dashboard.css`
+
+**Dependencies**: Phase 4 (data structure), Phase 5 (confidence data)
+
+---
+
+## Quick Wins & Future Considerations
+
+### Quick Wins (1-2 days each)
+
+1. **Dark Mode Toggle** 
+   - CSS custom properties already in place
+   - Add theme switcher in setup screen
+   - Save preference to localStorage
+
+2. **Sound Effects** (Optional)
+   - Correct answer: ✨ chime
+   - Incorrect answer: soft buzz
+   - Power-up: celebration sound
+   - Level adjustment: gentle tone
+   - Mute toggle for classroom control
+
+3. **Timer Mode**
+   - Optional countdown per question (30s/60s/90s)
+   - Visual timer bar
+   - Timed vs. untimed statistics
+   - Does not penalize struggling students
+
+4. **Print Worksheets**
+   - Generate PDF of 10 questions
+   - Traditional paper practice option
+   - Uses existing question generators
+   - No adaptive features in print mode
+
+### Medium-Term Enhancements
+
+5. **Curriculum Expansion**
+   - Add more modules (geometry, measurement, word problems, time)
+   - More difficulty levels (5 or 6 levels per module)
+   - Cross-topic mixed practice sessions
+   - Year 3-6 content
+
+6. **Accessibility Improvements**
+   - Full keyboard navigation throughout
+   - Screen reader optimization (ARIA labels)
+   - High contrast mode
+   - Text-to-speech for questions (Web Speech API)
+   - Dyslexia-friendly font option (OpenDyslexic)
+
+7. **PWA Features**
+   - Service worker for true offline capability
+   - Install prompt for home screen
+   - Background sync for progress data
+   - Push notifications for daily practice reminders
 
 ### Additional Features (Not Prioritized)
-- **Timer Mode**: Optional countdown timer for timed practice
-- **Achievement Badges**: Unlock badges for milestones
+
+- **Achievement Badges**: Unlock badges for milestones (10 sessions, 100 correct, etc.)
 - **Custom Topics**: Teacher-created custom question sets
-- **Voice Support**: Text-to-speech for questions and answers
-- **Accessibility Enhancements**: Full screen reader support, high contrast mode
-- **PWA Features**: Service worker for true offline support, install prompt
-- **Print Mode**: Generate printable worksheets from questions
-- **Multiplayer Mode**: Classroom competition mode
+- **Multiplayer Mode**: Classroom competition mode with leaderboard
+- **Parent Portal**: Simplified view of child's progress
+- **Gamification**: XP points, levels, unlockable themes
+- **AI Tutor Chat**: Simple Q&A for stuck students (future AI integration)
 
 ### Technical Debt / Improvements
-- Add automated testing framework (Jest or Vitest)
+
+- Add automated testing framework (Vitest recommended)
 - Implement bundle optimization (Vite or Rollup)
-- Add TypeScript for type safety
+- Add TypeScript for type safety on critical modules
 - Create component storybook for UI development
-- Add performance monitoring
+- Add performance monitoring (Lighthouse CI)
 - Implement error tracking (Sentry)
+- Code splitting for faster initial load
+- Optimize localStorage usage (compression)
 
 ---
 
 ## Success Metrics
 
 ### Student Engagement
-- Average session length
-- Questions attempted per session
-- Repeat usage rate
-- Level progression rate
+- Average session length (target: 10-15 minutes)
+- Questions attempted per session (target: 15-20)
+- Repeat usage rate (target: 60% return within 7 days)
+- Level progression rate (target: level up every 3-4 sessions)
+- Session completion rate (target: >80%)
+- **NEW:** Adaptive adjustment acceptance rate (target: >60%)
 
 ### Learning Outcomes
-- Accuracy improvement over time
-- Topics with highest/lowest accuracy
-- Hint usage patterns
-- Level-up frequency
+- Accuracy improvement over time (target: +10% over 10 sessions)
+- Topics with highest/lowest accuracy (identify curriculum gaps)
+- Hint usage patterns (decreasing over time = improving)
+- Level-up frequency (natural progression indicator)
+- **NEW:** Confidence score improvements (target: +15 points over 5 sessions)
+- **NEW:** Recovery rate after adaptive adjustment (target: >50% return to original level)
 
 ### Technical Performance
-- Page load time < 2 seconds
-- localStorage usage < 2MB
+- Page load time < 2 seconds on 4G
+- localStorage usage < 2MB per student
 - 60fps animations on tablets
 - Zero critical bugs in production
+- Adaptive engine response time < 200ms
+- UI interaction latency < 100ms
+
+### Adaptive System Effectiveness
+- **False positive rate** (unnecessary adjustments): <10%
+- **True positive rate** (caught struggling students): >85%
+- **Student satisfaction** with suggestions: >70% acceptance
+- **Time to recovery**: Average 2-3 sessions to return to target level
+- **Reduced frustration**: Session abandonment rate drops by 40%
 
 ---
 
@@ -505,8 +831,68 @@ Add a real-time statistics panel for students to track their performance during 
 | v0.3.0 | Oct 2025 | Phase 0, 1, 2 | On-screen keyboard for touch devices |
 | v0.4.0 | Oct 2025 | Phase 0, 1, 2, 3 | Auto power-up system with streak tracking |
 | v0.4.1 | Oct 2025 | Phase 0-3.5 | Module completion tracking & badges |
-| v1.0.0 | TBD | Phase 0-6 | Full student experience (planned) |
-| v1.1.0 | TBD | Phase 0-8 | Student stats + teacher dashboard (planned) |
+| **v1.0.0** | **Q2 2025** | **Phase 0-5** | **Full adaptive learning system (MAJOR)** |
+| v1.1.0 | Q2 2025 | Phase 0-6 | Hints system integration |
+| v1.2.0 | Q3 2025 | Phase 0-7 | Enhanced question types |
+| v1.3.0 | Q3 2025 | Phase 0-8 | Student stats panel |
+| v2.0.0 | Q4 2025 | Phase 0-9 | Complete student & teacher experience |
+
+---
+
+## Development Priorities Summary
+
+### 🔴 CRITICAL PRIORITY (Next 5-7 weeks)
+1. **Phase 4**: Progress Persistence (2-3 weeks) - Foundation
+2. **Phase 5**: Adaptive Difficulty Engine (3-4 weeks) - Revolutionary feature
+
+### 🟡 HIGH PRIORITY (Following 7-9 weeks)
+3. **Phase 6**: Hints System (2-3 weeks) - Complements adaptive system
+4. **Phase 7**: Enhanced Question Types (3-4 weeks) - Engagement & variety
+
+### 🟡 MEDIUM PRIORITY (Q3 2025)
+5. **Phase 8**: User Stats Panel (2 weeks) - Student feedback
+6. **Phase 9**: Teacher Dashboard (4 weeks) - Teacher insights
+
+### 🟢 LOW PRIORITY
+- Quick wins (dark mode, sounds, timer, print)
+- Technical improvements (testing, TypeScript, PWA)
+- Future features (badges, multiplayer, AI tutor)
+
+---
+
+## Rationale for Priority Order
+
+**Why Phase 4 → 5 → 6 → 7?**
+
+1. **Phase 4 (Progress Persistence)** must come first as it provides:
+   - Data foundation for adaptive engine
+   - Historical tracking required for confidence calculation
+   - Session storage for all future features
+
+2. **Phase 5 (Adaptive Engine)** immediately after because:
+   - Highest impact on learning outcomes
+   - Differentiates app from competitors
+   - Addresses key pain point (student frustration)
+   - Creates perfect balance with power-up system
+   - Natural extension of Phase 4 data
+
+3. **Phase 6 (Hints System)** next because:
+   - Complements adaptive system perfectly
+   - Provides in-question support (adaptive provides session-level support)
+   - Easier to implement after adaptive foundation exists
+   - High hint usage feeds into adaptive confidence score
+
+4. **Phase 7 (Enhanced Question Types)** after core learning systems because:
+   - Less critical than adaptive learning
+   - Can be implemented independently
+   - Adds variety without changing core mechanics
+   - Good project for parallel development
+
+5. **Phase 8 (Stats Panel)** and **Phase 9 (Dashboard)** last because:
+   - Visibility features, not core learning mechanics
+   - Require all previous phase data to be meaningful
+   - Can be developed in parallel if team size permits
+   - Teacher dashboard lowest priority (fewer users)
 
 ---
 
@@ -527,3 +913,8 @@ When implementing new phases:
 ## Questions & Feedback
 
 For questions about this roadmap or to suggest new features, see project documentation in `docs/` or open an issue.
+
+**Key Contact Areas:**
+- Educational psychology/pedagogy questions → Review adaptive engine design docs
+- Technical implementation questions → See `docs/engineering_doc.md`
+- Feature prioritization questions → See "Rationale for Priority Order" above
