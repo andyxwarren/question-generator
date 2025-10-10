@@ -1,0 +1,208 @@
+/**
+ * Responsive Styles
+ * Optimized for tablets (iPad) and mobile devices
+ */
+
+/* ===== TABLET (LANDSCAPE) ===== */
+@media (max-width: 1024px) {
+    .screen {
+        padding: var(--spacing-lg);
+    }
+
+    .topic-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .question-text {
+        font-size: 1.375rem;
+    }
+}
+
+/* ===== TABLET (PORTRAIT) & LARGE MOBILE ===== */
+@media (max-width: 768px) {
+    body {
+        padding: var(--spacing-sm);
+    }
+
+    .screen {
+        padding: var(--spacing-md);
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Setup Screen */
+    .topic-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .level-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Practice Screen */
+    .practice-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: flex-start;
+    }
+
+    .score-display {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .question-text {
+        font-size: 1.25rem;
+    }
+
+    /* Results Screen */
+    .results-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .results-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.75rem;
+    }
+
+    .setup-header {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .level-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .input-group {
+        justify-content: center;
+    }
+
+    .question-text {
+        font-size: 1.125rem;
+    }
+
+    .answer-btn {
+        padding: 0.875rem 1rem;
+    }
+
+    .results-icon {
+        font-size: 3.5rem;
+    }
+}
+
+/* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase tap targets for touch devices */
+    button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .topic-card,
+    .level-card,
+    .answer-btn {
+        min-height: 60px;
+    }
+
+    /* Remove hover effects on touch devices */
+    .topic-card:hover,
+    .level-card:hover,
+    .answer-btn:hover {
+        transform: none;
+    }
+
+    /* Enhance active states for touch feedback */
+    .topic-card:active,
+    .level-card:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+    }
+
+    .answer-btn:active:not(:disabled) {
+        transform: scale(0.98);
+    }
+
+    button:active {
+        transform: scale(0.97);
+    }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .screen {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+
+    .practice-header,
+    .progress-bar,
+    button {
+        display: none;
+    }
+
+    .question-card {
+        page-break-inside: avoid;
+    }
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    :root {
+        --color-border: #000;
+        --shadow-sm: none;
+        --shadow-md: none;
+        --shadow-lg: none;
+        --shadow-xl: none;
+    }
+
+    button,
+    .topic-card,
+    .level-card,
+    .answer-btn {
+        border-width: 2px;
+    }
+}
+
+/* Dark mode support (future enhancement) */
+@media (prefers-color-scheme: dark) {
+    /* Uncomment when implementing dark mode
+    :root {
+        --color-bg: #1e293b;
+        --color-surface: #334155;
+        --color-border: #475569;
+        --color-text: #f1f5f9;
+        --color-text-secondary: #cbd5e1;
+    }
+    */
+}

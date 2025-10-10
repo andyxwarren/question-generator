@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curriculum Parameter System MVP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .panel h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .module-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .module-btn {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+        }
+        
+        .module-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .module-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .module-btn .year {
+            font-size: 11px;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+        
+        .module-btn .title {
+            font-size: 13px;
+            font-weight: 600;
+            margin: 5px 0;
+        }
+        
+        .level-selector {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+        
+        .level-selector h3 {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .level-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .level-btn {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .level-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .level-btn.active {
+            border-width: 3px;
+        }
+        
+        .level-btn.level-1.active { background: #d4edda; border-color: #28a745; color: #155724; }
+        .level-btn.level-2.active { background: #d1ecf1; border-color: #17a2b8; color: #0c5460; }
+        .level-btn.level-3.active { background: #e2d9f3; border-color: #6f42c1; color: #4a148c; }
+        .level-btn.level-4.active { background: #ffe5cc; border-color: #fd7e14; color: #833c0c; }
+        
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .module-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .module-info h2 {
+            color: white;
+            border: none;
+            margin-bottom: 10px;
+        }
+        
+        .module-info .description {
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+        
+        .params-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .param-card {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .param-card .param-name {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .param-card .param-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .param-card .param-progression {
+            font-size: 11px;
+            color: #999;
+            line-height: 1.4;
+        }
+        
+        .generate-section {
+            text-align: center;
+        }
+
+        .question-count-control {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .question-count-control label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .question-count-control input {
+            width: 80px;
+            padding: 8px 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .questions-list {
+            margin-top: 25px;
+        }
+        
+        .question-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .question-card .q-number {
+            font-size: 12px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .question-card .q-format {
+            display: inline-block;
+            font-size: 10px;
+            padding: 4px 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .question-card .q-interaction {
+            display: inline-block;
+            font-size: 10px;
+            padding: 4px 8px;
+            background: #d4edda;
+            border-radius: 4px;
+            margin-left: 5px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #155724;
+        }
+        
+        .question-card .q-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .question-card .q-visual {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            border: 1px solid #e0e0e0;
+            white-space: pre-wrap;
+        }
+
+        .question-card .q-interactive {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 2px dashed #4caf50;
+        }
+
+        .question-card .q-draggable {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border-radius: 6px;
+            margin: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .question-card .q-dropzone {
+            display: inline-block;
+            padding: 8px 16px;
+            background: white;
+            border: 2px dashed #999;
+            border-radius: 6px;
+            margin: 5px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .question-card .q-clickable {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .question-card .q-clickable:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+        
+        .question-card .q-options {
+            margin: 15px 0;
+        }
+        
+        .question-card .q-option {
+            padding: 10px 15px;
+            font-size: 15px;
+            background: #f8f9fa;
+            border-left: 3px solid #667eea;
+            margin: 8px 0;
+            border-radius: 4px;
+        }
+        
+        .question-card .q-answer {
+            font-size: 14px;
+            color: #666;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .question-card .q-answer strong {
+            color: #667eea;
+        }
+        
+        .question-card .q-hint {
+            font-size: 12px;
+            color: #888;
+            font-style: italic;
+            margin-top: 8px;
+            padding: 8px;
+            background: #fff9e6;
+            border-left: 3px solid #ffc107;
+            border-radius: 4px;
+        }
+        
+        .export-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+        }
+        
+        .export-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: all 0.3s;
+        }
+        
+        .export-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .info-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        .variety-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .variety-info strong {
+            color: #1976d2;
+        }
+
+        .stats-panel {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Curriculum Parameter System - MVP</h1>
+            <p>Generate differentiated questions with multiple digital-ready formats at 4 difficulty levels</p>
+        </div>
+        
+        <div class="main-grid">
+            <!-- Left Sidebar -->
+            <div class="panel">
+                <h2>Select Module</h2>
+                <div class="module-list" id="moduleList"></div>
+                
+                <div class="level-selector">
+                    <h3>Difficulty Level</h3>
+                    <div class="level-btns">
+                        <button class="level-btn level-1" data-level="1">Level 1: Beginning</button>
+                        <button class="level-btn level-2" data-level="2">Level 2: Developing</button>
+                        <button class="level-btn level-3 active" data-level="3">Level 3: Meeting</button>
+                        <button class="level-btn level-4" data-level="4">Level 4: Exceeding</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <div class="module-info" id="moduleInfo">
+                    <h2 id="moduleTitle">Select a module to begin</h2>
+                    <div class="description" id="moduleDesc"></div>
+                    <div class="info-badge" id="moduleBadge"></div>
+                </div>
+                
+                <div class="panel">
+                    <h2>Parameters for Current Level</h2>
+                    <div class="params-grid" id="paramsGrid"></div>
+                </div>
+                
+                <div class="panel">
+                    <h2>Generate Questions</h2>
+                    <div class="generate-section">
+                        <div class="variety-info">
+                            <strong>🎮 Digital-Ready Formats:</strong> Questions include interactive formats like drag-and-drop, clickable options, true/false, matching, ordering, and more - perfect for online learning platforms.
+                        </div>
+                        
+                        <div class="question-count-control">
+                            <label for="questionCount">Number of Questions:</label>
+                            <input type="number" id="questionCount" min="1" max="50" value="10">
+                        </div>
+
+                        <button class="generate-btn" id="generateBtn">
+                            <span>⚡</span>
+                            <span>Generate Questions</span>
+                        </button>
+
+                        <div class="stats-panel" id="statsPanel" style="display: none;">
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalQuestions">0</div>
+                                <div class="stat-label">Total Questions</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="uniqueFormats">0</div>
+                                <div class="stat-label">Question Types</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="interactiveCount">0</div>
+                                <div class="stat-label">Interactive</div>
+                            </div>
+                        </div>
+
+                        <div class="questions-list" id="questionsList"></div>
+                        <div class="export-section" id="exportSection" style="display: none;">
+                            <button class="export-btn" onclick="printQuestions()">🖨️ Print Questions</button>
+                            <button class="export-btn" onclick="exportJSON()">💾 Export as JSON</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // MODULE DATABASE
+        const MODULES = {
+            'Y1_N1_counting': {
+                id: 'Y1_N1_counting',
+                year: 'Year 1',
+                strand: 'Number and Place Value',
+                substrand: 'Counting (in multiples)',
+                ref: 'N1',
+                description: 'Count to and across 100, forwards and backwards, beginning with 0 or 1, or from any given number; count in multiples of twos, fives and tens',
+                parameters: {
+                    min_value: { 1: 0, 2: 0, 3: 0, 4: 0 },
+                    max_value: { 1: 30, 2: 50, 3: 100, 4: 200 },
+                    step_sizes: { 1: [1, 2, 5, 10], 2: [1, 2, 5, 10], 3: [1, 2, 5, 10], 4: [1, 2, 3, 5, 10] },
+                    sequence_length: { 1: 5, 2: 10, 3: 15, 4: 20 },
+                    directions: { 1: ['forwards'], 2: ['forwards', 'backwards'], 3: ['forwards', 'backwards'], 4: ['forwards', 'backwards'] },
+                    missing_numbers: { 1: 0, 2: 1, 3: 2, 4: 3 }
+                }
+            },
+            'Y1_C1_bonds': {
+                id: 'Y1_C1_bonds',
+                year: 'Year 1',
+                strand: 'Calculations',
+                substrand: 'Add/subtract mentally',
+                ref: 'C1',
+                description: 'Represent and use number bonds and related subtraction facts within 20',
+                parameters: {
+                    total_value: { 1: [5, 10], 2: [10], 3: [10, 20], 4: [20] },
+                    missing_part: { 1: 'second', 2: 'either', 3: 'either', 4: 'any' },
+                    include_subtraction: { 1: false, 2: true, 3: true, 4: true },
+                    visual_aids: { 1: 'always', 2: 'often', 3: 'sometimes', 4: 'rarely' },
+                    time_limit: { 1: 15, 2: 10, 3: 5, 4: 3 },
+                    questions_per_session: { 1: 5, 2: 8, 3: 10, 4: 15 }
+                }
+            },
+            'Y2_N1_place_value': {
+                id: 'Y2_N1_place_value',
+                year: 'Year 2',
+                strand: 'Number and Place Value',
+                substrand: 'Place value',
+                ref: 'N1',
+                description: 'Recognise the place value of each digit in a two-digit number (tens, ones)',
+                parameters: {
+                    min_number: { 1: 10, 2: 10, 3: 10, 4: 10 },
+                    max_number: { 1: 50, 2: 75, 3: 99, 4: 999 },
+                    include_zero_placeholder: { 1: false, 2: true, 3: true, 4: true }
+                }
+            },
+            'Y3_C2_multiply': {
+                id: 'Y3_C2_multiply',
+                year: 'Year 3',
+                strand: 'Calculations',
+                substrand: 'Recall multiplication facts',
+                ref: 'C2',
+                description: 'Recall and use multiplication and division facts for the 3, 4 and 8 multiplication tables',
+                parameters: {
+                    times_tables: { 1: [2, 5, 10], 2: [2, 3, 4, 5, 10], 3: [3, 4, 8], 4: [3, 4, 6, 7, 8, 9] },
+                    max_multiplier: { 1: 5, 2: 10, 3: 12, 4: 12 },
+                    include_division: { 1: false, 2: true, 3: true, 4: true },
+                    time_limit: { 1: 8, 2: 5, 3: 3, 4: 2 },
+                    accuracy_target: { 1: 0.70, 2: 0.80, 3: 0.90, 4: 0.95 }
+                }
+            },
+            'Y4_F1_fractions': {
+                id: 'Y4_F1_fractions',
+                year: 'Year 4',
+                strand: 'Fractions, Decimals and Percentages',
+                substrand: 'Equivalent fractions',
+                ref: 'F1',
+                description: 'Recognise and show, using diagrams, families of common equivalent fractions',
+                parameters: {
+                    denominators: { 1: [2, 4, 10], 2: [2, 3, 4, 5, 10], 3: [2, 3, 4, 5, 6, 8, 10, 12], 4: [2, 3, 4, 5, 6, 7, 8, 9, 10, 12] },
+                    equivalences_to_find: { 1: 2, 2: 3, 3: 4, 4: 5 },
+                    visual_support: { 1: 'always', 2: 'often', 3: 'sometimes', 4: 'rarely' },
+                    simplification_required: { 1: false, 2: false, 3: true, 4: true }
+                }
+            },
+            'Y5_F2_decimals': {
+                id: 'Y5_F2_decimals',
+                year: 'Year 5',
+                strand: 'Fractions, Decimals and Percentages',
+                substrand: 'Decimal place value',
+                ref: 'F2',
+                description: 'Read, write, order and compare numbers with up to three decimal places',
+                parameters: {
+                    decimal_places: { 1: 1, 2: 2, 3: 3, 4: 3 },
+                    integer_range: { 1: [0, 10], 2: [0, 100], 3: [0, 1000], 4: [0, 10000] },
+                    number_count: { 1: 2, 2: 3, 3: 4, 4: 5 },
+                    include_trailing_zeros: { 1: false, 2: true, 3: true, 4: true }
+                }
+            }
+        };
+
+        const contexts = {
+            counting: ['counting steps', 'counting money', 'counting objects', 'counting jumps on a number line'],
+            money: ['pounds', 'pence', 'coins', 'savings'],
+            objects: ['apples', 'pencils', 'books', 'sweets', 'toys', 'stickers', 'marbles'],
+            animals: ['cats', 'dogs', 'birds', 'rabbits', 'fish', 'butterflies'],
+            people: ['children', 'students', 'friends', 'people'],
+            measurement: ['metres', 'centimetres', 'litres', 'grams', 'kilograms']
+        };
+
+        let currentModule = 'Y1_N1_counting';
+        let currentLevel = 3;
+        let generatedQuestions = [];
+
+        function init() {
+            renderModuleList();
+            renderLevelButtons();
+            updateDisplay();
+        }
+
+        function renderModuleList() {
+            const list = document.getElementById('moduleList');
+            list.innerHTML = Object.values(MODULES).map(m => `
+                <button class="module-btn ${m.id === currentModule ? 'active' : ''}" onclick="selectModule('${m.id}')">
+                    <div class="year">${m.year} - ${m.ref}</div>
+                    <div class="title">${m.strand}</div>
+                    <div class="year">${m.substrand}</div>
+                </button>
+            `).join('');
+        }
+
+        function renderLevelButtons() {
+            document.querySelectorAll('.level-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const level = parseInt(btn.dataset.level);
+                    selectLevel(level);
+                });
+            });
+        }
+
+        function selectModule(moduleId) {
+            currentModule = moduleId;
+            generatedQuestions = [];
+            renderModuleList();
+            updateDisplay();
+        }
+
+        function selectLevel(level) {
+            currentLevel = level;
+            document.querySelectorAll('.level-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.level) === level);
+            });
+            generatedQuestions = [];
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const module = MODULES[currentModule];
+            
+            document.getElementById('moduleTitle').textContent = `${module.year}: ${module.strand}`;
+            document.getElementById('moduleDesc').textContent = module.description;
+            document.getElementById('moduleBadge').textContent = `${module.substrand} (${module.ref})`;
+            
+            renderParameters(module);
+            
+            document.getElementById('questionsList').innerHTML = '';
+            document.getElementById('exportSection').style.display = 'none';
+            document.getElementById('statsPanel').style.display = 'none';
+        }
+
+        function renderParameters(module) {
+            const grid = document.getElementById('paramsGrid');
+            const params = module.parameters;
+            
+            grid.innerHTML = Object.entries(params).map(([key, values]) => {
+                const currentValue = values[currentLevel];
+                const valueDisplay = Array.isArray(currentValue) 
+                    ? currentValue.join(', ') 
+                    : typeof currentValue === 'boolean'
+                    ? (currentValue ? 'Yes' : 'No')
+                    : currentValue;
+                
+                const progression = [1,2,3,4].map(l => {
+                    const val = values[l];
+                    const display = Array.isArray(val) ? val.join(', ') : String(val);
+                    return `L${l}: ${display}`;
+                }).join('<br>');
+                
+                return `
+                    <div class="param-card">
+                        <div class="param-name">${key.replace(/_/g, ' ')}</div>
+                        <div class="param-value">${valueDisplay}</div>
+                        <div class="param-progression">${progression}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('generateBtn').addEventListener('click', generateQuestions);
+
+        function random(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function generateQuestions() {
+            const module = MODULES[currentModule];
+            const count = parseInt(document.getElementById('questionCount').value) || 10;
+            generatedQuestions = [];
+            
+            for (let i = 0; i < count; i++) {
+                const question = generateQuestion(module, currentLevel);
+                if (question) generatedQuestions.push(question);
+            }
+            
+            displayQuestions();
+        }
+
+        function generateQuestion(module, level) {
+            const params = module.parameters;
+            
+            // Define question types for each module with more variety
+            const questionTypes = {
+                'Y1_N1_counting': [
+                    'sequence_fill', 'drag_order', 'click_next', 'true_false_pattern', 
+                    'multiple_choice_rule', 'word_problem', 'error_spot', 'matching_pairs',
+                    'select_all_multiples', 'slider_position'
+                ],
+                'Y1_C1_bonds': [
+                    'fill_blank', 'drag_match', 'fact_family_complete', 'true_false',
+                    'multiple_choice', 'word_problem', 'visual_click', 'part_whole_drag',
+                    'balance_equation', 'quick_fire'
+                ],
+                'Y2_N1_place_value': [
+                    'identify_digit', 'drag_partition', 'multiple_choice', 'true_false',
+                    'order_numbers', 'expanded_form', 'compare_click', 'error_spot',
+                    'match_representation', 'word_form'
+                ],
+                'Y3_C2_multiply': [
+                    'standard_equation', 'multiple_choice', 'drag_match_division', 'fact_family',
+                    'word_problem', 'true_false', 'missing_factor', 'array_click',
+                    'quick_fire_timed', 'error_analysis'
+                ],
+                'Y4_F1_fractions': [
+                    'fill_equivalent', 'drag_match', 'multiple_choice', 'true_false_equiv',
+                    'visual_click_parts', 'simplify', 'select_all_equivalent', 'ordering',
+                    'word_problem', 'error_spot'
+                ],
+                'Y5_F2_decimals': [
+                    'order_drag', 'multiple_choice', 'true_false_compare', 'fill_blank',
+                    'number_line_click', 'word_problem', 'place_value_chart', 'rounding',
+                    'select_all_between', 'error_analysis'
+                ]
+            };
+
+            const types = questionTypes[module.id] || ['standard'];
+            const type = random(types);
+            
+            return generateSpecificQuestion(module, level, type, params);
+        }
+
+        function generateSpecificQuestion(module, level, type, params) {
+            
+            // COUNTING QUESTIONS
+            if (module.id === 'Y1_N1_counting') {
+                const steps = params.step_sizes[level];
+                const step = random(steps);
+                const direction = random(params.directions[level]);
+                const maxVal = params.max_value[level];
+                const seqLen = params.sequence_length[level];
+                
+                let start = Math.floor(Math.random() * (maxVal / 2));
+                start = Math.floor(start / step) * step;
+                
+                let sequence = [];
+                for (let j = 0; j < Math.min(seqLen, 10); j++) {
+                    sequence.push(direction === 'forwards' ? start + (j * step) : start - (j * step));
+                }
+
+                if (type === 'drag_order') {
+                    const shuffled = shuffle(sequence.slice(0, 5));
+                    return {
+                        text: `Drag the numbers into the correct order (${direction}):`,
+                        interactive: `Draggable: ${shuffled.map(n => `[${n}]`).join(' ')}\nDrop zones: [___] [___] [___] [___] [___]`,
+                        answer: sequence.slice(0, 5).join(', '),
+                        format: 'Drag & Drop Ordering',
+                        interaction: 'Drag & Drop'
+                    };
+                } else if (type === 'click_next') {
+                    const partial = sequence.slice(0, 4);
+                    const options = [sequence[4], sequence[4] + step, sequence[4] - step, sequence[4] + 2*step];
+                    return {
+                        text: `What number comes next? ${partial.join(', ')}, ...`,
+                        interactive: `Click the correct answer:\n${shuffle(options).map(n => `[${n}]`).join('  ')}`,
+                        answer: sequence[4].toString(),
+                        format: 'Click to Select',
+                        interaction: 'Click'
+                    };
+                } else if (type === 'true_false_pattern') {
+                    const statement = `This sequence counts ${direction} in ${step}s: ${sequence.slice(0, 5).join(', ')}`;
+                    const isTrue = Math.random() > 0.3;
+                    const wrongStep = step + (Math.random() > 0.5 ? 1 : -1);
+                    return {
+                        text: isTrue ? statement : `This sequence counts ${direction} in ${wrongStep}s: ${sequence.slice(0, 5).join(', ')}`,
+                        interactive: `Click: [TRUE] or [FALSE]`,
+                        answer: isTrue ? 'TRUE' : 'FALSE',
+                        format: 'True/False',
+                        interaction: 'Click'
+                    };
+                } else if (type === 'select_all_multiples') {
+                    const nums = Array.from({length: 10}, (_, i) => start + i * Math.floor(step/2));
+                    const multiples = nums.filter(n => n % step === 0);
+                    return {
+                        text: `Select ALL the multiples of ${step}:`,
+                        interactive: `Click all that apply:\n${nums.map(n => `[${n}]`).join(' ')}`,
+                        answer: multiples.join(', '),
+                        format: 'Select All That Apply',
+                        interaction: 'Multi-Select'
+                    };
+                } else if (type === 'error_spot') {
+                    const withError = [...sequence.slice(0, 5)];
+                    const errorPos = 2 + Math.floor(Math.random() * 2);
+                    withError[errorPos] = withError[errorPos] + 1;
+                    return {
+                        text: `This sequence has ONE mistake. Click the wrong number:`,
+                        interactive: `${withError.map(n => `[${n}]`).join(' ')}`,
+                        answer: withError[errorPos].toString(),
+                        format: 'Error Identification',
+                        interaction: 'Click'
+                    };
+                } else if (type === 'word_problem') {
+                    const context = random(contexts.objects);
+                    return {
+                        text: `Sarah ${direction === 'forwards' ? 'collects' : 'gives away'} ${step} ${context} each day. She starts with ${sequence[0]}. How many does she have after 4 days?`,
+                        answer: sequence[4].toString(),
+                        format: 'Word Problem',
+                        interaction: 'Type Answer'
+                    };
+                } else {
+                    const display = [...sequence.slice(0, 6)];
+                    display[3] = '___';
+                    return {
+                        text: `Fill in the missing number: ${display.join(', ')}`,
+                        answer: sequence[3].toString(),
+                        format: 'Fill in the Blank',
+                        interaction: 'Type Answer'
+                    };
+                }
+            }
+            
+            // NUMBER BONDS QUESTIONS
+            else if (module.id === 'Y1_C1_bonds') {
+                const totals = params.total_value[level];
+                const total = random(totals);
+                const part1 = Math.floor(Math.random() * (total + 1));
+                const part2 = total - part1;
+
+                if (type === 'drag_match') {
+                    const pairs = [[part1, part2], [part2, part1], [total - part1, part1], [total - part2, part2]];
+                    const shuffledPairs = shuffle(pairs.slice(0, 3));
+                    return {
+                        text: `Match the pairs that make ${total}:`,
+                        interactive: `Drag to match:\nLeft: [${part1}] [${part2}] [${Math.floor(total/2)}]\nRight: [${part2}] [${part1}] [${total - Math.floor(total/2)}]`,
+                        answer: `${part1}+${part2}, ${part2}+${part1}`,
+                        format: 'Drag & Match Pairs',
+                        interaction: 'Drag & Drop'
+                    };
+                } else if (type === 'fact_family_complete') {
+                    return {
+                        text: `Complete the fact family for ${total}:`,
+                        visual: `${part1} + ${part2} = ${total}\n${part2} + ___ = ${total}\n${total} - ${part1} = ___\n${total} - ___ = ${part1}`,
+                        answer: `${part1}, ${part2}, ${part2}`,
+                        format: 'Fact Family Completion',
+                        interaction: 'Type Answer'
+                    };
+                } else if (type === 'true_false') {
+                    const statements = [
+                        [`${part1} + ${part2} = ${total}`, true],
+                        [`${total} - ${part1} = ${part2}`, true],
+                        [`${part1} + ${part2} = ${total + 1}`, false],
+                        [`${total} - ${part2} = ${part1 + 1}`, false]
+                    ];
+                    const [statement, isTrue] = random(statements);
+                    return {
+                        text: statement,
+                        interactive: `Click: [TRUE] or [FALSE]`,
+                        answer: isTrue ? 'TRUE' : 'FALSE',
+                        format: 'True/False',
+                        interaction: 'Click'
+                    };
+                } else if (type === 'part_whole_drag') {
+                    return {
+                        text: `Complete the part-whole model:`,
+                        interactive: `Whole: [${total}]\nParts: [${part1}] [___]\n\nDrag: [${part2}] [${part2+1}] [${part2-1}]`,
+                        answer: part2.toString(),
+                        format: 'Part-Whole Model',
+                        interaction: 'Drag & Drop'
+                    };
+                } else if (type === 'balance_equation') {
+                    return {
+                        text: `Balance the equation. What goes in the box?`,
+                        interactive: `${part1} + ☐ = ${total}\n\nClick: [${part2}] [${part2+1}] [${part2-1}] [${total-part1-1}]`,
+                        answer: part2.toString(),
+                        format: 'Balance Equation',
+                        interaction: 'Click'
+                    };
+                } else if (type === 'word_problem') {
+                    const context = random(contexts.objects);
+                    return {
+                        text: `Tom has ${total} ${context}. He gives ${part1} to his friend. How many does he have left?`,
+                        answer: part2.toString(),
+                        format: 'Word Problem',
+                        interaction: 'Type Answer'
+                    };
+                } else {
+                    return {
+                        text: `${part1} + ? = ${total}`,
+                        answer: part2.toString(),
+                        format: 'Standard Equation',
+                        interaction: 'Type Answer'
+                    };
+                }
+            }
+            
+            // PLACE VALUE QUESTIONS
+            else if (module.id === 'Y2_N1_place_value') {
+                const min = params.min_number[level];
+                const max = params.max_number[level];
+                const num = Math.floor(Math.random() * (max - min + 1)) + min;
+                const tens = Math.floor(num / 10);
+                const ones = num % 10;
+
+                if (type === 'drag_partition') {
+                    const tensValue = tens * 10;
+                    const options = [tensValue, ones, tensValue + 10, ones + 1];
+                    return {
+                        text: `Partition ${num} by dragging:`,
+                        interactive: `${num} = [___] + [___]\n\nDrag from: ${shuffle(options).map(n => `[${n}]`).join(' ')}`,
+                        answer: `${tensValue} + ${ones}`,
+                        format: 'Drag & Partition',
+                        interaction: 'Drag & Drop'
+                    };
+                } else if (type === 'true_false') {
+                    const statements = [
+                        [`The digit ${tens} in ${num} represents ${tens * 10}`, true],
+                        [`${num} has ${tens} tens`, true],
+                        [`${num} has ${tens} ones`, false],
+                        [`The digit ${ones} in ${num} represents ${ones * 10}`, false]
+                    ];
+                    const [statement, isTrue] = random(statements);
+                    return {
+                        text: statement,
+                        interactive: `Click: [TRUE] or [FALSE]`,
+                        answer: isTrue ? 'TRUE' : 'FALSE',
+                        format: 'True/False',
+                        interaction: 'Click'
+                    };
+                } else if (type === 'order_numbers') {
+                    const nums = [num, num + 5, num - 5, num + 10].filter(n => n >= min && n <= max).slice(0, 4);
+                    const shuffled = shuffle(nums);
+                    const sorted = [...nums].sort((a, b) => a - b);
+                    return {
+                        text: `Drag to order from smallest to largest:`,
+                        interactive: `Drag: ${shuffled.map(n => `[${n}]`).join(' ')}\nTo: [___] [___] [___] [___]`,
+                        answer: sorted.join(', '),
+                        format: 'Ordering',
+                        interaction: 'Drag & Drop'
+                    };
+                } else if (type === 'compare_click') {
+                    const num2 = Math.floor(Math.random() * (max - min + 1)) + min;
+                    return {
+                        text: `Which number is LARGER?`,
+                        interactive: `Click: [${num}] or [${num2}]`,
+                        answer: Math.max(num, num2).toString(),
+                        format: 'Comparison',
+                        interaction: 'Click'
+                    };
+                } else if (type === 'match_representation') {
+                    const tensValue = tens * 10;
+                    return {
+                        text: `Match the number to its expanded form:`,
+                        interactive: `Drag ${num} to match:\n[${tensValue} + ${ones}]  [${tens} + ${ones}]  [${tensValue + ones + 10}]`,
+                        answer: `${tensValue} + ${ones}`,
+                        format: 'Match Representations',
+                        interaction: 'Drag & Drop'
+                    };
+                } else {
+                    return {
+                        text: `What is the value of the tens digit in ${num}?`,
+                        interactive: `Click: [${tens}] [${tens * 10}] [${ones}] [${ones * 10}]`,
+                        answer: (tens * 10).toString(),
+                        format: 'Identify Digit Value',
+                        interaction: 'Click'
+                    };
+                }
+            }
+            
+            // MULTIPLICATION QUESTIONS
+            else if (module.id === 'Y3_C2_multiply') {
+                const tables = params.times_tables[level];
+                const table = random(tables);
+                const multiplier = Math.floor(Math.random() * params.max_multiplier[level]) + 1;
+                const product = table * multiplier;
+
+                if (type === 'drag_match_division') {
+                    const equations = [
+                        [`${table} × ${multiplier}`, product],
+                        [`${product} ÷ ${table}`, multiplier],
+                        [`${product} ÷ ${multiplier}`, table]
+                    ];
+                    return {
+                        text: `Match each equation to its answer:`,
+                        interactive: `Drag to match:\nLeft: ${equations.map(e => e[0]).join(' | ')}\nRight: ${shuffle(equations.map(e => e[1])).join(' | ')}`,
+                        answer: equations.map(e => `${e[0]}=${e[1]}`).join(', '),
+                        format: 'Drag & Match',
+                        interaction: 'Drag & Drop'
+                    };
+                } else if (type === 'fact_family') {
+                    return {
+                        text: `Complete the fact family:`,
+                        visual: `${table} × ${multiplier} = ${product}\n${multiplier} × ${table} = ___\n${product} ÷ ${table} = ___\n${product} ÷ ${multiplier} = ___`,
+                        answer: `${product}, ${multiplier}, ${table}`,
+                        format: 'Fact Family',
+                        interaction: 'Type Answer'
+                    };
+                } else if (type === 'true_false') {
+                    const statements = [
+                        [`${table} × ${multiplier} = ${product}`, true],
+                        [`${product} ÷ ${table} = ${multiplier}`, true],
+                        [`${table} × ${multiplier} = ${product + table}`, false],
+                        [`${product} ÷ ${multiplier} = ${table + 1}`, false]
+                    ];
+                    const [statement, isTrue] = random(statements);
+                    return {
+                        text: statement,
+                        interactive: `Click: [TRUE] or [FALSE]`,
+                        answer: isTrue ? 'TRUE' : 'FALSE',
+                        format: 'True/False',
+                        interaction: 'Click'
+                    };
+                } else if (type === 'array_click') {
+                    return {
+                        text: `An array has ${table} rows and ${multiplier} columns. How many items total?`,
+                        interactive: `Click the answer: [${product}] [${product + table}] [${table + multiplier}] [${product - table}]`,
+                        answer: product.toString(),
+                        format: 'Array Representation',
+                        interaction: 'Click'
+                    };
+                } else if (type === 'word_problem') {
+                    const context = random(contexts.objects);
+                    return {
+                        text: `There are ${multiplier} boxes with ${table} ${context} in each. How many ${context} in total?`,
+                        answer: product.toString(),
+                        format: 'Word Problem',
+                        interaction: 'Type Answer'
+                    };
+                } else if (type === 'error_analysis') {
+                    const wrongAnswer = product + table;
+                    return {
+                        text: `Jamie says ${table} × ${multiplier} = ${wrongAnswer}. Is Jamie correct?`,
+                        interactive: `Click: [YES] or [NO]\nIf NO, what's the correct answer? [___]`,
+                        answer: `NO, ${product}`,
+                        format: 'Error Analysis',
+                        interaction: 'Click + Type'
+                    };
+                } else {
+                    return {
+                        text: `${table} × ${multiplier} = ?`,
+                        interactive: `Click: [${product}] [${product + table}] [${product - table}] [${table + multiplier}]`,
+                        answer: product.toString(),
+                        format: 'Multiple Choice',
+                        interaction: 'Click'
+                    };
+                }
+            }
+            
+            // FRACTIONS QUESTIONS
+            else if (module.id === 'Y4_F1_fractions') {
+                const denoms = params.denominators[level];
+                const denom1 = random(denoms);
+                const multiplier = Math.floor(Math.random() * 3) + 2;
+                const denom2 = denom1 * multiplier;
+                const num1 = Math.floor(Math.random() * denom1) + 1;
+                const num2 = num1 * multiplier;
+
+                if (type === 'drag_match') {
+                    const fractions = [
+                        [`${num1}/${denom1}`, `${num2}/${denom2}`],
+                        [`${num1 + 1}/${denom1}`, `${(num1 + 1) * multiplier}/${denom2}`]
+                    ];
+                    return {
+                        text: `Match the equivalent fractions:`,
+                        interactive: `Drag to match:\nLeft: ${fractions.map(f => f[0]).join(' | ')}\nRight: ${shuffle(fractions.map(f => f[1])).join(' | ')}`,
+                        answer: fractions.map(f => `${f[0]}=${f[1]}`).join(', '),
+                        format: 'Drag & Match',
+                        interaction: 'Drag & Drop'
+                    };
+                } else if (type === 'true_false_equiv') {
+                    const statements = [
+                        [`${num1}/${denom1} = ${num2}/${denom2}`, true],
+                        [`${num1}/${denom1} = ${num2 + 1}/${denom2}`, false],
+                        [`${num1}/${denom1} = ${num2}/${denom2 + 1}`, false]
+                    ];
+                    const [statement, isTrue] = random(statements);
+                    return {
+                        text: statement,
+                        interactive: `Click: [TRUE] or [FALSE]`,
+                        answer: isTrue ? 'TRUE' : 'FALSE',
+                        format: 'True/False',
+                        interaction: 'Click'
+                    };
+                } else if (type === 'select_all_equivalent') {
+                    const equiv = [`${num2}/${denom2}`, `${num1 * 3}/${denom1 * 3}`, `${num1 * 4}/${denom1 * 4}`];
+                    const notEquiv = [`${num1 + 1}/${denom1}`, `${num2}/${denom2 + 1}`];
+                    const all = shuffle([...equiv.slice(0, 2), ...notEquiv.slice(0, 2)]);
+                    return {
+                        text: `Select ALL fractions equivalent to ${num1}/${denom1}:`,
+                        interactive: `Click all that apply:\n${all.map(f => `[${f}]`).join(' ')}`,
+                        answer: equiv.slice(0, 2).join(', '),
+                        format: 'Select All That Apply',
+                        interaction: 'Multi-Select'
+                    };
+                } else if (type === 'ordering') {
+                    const fracs = [`${num1}/${denom1}`, `${num1 + 1}/${denom1}`, `${num1 - 1}/${denom1}`].filter(f => !f.includes('-'));
+                    const shuffled = shuffle(fracs);
+                    return {
+                        text: `Drag to order from smallest to largest:`,
+                        interactive: `Drag: ${shuffled.map(f => `[${f}]`).join(' ')}\nTo: [___] [___] [___]`,
+                        answer: fracs.join(', '),
+                        format: 'Ordering',
+                        interaction: 'Drag & Drop'
+                    };
+                } else if (type === 'simplify') {
+                    return {
+                        text: `Simplify ${num2}/${denom2} by clicking the simplified form:`,
+                        interactive: `Click: [${num1}/${denom1}] [${num2}/${denom1}] [${num1}/${denom2}] [${num1 + 1}/${denom1}]`,
+                        answer: `${num1}/${denom1}`,
+                        format: 'Simplification',
+                        interaction: 'Click'
+                    };
+                } else {
+                    return {
+                        text: `${num1}/${denom1} = ?/${denom2}`,
+                        interactive: `Type the missing number: [___]/${denom2}`,
+                        answer: num2.toString(),
+                        format: 'Fill in the Blank',
+                        interaction: 'Type Answer'
+                    };
+                }
+            }
+            
+            // DECIMALS QUESTIONS
+            else if (module.id === 'Y5_F2_decimals') {
+                const dp = params.decimal_places[level];
+                const range = params.integer_range[level];
+                const count = params.number_count[level];
+                
+                const numbers = [];
+                for (let i = 0; i < count; i++) {
+                    const integer = Math.floor(Math.random() * (range[1] - range[0])) + range[0];
+                    const decimal = (Math.random()).toFixed(dp);
+                    numbers.push(parseFloat(integer + decimal.substring(1)));
+                }
+
+                if (type === 'order_drag') {
+                    const subset = numbers.slice(0, 4);
+                    const shuffled = shuffle(subset);
+                    const sorted = [...subset].sort((a, b) => a - b);
+                    return {
+                        text: `Drag to order from smallest to largest:`,
+                        interactive: `Drag: ${shuffled.map(n => `[${n}]`).join(' ')}\nTo: [___] [___] [___] [___]`,
+                        answer: sorted.join(', '),
+                        format: 'Drag & Order',
+                        interaction: 'Drag & Drop'
+                    };
+                } else if (type === 'true_false_compare') {
+                    const [n1, n2] = numbers;
+                    const statements = [
+                        [`${n1} > ${n2}`, n1 > n2],
+                        [`${n1} < ${n2}`, n1 < n2],
+                        [`${n1} = ${n2}`, n1 === n2]
+                    ];
+                    const [statement, isTrue] = random(statements);
+                    return {
+                        text: statement,
+                        interactive: `Click: [TRUE] or [FALSE]`,
+                        answer: isTrue ? 'TRUE' : 'FALSE',
+                        format: 'True/False',
+                        interaction: 'Click'
+                    };
+                } else if (type === 'number_line_click') {
+                    const [n1, n2] = numbers.slice(0, 2);
+                    const lower = Math.floor(Math.min(n1, n2));
+                    const upper = Math.ceil(Math.max(n1, n2));
+                    return {
+                        text: `Where would ${n1} appear on this number line?`,
+                        interactive: `${lower} ----[A]---- ${(lower + upper) / 2} ----[B]---- ${upper}\n\nClick: [A] or [B]`,
+                        answer: n1 < (lower + upper) / 2 ? 'A' : 'B',
+                        format: 'Number Line',
+                        interaction: 'Click'
+                    };
+                } else if (type === 'select_all_between') {
+                    const [low, high] = numbers.slice(0, 2).sort((a, b) => a - b);
+                    const testNums = numbers.slice(2, 5);
+                    const between = testNums.filter(n => n > low && n < high);
+                    return {
+                        text: `Select ALL numbers between ${low} and ${high}:`,
+                        interactive: `Click all that apply:\n${testNums.map(n => `[${n}]`).join(' ')}`,
+                        answer: between.join(', '),
+                        format: 'Select All That Apply',
+                        interaction: 'Multi-Select'
+                    };
+                } else if (type === 'rounding') {
+                    const n = numbers[0];
+                    const rounded = Math.round(n);
+                    return {
+                        text: `Round ${n} to the nearest whole number:`,
+                        interactive: `Click: [${rounded - 1}] [${rounded}] [${rounded + 1}]`,
+                        answer: rounded.toString(),
+                        format: 'Rounding',
+                        interaction: 'Click'
+                    };
+                } else {
+                    const [n1, n2] = numbers;
+                    return {
+                        text: `Which is larger?`,
+                        interactive: `Click: [${n1}] or [${n2}]`,
+                        answer: Math.max(n1, n2).toString(),
+                        format: 'Comparison',
+                        interaction: 'Click'
+                    };
+                }
+            }
+            
+            return null;
+        }
+
+        function displayQuestions() {
+            const list = document.getElementById('questionsList');
+            const levelNames = { 1: 'Beginning', 2: 'Developing', 3: 'Meeting', 4: 'Exceeding' };
+            
+            // Calculate statistics
+            const formats = [...new Set(generatedQuestions.map(q => q.format))];
+            const interactive = generatedQuestions.filter(q => q.interaction && q.interaction !== 'Type Answer');
+            
+            document.getElementById('totalQuestions').textContent = generatedQuestions.length;
+            document.getElementById('uniqueFormats').textContent = formats.length;
+            document.getElementById('interactiveCount').textContent = interactive.length;
+            document.getElementById('statsPanel').style.display = 'grid';
+            
+            list.innerHTML = `
+                <div style="margin-bottom: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; text-align: left;">
+                    <strong>Generated ${generatedQuestions.length} questions for Level ${currentLevel}: ${levelNames[currentLevel]}</strong><br>
+                    <span style="font-size: 13px; color: #666;">${formats.length} different question types • ${interactive.length} interactive formats</span>
+                </div>
+            ` + generatedQuestions.map((q, idx) => `
+                <div class="question-card">
+                    <div class="q-number">Question ${idx + 1}</div>
+                    <div class="q-format">${q.format}</div>
+                    ${q.interaction ? `<div class="q-interaction">${q.interaction}</div>` : ''}
+                    <div class="q-text">${q.text}</div>
+                    ${q.visual ? `<div class="q-visual">${q.visual}</div>` : ''}
+                    ${q.interactive ? `<div class="q-interactive">${q.interactive}</div>` : ''}
+                    ${q.hint ? `<div class="q-hint">💡 Hint: ${q.hint}</div>` : ''}
+                    <div class="q-answer"><strong>Answer:</strong> ${q.answer}</div>
+                </div>
+            `).join('');
+            
+            document.getElementById('exportSection').style.display = 'block';
+        }
+
+        function printQuestions() {
+            const module = MODULES[currentModule];
+            const levelNames = { 1: 'Beginning', 2: 'Developing', 3: 'Meeting', 4: 'Exceeding' };
+            
+            const printWindow = window.open('', '', 'width=800,height=600');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Questions - ${module.year} ${module.strand}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 40px; }
+                        h1 { color: #667eea; }
+                        .question { margin: 25px 0; padding: 15px; border-left: 4px solid #667eea; background: #f9f9f9; page-break-inside: avoid; }
+                        .badges { margin-bottom: 10px; }
+                        .badge { display: inline-block; padding: 4px 10px; background: #e0e0e0; border-radius: 4px; font-size: 11px; margin-right: 5px; }
+                        .visual, .interactive { background: white; padding: 12px; margin: 10px 0; font-family: monospace; border: 1px solid #ddd; white-space: pre-wrap; }
+                        .interactive { border: 2px dashed #4caf50; background: #f1f8f4; }
+                        .answer { margin-top: 10px; padding: 10px; background: #e8e8e8; border-radius: 4px; }
+                        @media print { .no-print { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    <h1>${module.year}: ${module.strand}</h1>
+                    <p><strong>Module:</strong> ${module.description}</p>
+                    <p><strong>Level:</strong> ${currentLevel} - ${levelNames[currentLevel]}</p>
+                    <p><strong>Questions:</strong> ${generatedQuestions.length}</p>
+                    <hr>
+                    ${generatedQuestions.map((q, idx) => `
+                        <div class="question">
+                            <strong>Question ${idx + 1}</strong>
+                            <div class="badges">
+                                <span class="badge">${q.format}</span>
+                                ${q.interaction ? `<span class="badge" style="background: #d4edda;">${q.interaction}</span>` : ''}
+                            </div>
+                            <div style="margin: 10px 0; font-size: 16px;">${q.text}</div>
+                            ${q.visual ? `<div class="visual">${q.visual}</div>` : ''}
+                            ${q.interactive ? `<div class="interactive">${q.interactive}</div>` : ''}
+                            ${q.hint ? `<div style="margin-top: 8px; padding: 8px; background: #fff9e6; border-left: 3px solid #ffc107; font-style: italic; font-size: 13px;">💡 ${q.hint}</div>` : ''}
+                            <div class="answer"><strong>Answer:</strong> ${q.answer}</div>
+                        </div>
+                    `).join('')}
+                    <div class="no-print" style="margin-top: 30px;">
+                        <button onclick="window.print()" style="padding: 10px 20px; font-size: 14px; cursor: pointer;">Print</button>
+                        <button onclick="window.close()" style="padding: 10px 20px; font-size: 14px; cursor: pointer; margin-left: 10px;">Close</button>
+                    </div>
+                </body>
+                </html>
+            `);
+        }
+
+        function exportJSON() {
+            const module = MODULES[currentModule];
+            const data = {
+                module: {
+                    id: module.id,
+                    year: module.year,
+                    strand: module.strand,
+                    substrand: module.substrand,
+                    description: module.description
+                },
+                level: currentLevel,
+                question_count: generatedQuestions.length,
+                questions: generatedQuestions,
+                statistics: {
+                    total_questions: generatedQuestions.length,
+                    unique_formats: [...new Set(generatedQuestions.map(q => q.format))].length,
+                    interactive_count: generatedQuestions.filter(q => q.interaction && q.interaction !== 'Type Answer').length,
+                    format_breakdown: generatedQuestions.reduce((acc, q) => {
+                        acc[q.format] = (acc[q.format] || 0) + 1;
+                        return acc;
+                    }, {})
+                },
+                generated_at: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `questions_${module.id}_level${currentLevel}_${Date.now()}.json`;
+            a.click();
+        }
+
+        init();
+    </script>
+</body>
+</html>
