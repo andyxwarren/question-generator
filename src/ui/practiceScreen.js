@@ -34,6 +34,7 @@ class PracticeScreen {
         this.currentModule = null; // Current module ID (for level-up)
         this.currentLevel = null; // Current difficulty level (for level-up)
         this.leveledUp = false; // Track if student leveled up this session
+        this.moduleCompletedViaAdaptive = false; // Track if module completed via adaptive intervention
 
         // Phase 4: Session tracking
         this.sessionId = null; // Current session ID
@@ -57,6 +58,7 @@ class PracticeScreen {
         this.currentModule = moduleId;
         this.currentLevel = level;
         this.leveledUp = false;
+        this.moduleCompletedViaAdaptive = false;
 
         // Reset streak tracker for new session
         streakTracker.resetSession();
@@ -856,6 +858,14 @@ class PracticeScreen {
             return;
         }
 
+        if (intervention.type === 'complete_module') {
+            // For module completion, set flag and end session
+            console.log('🎯 Student accepted module completion');
+            this.moduleCompletedViaAdaptive = true;
+            this.finish();
+            return;
+        }
+
         // For level change (increase or decrease)
         console.log(`🎯 Student accepted level change: L${this.currentLevel} → L${suggestedLevel}`);
 
@@ -924,7 +934,9 @@ class PracticeScreen {
         let alreadyMarkedComplete = false;
 
         if (currentStudent) {
-            moduleComplete = this.isModuleCompleteForStudent(currentStudent.id, this.currentModule);
+            // Check historical completion OR adaptive completion
+            moduleComplete = this.isModuleCompleteForStudent(currentStudent.id, this.currentModule)
+                          || this.moduleCompletedViaAdaptive;
             const moduleProgress = currentStudent.moduleProgress[this.currentModule];
             alreadyMarkedComplete = moduleProgress ? moduleProgress.completed : false;
         }
@@ -969,7 +981,8 @@ class PracticeScreen {
             // Mark module as complete for this student
             if (currentStudent) {
                 this.markModuleCompleteForStudent(currentStudent.id, this.currentModule);
-                console.log(`🏆 Module ${this.currentModule} marked as complete for student ${currentStudent.id}`);
+                const completionSource = this.moduleCompletedViaAdaptive ? 'adaptive intervention' : 'natural progression';
+                console.log(`🏆 Module ${this.currentModule} marked as complete for student ${currentStudent.id} (via ${completionSource})`);
             }
 
             // Import module info and show completion prompt

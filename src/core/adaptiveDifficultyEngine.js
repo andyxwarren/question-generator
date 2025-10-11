@@ -265,13 +265,13 @@ class AdaptiveDifficultyEngine {
       }
     }
 
-    // Excelling → Suggest harder
+    // Excelling → Suggest harder or complete module
     if (confidence.level === 'Excelling') {
       if (currentLevel < 4) {
         return this.createIntervention('increase', confidence, questionNumber);
       } else {
-        // Already at hardest level
-        return null; // No intervention needed
+        // At Level 4 and excelling → Offer to complete module
+        return this.createIntervention('complete_module', confidence, questionNumber);
       }
     }
 
@@ -326,6 +326,15 @@ class AdaptiveDifficultyEngine {
         intervention.title = "Let's Try Something Different";
         intervention.message = "These questions are tricky. Would you like to try a different type of maths practice?";
         intervention.primaryAction = "Choose Different Module";
+        intervention.secondaryAction = "Keep Practicing";
+        break;
+
+      case 'complete_module':
+        intervention.suggestedLevel = null;
+        intervention.reason = 'Student excelling at highest level';
+        intervention.title = "Outstanding Achievement!";
+        intervention.message = "You've mastered Level 4! You're ready to complete this module. Well done!";
+        intervention.primaryAction = "🏆 Complete Module";
         intervention.secondaryAction = "Keep Practicing";
         break;
     }

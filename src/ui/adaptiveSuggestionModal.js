@@ -93,6 +93,9 @@ class AdaptiveSuggestionModal {
         } else if (type === 'switch_module') {
             icon = '🎯'; // Target for different approach
             iconClass = 'alternative';
+        } else if (type === 'complete_module') {
+            icon = '🏆'; // Trophy for completion
+            iconClass = 'challenge';
         }
 
         // Build level change visualization
