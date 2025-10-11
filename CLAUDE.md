@@ -59,7 +59,10 @@ src/
 │   ├── questionEngine.js        # Registry pattern: registers generators, orchestrates generation
 │   ├── questionHistory.js       # Deduplication: fingerprints + localStorage persistence
 │   ├── streakTracker.js         # Streak tracking for power-up system (Phase 3)
-│   ├── moduleProgress.js        # Module completion tracking (Phase 3.5)
+│   ├── storageManager.js        # Per-student data storage (sessions, progress, stats) (Phase 4+)
+│   ├── performanceAnalyzer.js   # Real-time performance tracking (Phase 5)
+│   ├── adaptiveDifficultyEngine.js # Adaptive difficulty suggestions (Phase 5)
+│   ├── difficultyMatrix.js      # Cross-module difficulty mapping (Phase 5)
 │   └── validator.js             # Answer validation logic
 └── ui/
     ├── setupScreen.js           # Setup screen component (module/level selection)
@@ -195,13 +198,14 @@ The streak tracking and auto level-up system rewards students for consecutive co
 
 ### Module Completion System (Phase 3.5)
 
-Tracks student progress and provides visual feedback when modules are mastered:
+Tracks student progress (per-student via `storageManager`) and provides visual feedback when modules are mastered:
 
-1. **Progress Tracking** (`moduleProgress.js`): Singleton that tracks correct answers per level per module
+1. **Progress Tracking** (via `storageManager.js`): Per-student tracking of correct answers per level per module
+   - Each student has isolated `moduleProgress` object in their profile
    - Counts correct answers separately for each level (1, 2, 3, 4)
-   - Persists to localStorage (key: `mathsPractice_moduleProgress`)
+   - Automatically updated during `completeSession()` after each practice session
+   - Persists to localStorage (key: `mathsPractice_storage`)
    - Detects when all 4 levels have ≥3 correct answers
-   - Can mark modules as officially "completed"
 
 2. **Completion Criteria**: Module complete when student answers 3+ questions correctly at ALL 4 levels
    - Level 1 (Beginning): ≥3 correct
@@ -210,28 +214,31 @@ Tracks student progress and provides visual feedback when modules are mastered:
    - Level 4 (Exceeding): ≥3 correct
 
 3. **Completion Prompt** (`moduleCompletionPrompt.js`): Celebration overlay
-   - Shows when module becomes complete
-   - Displays module name and icon with celebration (🎊)
-   - Two buttons: "Mark as Complete" or "Continue Practicing"
-   - Shows success message (🏆) after marking complete
+   - Shows when module becomes complete for that specific student
+   - Displays module name and icon with celebration (🏆)
+   - Auto-dismisses after 3 seconds
+   - Module marked as completed in student's profile
 
-4. **Visual Badges**: Completed modules show ✅ badge in setup screen
+4. **Visual Badges**: Completed modules show 🏆 badge in setup screen
    - Badge appears in top-right corner of module card
-   - Completed cards have subtle green gradient background
+   - Completed cards have special styling
+   - Badges are student-specific (each student sees their own progress)
    - Students can still practice completed modules
 
-5. **Progress Persistence**: All progress saved across sessions
-   - Tracks correct answers even if module not yet complete
+5. **Progress Persistence**: All progress saved per-student across sessions
+   - Student-specific: switching students shows different completion states
    - Progress accumulates over multiple practice sessions
-   - Can reset individual module progress
+   - Can reset via "Clear History" button (clears current student's data)
 
-**When active**: Automatically tracks all correct answers during practice. Prompts appear after session ends if module just became complete.
+**When active**: Automatically tracks all correct answers during practice. Progress updated in `storageManager.completeSession()`. Prompts appear after session ends if module just became complete for that student.
 
 **Integration points**:
-- `practiceScreen.js`: Calls `moduleProgress.recordCorrectAnswer()` after each correct answer
-- `practiceScreen.js`: Checks completion in `finish()` and shows prompt if complete
-- `setupScreen.js`: Displays completion badges in module cards via `renderTopics()`
-- localStorage key: `mathsPractice_moduleProgress`
+- `storageManager.js`: Tracks module progress in `student.moduleProgress[moduleId].levels`
+- `storageManager.completeSession()`: Updates correct answer counts per level
+- `practiceScreen.js`: Checks student-specific completion via `isModuleCompleteForStudent()`
+- `practiceScreen.js`: Marks complete via `markModuleCompleteForStudent()`
+- `setupScreen.js`: Displays student-specific completion badges in `renderTopics()`
+- localStorage key: `mathsPractice_storage` (all student data)
 
 ## Development Guidelines
 
@@ -291,9 +298,21 @@ const questions = engine.generate('counting', 1, 5, false); // false = skip hist
 console.log(questions);
 ```
 
-### Clear Question History
+### Clear Question History (and Student Progress)
 Via UI: Setup screen → "Clear History" button
-Via console: `localStorage.removeItem('mathsPractice_questionHistory')`
+- Clears question history (deduplication tracking)
+- If student is selected: clears that student's module progress, sessions, and stats
+Via console:
+```javascript
+import questionHistory from './src/core/questionHistory.js';
+questionHistory.clear(); // Clears question deduplication history
+
+import storageManager from './src/core/storageManager.js';
+const student = storageManager.getCurrentStudent();
+if (student) {
+  storageManager.clearStudentHistory(student.id); // Clears student's progress
+}
+```
 
 ### View Question History Stats
 Via UI: Setup screen → "View Stats" button

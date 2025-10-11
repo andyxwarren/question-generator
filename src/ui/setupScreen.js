@@ -8,7 +8,6 @@
 import { MODULES, getModule } from '../curriculum/modules.js';
 import questionEngine from '../core/questionEngine.js';
 import questionHistory from '../core/questionHistory.js';
-import moduleProgress from '../core/moduleProgress.js';
 import storageManager from '../core/storageManager.js';
 import studentSelector from './studentSelector.js';
 import progressDisplay from './progressDisplay.js';
@@ -72,7 +71,7 @@ class SetupScreen {
                         <input type="number"
                                id="questionCount"
                                min="1"
-                               max="20"
+                               max="100"
                                value="${this.questionCount}">
                         <button class="input-btn" id="increaseBtn">+</button>
                     </div>
@@ -85,6 +84,8 @@ class SetupScreen {
                     </select>
                     <span class="cooldown-info">🔄 Prevents seeing same questions</span>
                 </div>
+
+                ${this.renderAdaptiveControls()}
 
                 <div class="settings-actions" style="margin-top: 1rem;">
                     <button class="settings-btn" id="clearHistoryBtn" title="Clear question history">
@@ -171,8 +172,16 @@ class SetupScreen {
      * Render topic cards
      */
     renderTopics() {
+        // Get current student for progress checking
+        const currentStudent = storageManager.getCurrentStudent();
+
         return Object.values(MODULES).map(module => {
-            const isCompleted = moduleProgress.getProgress(module.id).completed;
+            // Check if module is completed for the current student
+            let isCompleted = false;
+            if (currentStudent && currentStudent.moduleProgress[module.id]) {
+                isCompleted = currentStudent.moduleProgress[module.id].completed;
+            }
+
             const completedClass = isCompleted ? 'completed' : '';
             const selectedClass = module.id === this.selectedModule ? 'selected' : '';
 
@@ -207,6 +216,36 @@ class SetupScreen {
                 ${opt.label}
             </option>
         `).join('');
+    }
+
+    /**
+     * Render adaptive learning controls (Phase 5)
+     */
+    renderAdaptiveControls() {
+        const currentStudent = storageManager.getCurrentStudent();
+
+        // Only show if student is selected
+        if (!currentStudent) {
+            return '';
+        }
+
+        const adaptiveProfile = storageManager.getAdaptiveProfile(currentStudent.id);
+        const isEnabled = adaptiveProfile ? adaptiveProfile.enabled : true;
+
+        return `
+            <div class="adaptive-controls" style="margin-top: 1.5rem;">
+                <div class="adaptive-controls-header">
+                    <label class="adaptive-controls-title">🎯 Adaptive Learning</label>
+                    <label class="adaptive-toggle">
+                        <input type="checkbox" id="adaptiveToggle" ${isEnabled ? 'checked' : ''}>
+                        <span class="adaptive-toggle-slider"></span>
+                    </label>
+                </div>
+                <p class="adaptive-controls-description">
+                    Automatically monitors performance and suggests difficulty adjustments during practice sessions to keep learning optimal.
+                </p>
+            </div>
+        `;
     }
 
     /**
@@ -287,7 +326,7 @@ class SetupScreen {
         });
 
         increaseBtn.addEventListener('click', () => {
-            if (this.questionCount < 20) {
+            if (this.questionCount < 100) {
                 this.questionCount++;
                 countInput.value = this.questionCount;
             }
@@ -296,7 +335,7 @@ class SetupScreen {
         countInput.addEventListener('change', (e) => {
             let value = parseInt(e.target.value);
             if (value < 1) value = 1;
-            if (value > 20) value = 20;
+            if (value > 100) value = 100;
             this.questionCount = value;
             countInput.value = value;
         });
@@ -327,21 +366,54 @@ class SetupScreen {
         viewStatsBtn.addEventListener('click', () => {
             this.viewStats();
         });
+
+        // Phase 5: Adaptive learning toggle
+        const adaptiveToggle = this.container.querySelector('#adaptiveToggle');
+        if (adaptiveToggle) {
+            adaptiveToggle.addEventListener('change', (e) => {
+                const currentStudent = storageManager.getCurrentStudent();
+                if (currentStudent) {
+                    storageManager.setAdaptiveEnabled(currentStudent.id, e.target.checked);
+                }
+            });
+        }
     }
 
     /**
-     * Clear question history
+     * Clear question history (and module progress for current student)
      */
     clearHistory() {
-        const confirmed = confirm(
-            'This will clear all question history.\n\n' +
-            'You may see previously seen questions again.\n\n' +
-            'Continue?'
-        );
+        const currentStudent = storageManager.getCurrentStudent();
+
+        let message = 'This will clear:\n' +
+                     '• Question history (duplicate tracking)\n';
+
+        if (currentStudent) {
+            message += `• Module progress for ${currentStudent.name}\n` +
+                      '• All practice sessions and statistics\n\n' +
+                      '⚠️ This cannot be undone!\n\n';
+        } else {
+            message += '\nYou may see previously seen questions again.\n\n';
+        }
+
+        message += 'Continue?';
+
+        const confirmed = confirm(message);
 
         if (confirmed) {
+            // Clear question history (duplicate tracking)
             questionHistory.clear();
-            alert('Question history cleared! ✓');
+
+            // Clear student-specific data if student is selected
+            if (currentStudent) {
+                storageManager.clearStudentHistory(currentStudent.id);
+            }
+
+            // Refresh UI to show cleared state
+            this.render();
+            this.attachEventListeners();
+
+            alert(`History cleared! ✓${currentStudent ? `\n\nAll data for ${currentStudent.name} has been reset.` : ''}`);
         }
     }
 

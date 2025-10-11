@@ -2,11 +2,8 @@
  * Module Completion Prompt Component
  *
  * Shows celebration overlay when student completes all 4 levels of a module.
- * Offers to mark the module as officially completed.
  * Part of Phase 3.5: Module Completion System
  */
-
-import moduleProgress from '../core/moduleProgress.js';
 
 class ModuleCompletionPrompt {
     constructor() {
@@ -15,22 +12,13 @@ class ModuleCompletionPrompt {
     }
 
     /**
-     * Show completion prompt for a module (auto-marks as complete)
+     * Show completion prompt for a module
      * @param {string} moduleId - Module identifier
      * @param {string} moduleName - Module display name
      * @param {string} moduleIcon - Module emoji icon
      * @returns {HTMLElement} Prompt element
      */
     show(moduleId, moduleName, moduleIcon) {
-        // Don't show if already marked complete
-        const progress = moduleProgress.getProgress(moduleId);
-        if (progress.completed) {
-            return null;
-        }
-
-        // Automatically mark as complete
-        moduleProgress.markModuleComplete(moduleId);
-
         // Remove existing prompt if any
         this.hide();
 

@@ -26,6 +26,54 @@ function shuffle(array) {
 }
 
 /**
+ * Helper: Pluralize a noun based on count
+ * @param {number} count - The count of items
+ * @param {string} singular - The singular form of the noun
+ * @param {string} [plural] - Optional custom plural form (defaults to adding 's')
+ * @returns {string} The correctly pluralized noun
+ */
+function pluralize(count, singular, plural = null) {
+    if (count === 1) {
+        return singular;
+    }
+    return plural || (singular + 's');
+}
+
+/**
+ * Helper: Get the correct verb form (handles third-person singular)
+ * @param {string} verb - The base verb (e.g., 'find', 'receive', 'buy')
+ * @param {boolean} thirdPersonSingular - Whether to use third-person singular form (e.g., 'finds')
+ * @returns {string} The correctly conjugated verb
+ */
+function conjugateVerb(verb, thirdPersonSingular = false) {
+    if (!thirdPersonSingular) {
+        return verb;
+    }
+
+    // Handle common irregular verbs
+    const irregulars = {
+        'have': 'has',
+        'do': 'does',
+        'go': 'goes'
+    };
+
+    if (irregulars[verb]) {
+        return irregulars[verb];
+    }
+
+    // Regular verbs: add 's' or 'es'
+    if (verb.endsWith('s') || verb.endsWith('sh') || verb.endsWith('ch') ||
+        verb.endsWith('x') || verb.endsWith('z')) {
+        return verb + 'es';
+    } else if (verb.endsWith('y') && !'aeiou'.includes(verb[verb.length - 2])) {
+        // e.g., 'carry' -> 'carries'
+        return verb.slice(0, -1) + 'ies';
+    } else {
+        return verb + 's';
+    }
+}
+
+/**
  * Generate number bonds question
  * @param {Object} params - Parameters for the current level
  * @param {number} level - Difficulty level (1-4)
@@ -50,15 +98,16 @@ export function generateBondsQuestion(params, level) {
     if (operation === 'subtraction') {
         if (questionType === 'word_problem') {
             const contexts = [
-                { item: 'apples', action: 'gives away' },
-                { item: 'sweets', action: 'eats' },
-                { item: 'pencils', action: 'loses' },
-                { item: 'stickers', action: 'gives to friends' }
+                { item: 'apple', action: 'give away', actionPresent: 'gives away' },
+                { item: 'sweet', action: 'eat', actionPresent: 'eats' },
+                { item: 'pencil', action: 'lose', actionPresent: 'loses' },
+                { item: 'sticker', action: 'give to friends', actionPresent: 'gives to friends' }
             ];
             const context = randomChoice(contexts);
+            const itemText = pluralize(total, context.item);
 
             return {
-                text: `Sam has ${total} ${context.item}. He ${context.action} ${part1}. How many does he have left?`,
+                text: `Sam has ${total} ${itemText}. He ${context.actionPresent} ${part1}. How many does he have left?`,
                 type: 'text_input',
                 answer: part2.toString(),
                 module: 'bonds',
@@ -105,15 +154,16 @@ export function generateBondsQuestion(params, level) {
         // Addition (missing addend)
         if (questionType === 'word_problem') {
             const contexts = [
-                { item: 'marbles', action: 'finds' },
-                { item: 'coins', action: 'gets' },
-                { item: 'toys', action: 'receives' },
-                { item: 'books', action: 'buys' }
+                { item: 'marble', action: 'find', actionPresent: 'finds' },
+                { item: 'coin', action: 'get', actionPresent: 'gets' },
+                { item: 'toy', action: 'receive', actionPresent: 'receives' },
+                { item: 'book', action: 'buy', actionPresent: 'buys' }
             ];
             const context = randomChoice(contexts);
+            const itemText = pluralize(part1, context.item);
 
             return {
-                text: `Lucy has ${part1} ${context.item}. She ${context.action} some more. Now she has ${total}. How many did she ${context.action}?`,
+                text: `Lucy has ${part1} ${itemText}. She ${context.actionPresent} some more. Now she has ${total}. How many did she ${context.action}?`,
                 type: 'text_input',
                 answer: part2.toString(),
                 module: 'bonds',

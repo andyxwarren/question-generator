@@ -26,6 +26,20 @@ function shuffle(array) {
 }
 
 /**
+ * Helper: Pluralize a noun based on count
+ * @param {number} count - The count of items
+ * @param {string} singular - The singular form of the noun
+ * @param {string} [plural] - Optional custom plural form (defaults to adding 's')
+ * @returns {string} The correctly pluralized noun
+ */
+function pluralize(count, singular, plural = null) {
+    if (count === 1) {
+        return singular;
+    }
+    return plural || (singular + 's');
+}
+
+/**
  * Generate multiplication question
  * @param {Object} params - Parameters for the current level
  * @param {number} level - Difficulty level (1-4)
@@ -50,15 +64,19 @@ export function generateMultiplyQuestion(params, level) {
     if (operation === 'division') {
         if (questionType === 'word_problem') {
             const contexts = [
-                { item: 'sweets', container: 'bags' },
-                { item: 'pencils', container: 'boxes' },
-                { item: 'apples', container: 'baskets' },
-                { item: 'books', container: 'shelves' }
+                { item: 'sweet', itemPlural: 'sweets', container: 'bag', containerPlural: 'bags' },
+                { item: 'pencil', itemPlural: 'pencils', container: 'box', containerPlural: 'boxes' },
+                { item: 'apple', itemPlural: 'apples', container: 'basket', containerPlural: 'baskets' },
+                { item: 'book', itemPlural: 'books', container: 'shelf', containerPlural: 'shelves' }
             ];
             const context = randomChoice(contexts);
+            const itemText = pluralize(product, context.item, context.itemPlural);
+            const containerText = pluralize(table, context.container, context.containerPlural);
+            const containerSingular = context.container;
+            const verb = product === 1 ? 'is' : 'are';
 
             return {
-                text: `${product} ${context.item} are shared equally into ${table} ${context.container}. How many ${context.item} in each ${context.container.slice(0, -1)}?`,
+                text: `${product} ${itemText} ${verb} shared equally into ${table} ${containerText}. How many ${itemText} in each ${containerSingular}?`,
                 type: 'text_input',
                 answer: multiplier.toString(),
                 module: 'multiply',
@@ -97,15 +115,19 @@ export function generateMultiplyQuestion(params, level) {
         // Multiplication
         if (questionType === 'word_problem') {
             const contexts = [
-                { item: 'flowers', container: 'vases' },
-                { item: 'cookies', container: 'boxes' },
-                { item: 'students', container: 'groups' },
-                { item: 'toys', container: 'bags' }
+                { item: 'flower', itemPlural: 'flowers', container: 'vase', containerPlural: 'vases' },
+                { item: 'cookie', itemPlural: 'cookies', container: 'box', containerPlural: 'boxes' },
+                { item: 'student', itemPlural: 'students', container: 'group', containerPlural: 'groups' },
+                { item: 'toy', itemPlural: 'toys', container: 'bag', containerPlural: 'bags' }
             ];
             const context = randomChoice(contexts);
+            const containerText = pluralize(multiplier, context.container, context.containerPlural);
+            const itemText = pluralize(table, context.item, context.itemPlural);
+            const itemTextAnswer = pluralize(product, context.item, context.itemPlural);
+            const thereVerb = multiplier === 1 ? 'is' : 'are';
 
             return {
-                text: `There are ${multiplier} ${context.container} with ${table} ${context.item} in each. How many ${context.item} in total?`,
+                text: `There ${thereVerb} ${multiplier} ${containerText} with ${table} ${itemText} in each. How many ${itemTextAnswer} in total?`,
                 type: 'text_input',
                 answer: product.toString(),
                 module: 'multiply',

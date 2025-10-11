@@ -61,6 +61,15 @@ class StorageManager {
             preferences: {
                 defaultLevel: 3,
                 defaultQuestionCount: 5
+            },
+            // Phase 5: Adaptive Difficulty Engine
+            adaptiveProfile: {
+                enabled: true,                    // Adaptive system enabled for this student
+                interventionHistory: [],          // Array of intervention records
+                preferences: {
+                    autoAdjust: false,            // Auto-accept recommendations (teacher override)
+                    interventionFrequency: 'normal' // 'low' | 'normal' | 'high'
+                }
             }
         };
 
@@ -533,6 +542,244 @@ class StorageManager {
 
         const totalTime = validSessions.reduce((sum, s) => sum + s.duration, 0);
         return Math.round(totalTime / validSessions.length);
+    }
+
+    /**
+     * Clear all history for a specific student (module progress + sessions)
+     * @param {string} studentId
+     * @returns {boolean} Success status
+     */
+    clearStudentHistory(studentId) {
+        const student = this.data.students[studentId];
+        if (!student) {
+            console.warn(`Student ${studentId} not found`);
+            return false;
+        }
+
+        // Clear module progress
+        student.moduleProgress = {};
+
+        // Clear all sessions for this student
+        Object.keys(this.data.sessions).forEach(sessionId => {
+            if (this.data.sessions[sessionId].studentId === studentId) {
+                delete this.data.sessions[sessionId];
+            }
+        });
+
+        // Reset student stats
+        student.totalSessions = 0;
+        student.totalQuestions = 0;
+        student.totalCorrect = 0;
+
+        // Keep adaptive profile (user preference)
+
+        this.data.lastModified = Date.now();
+        this.save();
+
+        console.log(`✓ Cleared all history for: ${student.name}`);
+        return true;
+    }
+
+    /**
+     * ===== ADAPTIVE PROFILE MANAGEMENT (Phase 5) =====
+     */
+
+    /**
+     * Get adaptive profile for a student
+     * @param {string} studentId
+     * @returns {Object|null} Adaptive profile or null
+     */
+    getAdaptiveProfile(studentId) {
+        const student = this.data.students[studentId];
+        if (!student) return null;
+
+        // Ensure adaptiveProfile exists (for legacy students)
+        if (!student.adaptiveProfile) {
+            student.adaptiveProfile = {
+                enabled: true,
+                interventionHistory: [],
+                preferences: {
+                    autoAdjust: false,
+                    interventionFrequency: 'normal'
+                }
+            };
+            this.save();
+        }
+
+        return student.adaptiveProfile;
+    }
+
+    /**
+     * Update adaptive preferences for a student
+     * @param {string} studentId
+     * @param {Object} preferences - Preferences to update
+     * @returns {boolean} Success status
+     */
+    updateAdaptivePreferences(studentId, preferences) {
+        const student = this.data.students[studentId];
+        if (!student) {
+            console.warn(`Student ${studentId} not found`);
+            return false;
+        }
+
+        const profile = this.getAdaptiveProfile(studentId);
+        profile.preferences = { ...profile.preferences, ...preferences };
+
+        this.data.lastModified = Date.now();
+        this.save();
+
+        console.log(`✓ Updated adaptive preferences for ${student.name}`);
+        return true;
+    }
+
+    /**
+     * Enable or disable adaptive system for a student
+     * @param {string} studentId
+     * @param {boolean} enabled
+     * @returns {boolean} Success status
+     */
+    setAdaptiveEnabled(studentId, enabled) {
+        const student = this.data.students[studentId];
+        if (!student) {
+            console.warn(`Student ${studentId} not found`);
+            return false;
+        }
+
+        const profile = this.getAdaptiveProfile(studentId);
+        profile.enabled = enabled;
+
+        this.data.lastModified = Date.now();
+        this.save();
+
+        console.log(`✓ Adaptive system ${enabled ? 'ENABLED' : 'DISABLED'} for ${student.name}`);
+        return true;
+    }
+
+    /**
+     * Record an intervention (suggestion made to student)
+     * @param {string} studentId
+     * @param {Object} intervention - Intervention data from adaptiveDifficultyEngine
+     * @param {boolean} accepted - Whether student accepted the suggestion
+     * @param {string} sessionId - Session where intervention occurred
+     */
+    recordIntervention(studentId, intervention, accepted, sessionId) {
+        const student = this.data.students[studentId];
+        if (!student) {
+            console.warn(`Student ${studentId} not found`);
+            return;
+        }
+
+        const profile = this.getAdaptiveProfile(studentId);
+
+        const interventionRecord = {
+            id: this.generateId('intervention'),
+            timestamp: Date.now(),
+            sessionId,
+            moduleId: intervention.moduleId,
+            currentLevel: intervention.currentLevel,
+            suggestedLevel: intervention.suggestedLevel,
+            type: intervention.type, // 'decrease' | 'increase' | 'switch_module'
+            reason: intervention.reason,
+            confidenceScore: intervention.confidence.score,
+            confidenceLevel: intervention.confidence.level,
+            accepted,
+            triggeredAt: intervention.triggeredAt // Question number
+        };
+
+        profile.interventionHistory.push(interventionRecord);
+
+        // Keep only last 50 interventions per student (prevent unbounded growth)
+        if (profile.interventionHistory.length > 50) {
+            profile.interventionHistory = profile.interventionHistory.slice(-50);
+        }
+
+        this.data.lastModified = Date.now();
+        this.save();
+
+        console.log(`✓ Recorded intervention: ${intervention.type} ${accepted ? 'ACCEPTED' : 'DECLINED'}`);
+    }
+
+    /**
+     * Get intervention history for a student
+     * @param {string} studentId
+     * @param {Object} [filters] - Optional filters { moduleId, limit, accepted }
+     * @returns {Array} Array of intervention records
+     */
+    getInterventionHistory(studentId, filters = {}) {
+        const profile = this.getAdaptiveProfile(studentId);
+        if (!profile) return [];
+
+        let history = [...profile.interventionHistory];
+
+        // Apply filters
+        if (filters.moduleId) {
+            history = history.filter(i => i.moduleId === filters.moduleId);
+        }
+        if (filters.accepted !== undefined) {
+            history = history.filter(i => i.accepted === filters.accepted);
+        }
+
+        // Sort by timestamp (newest first)
+        history.sort((a, b) => b.timestamp - a.timestamp);
+
+        // Apply limit
+        if (filters.limit) {
+            history = history.slice(0, filters.limit);
+        }
+
+        return history;
+    }
+
+    /**
+     * Get intervention statistics for a student
+     * @param {string} studentId
+     * @returns {Object} Statistics about interventions
+     */
+    getInterventionStats(studentId) {
+        const history = this.getInterventionHistory(studentId);
+
+        if (history.length === 0) {
+            return {
+                totalInterventions: 0,
+                acceptedCount: 0,
+                declinedCount: 0,
+                acceptanceRate: 0,
+                byType: {},
+                mostCommonType: null
+            };
+        }
+
+        const acceptedCount = history.filter(i => i.accepted).length;
+        const declinedCount = history.length - acceptedCount;
+
+        // Count by type
+        const byType = {};
+        history.forEach(i => {
+            if (!byType[i.type]) {
+                byType[i.type] = { total: 0, accepted: 0, declined: 0 };
+            }
+            byType[i.type].total++;
+            if (i.accepted) {
+                byType[i.type].accepted++;
+            } else {
+                byType[i.type].declined++;
+            }
+        });
+
+        // Find most common type
+        const mostCommonType = Object.keys(byType).reduce((max, type) => {
+            return byType[type].total > (byType[max]?.total || 0) ? type : max;
+        }, null);
+
+        return {
+            totalInterventions: history.length,
+            acceptedCount,
+            declinedCount,
+            acceptanceRate: Math.round((acceptedCount / history.length) * 100),
+            byType,
+            mostCommonType,
+            recentInterventions: history.slice(0, 5)
+        };
     }
 
     /**

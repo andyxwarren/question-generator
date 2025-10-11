@@ -5,15 +5,19 @@
  * Includes streak tracking and auto power-up system (Phase 3).
  * Tracks module completion progress (Phase 3.5).
  * Integrates with StorageManager for detailed session tracking (Phase 4).
+ * Integrates with Adaptive Difficulty Engine for real-time performance monitoring (Phase 5).
  */
 
 import validator from '../core/validator.js';
 import OnScreenKeyboard from './onScreenKeyboard.js';
 import streakTracker from '../core/streakTracker.js';
 import powerUpButton from './powerUpButton.js';
-import moduleProgress from '../core/moduleProgress.js';
 import moduleCompletionPrompt from './moduleCompletionPrompt.js';
 import storageManager from '../core/storageManager.js';
+import performanceAnalyzer from '../core/performanceAnalyzer.js';
+import adaptiveDifficultyEngine from '../core/adaptiveDifficultyEngine.js';
+import confidenceMeter from './confidenceMeter.js';
+import adaptiveSuggestionModal from './adaptiveSuggestionModal.js';
 
 class PracticeScreen {
     constructor() {
@@ -72,6 +76,29 @@ class PracticeScreen {
             console.log('ℹ No student selected - session tracking disabled');
         }
 
+        // Phase 5: Initialize adaptive system if student is selected
+        if (currentStudent) {
+            const adaptiveProfile = storageManager.getAdaptiveProfile(currentStudent.id);
+
+            // Check if adaptive is enabled for this student
+            if (adaptiveProfile && adaptiveProfile.enabled) {
+                // Reset and start performance tracking
+                performanceAnalyzer.startSession(
+                    this.sessionId,
+                    currentStudent.id,
+                    moduleId,
+                    level
+                );
+
+                // Reset adaptive engine for new session
+                adaptiveDifficultyEngine.resetSession();
+
+                console.log('🎯 Adaptive system: ENABLED for this session');
+            } else {
+                console.log('🎯 Adaptive system: DISABLED for this student');
+            }
+        }
+
         this.render();
         this.showQuestion();
     }
@@ -80,12 +107,26 @@ class PracticeScreen {
      * Render the practice screen structure
      */
     render() {
+        // Check which system is active
+        const currentStudent = storageManager.getCurrentStudent();
+        const adaptiveProfile = currentStudent ? storageManager.getAdaptiveProfile(currentStudent.id) : null;
+        const adaptiveEnabled = adaptiveProfile && adaptiveProfile.enabled;
+
+        // Build system indicator
+        const systemIndicator = adaptiveEnabled
+            ? '<span class="system-indicator adaptive">🎯 Adaptive Learning</span>'
+            : '<span class="system-indicator powerup">⚡ Power-Up Mode</span>';
+
         this.container.innerHTML = `
+            <div id="confidenceMeterContainer"></div>
+
             <div class="practice-header">
                 <div class="progress-info">
                     <span class="question-counter">
                         Question <span id="currentQ">1</span> of <span id="totalQ">${this.questions.length}</span>
                     </span>
+                    <span class="level-display" id="levelDisplay">${this.getLevelName(this.currentLevel)}</span>
+                    ${systemIndicator}
                 </div>
                 <div class="score-display">
                     <div class="score-item correct">
@@ -110,6 +151,14 @@ class PracticeScreen {
                 </div>
             </div>
         `;
+
+        // Phase 5: Initialize and show confidence meter if adaptive is enabled
+        // Reuse currentStudent and adaptiveEnabled from above
+        if (adaptiveEnabled) {
+            const meterContainer = this.container.querySelector('#confidenceMeterContainer');
+            confidenceMeter.init(meterContainer);
+            confidenceMeter.show();
+        }
     }
 
     /**
@@ -152,6 +201,22 @@ class PracticeScreen {
             'text_input': 'Type Your Answer'
         };
         return labels[type] || 'Question';
+    }
+
+    /**
+     * Get formatted level name
+     * @param {number} level - Difficulty level (1-4)
+     * @returns {string} Formatted level display (e.g., "Level 1 (Beginning)")
+     */
+    getLevelName(level) {
+        const levelNames = {
+            1: 'Beginning',
+            2: 'Developing',
+            3: 'Meeting',
+            4: 'Exceeding'
+        };
+        const name = levelNames[level] || 'Unknown';
+        return `Level ${level} (${name})`;
     }
 
     /**
@@ -276,8 +341,6 @@ class PracticeScreen {
         // Update score
         if (result.isCorrect) {
             this.score.correct++;
-            // Track correct answer for module progress (Phase 3.5)
-            moduleProgress.recordCorrectAnswer(this.currentModule, this.currentLevel);
         } else {
             this.score.incorrect++;
         }
@@ -299,48 +362,114 @@ class PracticeScreen {
             storageManager.updateBestStreak(this.sessionId, streakStatus.currentStreak);
         }
 
+        // Phase 5: Record result in performance analyzer (only if adaptive enabled)
+        const currentStudent = storageManager.getCurrentStudent();
+        if (currentStudent) {
+            const adaptiveProfile = storageManager.getAdaptiveProfile(currentStudent.id);
+            if (adaptiveProfile && adaptiveProfile.enabled && performanceAnalyzer.sessionId) {
+                // Record question result
+                performanceAnalyzer.recordResult({
+                    correct: result.isCorrect,
+                    timeMs: responseTimeMs,
+                    questionText: question.text,
+                    answer: answer
+                });
+
+                // Update confidence meter
+                const confidenceData = adaptiveDifficultyEngine.calculateConfidenceScore();
+                confidenceMeter.update(confidenceData);
+
+                // Check for intervention (after showing feedback)
+                // Only runs when adaptive is ENABLED
+                const questionsAnswered = this.score.correct + this.score.incorrect;
+                setTimeout(() => {
+                    this.checkForAdaptiveIntervention(questionsAnswered);
+                }, 1500); // After feedback is shown
+            }
+        }
+
         this.showFeedback(result, streakStatus);
         this.disableAnswerInputs();
         this.updateProgress();
         this.updateStreakDisplay();
 
-        // Show power-up button if available (not at max level)
-        if (streakStatus.justUnlocked && this.currentLevel < 4) {
-            setTimeout(() => {
-                powerUpButton.show(() => this.handlePowerUp());
-            }, 800); // Brief delay for better UX
-        }
-
         // At Level 4 with 3-streak: offer to complete module and end session
         if (streakStatus.justUnlocked && this.currentLevel === 4) {
-            // Check if module would be complete
-            if (moduleProgress.isModuleComplete(this.currentModule)) {
-                setTimeout(() => {
-                    this.showLevel4CompletionOffer();
-                }, 800);
+            // Check if module would be complete (student-specific)
+            // Reuse currentStudent from above
+            if (currentStudent) {
+                const isComplete = this.isModuleCompleteForStudent(currentStudent.id, this.currentModule);
+                if (isComplete) {
+                    setTimeout(() => {
+                        this.showLevel4CompletionOffer();
+                    }, 800);
+                }
             }
         }
+    }
 
-        // Hide power-up button if streak was lost
-        if (streakStatus.lostPowerUp) {
-            powerUpButton.hide();
+    /**
+     * Check if module is complete for a specific student
+     * @param {string} studentId - Student ID
+     * @param {string} moduleId - Module ID
+     * @returns {boolean} True if all 4 levels have 3+ correct answers
+     */
+    isModuleCompleteForStudent(studentId, moduleId) {
+        const student = storageManager.getStudent(studentId);
+        if (!student || !student.moduleProgress[moduleId]) {
+            return false;
         }
+
+        const moduleProgress = student.moduleProgress[moduleId];
+        return moduleProgress.levels[1] >= 3 &&
+               moduleProgress.levels[2] >= 3 &&
+               moduleProgress.levels[3] >= 3 &&
+               moduleProgress.levels[4] >= 3;
     }
 
     /**
      * Show feedback after answer submission
      */
-    showFeedback(result) {
+    showFeedback(result, streakStatus) {
         const feedbackArea = this.container.querySelector('#feedbackArea');
 
+        // Check if adaptive is enabled (to make systems mutually exclusive)
+        const currentStudent = storageManager.getCurrentStudent();
+        const adaptiveProfile = currentStudent ? storageManager.getAdaptiveProfile(currentStudent.id) : null;
+        const adaptiveEnabled = adaptiveProfile && adaptiveProfile.enabled;
+
+        // Check if power-up is available (3-streak at non-max level)
+        // Only show power-up if adaptive is DISABLED
+        const powerUpAvailable = !adaptiveEnabled && streakStatus && streakStatus.justUnlocked && this.currentLevel < 4;
+
         if (result.isCorrect) {
-            feedbackArea.innerHTML = `
-                <div class="feedback feedback-correct">
-                    <span class="feedback-icon">✓</span>
-                    <span class="feedback-text">Correct! Well done!</span>
-                </div>
-                <button class="next-btn" id="nextBtn">Next Question →</button>
-            `;
+            if (powerUpAvailable) {
+                // Show inline power-up choice
+                const newLevel = this.currentLevel + 1;
+                feedbackArea.innerHTML = `
+                    <div class="feedback feedback-correct feedback-powerup">
+                        <span class="feedback-icon">🎉</span>
+                        <span class="feedback-text">3 in a row! You can level up!</span>
+                    </div>
+                    <div class="feedback-powerup-choice">
+                        <button class="powerup-primary-btn" id="powerUpBtn">
+                            ⚡ Power Up to ${this.getLevelName(newLevel)}!
+                        </button>
+                        <button class="powerup-secondary-btn" id="stayBtn">
+                            Stay at ${this.getLevelName(this.currentLevel)}
+                        </button>
+                    </div>
+                `;
+            } else {
+                // Regular correct feedback
+                feedbackArea.innerHTML = `
+                    <div class="feedback feedback-correct">
+                        <span class="feedback-icon">✓</span>
+                        <span class="feedback-text">Correct! Well done!</span>
+                    </div>
+                    <button class="next-btn" id="nextBtn">Next Question →</button>
+                `;
+            }
         } else {
             feedbackArea.innerHTML = `
                 <div class="feedback feedback-incorrect">
@@ -364,11 +493,30 @@ class PracticeScreen {
             });
         }
 
-        // Attach next button listener
-        const nextBtn = this.container.querySelector('#nextBtn');
-        nextBtn.addEventListener('click', () => {
-            this.nextQuestion();
-        });
+        // Attach button listeners
+        if (powerUpAvailable) {
+            // Power-up choice buttons
+            const powerUpBtn = feedbackArea.querySelector('#powerUpBtn');
+            const stayBtn = feedbackArea.querySelector('#stayBtn');
+
+            powerUpBtn.addEventListener('click', () => {
+                this.handlePowerUp();
+            });
+
+            stayBtn.addEventListener('click', () => {
+                // Consume power-up but don't level up
+                streakTracker.consumePowerUp();
+                this.nextQuestion();
+            });
+        } else {
+            // Regular next button
+            const nextBtn = feedbackArea.querySelector('#nextBtn');
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    this.nextQuestion();
+                });
+            }
+        }
     }
 
     /**
@@ -407,13 +555,31 @@ class PracticeScreen {
      * Update progress display
      */
     updateProgress() {
-        this.container.querySelector('#currentQ').textContent = this.currentIndex + 1;
-        this.container.querySelector('#totalQ').textContent = this.questions.length;
+        const currentQ = this.currentIndex + 1;
+        const totalQ = this.questions.length;
+
+        // Update question counters
+        this.container.querySelector('#currentQ').textContent = currentQ;
+        this.container.querySelector('#totalQ').textContent = totalQ;
+
+        // Update score
         this.container.querySelector('#correctCount').textContent = this.score.correct;
         this.container.querySelector('#incorrectCount').textContent = this.score.incorrect;
 
-        const progress = ((this.currentIndex + 1) / this.questions.length) * 100;
-        this.container.querySelector('#progressFill').style.width = `${progress}%`;
+        // Calculate and update progress bar
+        const progress = Math.min(100, Math.max(0, (currentQ / totalQ) * 100));
+        const progressFill = this.container.querySelector('#progressFill');
+        if (progressFill) {
+            progressFill.style.width = `${progress.toFixed(1)}%`;
+        }
+
+        // Update level display badge
+        const levelDisplay = this.container.querySelector('#levelDisplay');
+        if (levelDisplay) {
+            levelDisplay.textContent = this.getLevelName(this.currentLevel);
+        }
+
+        console.log(`Progress: Q${currentQ}/${totalQ} (${progress.toFixed(1)}%) - L${this.currentLevel} - Score: ${this.score.correct}/${this.score.correct + this.score.incorrect}`);
     }
 
     /**
@@ -462,10 +628,11 @@ class PracticeScreen {
         // Show celebration overlay
         this.showPowerUpOverlay(this.currentLevel, newLevel);
 
-        // After celebration, continue with new level questions
+        // After celebration, transition to new level and advance to next question
         setTimeout(() => {
             this.transitionToNewLevel(newLevel);
-        }, 3000);
+            this.nextQuestion(); // Student is still on current question, so advance now
+        }, 1500);
     }
 
     /**
@@ -489,15 +656,27 @@ class PracticeScreen {
             if (overlay.parentNode) {
                 overlay.parentNode.removeChild(overlay);
             }
-        }, 3000);
+        }, 1500);
     }
 
     /**
      * Transition to new difficulty level
+     * NOTE: Does NOT advance to next question - caller should do that if needed
      */
     transitionToNewLevel(newLevel) {
+        const oldLevel = this.currentLevel;
+
         // Update current level
         this.currentLevel = newLevel;
+
+        // Update performance analyzer level (for adaptive system)
+        const currentStudent = storageManager.getCurrentStudent();
+        if (currentStudent) {
+            const adaptiveProfile = storageManager.getAdaptiveProfile(currentStudent.id);
+            if (adaptiveProfile && adaptiveProfile.enabled && performanceAnalyzer.sessionId) {
+                performanceAnalyzer.updateLevel(newLevel);
+            }
+        }
 
         // Calculate how many questions remain
         const questionsRemaining = this.questions.length - (this.currentIndex + 1);
@@ -521,8 +700,14 @@ class PracticeScreen {
             ...newQuestions
         ];
 
-        // Continue to next question (which will be at new level)
-        this.nextQuestion();
+        // Update UI to reflect new level
+        this.updateProgress(); // Updates level badge and progress bar
+
+        console.log(`✓ Level transition complete: L${oldLevel} → L${newLevel}`);
+
+        // NOTE: Caller is responsible for calling nextQuestion() if appropriate
+        // - Power-up: student is still on current question, so nextQuestion() should be called
+        // - Adaptive: student has already moved to next question, so nextQuestion() should NOT be called
     }
 
     /**
@@ -592,11 +777,29 @@ class PracticeScreen {
             }
         }, 300);
 
-        // Mark module as complete
-        moduleProgress.markModuleComplete(this.currentModule);
+        // Mark module as complete (student-specific)
+        const currentStudent = storageManager.getCurrentStudent();
+        if (currentStudent) {
+            this.markModuleCompleteForStudent(currentStudent.id, this.currentModule);
+        }
 
         // End the session
         this.finish();
+    }
+
+    /**
+     * Mark a module as complete for a specific student
+     * @param {string} studentId - Student ID
+     * @param {string} moduleId - Module ID
+     */
+    markModuleCompleteForStudent(studentId, moduleId) {
+        const student = storageManager.getStudent(studentId);
+        if (!student || !student.moduleProgress[moduleId]) {
+            return;
+        }
+
+        student.moduleProgress[moduleId].completed = true;
+        storageManager.save();
     }
 
     /**
@@ -613,15 +816,118 @@ class PracticeScreen {
     }
 
     /**
+     * Check for adaptive intervention (Phase 5)
+     * Only called when adaptive system is ENABLED
+     * @param {number} questionsAnswered - Total questions answered so far
+     */
+    checkForAdaptiveIntervention(questionsAnswered) {
+        // Don't check if modal is already showing
+        if (adaptiveSuggestionModal.isShowing()) {
+            return;
+        }
+
+        // Check for intervention
+        const intervention = adaptiveDifficultyEngine.checkForIntervention(questionsAnswered);
+
+        if (intervention) {
+            const currentStudent = storageManager.getCurrentStudent();
+
+            // Show suggestion modal
+            adaptiveSuggestionModal.show(
+                intervention,
+                this.sessionId,
+                currentStudent.id,
+                (suggestedLevel) => this.handleAdaptiveAccept(intervention, suggestedLevel),
+                () => this.handleAdaptiveDecline(intervention)
+            );
+        }
+    }
+
+    /**
+     * Handle student accepting adaptive suggestion
+     * @param {Object} intervention - Intervention data
+     * @param {number} suggestedLevel - Suggested difficulty level
+     */
+    handleAdaptiveAccept(intervention, suggestedLevel) {
+        if (intervention.type === 'switch_module') {
+            // For module switch, end current session and return to setup
+            console.log('🎯 Student accepted module switch suggestion');
+            this.finish();
+            return;
+        }
+
+        // For level change (increase or decrease)
+        console.log(`🎯 Student accepted level change: L${this.currentLevel} → L${suggestedLevel}`);
+
+        // Show transition overlay
+        this.showAdaptiveLevelChangeOverlay(this.currentLevel, suggestedLevel, intervention.type);
+
+        // After animation, transition to new level
+        setTimeout(() => {
+            this.transitionToNewLevel(suggestedLevel);
+        }, 2500);
+    }
+
+    /**
+     * Handle student declining adaptive suggestion
+     * @param {Object} intervention - Intervention data
+     */
+    handleAdaptiveDecline(intervention) {
+        console.log('🎯 Student declined adaptive suggestion');
+        // Just continue with current level - no action needed
+    }
+
+    /**
+     * Show adaptive level change overlay
+     * @param {number} oldLevel - Current level
+     * @param {number} newLevel - New level
+     * @param {string} type - Intervention type ('increase' or 'decrease')
+     */
+    showAdaptiveLevelChangeOverlay(oldLevel, newLevel, type) {
+        const overlay = document.createElement('div');
+        overlay.className = 'power-up-overlay'; // Reuse power-up overlay styles
+
+        const icon = type === 'increase' ? '🌟' : '🤝';
+        const title = type === 'increase' ? 'Challenge Accepted!' : 'Good Choice!';
+        const message = type === 'increase'
+            ? 'Get ready for harder questions!'
+            : 'Let\'s build your confidence!';
+
+        overlay.innerHTML = `
+            <div class="power-up-card">
+                <div class="power-up-icon">${icon}</div>
+                <h2>${title}</h2>
+                <p>Level ${oldLevel} → Level ${newLevel}</p>
+                <p class="power-up-subtitle">${message}</p>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        // Remove overlay after animation
+        setTimeout(() => {
+            if (overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+            }
+        }, 2500);
+    }
+
+    /**
      * Finish practice session
      */
     finish() {
         const endTime = Date.now();
         const timeSpent = Math.floor((endTime - this.startTime) / 1000); // seconds
 
-        // Check if module just became complete (Phase 3.5)
-        const moduleComplete = moduleProgress.isModuleComplete(this.currentModule);
-        const alreadyMarkedComplete = moduleProgress.getProgress(this.currentModule).completed;
+        // Check if module just became complete (student-specific)
+        const currentStudent = storageManager.getCurrentStudent();
+        let moduleComplete = false;
+        let alreadyMarkedComplete = false;
+
+        if (currentStudent) {
+            moduleComplete = this.isModuleCompleteForStudent(currentStudent.id, this.currentModule);
+            const moduleProgress = currentStudent.moduleProgress[this.currentModule];
+            alreadyMarkedComplete = moduleProgress ? moduleProgress.completed : false;
+        }
 
         // Calculate final score
         const totalQuestions = this.score.correct + this.score.incorrect;
@@ -642,6 +948,12 @@ class PracticeScreen {
             console.log(`✓ Session completed: ${finalScore.correct}/${finalScore.total} (${finalScore.percentage}%)`);
         }
 
+        // Phase 5: Clean up adaptive system
+        if (performanceAnalyzer.sessionId) {
+            performanceAnalyzer.endSession();
+        }
+        confidenceMeter.hide();
+
         const sessionData = {
             questions: this.questions,
             score: this.score,
@@ -654,7 +966,13 @@ class PracticeScreen {
 
         // Show module completion prompt if just completed
         if (moduleComplete && !alreadyMarkedComplete) {
-            // Import module info
+            // Mark module as complete for this student
+            if (currentStudent) {
+                this.markModuleCompleteForStudent(currentStudent.id, this.currentModule);
+                console.log(`🏆 Module ${this.currentModule} marked as complete for student ${currentStudent.id}`);
+            }
+
+            // Import module info and show completion prompt
             import('../curriculum/modules.js').then(({ MODULES }) => {
                 const module = MODULES[this.currentModule];
                 if (module) {
