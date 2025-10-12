@@ -13,7 +13,7 @@ This framework defines parameters for each module across 4 difficulty levels:
 
 ### 1. NUMBER AND PLACE VALUE
 
-#### A. Counting (in multiples)
+#### A. Counting (in multiples) - UID: N01_Y1_NPV
 **Example Module**: "Count to and across 100, forwards and backwards, beginning with 0 or 1"
 
 | Parameter | Level 1 (Beginning) | Level 2 (Developing) | Level 3 (Meeting) | Level 4 (Exceeding) |
@@ -25,7 +25,7 @@ This framework defines parameters for each module across 4 difficulty levels:
 | directions | [forwards] | [forwards, backwards] | [forwards, backwards] | [forwards, backwards] |
 | sequence_length | 5-10 | 10-15 | 15-20 | 20-30 |
 
-#### B. Place Value & Number Recognition
+#### B. Place Value & Number Recognition - UID: N02_Y5_NPV
 **Example Module**: "Read, write, order and compare numbers to at least 1,000,000"
 
 | Parameter | Level 1 | Level 2 | Level 3 | Level 4 |
@@ -41,8 +41,8 @@ This framework defines parameters for each module across 4 difficulty levels:
 
 ### 2. CALCULATIONS
 
-#### A. Addition & Subtraction
-**Example Module**: "Add and subtract numbers mentally, including three-digit numbers and ones/tens/hundreds"
+#### A. Addition & Subtraction - UID: C01_Y3_CALC
+**Example Module**: "add and subtract numbers mentally, including: a three-digit number and ones, a three-digit number and tens, a three-digit number and hundreds"
 
 | Parameter | Level 1 | Level 2 | Level 3 | Level 4 |
 |-----------|---------|---------|---------|---------|
@@ -54,8 +54,8 @@ This framework defines parameters for each module across 4 difficulty levels:
 | problem_steps | 1 | 1 | 1-2 | 2-3 |
 | context_type | [abstract] | [simple word problems] | [varied contexts] | [complex real-world] |
 
-#### B. Multiplication & Division
-**Example Module**: "Recall multiplication and division facts for 3, 4 and 8 times tables"
+#### B. Multiplication & Division - UID: C06_Y3_CALC
+**Example Module**: "recall and use multiplication and division facts for the 3, 4 and 8 multiplication tables"
 
 | Parameter | Level 1 | Level 2 | Level 3 | Level 4 |
 |-----------|---------|---------|---------|---------|
@@ -71,7 +71,7 @@ This framework defines parameters for each module across 4 difficulty levels:
 
 ### 3. FRACTIONS, DECIMALS & PERCENTAGES
 
-#### A. Fraction Recognition & Equivalence
+#### A. Fraction Recognition & Equivalence - UID: F02_Y5_FRAC
 **Example Module**: "Recognise and write equivalent fractions"
 
 | Parameter | Level 1 | Level 2 | Level 3 | Level 4 |
@@ -83,7 +83,7 @@ This framework defines parameters for each module across 4 difficulty levels:
 | equivalences_shown | 2 | 2-3 | 3-4 | 4-6 |
 | simplification_required | false | false | true | true |
 
-#### B. Decimal Operations
+#### B. Decimal Operations - UID: C06_Y5_CALC
 **Example Module**: "Multiply and divide decimals by 10, 100, 1000"
 
 | Parameter | Level 1 | Level 2 | Level 3 | Level 4 |

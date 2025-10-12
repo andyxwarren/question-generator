@@ -104,6 +104,8 @@ function exportCodebase(rootDir) {
     "codebase_dump.md", // ✅ exclude markdown files
     'gitignore',
     "*.md", // ✅ exclude markdown files
+    "*.csv",
+    "*.png"
   ];
 
   const outputFilename = "codebase_dump.md";

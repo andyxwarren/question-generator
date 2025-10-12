@@ -79,7 +79,7 @@ export function generateMultiplyQuestion(params, level) {
                 text: `${product} ${itemText} ${verb} shared equally into ${table} ${containerText}. How many ${itemText} in each ${containerSingular}?`,
                 type: 'text_input',
                 answer: multiplier.toString(),
-                module: 'multiply',
+                module: 'C06_Y3_CALC',
                 level: level
             };
         } else {
@@ -89,7 +89,7 @@ export function generateMultiplyQuestion(params, level) {
                 type: 'text_input',
                 answer: multiplier.toString(),
                 hint: `Think: ${table} times what equals ${product}?`,
-                module: 'multiply',
+                module: 'C06_Y3_CALC',
                 level: level
             };
         }
@@ -108,7 +108,7 @@ export function generateMultiplyQuestion(params, level) {
             type: 'multiple_choice',
             options: options,
             answer: correctAnswer.toString(),
-            module: 'multiply',
+            module: 'C06_Y3_CALC',
             level: level
         };
     } else {
@@ -130,7 +130,7 @@ export function generateMultiplyQuestion(params, level) {
                 text: `There ${thereVerb} ${multiplier} ${containerText} with ${table} ${itemText} in each. How many ${itemTextAnswer} in total?`,
                 type: 'text_input',
                 answer: product.toString(),
-                module: 'multiply',
+                module: 'C06_Y3_CALC',
                 level: level
             };
         } else if (questionType === 'missing_factor') {
@@ -140,7 +140,7 @@ export function generateMultiplyQuestion(params, level) {
                 type: 'text_input',
                 answer: multiplier.toString(),
                 hint: `What times ${table} equals ${product}?`,
-                module: 'multiply',
+                module: 'C06_Y3_CALC',
                 level: level
             };
         } else {
@@ -149,7 +149,7 @@ export function generateMultiplyQuestion(params, level) {
                 text: `${table} × ${multiplier} = ?`,
                 type: 'text_input',
                 answer: product.toString(),
-                module: 'multiply',
+                module: 'C06_Y3_CALC',
                 level: level
             };
         }
@@ -160,6 +160,6 @@ export function generateMultiplyQuestion(params, level) {
  * Register this generator
  */
 export default {
-    moduleId: 'multiply',
+    moduleId: 'C06_Y3_CALC',
     generate: generateMultiplyQuestion
 };

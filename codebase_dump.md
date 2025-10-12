@@ -1,7 +1,7 @@
 # 🧾 Codebase Export
-_Generated on 11/10/2025, 07:15:33_
+_Generated on 12/10/2025, 09:36:24_
 
-**Total files included:** 40
+**Total files included:** 38
 
 ---
 ### `.claude\settings.local.json`
@@ -2500,351 +2500,6 @@ _Generated on 11/10/2025, 07:15:33_
 ```
 
 ---
-### `docs\national_curriculum_framework_excel.csv`
-**Type:** csv
-
-```csv
-﻿Strand,Substrand,Content domain reference,Year,Module
-Number and place value,counting (in multiples),N1,Year 1,"count to and across 100, forwards and backwards, beginning with 0 or 1, or from any given number; count in multiples of twos, fives and tens"
-Number and place value,counting (in multiples),N1,Year 2,"count in steps of 2, 3, and 5 from 0, and in tens from any number, forward or backward"
-Number and place value,counting (in multiples),N1,Year 3,"count from 0 in multiples of 4, 8, 50 and 100"
-Number and place value,counting (in multiples),N1,Year 4,"count in multiples of 6, 7, 9, 25 and 1,000"
-Number and place value,counting (in multiples),N1,Year 5,"count forwards or backwards in steps of powers of 10 for any given number up to 1,000,000"
-Number and place value,counting (in multiples),N1,Year 6,
-Number and place value,"read, write, order and compare numbers",N2,Year 1,"count, read and write numbers to 100 in numerals; given a number, identify one more and one less; read and write numbers from 1 to 20 in numerals and words"
-Number and place value,"read, write, order and compare numbers",N2,Year 2,"read and write numbers to at least 100 in numerals and in words; compare and order numbers from 0 up to 100; use <, > and = signs"
-Number and place value,"read, write, order and compare numbers",N2,Year 3,"compare and order numbers up to 1,000; read and write numbers to 1,000 in numerals and in words; find 10 or 100 more or less than a given number"
-Number and place value,"read, write, order and compare numbers",N2,Year 4,"order and compare numbers beyond 1,000; find 1,000 more or less than a given number"
-Number and place value,"read, write, order and compare numbers",N2,Year 5,"read, write, order and compare numbers to at least 1,000,000"
-Number and place value,"read, write, order and compare numbers",N2,Year 6,"read, write, order and compare numbers up to 10,000,000"
-Number and place value,place value; roman numerals,N3,Year 1,
-Number and place value,place value; roman numerals,N3,Year 2,"recognise the place value of each digit in a two-digit number (tens, ones)"
-Number and place value,place value; roman numerals,N3,Year 3,"recognise the place value of each digit in a three-digit number (hundreds, tens, ones)"
-Number and place value,place value; roman numerals,N3,Year 4,"recognise the place value of each digit in a four-digit number (thousands, hundreds, tens and ones); read Roman numerals to 100 (I to C) and know that over time, the numeral system changed to include the concept of zero and place value"
-Number and place value,place value; roman numerals,N3,Year 5,"determine the value of each digit in numbers up to 1,000,000; read Roman numerals to 1,000 (M) and recognise years written in Roman numerals"
-Number and place value,place value; roman numerals,N3,Year 6,"determine the value of each digit in numbers up to 10,000,000"
-Number and place value,"identify, represent and estimate; rounding",N4,Year 1,"identify and represent numbers using objects and pictorial representations including the number line, and use the language of: equal to, more than, less than (fewer), most, least"
-Number and place value,"identify, represent and estimate; rounding",N4,Year 2,"identify, represent and estimate numbers using different representations, including the number line"
-Number and place value,"identify, represent and estimate; rounding",N4,Year 3,"identify, represent and estimate numbers using different representations"
-Number and place value,"identify, represent and estimate; rounding",N4,Year 4,"identify, represent and estimate numbers using different representations; round any number to the nearest 10, 100 or 1,000"
-Number and place value,"identify, represent and estimate; rounding",N4,Year 5,"round any number up to 1,000,000 to the nearest 10, 100, 1,000, 10,000 and 100,000"
-Number and place value,"identify, represent and estimate; rounding",N4,Year 6,round any whole number to a required degree of accuracy
-Number and place value,negative numbers,N5,Year 1,
-Number and place value,negative numbers,N5,Year 2,
-Number and place value,negative numbers,N5,Year 3,
-Number and place value,negative numbers,N5,Year 4,count backwards through zero to include negative numbers
-Number and place value,negative numbers,N5,Year 5,"interpret negative numbers in context, count forwards and backwards with positive and negative whole numbers, including through zero"
-Number and place value,negative numbers,N5,Year 6,"use negative numbers in context, and calculate intervals across zero"
-Number and place value,number problems,N6,Year 1,
-Number and place value,number problems,N6,Year 2,use place value and number facts to solve problems
-Number and place value,number problems,N6,Year 3,solve number problems and practical problems involving 3N1-3N4
-Number and place value,number problems,N6,Year 4,solve number and practical problems that involve 4N1-4N5 and with increasingly large positive numbers
-Number and place value,number problems,N6,Year 5,solve number problems and practical problems that involve 5N1-5N5
-Number and place value,number problems,N6,Year 6,solve number problems and practical problems that involve 6N2-6N5
-"Addition, subtraction, multiplication and division (calculations)",add / subtract mentally,C1,Year 1,represent and use number bonds and related subtraction facts within 20
-"Addition, subtraction, multiplication and division (calculations)",add / subtract mentally,C1,Year 2,"recall and use addition and subtraction facts to 20 fluently, and derive and use related facts up to 100"
-"Addition, subtraction, multiplication and division (calculations)",add / subtract mentally,C1,Year 3,"add and subtract numbers mentally, including: a three-digit number and ones, a three-digit number and tens, a three-digit number and hundreds"
-"Addition, subtraction, multiplication and division (calculations)",add / subtract mentally,C1,Year 4,
-"Addition, subtraction, multiplication and division (calculations)",add / subtract mentally,C1,Year 5,add and subtract numbers mentally with increasingly large numbers
-"Addition, subtraction, multiplication and division (calculations)",add / subtract mentally,C1,Year 6,
-"Addition, subtraction, multiplication and division (calculations)",add / subtract using written methods,C2,Year 1,"add and subtract one-digit and two-digit numbers to 20, including zero; read, write and interpret mathematical statements involving addition (+), subtraction (–) and equals (=) signs"
-"Addition, subtraction, multiplication and division (calculations)",add / subtract using written methods,C2,Year 2,"add and subtract numbers using concrete objects, pictorial representations, and mentally, including: a two-digit number and ones, a two-digit number and tens, two two-digit numbers, adding three one-digit numbers"
-"Addition, subtraction, multiplication and division (calculations)",add / subtract using written methods,C2,Year 3,"add and subtract numbers with up to three digits, using formal written methods of columnar addition and subtraction"
-"Addition, subtraction, multiplication and division (calculations)",add / subtract using written methods,C2,Year 4,add and subtract numbers with up to 4 digits using the formal written methods of columnar addition and subtraction where appropriate
-"Addition, subtraction, multiplication and division (calculations)",add / subtract using written methods,C2,Year 5,"add and subtract whole numbers with more than 4 digits, including using formal written methods (columnar addition and subtraction)"
-"Addition, subtraction, multiplication and division (calculations)",add / subtract using written methods,C2,Year 6,
-"Addition, subtraction, multiplication and division (calculations)","estimate, use inverses and check",C3,Year 1,
-"Addition, subtraction, multiplication and division (calculations)","estimate, use inverses and check",C3,Year 2,recognise and use the inverse relationship between addition and subtraction and use this to check calculations and missing number problems
-"Addition, subtraction, multiplication and division (calculations)","estimate, use inverses and check",C3,Year 3,estimate the answer to a calculation and use inverse operations to check answers
-"Addition, subtraction, multiplication and division (calculations)","estimate, use inverses and check",C3,Year 4,estimate and use inverse operations to check answers to a calculation
-"Addition, subtraction, multiplication and division (calculations)","estimate, use inverses and check",C3,Year 5,"use rounding to check answers to calculations and determine, in the context of a problem, levels of accuracy"
-"Addition, subtraction, multiplication and division (calculations)","estimate, use inverses and check",C3,Year 6,"use estimation to check answers to calculations and determine, in the context of a problem, an appropriate degree of accuracy"
-"Addition, subtraction, multiplication and division (calculations)",add / subtract to solve problems,C4,Year 1,"solve one-step problems that involve addition and subtraction, using concrete objects and pictorial representations, and missing number problems such as 7 = _ – 9"
-"Addition, subtraction, multiplication and division (calculations)",add / subtract to solve problems,C4,Year 2,"solve problems with addition and subtraction: using concrete objects and pictorial representations, including those involving numbers, quantities and measures; applying their increasing knowledge of mental and written methods"
-"Addition, subtraction, multiplication and division (calculations)",add / subtract to solve problems,C4,Year 3,"solve problems, including missing number problems, using number facts, place value, and more complex addition and subtraction"
-"Addition, subtraction, multiplication and division (calculations)",add / subtract to solve problems,C4,Year 4,"solve addition and subtraction two-step problems in contexts, deciding which operations and methods to use and why"
-"Addition, subtraction, multiplication and division (calculations)",add / subtract to solve problems,C4,Year 5,"solve addition and subtraction multi-step problems in contexts, deciding which operations and methods to use and why"
-"Addition, subtraction, multiplication and division (calculations)",add / subtract to solve problems,C4,Year 6,"solve addition and subtraction multi-step problems in contexts, deciding which operations and methods to use and why"
-"Addition, subtraction, multiplication and division (calculations)","properties of number (multiples, factors, primes, squares and cubes)",C5,Year 1,
-"Addition, subtraction, multiplication and division (calculations)","properties of number (multiples, factors, primes, squares and cubes)",C5,Year 2,
-"Addition, subtraction, multiplication and division (calculations)","properties of number (multiples, factors, primes, squares and cubes)",C5,Year 3,
-"Addition, subtraction, multiplication and division (calculations)","properties of number (multiples, factors, primes, squares and cubes)",C5,Year 4,
-"Addition, subtraction, multiplication and division (calculations)","properties of number (multiples, factors, primes, squares and cubes)",C5,Year 5,"identify multiples and factors, including finding all factor pairs of a number and common factors of two numbers; know and use the vocabulary of prime numbers, prime factors and composite (non-prime) numbers; establish whether a number up to 100 is prime and recall prime numbers up to 19; recognise and use square numbers and cube numbers, and the notation for squared (²) and cubed (³)"
-"Addition, subtraction, multiplication and division (calculations)","properties of number (multiples, factors, primes, squares and cubes)",C5,Year 6,"identify common factors, common multiples and prime numbers"
-"Addition, subtraction, multiplication and division (calculations)",multiply / divide mentally,C6,Year 1,
-"Addition, subtraction, multiplication and division (calculations)",multiply / divide mentally,C6,Year 2,"recall and use multiplication and division facts for the 2, 5 and 10 multiplication tables, including recognising odd and even numbers"
-"Addition, subtraction, multiplication and division (calculations)",multiply / divide mentally,C6,Year 3,"recall and use multiplication and division facts for the 3, 4 and 8 multiplication tables"
-"Addition, subtraction, multiplication and division (calculations)",multiply / divide mentally,C6,Year 4,"recall multiplication and division facts for multiplication tables up to 12 x 12; use place value, known and derived facts to multiply and divide mentally, including: multiplying by 0 and 1, dividing by 1, multiplying together three numbers; recognise and use factor pairs and commutativity in mental calculations"
-"Addition, subtraction, multiplication and division (calculations)",multiply / divide mentally,C6,Year 5,"multiply and divide numbers mentally drawing upon known facts; multiply and divide whole numbers and those involving decimals by 10, 100 and 1,000"
-"Addition, subtraction, multiplication and division (calculations)",multiply / divide mentally,C6,Year 6,"perform mental calculations, including with mixed operations and large numbers"
-"Addition, subtraction, multiplication and division (calculations)",multiply / divide using written methods,C7,Year 1,
-"Addition, subtraction, multiplication and division (calculations)",multiply / divide using written methods,C7,Year 2,"calculate mathematical statements for multiplication and division within the multiplication tables and write them using the multiplication (×), division (÷) and equals (=) signs"
-"Addition, subtraction, multiplication and division (calculations)",multiply / divide using written methods,C7,Year 3,"write and calculate mathematical statements for multiplication and division using the multiplication tables that pupils know, including for two-digit numbers times one-digit numbers, using mental and progressing to formal written methods"
-"Addition, subtraction, multiplication and division (calculations)",multiply / divide using written methods,C7,Year 4,multiply two-digit and three-digit numbers by a one-digit number using formal written layout
-"Addition, subtraction, multiplication and division (calculations)",multiply / divide using written methods,C7,Year 5,"multiply numbers up to 4 digits by a one- or two-digit number using a formal written method, including long multiplication for two-digit numbers; divide numbers up to 4 digits by a one-digit number using the formal written method of short division and interpret remainders appropriately for the context"
-"Addition, subtraction, multiplication and division (calculations)",multiply / divide using written methods,C7,Year 6,"multiply multi-digit numbers up to 4 digits by a two-digit whole number using the formal written method of long multiplication; divide numbers up to 4 digits by a two-digit whole number using the formal written method of long division, and interpret remainders as whole number remainders, fractions, or by rounding, as appropriate for the context; divide numbers up to 4 digits by a two-digit number using the formal written method of short division where appropriate, interpreting remainders according to the context"
-"Addition, subtraction, multiplication and division (calculations)","solve problems (commutative, associative, distributive and all four operations)",C8,Year 1,"solve one-step problems involving multiplication and division, by calculating the answer using concrete objects, pictorial representations and arrays with the support of the teacher"
-"Addition, subtraction, multiplication and division (calculations)","solve problems (commutative, associative, distributive and all four operations)",C8,Year 2,"solve problems involving multiplication and division, using materials, arrays, repeated addition, mental methods, and multiplication and division facts, including problems in contexts; show that addition of two numbers can be done in any order (commutative) and subtraction of one number from another cannot; show that multiplication of two numbers can be done in any order (commutative) and division of one number by another cannot"
-"Addition, subtraction, multiplication and division (calculations)","solve problems (commutative, associative, distributive and all four operations)",C8,Year 3,"solve problems, including missing number problems, involving multiplication and division, including integer scaling problems and correspondence problems in which n objects are connected to m objects"
-"Addition, subtraction, multiplication and division (calculations)","solve problems (commutative, associative, distributive and all four operations)",C8,Year 4,"solve problems involving multiplying and adding, including using the distributive law to multiply two-digit numbers by one digit, integer scaling problems and harder correspondence problems such as n objects are connected to m objects"
-"Addition, subtraction, multiplication and division (calculations)","solve problems (commutative, associative, distributive and all four operations)",C8,Year 5,"solve problems involving multiplication and division including using their knowledge of factors and multiples, squares and cubes; solve problems involving addition, subtraction, multiplication and division and a combination of these, including understanding the meaning of the equals sign; solve problems involving multiplication and division including scaling by simple fractions and problems involving simple rates"
-"Addition, subtraction, multiplication and division (calculations)","solve problems (commutative, associative, distributive and all four operations)",C8,Year 6,"solve problems involving addition, subtraction, multiplication and division"
-"Addition, subtraction, multiplication and division (calculations)",order of operations,C9,Year 1,
-"Addition, subtraction, multiplication and division (calculations)",order of operations,C9,Year 2,
-"Addition, subtraction, multiplication and division (calculations)",order of operations,C9,Year 3,
-"Addition, subtraction, multiplication and division (calculations)",order of operations,C9,Year 4,
-"Addition, subtraction, multiplication and division (calculations)",order of operations,C9,Year 5,
-"Addition, subtraction, multiplication and division (calculations)",order of operations,C9,Year 6,use their knowledge of the order of operations to carry out calculations involving the four operations
-"Fractions, decimals and percentages","recognise, find, write, name and count fractions",F1,Year 1,"recognise, find and name a half as one of two equal parts of an object, shape or quantity; recognise, find and name a quarter as one of four equal parts of an object, shape or quantity"
-"Fractions, decimals and percentages","recognise, find, write, name and count fractions",F1,Year 2,"recognise, find, name and write fractions ⅓, ¼, ²⁄₄ and ¾ of a length, shape, set of objects or quantity; write simple fractions, for example, ½ of 6 = 3"
-"Fractions, decimals and percentages","recognise, find, write, name and count fractions",F1,Year 3,"count up and down in tenths, recognise that tenths arise from dividing an object into 10 equal parts and in dividing one-digit numbers or quantities by 10; recognise, find and write fractions of a discrete set of objects: unit fractions and non-unit fractions with small denominators; recognise and use fractions as numbers: unit fractions and non-unit fractions with small denominators"
-"Fractions, decimals and percentages","recognise, find, write, name and count fractions",F1,Year 4,count up and down in hundredths; recognise that hundredths arise when dividing an object by a hundred and dividing tenths by ten
-"Fractions, decimals and percentages","recognise, find, write, name and count fractions",F1,Year 5,
-"Fractions, decimals and percentages","recognise, find, write, name and count fractions",F1,Year 6,
-"Fractions, decimals and percentages",equivalent fractions,F2,Year 1,
-"Fractions, decimals and percentages",equivalent fractions,F2,Year 2,recognise the equivalence of ²⁄₄ and ½
-"Fractions, decimals and percentages",equivalent fractions,F2,Year 3,"recognise and show, using diagrams, equivalent fractions with small denominators"
-"Fractions, decimals and percentages",equivalent fractions,F2,Year 4,"recognise and show, using diagrams, families of common equivalent fractions"
-"Fractions, decimals and percentages",equivalent fractions,F2,Year 5,"recognise mixed numbers and improper fractions and convert from one form to the other; write mathematical statements >1 as a mixed number [e.g. ⅖ + ⅘ = ⁶⁄₅ = 1⅕]; identify name and write equivalent fractions of a given fraction, represented visually, including tenths and hundredths"
-"Fractions, decimals and percentages",equivalent fractions,F2,Year 6,use common factors to simplify fractions; use common multiples to express fractions in the same denomination
-"Fractions, decimals and percentages",comparing and ordering fractions,F3,Year 1,
-"Fractions, decimals and percentages",comparing and ordering fractions,F3,Year 2,
-"Fractions, decimals and percentages",comparing and ordering fractions,F3,Year 3,compare and order unit fractions and fractions with the same denominators
-"Fractions, decimals and percentages",comparing and ordering fractions,F3,Year 4,
-"Fractions, decimals and percentages",comparing and ordering fractions,F3,Year 5,compare and order fractions whose denominators are all multiples of the same number
-"Fractions, decimals and percentages",comparing and ordering fractions,F3,Year 6,"compare and order fractions, including fractions > 1"
-"Fractions, decimals and percentages",add / subtract fractions,F4,Year 1,
-"Fractions, decimals and percentages",add / subtract fractions,F4,Year 2,
-"Fractions, decimals and percentages",add / subtract fractions,F4,Year 3,add and subtract fractions with the same denominator within one whole [e.g. ⅚ + ⅚ = ⁶⁄₇]
-"Fractions, decimals and percentages",add / subtract fractions,F4,Year 4,add and subtract fractions with the same denominator
-"Fractions, decimals and percentages",add / subtract fractions,F4,Year 5,add and subtract fractions with the same denominator and denominators that are multiples of the same number
-"Fractions, decimals and percentages",add / subtract fractions,F4,Year 6,"add and subtract fractions with different denominators and mixed numbers, using the concept of equivalent fractions"
-"Fractions, decimals and percentages",multiply / divide fractions,F5,Year 1,
-"Fractions, decimals and percentages",multiply / divide fractions,F5,Year 2,
-"Fractions, decimals and percentages",multiply / divide fractions,F5,Year 3,
-"Fractions, decimals and percentages",multiply / divide fractions,F5,Year 4,
-"Fractions, decimals and percentages",multiply / divide fractions,F5,Year 5,"multiply proper fractions and mixed numbers by whole numbers, supported by materials and diagrams"
-"Fractions, decimals and percentages",multiply / divide fractions,F5,Year 6,"multiply simple pairs of proper fractions, writing the answer in its simplest form [e.g. ¼ x ½ = ⅛]; divide proper fractions by whole numbers [e.g. ⅓ ÷ 2 = ⅙]"
-"Fractions, decimals and percentages",fractions / decimals equivalence,F6,Year 1,
-"Fractions, decimals and percentages",fractions / decimals equivalence,F6,Year 2,
-"Fractions, decimals and percentages",fractions / decimals equivalence,F6,Year 3,
-"Fractions, decimals and percentages",fractions / decimals equivalence,F6,Year 4,"recognise and write decimal equivalents to ¼, ½, ¾; recognise and write decimal equivalents of any number of tenths or hundredths"
-"Fractions, decimals and percentages",fractions / decimals equivalence,F6,Year 5,"read and write decimal numbers as fractions [e.g. 0.71 = ⁷¹⁄₁₀₀]; recognise and use thousandths and relate them to tenths, hundredths and decimal equivalents"
-"Fractions, decimals and percentages",fractions / decimals equivalence,F6,Year 6,associate a fraction with division to calculate decimal fraction equivalents (e.g. 0.375) for a simple fraction [e.g. ⅜]
-"Fractions, decimals and percentages",rounding decimals,F7,Year 1,
-"Fractions, decimals and percentages",rounding decimals,F7,Year 2,
-"Fractions, decimals and percentages",rounding decimals,F7,Year 3,
-"Fractions, decimals and percentages",rounding decimals,F7,Year 4,round decimals with one decimal place to the nearest whole number
-"Fractions, decimals and percentages",rounding decimals,F7,Year 5,round decimals with two decimal places to the nearest whole number and to one decimal place
-"Fractions, decimals and percentages",rounding decimals,F7,Year 6,
-"Fractions, decimals and percentages",compare and order decimals,F8,Year 1,
-"Fractions, decimals and percentages",compare and order decimals,F8,Year 2,
-"Fractions, decimals and percentages",compare and order decimals,F8,Year 3,
-"Fractions, decimals and percentages",compare and order decimals,F8,Year 4,compare numbers with the same number of decimal places up to two decimal places
-"Fractions, decimals and percentages",compare and order decimals,F8,Year 5,"read, write, order and compare numbers with up to three decimal places"
-"Fractions, decimals and percentages",compare and order decimals,F8,Year 6,
-"Fractions, decimals and percentages",multiply / divide decimals,F9,Year 1,
-"Fractions, decimals and percentages",multiply / divide decimals,F9,Year 2,
-"Fractions, decimals and percentages",multiply / divide decimals,F9,Year 3,
-"Fractions, decimals and percentages",multiply / divide decimals,F9,Year 4,"find the effect of dividing a one- or two-digit number by 10 and 100, identifying the value of the digits in the answer as ones, tenths and hundredths"
-"Fractions, decimals and percentages",multiply / divide decimals,F9,Year 5,
-"Fractions, decimals and percentages",multiply / divide decimals,F9,Year 6,"identify the value of each digit to three decimal places and multiply and divide numbers by 10, 100 and 1,000 giving answers up to three decimal places; multiply one-digit numbers with up to two-decimal places by whole numbers; use written division methods in cases where the answer has up to two-decimal places"
-"Fractions, decimals and percentages",solve problems with fractions and decimals,F10,Year 1,
-"Fractions, decimals and percentages",solve problems with fractions and decimals,F10,Year 2,
-"Fractions, decimals and percentages",solve problems with fractions and decimals,F10,Year 3,solve problems that involve 3F1-3F4
-"Fractions, decimals and percentages",solve problems with fractions and decimals,F10,Year 4,"solve problems involving increasingly harder fractions to calculate quantities and fractions to divide quantities, including non-unit fractions where the answer is a whole number; solve simple measure and money problems involving fractions and decimals to two decimal places"
-"Fractions, decimals and percentages",solve problems with fractions and decimals,F10,Year 5,solve problems involving numbers up to three decimal places
-"Fractions, decimals and percentages",solve problems with fractions and decimals,F10,Year 6,solve problems which require answers to be rounded to specified degrees of accuracy
-"Fractions, decimals and percentages",fractions / decimal / percentage equivalence,F11,Year 1,
-"Fractions, decimals and percentages",fractions / decimal / percentage equivalence,F11,Year 2,
-"Fractions, decimals and percentages",fractions / decimal / percentage equivalence,F11,Year 3,
-"Fractions, decimals and percentages",fractions / decimal / percentage equivalence,F11,Year 4,
-"Fractions, decimals and percentages",fractions / decimal / percentage equivalence,F11,Year 5,"recognise the per cent symbol (%) and understand that per cent relates to 'number of parts per hundred'; write percentages as a fraction with denominator hundred, and as a decimal"
-"Fractions, decimals and percentages",fractions / decimal / percentage equivalence,F11,Year 6,"recall and use equivalences between simple fractions, decimals and percentages, including in different contexts"
-"Fractions, decimals and percentages",solve problems with percentages,F12,Year 1,
-"Fractions, decimals and percentages",solve problems with percentages,F12,Year 2,
-"Fractions, decimals and percentages",solve problems with percentages,F12,Year 3,
-"Fractions, decimals and percentages",solve problems with percentages,F12,Year 4,
-"Fractions, decimals and percentages",solve problems with percentages,F12,Year 5,"solve problems that require knowing percentage and decimal equivalents of ½, ¼, ⅕, ⅖, ⅘ and those fractions with a denominator of a multiple of 10 or 25"
-"Fractions, decimals and percentages",solve problems with percentages,F12,Year 6,
-Ratio and proportion,"relative sizes, similarity",R1,Year 1,
-Ratio and proportion,"relative sizes, similarity",R1,Year 2,
-Ratio and proportion,"relative sizes, similarity",R1,Year 3,
-Ratio and proportion,"relative sizes, similarity",R1,Year 4,
-Ratio and proportion,"relative sizes, similarity",R1,Year 5,
-Ratio and proportion,"relative sizes, similarity",R1,Year 6,"solve problems involving the relative sizes of two quantities, where missing values can be found by using integer multiplication and division facts"
-Ratio and proportion,use of percentages for comparison,R2,Year 1,
-Ratio and proportion,use of percentages for comparison,R2,Year 2,
-Ratio and proportion,use of percentages for comparison,R2,Year 3,
-Ratio and proportion,use of percentages for comparison,R2,Year 4,
-Ratio and proportion,use of percentages for comparison,R2,Year 5,
-Ratio and proportion,use of percentages for comparison,R2,Year 6,solve problems involving the calculation of percentages [e.g. of measures such as 15% of 360] and the use of percentages for comparison
-Ratio and proportion,scale factors,R3,Year 1,
-Ratio and proportion,scale factors,R3,Year 2,
-Ratio and proportion,scale factors,R3,Year 3,
-Ratio and proportion,scale factors,R3,Year 4,
-Ratio and proportion,scale factors,R3,Year 5,
-Ratio and proportion,scale factors,R3,Year 6,solve problem involving similar shapes where the scale factor is known or can be found
-Ratio and proportion,unequal sharing and grouping,R4,Year 1,
-Ratio and proportion,unequal sharing and grouping,R4,Year 2,
-Ratio and proportion,unequal sharing and grouping,R4,Year 3,
-Ratio and proportion,unequal sharing and grouping,R4,Year 4,
-Ratio and proportion,unequal sharing and grouping,R4,Year 5,
-Ratio and proportion,unequal sharing and grouping,R4,Year 6,solve problems involving unequal sharing and grouping using knowledge of fractions and multiples
-Algebra,missing number problems expressed in algebra,A1,Year 1,
-Algebra,missing number problems expressed in algebra,A1,Year 2,
-Algebra,missing number problems expressed in algebra,A1,Year 3,
-Algebra,missing number problems expressed in algebra,A1,Year 4,
-Algebra,missing number problems expressed in algebra,A1,Year 5,
-Algebra,missing number problems expressed in algebra,A1,Year 6,express missing number problems algebraically
-Algebra,simple formulae expressed in words,A2,Year 1,
-Algebra,simple formulae expressed in words,A2,Year 2,
-Algebra,simple formulae expressed in words,A2,Year 3,
-Algebra,simple formulae expressed in words,A2,Year 4,
-Algebra,simple formulae expressed in words,A2,Year 5,
-Algebra,simple formulae expressed in words,A2,Year 6,use simple formulae
-Algebra,generate and describe linear number sequences,A3,Year 1,
-Algebra,generate and describe linear number sequences,A3,Year 2,
-Algebra,generate and describe linear number sequences,A3,Year 3,
-Algebra,generate and describe linear number sequences,A3,Year 4,
-Algebra,generate and describe linear number sequences,A3,Year 5,
-Algebra,generate and describe linear number sequences,A3,Year 6,generate and describe linear number sequences
-Algebra,number sentences involving two unknowns,A4,Year 1,
-Algebra,number sentences involving two unknowns,A4,Year 2,
-Algebra,number sentences involving two unknowns,A4,Year 3,
-Algebra,number sentences involving two unknowns,A4,Year 4,
-Algebra,number sentences involving two unknowns,A4,Year 5,
-Algebra,number sentences involving two unknowns,A4,Year 6,find pairs of numbers that satisfy an equation with two unknowns
-Algebra,enumerate all possibilities of combinations of two variables,A5,Year 1,
-Algebra,enumerate all possibilities of combinations of two variables,A5,Year 2,
-Algebra,enumerate all possibilities of combinations of two variables,A5,Year 3,
-Algebra,enumerate all possibilities of combinations of two variables,A5,Year 4,
-Algebra,enumerate all possibilities of combinations of two variables,A5,Year 5,
-Algebra,enumerate all possibilities of combinations of two variables,A5,Year 6,enumerate possibilities of combinations of two variables
-Measurement,"compare, describe and order measures",M1,Year 1,"compare, describe and solve practical problems for: lengths and heights (e.g. long/short, taller/shorter); mass/weight (e.g. heavy/light, heavier than); capacity and volume (e.g. full/empty, more than/less than); time (e.g. quicker, slower)"
-Measurement,"compare, describe and order measures",M1,Year 2,"compare and order lengths, mass, volume/capacity and record the results using >, < and ="
-Measurement,"compare, describe and order measures",M1,Year 3,compare lengths (m/cm/mm); compare mass (kg/g); compare volume/capacity (l/ml)
-Measurement,"compare, describe and order measures",M1,Year 4,"compare different measures, including money in pounds and pence"
-Measurement,"compare, describe and order measures",M1,Year 5,
-Measurement,"compare, describe and order measures",M1,Year 6,
-Measurement,"estimate, measure and read scales",M2,Year 1,"measure and begin to record: lengths and heights; mass/weight; capacity and volume; time (hours, minutes, seconds)"
-Measurement,"estimate, measure and read scales",M2,Year 2,"choose and use appropriate standard units to estimate and measure: length/height (m/cm); mass (kg/g); temperature (°C); capacity (litres/ml) to the nearest appropriate unit, using rulers, scales, thermometers and measuring vessels"
-Measurement,"estimate, measure and read scales",M2,Year 3,measure lengths (m/cm/mm); measure mass (kg/g); measure volume / capacity (l/ml)
-Measurement,"estimate, measure and read scales",M2,Year 4,"estimate different measures, including money in pounds and pence"
-Measurement,"estimate, measure and read scales",M2,Year 5,
-Measurement,"estimate, measure and read scales",M2,Year 6,
-Measurement,money,M3,Year 1,recognise and know the value of different denominations of coins and notes
-Measurement,money,M3,Year 2,recognise and use symbols for pounds (£) and pence (p); combine amounts to make a particular value; find different combinations of coins that equal the same amounts of money
-Measurement,money,M3,Year 3,Key stage 1 content domain
-Measurement,money,M3,Year 4,
-Measurement,money,M3,Year 5,
-Measurement,money,M3,Year 6,
-Measurement,"telling time, ordering time, duration and units of time",M4,Year 1,"tell the time to the hour and half past the hour and draw the hands on a clock face to show these times; sequence events in chronological order using language (e.g. before, after, next); recognise and use language relating to dates, including days of the week, weeks, months and years"
-Measurement,"telling time, ordering time, duration and units of time",M4,Year 2,"tell and write the time to five minutes, including quarter past/to the hour and draw the hands on a clock face to show these times; compare and sequence intervals of time; know the number of minutes in an hour and the number of hours in a day"
-Measurement,"telling time, ordering time, duration and units of time",M4,Year 3,"tell and write the time from an analogue clock; 12-hour clocks; tell and write the time from an analogue clock; 24-hour clocks; tell and write the time from an analogue clock, including using Roman numerals from I to XII; estimate and read time with increasing accuracy to the nearest minute; record and compare time in terms of seconds, minutes and hours; use vocabulary such as o'clock / a.m. / p.m., morning, afternoon, noon and midnight; know the number of seconds in a minute and the number of days in each month, year and leap year; compare durations of events, [e.g. to calculate the time taken by particular events or tasks]"
-Measurement,"telling time, ordering time, duration and units of time",M4,Year 4,"read, write and convert time between analogue and digital 12-hour clocks; read, write and convert time between analogue and digital 24-hour clocks; solve problems involving converting from hours to minutes; minutes to seconds; years to months; weeks to days"
-Measurement,"telling time, ordering time, duration and units of time",M4,Year 5,solve problems involving converting between units of time
-Measurement,"telling time, ordering time, duration and units of time",M4,Year 6,
-Measurement,convert between metric units,M5,Year 1,
-Measurement,convert between metric units,M5,Year 2,
-Measurement,convert between metric units,M5,Year 3,
-Measurement,convert between metric units,M5,Year 4,
-Measurement,convert between metric units,M5,Year 5,convert between different units of metric measure [e.g. kilometre and metre; centimetre and metre; centimetre and millimetre; gram and kilogram; litre and millilitre]
-Measurement,convert between metric units,M5,Year 6,
-Measurement,convert metric / imperial,M6,Year 1,
-Measurement,convert metric / imperial,M6,Year 2,
-Measurement,convert metric / imperial,M6,Year 3,
-Measurement,convert metric / imperial,M6,Year 4,convert between different units of measurement [e.g. kilometre to metre; hour to minute]
-Measurement,convert metric / imperial,M6,Year 5,"understand and use approximate equivalences between metric units and common imperial units such as inches, pounds and pints"
-Measurement,convert metric / imperial,M6,Year 6,"use, read, write and convert between standard units, converting measurements of length, mass, volume and time from a smaller unit of measure to a larger unit, and vice versa, using decimal notation of up to three decimal places; convert between miles and kilometres"
-Measurement,"perimeter, area",M7,Year 1,
-Measurement,"perimeter, area",M7,Year 2,
-Measurement,"perimeter, area",M7,Year 3,measure the perimeter of simple 2-D shapes
-Measurement,"perimeter, area",M7,Year 4,measure and calculate the perimeter of a rectilinear figure (including squares) in centimetres and metres; find the area of rectilinear shapes by counting squares
-Measurement,"perimeter, area",M7,Year 5,"measure and calculate the perimeter of composite rectilinear shapes in centimetres and metres; calculate and compare the area of rectangles (including squares), and including using standard units, square centimetres (cm²) and square metres (m²) and estimate the area of irregular shapes"
-Measurement,"perimeter, area",M7,Year 6,recognise that shapes with the same areas can have different perimeters and vice versa; calculate the area of parallelograms and triangles; recognise when it is possible to use the formulae for the area of shapes
-Measurement,volume,M8,Year 1,
-Measurement,volume,M8,Year 2,
-Measurement,volume,M8,Year 3,
-Measurement,volume,M8,Year 4,
-Measurement,volume,M8,Year 5,estimate volume [e.g. using 1 cm³ blocks to build cuboids (including cubes)] and capacity [e.g. using water]
-Measurement,volume,M8,Year 6,"calculate, estimate and compare volume of cubes and cuboids using standard units, including centimetre cubed (cm³) and cubic metres (m³), and extending to other units [e.g. mm³ and km³]; recognise when it is possible to use the formulae for the volume of shapes"
-Measurement,"solve problems (a, money; b, length; c, mass / weight; d, capacity / volume)",M9,Year 1,
-Measurement,"solve problems (a, money; b, length; c, mass / weight; d, capacity / volume)",M9,Year 2,"solve simple problems in a practical context involving addition and subtraction of money of the same unit, including giving change"
-Measurement,"solve problems (a, money; b, length; c, mass / weight; d, capacity / volume)",M9,Year 3,"add and subtract amounts of money to give change, using both pounds (£) and pence (p) in practical contexts; add and subtract lengths (m/cm/mm); add and subtract mass (kg/g); add and subtract volume / capacity (l/ml)"
-Measurement,"solve problems (a, money; b, length; c, mass / weight; d, capacity / volume)",M9,Year 4,"calculate different measures, including money in pounds and pence"
-Measurement,"solve problems (a, money; b, length; c, mass / weight; d, capacity / volume)",M9,Year 5,"use all four operations to solve problems involving measures [money] using decimal notation, including scaling; use all four operations to solve problems involving measure [e.g. length] using decimal notation, including scaling; use all four operations to solve problems involving measure [e.g. mass] using decimal notation, including scaling; use all four operations to solve problems involving measure [e.g. volume] using decimal notation, including scaling"
-Measurement,"solve problems (a, money; b, length; c, mass / weight; d, capacity / volume)",M9,Year 6,"solve problems involving the calculation and conversion of units of measure, using decimal notation up to three decimal places where appropriate"
-Geometry – properties of shapes,recognise and name common shapes,G1,Year 1,"recognise and name common 2-D shapes (e.g. rectangles, squares, circles, triangles); recognise and name common 3-D shapes (e.g. cuboids, cubes, pyramids, spheres)"
-Geometry – properties of shapes,recognise and name common shapes,G1,Year 2,compare and sort common 2-D and 3-D shapes and everyday objects
-Geometry – properties of shapes,recognise and name common shapes,G1,Year 3,Within key stage 1 content domain
-Geometry – properties of shapes,recognise and name common shapes,G1,Year 4,
-Geometry – properties of shapes,recognise and name common shapes,G1,Year 5,
-Geometry – properties of shapes,recognise and name common shapes,G1,Year 6,
-Geometry – properties of shapes,describe properties and classify shapes,G2,Year 1,
-Geometry – properties of shapes,describe properties and classify shapes,G2,Year 2,"identify and describe the properties of 2-D shapes, including the number of sides and line symmetry in a vertical line; identify and describe the properties of 3-D shapes, including the number of edges, vertices and faces"
-Geometry – properties of shapes,describe properties and classify shapes,G2,Year 3,"identify horizontal, vertical lines and pairs of perpendicular and parallel lines"
-Geometry – properties of shapes,describe properties and classify shapes,G2,Year 4,"compare and classify geometric shapes, including quadrilaterals and triangles based on their properties and sizes; identify lines of symmetry in 2-D shapes presented in different orientations; complete a simple symmetric figure with respect to a specific line of symmetry"
-Geometry – properties of shapes,describe properties and classify shapes,G2,Year 5,use the properties of rectangles to deduce related facts and find missing lengths and angles; distinguish between regular and irregular polygons based on reasoning about equal sides and angles
-Geometry – properties of shapes,describe properties and classify shapes,G2,Year 6,compare and classify geometric shapes based on their properties and sizes; describe simple 3-D shapes
-Geometry – properties of shapes,draw and make shapes and relate 2-D to 3-D shapes (including nets),G3,Year 1,
-Geometry – properties of shapes,draw and make shapes and relate 2-D to 3-D shapes (including nets),G3,Year 2,identify 2-D shapes on the surface of 3-D shapes (e.g. a circle on a cylinder and a triangle on a pyramid)
-Geometry – properties of shapes,draw and make shapes and relate 2-D to 3-D shapes (including nets),G3,Year 3,draw 2-D shapes; make 3-D shapes using modelling materials; recognise 3-D shapes in different orientations and describe them
-Geometry – properties of shapes,draw and make shapes and relate 2-D to 3-D shapes (including nets),G3,Year 4,
-Geometry – properties of shapes,draw and make shapes and relate 2-D to 3-D shapes (including nets),G3,Year 5,"identify 3-D shapes including cubes and other cuboids, from 2-D representations"
-Geometry – properties of shapes,draw and make shapes and relate 2-D to 3-D shapes (including nets),G3,Year 6,"draw 2-D shapes using given dimensions and angles; recognise and build simple 3-D shapes, including making nets"
-Geometry – properties of shapes,angles – measuring and properties,G4,Year 1,
-Geometry – properties of shapes,angles – measuring and properties,G4,Year 2,
-Geometry – properties of shapes,angles – measuring and properties,G4,Year 3,"recognise that angles are a property of shape or a description of a turn; identify right angles, recognise that two right angles make a half-turn, three make three quarters of a turn and four a complete turn; identify whether angles are greater than or less than a right angle"
-Geometry – properties of shapes,angles – measuring and properties,G4,Year 4,identify acute and obtuse angles and compare and order angles up to two right angles by size
-Geometry – properties of shapes,angles – measuring and properties,G4,Year 5,"know angles are measured in degrees: estimate and compare acute, obtuse and reflex angles; identify: angles at a point and one whole turn (total 360°), angles at a point on a straight line and ½ a turn (total 180°), other multiples of 90°; draw given angles and measure them in degrees (°)"
-Geometry – properties of shapes,angles – measuring and properties,G4,Year 6,"find unknown angles in any triangles, quadrilaterals and regular polygons; recognise angles where they meet at a point, are on a straight line, or are vertically opposite, and find missing angles"
-Geometry – properties of shapes,circles,G5,Year 1,
-Geometry – properties of shapes,circles,G5,Year 2,
-Geometry – properties of shapes,circles,G5,Year 3,
-Geometry – properties of shapes,circles,G5,Year 4,
-Geometry – properties of shapes,circles,G5,Year 5,
-Geometry – properties of shapes,circles,G5,Year 6,"illustrate and name parts of circles, including radius, diameter and circumference and know that the diameter is twice the radius"
-Geometry - position and direction,patterns,P1,Year 1,
-Geometry - position and direction,patterns,P1,Year 2,order and arrange combinations of mathematical objects in patterns and sequences
-Geometry - position and direction,patterns,P1,Year 3,Within key stage 1 content domain
-Geometry - position and direction,patterns,P1,Year 4,
-Geometry - position and direction,patterns,P1,Year 5,
-Geometry - position and direction,patterns,P1,Year 6,
-Geometry - position and direction,"describe position, direction and movement",P2,Year 1,"describe position, direction and movement, including half, quarter and three-quarter turns"
-Geometry - position and direction,"describe position, direction and movement",P2,Year 2,"use mathematical vocabulary to describe position, direction and movement, including movement in a straight line and distinguishing between rotation as a turn and in terms of right angles for quarter, half and three-quarter turns (clockwise and anti-clockwise)"
-Geometry - position and direction,"describe position, direction and movement",P2,Year 3,
-Geometry - position and direction,"describe position, direction and movement",P2,Year 4,describe movements between positions as translations of a given unit to the left / right and up / down
-Geometry - position and direction,"describe position, direction and movement",P2,Year 5,"identify, describe and represent the position of a shape following a reflection or translation, using the appropriate language, and know that the shape has not changed"
-Geometry - position and direction,"describe position, direction and movement",P2,Year 6,"draw and translate simple shapes on the co-ordinate plane, and reflect them in the axes"
-Geometry - position and direction,co-ordinates,P3,Year 1,
-Geometry - position and direction,co-ordinates,P3,Year 2,
-Geometry - position and direction,co-ordinates,P3,Year 3,
-Geometry - position and direction,co-ordinates,P3,Year 4,describe positions on a 2-D grid as co-ordinates in the first quadrant; plot specified points and draw sides to complete a given polygon
-Geometry - position and direction,co-ordinates,P3,Year 5,
-Geometry - position and direction,co-ordinates,P3,Year 6,describe positions on the full co-ordinate grid (all four quadrants)
-Statistics,interpret and represent data,S1,Year 1,
-Statistics,interpret and represent data,S1,Year 2,"interpret and construct simple pictograms, tally charts, block diagrams and simple tables"
-Statistics,interpret and represent data,S1,Year 3,"interpret and present data using bar charts, pictograms and tables"
-Statistics,interpret and represent data,S1,Year 4,"interpret and present discrete and continuous data using appropriate graphical methods, including bar charts and time graphs"
-Statistics,interpret and represent data,S1,Year 5,"complete, read and interpret information in tables, including timetables"
-Statistics,interpret and represent data,S1,Year 6,interpret and construct pie charts and line graphs and use these to solve problems
-Statistics,solve problems involving data,S2,Year 1,
-Statistics,solve problems involving data,S2,Year 2,ask and answer simple questions by counting the number of objects in each category and sorting the categories by quantity; ask and answer questions about totalling and comparing categorical data
-Statistics,solve problems involving data,S2,Year 3,"solve one-step and two-step questions [e.g. 'How many more?' and 'How many fewer?'] using information presented in scaled bar charts, pictograms and tables"
-Statistics,solve problems involving data,S2,Year 4,"solve comparison, sum and difference problems using information presented in bar charts, pictograms, tables and other graphs"
-Statistics,solve problems involving data,S2,Year 5,"solve comparison, sum and difference problems using information presented in a line graph"
-Statistics,solve problems involving data,S2,Year 6,
-Statistics,mean average,S3,Year 1,
-Statistics,mean average,S3,Year 2,
-Statistics,mean average,S3,Year 3,
-Statistics,mean average,S3,Year 4,
-Statistics,mean average,S3,Year 5,
-Statistics,mean average,S3,Year 6,calculate and interpret the mean as an average
-
-```
-
----
 ### `docs\param_demo.tsx`
 **Type:** tsx
 
@@ -3405,9 +3060,9 @@ class AdaptiveDifficultyEngine {
   constructor() {
     // Intervention settings
     this.enabled = true; // Can be toggled by teacher/settings
-    this.interventionCheckpoints = [5, 10, 15, 20]; // Question numbers to check
-    this.maxInterventionsPerSession = 1; // Limit to avoid disruption
-    this.interventionsMadeThisSession = 0;
+    this.interventionCheckInterval = 5; // Check every N questions (5, 10, 15, 20, 25...)
+    this.maxInterventionsPerSession = 4; // Allow progression through all levels (1→2→3→4)
+    this.interventionsMadeThisSession = 0; // Only counts accepted interventions
 
     // Confidence score weights (must sum to 100)
     this.weights = {
@@ -3423,8 +3078,8 @@ class AdaptiveDifficultyEngine {
       critical: { max: 30, label: 'Critical', color: 'red' },
       struggling: { min: 30, max: 40, label: 'Struggling', color: 'orange' },
       challenging: { min: 40, max: 65, label: 'Challenging', color: 'amber' },
-      optimal: { min: 65, max: 85, label: 'Optimal', color: 'green' },
-      excelling: { min: 85, label: 'Excelling', color: 'blue' }
+      optimal: { min: 65, max: 80, label: 'Optimal', color: 'green' },
+      excelling: { min: 80, label: 'Excelling', color: 'blue' } // 80% = 4/5 correct
     };
 
     console.log('🎯 AdaptiveDifficultyEngine: Initialized');
@@ -3608,8 +3263,8 @@ class AdaptiveDifficultyEngine {
       return null;
     }
 
-    // Check 2: Is this a checkpoint?
-    if (!this.interventionCheckpoints.includes(questionNumber)) {
+    // Check 2: Is this a checkpoint? (every N questions: 5, 10, 15, 20, 25...)
+    if (questionNumber % this.interventionCheckInterval !== 0) {
       return null;
     }
 
@@ -3646,13 +3301,13 @@ class AdaptiveDifficultyEngine {
       }
     }
 
-    // Excelling → Suggest harder
+    // Excelling → Suggest harder or complete module
     if (confidence.level === 'Excelling') {
       if (currentLevel < 4) {
         return this.createIntervention('increase', confidence, questionNumber);
       } else {
-        // Already at hardest level
-        return null; // No intervention needed
+        // At Level 4 and excelling → Offer to complete module
+        return this.createIntervention('complete_module', confidence, questionNumber);
       }
     }
 
@@ -3709,6 +3364,15 @@ class AdaptiveDifficultyEngine {
         intervention.primaryAction = "Choose Different Module";
         intervention.secondaryAction = "Keep Practicing";
         break;
+
+      case 'complete_module':
+        intervention.suggestedLevel = null;
+        intervention.reason = 'Student excelling at highest level';
+        intervention.title = "Outstanding Achievement!";
+        intervention.message = "You've mastered Level 4! You're ready to complete this module. Well done!";
+        intervention.primaryAction = "🏆 Complete Module";
+        intervention.secondaryAction = "Keep Practicing";
+        break;
     }
 
     console.log(`🎯 AdaptiveDifficultyEngine: Intervention created - ${type} (L${currentLevel} → L${intervention.suggestedLevel || '?'})`);
@@ -3718,10 +3382,10 @@ class AdaptiveDifficultyEngine {
 
   /**
    * Record that intervention was shown to student
+   * Note: Counter is NOT incremented here - only when accepted
    */
   recordInterventionShown() {
-    this.interventionsMadeThisSession++;
-    console.log(`🎯 AdaptiveDifficultyEngine: Intervention shown (${this.interventionsMadeThisSession}/${this.maxInterventionsPerSession})`);
+    console.log(`🎯 AdaptiveDifficultyEngine: Intervention shown (${this.interventionsMadeThisSession} accepted so far)`);
   }
 
   /**
@@ -3731,6 +3395,14 @@ class AdaptiveDifficultyEngine {
    */
   recordInterventionResponse(intervention, accepted) {
     console.log(`🎯 AdaptiveDifficultyEngine: Intervention ${accepted ? 'ACCEPTED' : 'DECLINED'} - ${intervention.type}`);
+
+    // Only increment counter when accepted (declined interventions can be re-offered)
+    if (accepted) {
+      this.interventionsMadeThisSession++;
+      console.log(`🎯 AdaptiveDifficultyEngine: Accepted interventions: ${this.interventionsMadeThisSession}/${this.maxInterventionsPerSession}`);
+    } else {
+      console.log(`🎯 AdaptiveDifficultyEngine: Intervention declined - will check again at next checkpoint`);
+    }
 
     // Future: Store in storageManager for learning patterns
     // This data can be used to:
@@ -3794,7 +3466,7 @@ class AdaptiveDifficultyEngine {
   getConfig() {
     return {
       enabled: this.enabled,
-      checkpoints: this.interventionCheckpoints,
+      checkInterval: this.interventionCheckInterval,
       maxInterventions: this.maxInterventionsPerSession,
       weights: this.weights,
       triggers: this.triggers
@@ -4256,182 +3928,6 @@ export default difficultyMatrix;
 ```
 
 ---
-### `src\core\moduleProgress.js`
-**Type:** js
-
-```js
-/**
- * Module Progress Tracker
- *
- * Tracks student progress across all modules and difficulty levels.
- * Detects module completion when student answers 3+ questions correctly at each level.
- * Part of Phase 3.5: Module Completion System
- */
-
-class ModuleProgress {
-    constructor() {
-        this.storageKey = 'mathsPractice_moduleProgress';
-        this.data = this.load();
-    }
-
-    /**
-     * Initialize module data if it doesn't exist
-     * @param {string} moduleId - Module identifier
-     */
-    initModule(moduleId) {
-        if (!this.data[moduleId]) {
-            this.data[moduleId] = {
-                level1Correct: 0,
-                level2Correct: 0,
-                level3Correct: 0,
-                level4Correct: 0,
-                completed: false,
-                completedDate: null
-            };
-        }
-    }
-
-    /**
-     * Record a correct answer for a specific module and level
-     * @param {string} moduleId - Module identifier
-     * @param {number} level - Difficulty level (1-4)
-     */
-    recordCorrectAnswer(moduleId, level) {
-        this.initModule(moduleId);
-
-        const levelKey = `level${level}Correct`;
-        this.data[moduleId][levelKey]++;
-
-        this.save();
-    }
-
-    /**
-     * Get progress data for a specific module
-     * @param {string} moduleId - Module identifier
-     * @returns {Object} Module progress data
-     */
-    getProgress(moduleId) {
-        this.initModule(moduleId);
-        return { ...this.data[moduleId] };
-    }
-
-    /**
-     * Check if a specific level has been completed (3+ correct)
-     * @param {string} moduleId - Module identifier
-     * @param {number} level - Difficulty level (1-4)
-     * @returns {boolean} True if level has 3+ correct answers
-     */
-    isLevelComplete(moduleId, level) {
-        const progress = this.getProgress(moduleId);
-        const levelKey = `level${level}Correct`;
-        return progress[levelKey] >= 3;
-    }
-
-    /**
-     * Check if all 4 levels of a module have been completed
-     * @param {string} moduleId - Module identifier
-     * @returns {boolean} True if all levels have 3+ correct answers
-     */
-    isModuleComplete(moduleId) {
-        return this.isLevelComplete(moduleId, 1) &&
-               this.isLevelComplete(moduleId, 2) &&
-               this.isLevelComplete(moduleId, 3) &&
-               this.isLevelComplete(moduleId, 4);
-    }
-
-    /**
-     * Mark a module as officially completed
-     * @param {string} moduleId - Module identifier
-     */
-    markModuleComplete(moduleId) {
-        this.initModule(moduleId);
-        this.data[moduleId].completed = true;
-        this.data[moduleId].completedDate = Date.now();
-        this.save();
-    }
-
-    /**
-     * Get array of all completed module IDs
-     * @returns {string[]} Array of module IDs
-     */
-    getCompletedModules() {
-        return Object.keys(this.data).filter(moduleId =>
-            this.data[moduleId].completed === true
-        );
-    }
-
-    /**
-     * Get completion statistics for a module
-     * @param {string} moduleId - Module identifier
-     * @returns {Object} Statistics object
-     */
-    getStats(moduleId) {
-        const progress = this.getProgress(moduleId);
-        return {
-            level1Complete: this.isLevelComplete(moduleId, 1),
-            level2Complete: this.isLevelComplete(moduleId, 2),
-            level3Complete: this.isLevelComplete(moduleId, 3),
-            level4Complete: this.isLevelComplete(moduleId, 4),
-            allLevelsComplete: this.isModuleComplete(moduleId),
-            markedComplete: progress.completed,
-            totalCorrect: progress.level1Correct + progress.level2Correct +
-                         progress.level3Correct + progress.level4Correct,
-            completedDate: progress.completedDate
-        };
-    }
-
-    /**
-     * Load progress data from localStorage
-     * @returns {Object} Progress data object
-     */
-    load() {
-        try {
-            const stored = localStorage.getItem(this.storageKey);
-            if (stored) {
-                return JSON.parse(stored);
-            }
-        } catch (error) {
-            console.error('Failed to load module progress:', error);
-        }
-        return {};
-    }
-
-    /**
-     * Save progress data to localStorage
-     */
-    save() {
-        try {
-            localStorage.setItem(this.storageKey, JSON.stringify(this.data));
-        } catch (error) {
-            console.error('Failed to save module progress:', error);
-        }
-    }
-
-    /**
-     * Clear all progress data
-     */
-    clear() {
-        this.data = {};
-        this.save();
-    }
-
-    /**
-     * Reset a specific module's progress
-     * @param {string} moduleId - Module identifier
-     */
-    resetModule(moduleId) {
-        delete this.data[moduleId];
-        this.save();
-    }
-}
-
-// Export singleton instance
-const moduleProgress = new ModuleProgress();
-export default moduleProgress;
-
-```
-
----
 ### `src\core\performanceAnalyzer.js`
 **Type:** js
 
@@ -4802,6 +4298,21 @@ class PerformanceAnalyzer {
    */
   hasEnoughData(minQuestions = 5) {
     return this.totalQuestions >= minQuestions;
+  }
+
+  /**
+   * Update the current level during a session (for adaptive level changes)
+   * @param {number} newLevel - New difficulty level (1-4)
+   */
+  updateLevel(newLevel) {
+    if (!this.sessionId) {
+      console.warn('⚠️ PerformanceAnalyzer: No active session. Cannot update level.');
+      return;
+    }
+
+    const oldLevel = this.currentLevel;
+    this.currentLevel = newLevel;
+    console.log(`📊 PerformanceAnalyzer: Level updated L${oldLevel} → L${newLevel}`);
   }
 
   /**
@@ -5800,6 +5311,42 @@ class StorageManager {
 
         const totalTime = validSessions.reduce((sum, s) => sum + s.duration, 0);
         return Math.round(totalTime / validSessions.length);
+    }
+
+    /**
+     * Clear all history for a specific student (module progress + sessions)
+     * @param {string} studentId
+     * @returns {boolean} Success status
+     */
+    clearStudentHistory(studentId) {
+        const student = this.data.students[studentId];
+        if (!student) {
+            console.warn(`Student ${studentId} not found`);
+            return false;
+        }
+
+        // Clear module progress
+        student.moduleProgress = {};
+
+        // Clear all sessions for this student
+        Object.keys(this.data.sessions).forEach(sessionId => {
+            if (this.data.sessions[sessionId].studentId === studentId) {
+                delete this.data.sessions[sessionId];
+            }
+        });
+
+        // Reset student stats
+        student.totalSessions = 0;
+        student.totalQuestions = 0;
+        student.totalCorrect = 0;
+
+        // Keep adaptive profile (user preference)
+
+        this.data.lastModified = Date.now();
+        this.save();
+
+        console.log(`✓ Cleared all history for: ${student.name}`);
+        return true;
     }
 
     /**
@@ -7517,6 +7064,9 @@ class AdaptiveSuggestionModal {
         } else if (type === 'switch_module') {
             icon = '🎯'; // Target for different approach
             iconClass = 'alternative';
+        } else if (type === 'complete_module') {
+            icon = '🏆'; // Trophy for completion
+            iconClass = 'challenge';
         }
 
         // Build level change visualization
@@ -8072,11 +7622,8 @@ export default confidenceMeter;
  * Module Completion Prompt Component
  *
  * Shows celebration overlay when student completes all 4 levels of a module.
- * Offers to mark the module as officially completed.
  * Part of Phase 3.5: Module Completion System
  */
-
-import moduleProgress from '../core/moduleProgress.js';
 
 class ModuleCompletionPrompt {
     constructor() {
@@ -8085,22 +7632,13 @@ class ModuleCompletionPrompt {
     }
 
     /**
-     * Show completion prompt for a module (auto-marks as complete)
+     * Show completion prompt for a module
      * @param {string} moduleId - Module identifier
      * @param {string} moduleName - Module display name
      * @param {string} moduleIcon - Module emoji icon
      * @returns {HTMLElement} Prompt element
      */
     show(moduleId, moduleName, moduleIcon) {
-        // Don't show if already marked complete
-        const progress = moduleProgress.getProgress(moduleId);
-        if (progress.completed) {
-            return null;
-        }
-
-        // Automatically mark as complete
-        moduleProgress.markModuleComplete(moduleId);
-
         // Remove existing prompt if any
         this.hide();
 
@@ -8721,7 +8259,6 @@ import validator from '../core/validator.js';
 import OnScreenKeyboard from './onScreenKeyboard.js';
 import streakTracker from '../core/streakTracker.js';
 import powerUpButton from './powerUpButton.js';
-import moduleProgress from '../core/moduleProgress.js';
 import moduleCompletionPrompt from './moduleCompletionPrompt.js';
 import storageManager from '../core/storageManager.js';
 import performanceAnalyzer from '../core/performanceAnalyzer.js';
@@ -8744,6 +8281,7 @@ class PracticeScreen {
         this.currentModule = null; // Current module ID (for level-up)
         this.currentLevel = null; // Current difficulty level (for level-up)
         this.leveledUp = false; // Track if student leveled up this session
+        this.moduleCompletedViaAdaptive = false; // Track if module completed via adaptive intervention
 
         // Phase 4: Session tracking
         this.sessionId = null; // Current session ID
@@ -8767,6 +8305,7 @@ class PracticeScreen {
         this.currentModule = moduleId;
         this.currentLevel = level;
         this.leveledUp = false;
+        this.moduleCompletedViaAdaptive = false;
 
         // Reset streak tracker for new session
         streakTracker.resetSession();
@@ -8817,6 +8356,16 @@ class PracticeScreen {
      * Render the practice screen structure
      */
     render() {
+        // Check which system is active
+        const currentStudent = storageManager.getCurrentStudent();
+        const adaptiveProfile = currentStudent ? storageManager.getAdaptiveProfile(currentStudent.id) : null;
+        const adaptiveEnabled = adaptiveProfile && adaptiveProfile.enabled;
+
+        // Build system indicator
+        const systemIndicator = adaptiveEnabled
+            ? '<span class="system-indicator adaptive">🎯 Adaptive Learning</span>'
+            : '<span class="system-indicator powerup">⚡ Power-Up Mode</span>';
+
         this.container.innerHTML = `
             <div id="confidenceMeterContainer"></div>
 
@@ -8826,6 +8375,7 @@ class PracticeScreen {
                         Question <span id="currentQ">1</span> of <span id="totalQ">${this.questions.length}</span>
                     </span>
                     <span class="level-display" id="levelDisplay">${this.getLevelName(this.currentLevel)}</span>
+                    ${systemIndicator}
                 </div>
                 <div class="score-display">
                     <div class="score-item correct">
@@ -8852,14 +8402,11 @@ class PracticeScreen {
         `;
 
         // Phase 5: Initialize and show confidence meter if adaptive is enabled
-        const currentStudent = storageManager.getCurrentStudent();
-        if (currentStudent) {
-            const adaptiveProfile = storageManager.getAdaptiveProfile(currentStudent.id);
-            if (adaptiveProfile && adaptiveProfile.enabled) {
-                const meterContainer = this.container.querySelector('#confidenceMeterContainer');
-                confidenceMeter.init(meterContainer);
-                confidenceMeter.show();
-            }
+        // Reuse currentStudent and adaptiveEnabled from above
+        if (adaptiveEnabled) {
+            const meterContainer = this.container.querySelector('#confidenceMeterContainer');
+            confidenceMeter.init(meterContainer);
+            confidenceMeter.show();
         }
     }
 
@@ -9043,8 +8590,6 @@ class PracticeScreen {
         // Update score
         if (result.isCorrect) {
             this.score.correct++;
-            // Track correct answer for module progress (Phase 3.5)
-            moduleProgress.recordCorrectAnswer(this.currentModule, this.currentLevel);
         } else {
             this.score.incorrect++;
         }
@@ -9066,7 +8611,7 @@ class PracticeScreen {
             storageManager.updateBestStreak(this.sessionId, streakStatus.currentStreak);
         }
 
-        // Phase 5: Record result in performance analyzer
+        // Phase 5: Record result in performance analyzer (only if adaptive enabled)
         const currentStudent = storageManager.getCurrentStudent();
         if (currentStudent) {
             const adaptiveProfile = storageManager.getAdaptiveProfile(currentStudent.id);
@@ -9084,6 +8629,7 @@ class PracticeScreen {
                 confidenceMeter.update(confidenceData);
 
                 // Check for intervention (after showing feedback)
+                // Only runs when adaptive is ENABLED
                 const questionsAnswered = this.score.correct + this.score.incorrect;
                 setTimeout(() => {
                     this.checkForAdaptiveIntervention(questionsAnswered);
@@ -9096,43 +8642,83 @@ class PracticeScreen {
         this.updateProgress();
         this.updateStreakDisplay();
 
-        // Show power-up button if available (not at max level)
-        if (streakStatus.justUnlocked && this.currentLevel < 4) {
-            setTimeout(() => {
-                powerUpButton.show(() => this.handlePowerUp());
-            }, 800); // Brief delay for better UX
-        }
-
         // At Level 4 with 3-streak: offer to complete module and end session
         if (streakStatus.justUnlocked && this.currentLevel === 4) {
-            // Check if module would be complete
-            if (moduleProgress.isModuleComplete(this.currentModule)) {
-                setTimeout(() => {
-                    this.showLevel4CompletionOffer();
-                }, 800);
+            // Check if module would be complete (student-specific)
+            // Reuse currentStudent from above
+            if (currentStudent) {
+                const isComplete = this.isModuleCompleteForStudent(currentStudent.id, this.currentModule);
+                if (isComplete) {
+                    setTimeout(() => {
+                        this.showLevel4CompletionOffer();
+                    }, 800);
+                }
             }
         }
+    }
 
-        // Hide power-up button if streak was lost
-        if (streakStatus.lostPowerUp) {
-            powerUpButton.hide();
+    /**
+     * Check if module is complete for a specific student
+     * @param {string} studentId - Student ID
+     * @param {string} moduleId - Module ID
+     * @returns {boolean} True if all 4 levels have 3+ correct answers
+     */
+    isModuleCompleteForStudent(studentId, moduleId) {
+        const student = storageManager.getStudent(studentId);
+        if (!student || !student.moduleProgress[moduleId]) {
+            return false;
         }
+
+        const moduleProgress = student.moduleProgress[moduleId];
+        return moduleProgress.levels[1] >= 3 &&
+               moduleProgress.levels[2] >= 3 &&
+               moduleProgress.levels[3] >= 3 &&
+               moduleProgress.levels[4] >= 3;
     }
 
     /**
      * Show feedback after answer submission
      */
-    showFeedback(result) {
+    showFeedback(result, streakStatus) {
         const feedbackArea = this.container.querySelector('#feedbackArea');
 
+        // Check if adaptive is enabled (to make systems mutually exclusive)
+        const currentStudent = storageManager.getCurrentStudent();
+        const adaptiveProfile = currentStudent ? storageManager.getAdaptiveProfile(currentStudent.id) : null;
+        const adaptiveEnabled = adaptiveProfile && adaptiveProfile.enabled;
+
+        // Check if power-up is available (3-streak at non-max level)
+        // Only show power-up if adaptive is DISABLED
+        const powerUpAvailable = !adaptiveEnabled && streakStatus && streakStatus.justUnlocked && this.currentLevel < 4;
+
         if (result.isCorrect) {
-            feedbackArea.innerHTML = `
-                <div class="feedback feedback-correct">
-                    <span class="feedback-icon">✓</span>
-                    <span class="feedback-text">Correct! Well done!</span>
-                </div>
-                <button class="next-btn" id="nextBtn">Next Question →</button>
-            `;
+            if (powerUpAvailable) {
+                // Show inline power-up choice
+                const newLevel = this.currentLevel + 1;
+                feedbackArea.innerHTML = `
+                    <div class="feedback feedback-correct feedback-powerup">
+                        <span class="feedback-icon">🎉</span>
+                        <span class="feedback-text">3 in a row! You can level up!</span>
+                    </div>
+                    <div class="feedback-powerup-choice">
+                        <button class="powerup-primary-btn" id="powerUpBtn">
+                            ⚡ Power Up to ${this.getLevelName(newLevel)}!
+                        </button>
+                        <button class="powerup-secondary-btn" id="stayBtn">
+                            Stay at ${this.getLevelName(this.currentLevel)}
+                        </button>
+                    </div>
+                `;
+            } else {
+                // Regular correct feedback
+                feedbackArea.innerHTML = `
+                    <div class="feedback feedback-correct">
+                        <span class="feedback-icon">✓</span>
+                        <span class="feedback-text">Correct! Well done!</span>
+                    </div>
+                    <button class="next-btn" id="nextBtn">Next Question →</button>
+                `;
+            }
         } else {
             feedbackArea.innerHTML = `
                 <div class="feedback feedback-incorrect">
@@ -9156,11 +8742,30 @@ class PracticeScreen {
             });
         }
 
-        // Attach next button listener
-        const nextBtn = this.container.querySelector('#nextBtn');
-        nextBtn.addEventListener('click', () => {
-            this.nextQuestion();
-        });
+        // Attach button listeners
+        if (powerUpAvailable) {
+            // Power-up choice buttons
+            const powerUpBtn = feedbackArea.querySelector('#powerUpBtn');
+            const stayBtn = feedbackArea.querySelector('#stayBtn');
+
+            powerUpBtn.addEventListener('click', () => {
+                this.handlePowerUp();
+            });
+
+            stayBtn.addEventListener('click', () => {
+                // Consume power-up but don't level up
+                streakTracker.consumePowerUp();
+                this.nextQuestion();
+            });
+        } else {
+            // Regular next button
+            const nextBtn = feedbackArea.querySelector('#nextBtn');
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    this.nextQuestion();
+                });
+            }
+        }
     }
 
     /**
@@ -9199,19 +8804,31 @@ class PracticeScreen {
      * Update progress display
      */
     updateProgress() {
-        this.container.querySelector('#currentQ').textContent = this.currentIndex + 1;
-        this.container.querySelector('#totalQ').textContent = this.questions.length;
+        const currentQ = this.currentIndex + 1;
+        const totalQ = this.questions.length;
+
+        // Update question counters
+        this.container.querySelector('#currentQ').textContent = currentQ;
+        this.container.querySelector('#totalQ').textContent = totalQ;
+
+        // Update score
         this.container.querySelector('#correctCount').textContent = this.score.correct;
         this.container.querySelector('#incorrectCount').textContent = this.score.incorrect;
 
-        const progress = ((this.currentIndex + 1) / this.questions.length) * 100;
-        this.container.querySelector('#progressFill').style.width = `${progress}%`;
+        // Calculate and update progress bar
+        const progress = Math.min(100, Math.max(0, (currentQ / totalQ) * 100));
+        const progressFill = this.container.querySelector('#progressFill');
+        if (progressFill) {
+            progressFill.style.width = `${progress.toFixed(1)}%`;
+        }
 
-        // Update level display
+        // Update level display badge
         const levelDisplay = this.container.querySelector('#levelDisplay');
         if (levelDisplay) {
             levelDisplay.textContent = this.getLevelName(this.currentLevel);
         }
+
+        console.log(`Progress: Q${currentQ}/${totalQ} (${progress.toFixed(1)}%) - L${this.currentLevel} - Score: ${this.score.correct}/${this.score.correct + this.score.incorrect}`);
     }
 
     /**
@@ -9260,10 +8877,11 @@ class PracticeScreen {
         // Show celebration overlay
         this.showPowerUpOverlay(this.currentLevel, newLevel);
 
-        // After celebration, continue with new level questions
+        // After celebration, transition to new level and advance to next question
         setTimeout(() => {
             this.transitionToNewLevel(newLevel);
-        }, 3000);
+            this.nextQuestion(); // Student is still on current question, so advance now
+        }, 1500);
     }
 
     /**
@@ -9287,15 +8905,27 @@ class PracticeScreen {
             if (overlay.parentNode) {
                 overlay.parentNode.removeChild(overlay);
             }
-        }, 3000);
+        }, 1500);
     }
 
     /**
      * Transition to new difficulty level
+     * NOTE: Does NOT advance to next question - caller should do that if needed
      */
     transitionToNewLevel(newLevel) {
+        const oldLevel = this.currentLevel;
+
         // Update current level
         this.currentLevel = newLevel;
+
+        // Update performance analyzer level (for adaptive system)
+        const currentStudent = storageManager.getCurrentStudent();
+        if (currentStudent) {
+            const adaptiveProfile = storageManager.getAdaptiveProfile(currentStudent.id);
+            if (adaptiveProfile && adaptiveProfile.enabled && performanceAnalyzer.sessionId) {
+                performanceAnalyzer.updateLevel(newLevel);
+            }
+        }
 
         // Calculate how many questions remain
         const questionsRemaining = this.questions.length - (this.currentIndex + 1);
@@ -9319,8 +8949,14 @@ class PracticeScreen {
             ...newQuestions
         ];
 
-        // Continue to next question (which will be at new level)
-        this.nextQuestion();
+        // Update UI to reflect new level
+        this.updateProgress(); // Updates level badge and progress bar
+
+        console.log(`✓ Level transition complete: L${oldLevel} → L${newLevel}`);
+
+        // NOTE: Caller is responsible for calling nextQuestion() if appropriate
+        // - Power-up: student is still on current question, so nextQuestion() should be called
+        // - Adaptive: student has already moved to next question, so nextQuestion() should NOT be called
     }
 
     /**
@@ -9390,11 +9026,29 @@ class PracticeScreen {
             }
         }, 300);
 
-        // Mark module as complete
-        moduleProgress.markModuleComplete(this.currentModule);
+        // Mark module as complete (student-specific)
+        const currentStudent = storageManager.getCurrentStudent();
+        if (currentStudent) {
+            this.markModuleCompleteForStudent(currentStudent.id, this.currentModule);
+        }
 
         // End the session
         this.finish();
+    }
+
+    /**
+     * Mark a module as complete for a specific student
+     * @param {string} studentId - Student ID
+     * @param {string} moduleId - Module ID
+     */
+    markModuleCompleteForStudent(studentId, moduleId) {
+        const student = storageManager.getStudent(studentId);
+        if (!student || !student.moduleProgress[moduleId]) {
+            return;
+        }
+
+        student.moduleProgress[moduleId].completed = true;
+        storageManager.save();
     }
 
     /**
@@ -9412,11 +9066,12 @@ class PracticeScreen {
 
     /**
      * Check for adaptive intervention (Phase 5)
+     * Only called when adaptive system is ENABLED
      * @param {number} questionsAnswered - Total questions answered so far
      */
     checkForAdaptiveIntervention(questionsAnswered) {
-        // Don't check if modal is already showing or if power-up is active
-        if (adaptiveSuggestionModal.isShowing() || powerUpButton.isVisible()) {
+        // Don't check if modal is already showing
+        if (adaptiveSuggestionModal.isShowing()) {
             return;
         }
 
@@ -9446,6 +9101,14 @@ class PracticeScreen {
         if (intervention.type === 'switch_module') {
             // For module switch, end current session and return to setup
             console.log('🎯 Student accepted module switch suggestion');
+            this.finish();
+            return;
+        }
+
+        if (intervention.type === 'complete_module') {
+            // For module completion, set flag and end session
+            console.log('🎯 Student accepted module completion');
+            this.moduleCompletedViaAdaptive = true;
             this.finish();
             return;
         }
@@ -9512,9 +9175,18 @@ class PracticeScreen {
         const endTime = Date.now();
         const timeSpent = Math.floor((endTime - this.startTime) / 1000); // seconds
 
-        // Check if module just became complete (Phase 3.5)
-        const moduleComplete = moduleProgress.isModuleComplete(this.currentModule);
-        const alreadyMarkedComplete = moduleProgress.getProgress(this.currentModule).completed;
+        // Check if module just became complete (student-specific)
+        const currentStudent = storageManager.getCurrentStudent();
+        let moduleComplete = false;
+        let alreadyMarkedComplete = false;
+
+        if (currentStudent) {
+            // Check historical completion OR adaptive completion
+            moduleComplete = this.isModuleCompleteForStudent(currentStudent.id, this.currentModule)
+                          || this.moduleCompletedViaAdaptive;
+            const moduleProgress = currentStudent.moduleProgress[this.currentModule];
+            alreadyMarkedComplete = moduleProgress ? moduleProgress.completed : false;
+        }
 
         // Calculate final score
         const totalQuestions = this.score.correct + this.score.incorrect;
@@ -9553,7 +9225,14 @@ class PracticeScreen {
 
         // Show module completion prompt if just completed
         if (moduleComplete && !alreadyMarkedComplete) {
-            // Import module info
+            // Mark module as complete for this student
+            if (currentStudent) {
+                this.markModuleCompleteForStudent(currentStudent.id, this.currentModule);
+                const completionSource = this.moduleCompletedViaAdaptive ? 'adaptive intervention' : 'natural progression';
+                console.log(`🏆 Module ${this.currentModule} marked as complete for student ${currentStudent.id} (via ${completionSource})`);
+            }
+
+            // Import module info and show completion prompt
             import('../curriculum/modules.js').then(({ MODULES }) => {
                 const module = MODULES[this.currentModule];
                 if (module) {
@@ -10342,7 +10021,6 @@ export default ResultsScreen;
 import { MODULES, getModule } from '../curriculum/modules.js';
 import questionEngine from '../core/questionEngine.js';
 import questionHistory from '../core/questionHistory.js';
-import moduleProgress from '../core/moduleProgress.js';
 import storageManager from '../core/storageManager.js';
 import studentSelector from './studentSelector.js';
 import progressDisplay from './progressDisplay.js';
@@ -10406,7 +10084,7 @@ class SetupScreen {
                         <input type="number"
                                id="questionCount"
                                min="1"
-                               max="20"
+                               max="100"
                                value="${this.questionCount}">
                         <button class="input-btn" id="increaseBtn">+</button>
                     </div>
@@ -10507,8 +10185,16 @@ class SetupScreen {
      * Render topic cards
      */
     renderTopics() {
+        // Get current student for progress checking
+        const currentStudent = storageManager.getCurrentStudent();
+
         return Object.values(MODULES).map(module => {
-            const isCompleted = moduleProgress.getProgress(module.id).completed;
+            // Check if module is completed for the current student
+            let isCompleted = false;
+            if (currentStudent && currentStudent.moduleProgress[module.id]) {
+                isCompleted = currentStudent.moduleProgress[module.id].completed;
+            }
+
             const completedClass = isCompleted ? 'completed' : '';
             const selectedClass = module.id === this.selectedModule ? 'selected' : '';
 
@@ -10653,7 +10339,7 @@ class SetupScreen {
         });
 
         increaseBtn.addEventListener('click', () => {
-            if (this.questionCount < 20) {
+            if (this.questionCount < 100) {
                 this.questionCount++;
                 countInput.value = this.questionCount;
             }
@@ -10662,7 +10348,7 @@ class SetupScreen {
         countInput.addEventListener('change', (e) => {
             let value = parseInt(e.target.value);
             if (value < 1) value = 1;
-            if (value > 20) value = 20;
+            if (value > 100) value = 100;
             this.questionCount = value;
             countInput.value = value;
         });
@@ -10707,18 +10393,40 @@ class SetupScreen {
     }
 
     /**
-     * Clear question history
+     * Clear question history (and module progress for current student)
      */
     clearHistory() {
-        const confirmed = confirm(
-            'This will clear all question history.\n\n' +
-            'You may see previously seen questions again.\n\n' +
-            'Continue?'
-        );
+        const currentStudent = storageManager.getCurrentStudent();
+
+        let message = 'This will clear:\n' +
+                     '• Question history (duplicate tracking)\n';
+
+        if (currentStudent) {
+            message += `• Module progress for ${currentStudent.name}\n` +
+                      '• All practice sessions and statistics\n\n' +
+                      '⚠️ This cannot be undone!\n\n';
+        } else {
+            message += '\nYou may see previously seen questions again.\n\n';
+        }
+
+        message += 'Continue?';
+
+        const confirmed = confirm(message);
 
         if (confirmed) {
+            // Clear question history (duplicate tracking)
             questionHistory.clear();
-            alert('Question history cleared! ✓');
+
+            // Clear student-specific data if student is selected
+            if (currentStudent) {
+                storageManager.clearStudentHistory(currentStudent.id);
+            }
+
+            // Refresh UI to show cleared state
+            this.render();
+            this.attachEventListeners();
+
+            alert(`History cleared! ✓${currentStudent ? `\n\nAll data for ${currentStudent.name} has been reset.` : ''}`);
         }
     }
 
@@ -11439,26 +11147,24 @@ export default studentSelector;
 /* ===== CONFIDENCE METER ===== */
 
 .confidence-meter {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 500px;
+    position: relative;
+    width: 100%;
+    max-width: 550px;
+    margin: 0 auto var(--spacing-sm) auto;
     background: white;
-    border-radius: 12px;
-    padding: 16px 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    padding: 12px 16px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
     opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
+    transform: translateY(-8px);
     transition: all 0.3s ease;
     pointer-events: none;
-    z-index: 900;
+    z-index: 10;
 }
 
 .confidence-meter.visible {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
     pointer-events: auto;
 }
 
@@ -11466,17 +11172,17 @@ export default studentSelector;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .confidence-meter-label {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: #555;
 }
 
 .confidence-meter-value {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: #333;
 }
@@ -11484,11 +11190,11 @@ export default studentSelector;
 /* Progress Bar Container */
 .confidence-meter-bar {
     position: relative;
-    height: 24px;
+    height: 20px;
     background: #f0f0f0;
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 /* Background Zones (visual reference) */
@@ -11560,11 +11266,12 @@ export default studentSelector;
 
 /* Message Display */
 .confidence-meter-message {
-    font-size: 13px;
+    font-size: 12px;
     text-align: center;
     font-weight: 500;
     color: #666;
-    min-height: 18px;
+    min-height: 16px;
+    line-height: 1.3;
     transition: color 0.3s ease;
 }
 
@@ -11904,8 +11611,8 @@ export default studentSelector;
 /* Tablet (iPad) */
 @media (max-width: 1024px) {
     .confidence-meter {
-        max-width: 600px;
-        width: 85%;
+        max-width: 100%;
+        width: 100%;
     }
 
     .adaptive-suggestion-modal {
@@ -11925,26 +11632,36 @@ export default studentSelector;
 /* Mobile */
 @media (max-width: 480px) {
     .confidence-meter {
-        top: 10px;
-        width: 95%;
-        padding: 12px 16px;
+        width: 100%;
+        max-width: 100%;
+        padding: 10px 12px;
+        margin-bottom: 0.625rem;
+        border-radius: 8px;
+    }
+
+    .confidence-meter-header {
+        margin-bottom: 8px;
     }
 
     .confidence-meter-label {
-        font-size: 13px;
+        font-size: 12px;
     }
 
     .confidence-meter-value {
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .confidence-meter-bar {
-        height: 20px;
+        height: 16px;
+        border-radius: 8px;
+        margin-bottom: 5px;
     }
 
     .confidence-meter-message {
-        font-size: 12px;
+        font-size: 11px;
+        min-height: 14px;
     }
+}
 
     .adaptive-suggestion-modal {
         width: 95%;
@@ -12830,9 +12547,10 @@ body {
     font-family: var(--font-body);
     background-color: var(--color-bg);
     color: var(--color-text);
-    line-height: 1.6;
+    line-height: 1.5;
     min-height: 100vh;
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
+    overflow-x: hidden;
 }
 
 /* ===== LAYOUT ===== */
@@ -12844,9 +12562,13 @@ body {
 .screen {
     background: var(--color-surface);
     border-radius: var(--radius-xl);
-    padding: var(--spacing-xl);
-    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
     min-height: 500px;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
 }
 
 .hidden {
@@ -12855,17 +12577,19 @@ body {
 
 /* ===== TYPOGRAPHY ===== */
 h1 {
-    font-size: var(--font-size-3xl);
+    font-size: clamp(1.5rem, 4vw, 2rem);
     font-weight: 700;
     color: var(--color-text);
     margin-bottom: var(--spacing-sm);
+    line-height: 1.2;
 }
 
 h2 {
-    font-size: var(--font-size-2xl);
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
     font-weight: 600;
     color: var(--color-text);
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.3;
 }
 
 h3 {
@@ -12875,9 +12599,10 @@ h3 {
 }
 
 .subtitle {
-    font-size: var(--font-size-lg);
+    font-size: clamp(0.95rem, 2vw, 1.125rem);
     color: var(--color-text-secondary);
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.4;
 }
 
 /* ===== BUTTONS ===== */
@@ -14840,8 +14565,13 @@ input[type="number"]:disabled {
 
 /* ===== TABLET (LANDSCAPE) ===== */
 @media (max-width: 1024px) {
+    body {
+        padding: var(--spacing-xs);
+    }
+
     .screen {
-        padding: var(--spacing-lg);
+        padding: var(--spacing-md);
+        max-height: calc(100vh - 1rem);
     }
 
     .topic-grid {
@@ -14849,68 +14579,97 @@ input[type="number"]:disabled {
     }
 
     .question-text {
-        font-size: 1.375rem;
+        font-size: clamp(1.125rem, 3vw, 1.375rem);
+    }
+
+    .question-card {
+        padding: var(--spacing-sm);
+        max-height: calc(100vh - 260px);
+    }
+
+    .practice-header {
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
     }
 }
 
 /* ===== TABLET (PORTRAIT) & LARGE MOBILE ===== */
 @media (max-width: 768px) {
     body {
-        padding: var(--spacing-sm);
+        padding: 0.375rem;
     }
 
     .screen {
-        padding: var(--spacing-md);
+        padding: var(--spacing-sm);
+        max-height: calc(100vh - 0.75rem);
+        border-radius: var(--radius-lg);
     }
 
     h1 {
-        font-size: 2rem;
+        font-size: clamp(1.5rem, 5vw, 1.875rem);
+        margin-bottom: 0.5rem;
     }
 
     h2 {
-        font-size: 1.5rem;
+        font-size: clamp(1.25rem, 4vw, 1.5rem);
+        margin-bottom: 0.5rem;
     }
 
     /* Setup Screen */
+    .setup-header {
+        margin-bottom: var(--spacing-md);
+    }
+
     .topic-grid {
         grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
     }
 
     .level-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
     }
 
     /* Practice Screen */
     .practice-header {
-        flex-direction: column;
-        gap: var(--spacing-md);
-        align-items: flex-start;
+        gap: 0.625rem;
+        margin-bottom: 0.625rem;
+        padding-bottom: 0.625rem;
     }
 
     .progress-info {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-xs);
-        width: 100%;
-    }
-
-    .level-display {
-        margin-left: 0;
-        align-self: flex-start;
+        gap: 0.5rem;
     }
 
     .score-display {
         width: 100%;
-        justify-content: space-around;
+        justify-content: space-between;
+        gap: var(--spacing-sm);
+    }
+
+    .question-card {
+        padding: 0.75rem;
+        max-height: calc(100vh - 240px);
     }
 
     .question-text {
-        font-size: 1.25rem;
+        font-size: clamp(1.125rem, 4vw, 1.25rem);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .answer-btn {
+        padding: 0.625rem 0.875rem;
+        font-size: clamp(0.875rem, 2.5vw, 1rem);
+    }
+
+    .progress-bar {
+        margin-bottom: 0.75rem;
     }
 
     /* Results Screen */
     .results-stats {
         grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
     }
 
     .results-actions {
@@ -14920,37 +14679,118 @@ input[type="number"]:disabled {
 
 /* ===== MOBILE ===== */
 @media (max-width: 480px) {
-    h1 {
-        font-size: 1.75rem;
+    body {
+        padding: 0.25rem;
     }
 
+    .screen {
+        padding: 0.75rem;
+        max-height: calc(100vh - 0.5rem);
+        border-radius: 0.75rem;
+    }
+
+    h1 {
+        font-size: clamp(1.375rem, 6vw, 1.625rem);
+        margin-bottom: 0.375rem;
+    }
+
+    h2 {
+        font-size: clamp(1.125rem, 5vw, 1.375rem);
+    }
+
+    /* Setup Screen */
     .setup-header {
+        margin-bottom: 0.75rem;
+    }
+
+    .setup-section {
         margin-bottom: var(--spacing-md);
     }
 
     .level-grid {
         grid-template-columns: 1fr;
+        gap: 0.5rem;
     }
 
     .settings-group {
         flex-direction: column;
         align-items: stretch;
+        gap: 0.5rem;
     }
 
     .input-group {
         justify-content: center;
     }
 
-    .question-text {
+    /* Practice Screen */
+    .practice-header {
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .score-display {
+        gap: 0.5rem;
+    }
+
+    .score-item {
+        min-width: 50px;
+    }
+
+    .score-value {
         font-size: 1.125rem;
     }
 
+    .score-label {
+        font-size: 0.688rem;
+    }
+
+    .system-indicator {
+        display: none; /* Hide on very small screens to save space */
+    }
+
+    .question-card {
+        padding: 0.625rem;
+        max-height: calc(100vh - 220px);
+    }
+
+    .question-text {
+        font-size: clamp(1rem, 4.5vw, 1.125rem);
+        margin-bottom: 0.625rem;
+        line-height: 1.3;
+    }
+
+    .answer-options {
+        gap: 0.5rem;
+    }
+
     .answer-btn {
-        padding: 0.875rem 1rem;
+        padding: 0.625rem 0.75rem;
+        font-size: clamp(0.875rem, 3vw, 0.95rem);
+    }
+
+    .progress-bar {
+        height: 5px;
+        margin-bottom: 0.625rem;
+    }
+
+    .powerup-primary-btn {
+        font-size: clamp(0.875rem, 3vw, 0.95rem);
+        padding: 0.75rem 1rem;
+    }
+
+    .powerup-secondary-btn {
+        font-size: clamp(0.813rem, 2.5vw, 0.875rem);
+        padding: 0.5rem 0.75rem;
+    }
+
+    .next-btn {
+        padding: 0.625rem 1rem;
+        font-size: clamp(0.875rem, 3vw, 0.95rem);
     }
 
     .results-icon {
-        font-size: 3.5rem;
+        font-size: 3rem;
     }
 }
 
@@ -14964,14 +14804,18 @@ input[type="number"]:disabled {
 
     .topic-card,
     .level-card,
-    .answer-btn {
+    .answer-btn,
+    .powerup-primary-btn,
+    .powerup-secondary-btn {
         min-height: 60px;
     }
 
     /* Remove hover effects on touch devices */
     .topic-card:hover,
     .level-card:hover,
-    .answer-btn:hover {
+    .answer-btn:hover,
+    .powerup-primary-btn:hover,
+    .powerup-secondary-btn:hover {
         transform: none;
     }
 
@@ -14984,6 +14828,14 @@ input[type="number"]:disabled {
 
     .answer-btn:active:not(:disabled) {
         transform: scale(0.98);
+    }
+
+    .powerup-primary-btn:active {
+        transform: scale(0.98);
+    }
+
+    .powerup-secondary-btn:active {
+        transform: scale(0.97);
     }
 
     button:active {
@@ -15299,51 +15151,87 @@ input[type="number"]:disabled {
 /* ===== PRACTICE SCREEN ===== */
 .practice-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-md);
-    padding-bottom: var(--spacing-md);
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
     border-bottom: 2px solid var(--color-border);
 }
 
 .progress-info {
-    font-size: var(--font-size-lg);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-size-base);
     font-weight: 600;
     color: var(--color-primary);
 }
 
 .question-counter {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: var(--spacing-xs);
+    white-space: nowrap;
 }
 
 .level-display {
     display: inline-block;
-    margin-left: var(--spacing-md);
-    padding: 0.375rem 0.75rem;
+    margin-left: 0;
+    padding: 0.25rem 0.625rem;
     background: var(--color-primary-light);
     color: var(--color-primary);
     border-radius: var(--radius-sm);
-    font-size: var(--font-size-sm);
+    font-size: 0.813rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     border: 2px solid var(--color-primary);
+    white-space: nowrap;
+}
+
+/* System Indicator (Adaptive vs Power-Up) */
+.system-indicator {
+    display: inline-block;
+    margin-left: 0;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border: 2px solid;
+    opacity: 0.85;
+    white-space: nowrap;
+}
+
+.system-indicator.adaptive {
+    background: #ede9fe;
+    color: #6b21a8;
+    border-color: #8b5cf6;
+}
+
+.system-indicator.powerup {
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #fbbf24;
 }
 
 .score-display {
     display: flex;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
+    align-items: center;
 }
 
 .score-item {
     text-align: center;
+    min-width: 60px;
 }
 
 .score-value {
-    font-size: 1.75rem;
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
     font-weight: 700;
+    line-height: 1;
 }
 
 .score-item.correct .score-value {
@@ -15355,25 +15243,27 @@ input[type="number"]:disabled {
 }
 
 .score-label {
-    font-size: var(--font-size-sm);
+    font-size: 0.75rem;
     color: var(--color-text-secondary);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
+    margin-top: 0.125rem;
 }
 
 /* Progress Bar */
 .progress-bar {
-    height: 8px;
+    height: 6px;
     background: var(--color-border);
     border-radius: 999px;
     overflow: hidden;
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
 }
 
 .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--color-success) 0%, var(--color-primary) 100%);
-    transition: width var(--transition-slow);
+    transition: width 400ms ease-out;
+    min-width: 0%;
 }
 
 /* Question Card */
@@ -15385,28 +15275,30 @@ input[type="number"]:disabled {
 .question-card {
     background: var(--color-bg);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
+    max-height: calc(100vh - 280px);
+    overflow-y: auto;
 }
 
 .question-type {
     display: inline-block;
     background: var(--color-primary-light);
     color: var(--color-primary);
-    padding: 0.375rem 0.75rem;
+    padding: 0.25rem 0.625rem;
     border-radius: var(--radius-sm);
-    font-size: var(--font-size-sm);
+    font-size: 0.813rem;
     font-weight: 600;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
 .question-text {
-    font-size: 1.5rem;
+    font-size: clamp(1.125rem, 3.5vw, 1.5rem);
     font-weight: 600;
     color: var(--color-text);
-    margin-bottom: var(--spacing-lg);
-    line-height: 1.4;
+    margin-bottom: var(--spacing-md);
+    line-height: 1.35;
 }
 
 .question-hint {
@@ -15421,23 +15313,24 @@ input[type="number"]:disabled {
 
 /* Answer Area */
 .answer-area {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
 }
 
 .answer-options {
     display: grid;
-    gap: var(--spacing-sm);
+    gap: 0.625rem;
 }
 
 .answer-btn {
-    padding: 1rem 1.5rem;
+    padding: 0.75rem 1rem;
     background: var(--color-surface);
     border: 2px solid var(--color-border);
     border-radius: var(--radius-md);
-    font-size: var(--font-size-lg);
+    font-size: clamp(0.95rem, 2.5vw, 1.125rem);
     font-weight: 500;
     text-align: left;
     color: var(--color-text);
+    min-height: 44px;
 }
 
 .answer-btn:hover:not(:disabled) {
@@ -15488,24 +15381,30 @@ input[type="number"]:disabled {
 
 /* Feedback */
 .feedback-area {
-    margin-top: var(--spacing-md);
+    margin-top: var(--spacing-sm);
 }
 
 .feedback {
-    padding: var(--spacing-md);
+    padding: 0.625rem 0.875rem;
     border-radius: var(--radius-md);
-    font-size: var(--font-size-lg);
+    font-size: clamp(0.95rem, 2.5vw, 1.125rem);
     font-weight: 500;
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-sm);
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
 }
 
 .feedback-correct {
     background: var(--color-success-light);
     color: #065f46;
     border: 2px solid var(--color-success);
+}
+
+.feedback-powerup {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+    border: 2px solid #fbbf24;
 }
 
 .feedback-incorrect {
@@ -15519,14 +15418,83 @@ input[type="number"]:disabled {
     font-weight: 700;
 }
 
+/* Power-Up Choice (Inline) */
+.feedback-powerup-choice {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: var(--spacing-sm);
+}
+
+.powerup-primary-btn {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: clamp(0.95rem, 2.5vw, 1.125rem);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
+    text-align: center;
+    min-height: 44px;
+}
+
+.powerup-primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(255, 107, 107, 0.4);
+}
+
+.powerup-primary-btn:active {
+    transform: translateY(0);
+}
+
+.powerup-secondary-btn {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    background: white;
+    color: var(--color-text-secondary);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: clamp(0.875rem, 2vw, 1rem);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    min-height: 40px;
+}
+
+.powerup-secondary-btn:hover {
+    background: var(--color-bg);
+    border-color: var(--color-text-secondary);
+    color: var(--color-text);
+}
+
+.powerup-secondary-btn:active {
+    transform: scale(0.98);
+}
+
+.powerup-primary-btn:focus-visible {
+    outline: 3px solid #fbbf24;
+    outline-offset: 3px;
+}
+
+.powerup-secondary-btn:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
 .next-btn {
     width: 100%;
-    padding: 0.875rem 1.5rem;
+    padding: 0.75rem 1.25rem;
     background: var(--color-success);
     color: white;
     border-radius: var(--radius-md);
-    font-size: var(--font-size-base);
+    font-size: clamp(0.95rem, 2.5vw, 1rem);
     font-weight: 600;
+    min-height: 44px;
 }
 
 .next-btn:hover {

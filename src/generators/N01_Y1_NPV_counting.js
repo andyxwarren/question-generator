@@ -78,7 +78,7 @@ export function generateCountingQuestion(params, level) {
             type: 'multiple_choice',
             options: options,
             answer: correctAnswer.toString(),
-            module: 'counting',
+            module: 'N01_Y1_NPV',
             level: level
         };
     } else if (type === 'next_number') {
@@ -96,7 +96,7 @@ export function generateCountingQuestion(params, level) {
             type: 'multiple_choice',
             options: options,
             answer: correctAnswer.toString(),
-            module: 'counting',
+            module: 'N01_Y1_NPV',
             level: level
         };
     } else {
@@ -111,7 +111,7 @@ export function generateCountingQuestion(params, level) {
             type: 'text_input',
             answer: correctAnswer.toString(),
             hint: `The pattern counts ${direction} in ${step}s`,
-            module: 'counting',
+            module: 'N01_Y1_NPV',
             level: level
         };
     }
@@ -121,6 +121,6 @@ export function generateCountingQuestion(params, level) {
  * Register this generator
  */
 export default {
-    moduleId: 'counting',
+    moduleId: 'N01_Y1_NPV',
     generate: generateCountingQuestion
 };

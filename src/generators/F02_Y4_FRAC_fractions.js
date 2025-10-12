@@ -78,7 +78,7 @@ export function generateFractionsQuestion(params, level) {
             type: 'multiple_choice',
             options: options,
             answer: correctAnswer,
-            module: 'fractions',
+            module: 'F02_Y4_FRAC',
             level: level
         };
     } else if (type === 'identify_equivalent') {
@@ -96,7 +96,7 @@ export function generateFractionsQuestion(params, level) {
             type: 'multiple_choice',
             options: options,
             answer: correctAnswer,
-            module: 'fractions',
+            module: 'F02_Y4_FRAC',
             level: level
         };
     } else {
@@ -106,7 +106,7 @@ export function generateFractionsQuestion(params, level) {
             type: 'text_input',
             answer: num2.toString(),
             hint: `Type just the numerator (top number). The denominator is ${denom2}.`,
-            module: 'fractions',
+            module: 'F02_Y4_FRAC',
             level: level
         };
     }
@@ -116,6 +116,6 @@ export function generateFractionsQuestion(params, level) {
  * Register this generator
  */
 export default {
-    moduleId: 'fractions',
+    moduleId: 'F02_Y4_FRAC',
     generate: generateFractionsQuestion
 };

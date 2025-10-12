@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curriculum Parameter System MVP</title>
+    <link rel="stylesheet" href="question_generator.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Curriculum Parameter System - MVP</h1>
+            <p>Generate differentiated questions with multiple digital-ready formats at 4 difficulty levels</p>
+        </div>
+        
+        <div class="main-grid">
+            <!-- Left Sidebar -->
+            <div class="panel">
+                <h2>Select Module</h2>
+                <div class="module-list" id="moduleList"></div>
+                
+                <div class="level-selector">
+                    <h3>Difficulty Level</h3>
+                    <div class="level-btns">
+                        <button class="level-btn level-1" data-level="1">Level 1: Beginning</button>
+                        <button class="level-btn level-2" data-level="2">Level 2: Developing</button>
+                        <button class="level-btn level-3 active" data-level="3">Level 3: Meeting</button>
+                        <button class="level-btn level-4" data-level="4">Level 4: Exceeding</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <div class="module-info" id="moduleInfo">
+                    <h2 id="moduleTitle">Select a module to begin</h2>
+                    <div class="description" id="moduleDesc"></div>
+                    <div class="info-badge" id="moduleBadge"></div>
+                </div>
+                
+                <div class="panel">
+                    <h2>Parameters for Current Level</h2>
+                    <div class="params-grid" id="paramsGrid"></div>
+                </div>
+                
+                <div class="panel">
+                    <h2>Generate Questions</h2>
+                    <div class="generate-section">
+                        <div class="variety-info">
+                            <strong>🎮 Digital-Ready Formats:</strong> Questions include interactive formats like drag-and-drop, clickable options, true/false, matching, ordering, and more - perfect for online learning platforms.
+                        </div>
+                        
+                        <div class="question-count-control">
+                            <label for="questionCount">Number of Questions:</label>
+                            <input type="number" id="questionCount" min="1" max="50" value="10">
+                        </div>
+
+                        <button class="generate-btn" id="generateBtn">
+                            <span>⚡</span>
+                            <span>Generate Questions</span>
+                        </button>
+
+                        <div class="stats-panel" id="statsPanel" style="display: none;">
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalQuestions">0</div>
+                                <div class="stat-label">Total Questions</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="uniqueFormats">0</div>
+                                <div class="stat-label">Question Types</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="interactiveCount">0</div>
+                                <div class="stat-label">Interactive</div>
+                            </div>
+                        </div>
+
+                        <div class="questions-list" id="questionsList"></div>
+                        <div class="export-section" id="exportSection" style="display: none;">
+                            <button class="export-btn" onclick="printQuestions()">🖨️ Print Questions</button>
+                            <button class="export-btn" onclick="exportJSON()">💾 Export as JSON</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="question_generator.js"></script>
+</body>
+</html>

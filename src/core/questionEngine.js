@@ -6,10 +6,10 @@
  */
 
 import { getModule, getParameters } from '../curriculum/modules.js';
-import countingGenerator from '../generators/counting.js';
-import bondsGenerator from '../generators/bonds.js';
-import multiplyGenerator from '../generators/multiply.js';
-import fractionsGenerator from '../generators/fractions.js';
+import countingGenerator from '../generators/N01_Y1_NPV_counting.js';
+import bondsGenerator from '../generators/C01_Y1_CALC_bonds.js';
+import multiplyGenerator from '../generators/C06_Y3_CALC_multiply.js';
+import fractionsGenerator from '../generators/F02_Y4_FRAC_fractions.js';
 import questionHistory from './questionHistory.js';
 
 /**

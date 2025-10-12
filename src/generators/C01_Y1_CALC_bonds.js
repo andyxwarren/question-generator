@@ -110,7 +110,7 @@ export function generateBondsQuestion(params, level) {
                 text: `Sam has ${total} ${itemText}. He ${context.actionPresent} ${part1}. How many does he have left?`,
                 type: 'text_input',
                 answer: part2.toString(),
-                module: 'bonds',
+                module: 'C01_Y1_CALC',
                 level: level
             };
         } else {
@@ -120,7 +120,7 @@ export function generateBondsQuestion(params, level) {
                 type: 'text_input',
                 answer: part2.toString(),
                 hint: `Think: What number plus ${part1} makes ${total}?`,
-                module: 'bonds',
+                module: 'C01_Y1_CALC',
                 level: level
             };
         }
@@ -147,7 +147,7 @@ export function generateBondsQuestion(params, level) {
             type: 'multiple_choice',
             options: shuffle(options.slice(0, 4)),
             answer: correctAnswer.toString(),
-            module: 'bonds',
+            module: 'C01_Y1_CALC',
             level: level
         };
     } else {
@@ -166,7 +166,7 @@ export function generateBondsQuestion(params, level) {
                 text: `Lucy has ${part1} ${itemText}. She ${context.actionPresent} some more. Now she has ${total}. How many did she ${context.action}?`,
                 type: 'text_input',
                 answer: part2.toString(),
-                module: 'bonds',
+                module: 'C01_Y1_CALC',
                 level: level
             };
         } else {
@@ -176,7 +176,7 @@ export function generateBondsQuestion(params, level) {
                 type: 'text_input',
                 answer: part2.toString(),
                 hint: `What number do you add to ${part1} to make ${total}?`,
-                module: 'bonds',
+                module: 'C01_Y1_CALC',
                 level: level
             };
         }
@@ -187,6 +187,6 @@ export function generateBondsQuestion(params, level) {
  * Register this generator
  */
 export default {
-    moduleId: 'bonds',
+    moduleId: 'C01_Y1_CALC',
     generate: generateBondsQuestion
 };
