@@ -10,7 +10,6 @@ import countingGenerator from '../generators/N01_Y1_NPV_counting.js';
 import bondsGenerator from '../generators/C01_Y1_CALC_bonds.js';
 import multiplyGenerator from '../generators/C06_Y3_CALC_multiply.js';
 import fractionsGenerator from '../generators/F02_Y4_FRAC_fractions.js';
-import questionHistory from './questionHistory.js';
 
 /**
  * Question Engine Class
@@ -76,50 +75,20 @@ class QuestionEngine {
     }
 
     /**
-     * Generate multiple questions (with deduplication)
+     * Generate multiple questions
      * @param {string} moduleId - Module identifier
      * @param {number} level - Difficulty level (1-4)
      * @param {number} count - Number of questions to generate
-     * @param {boolean} checkHistory - Whether to check question history (default: true)
      * @returns {Array} Array of question objects
      */
-    generate(moduleId, level, count = 10, checkHistory = true) {
+    generate(moduleId, level, count = 10) {
         const questions = [];
-        const maxAttempts = count * 10; // Increased to account for duplicate skipping
-        let attempts = 0;
-        let skippedDuplicates = 0;
 
-        // Clean up expired entries before generating
-        if (checkHistory) {
-            questionHistory.cleanup();
-        }
-
-        while (questions.length < count && attempts < maxAttempts) {
+        for (let i = 0; i < count; i++) {
             const question = this.generateOne(moduleId, level);
-
             if (question) {
-                // Check if this question has been seen recently
-                if (checkHistory && questionHistory.hasQuestionBeenSeen(question)) {
-                    skippedDuplicates++;
-                    attempts++;
-                    continue; // Skip this duplicate question
-                }
-
-                // Add question and mark as seen
                 questions.push(question);
-
-                if (checkHistory) {
-                    questionHistory.markQuestionAsSeen(question);
-                }
             }
-
-            attempts++;
-        }
-
-        if (questions.length < count) {
-            console.warn(`Only generated ${questions.length} out of ${count} requested questions (${skippedDuplicates} duplicates skipped)`);
-        } else if (skippedDuplicates > 0) {
-            console.log(`Successfully generated ${questions.length} questions (${skippedDuplicates} duplicates skipped)`);
         }
 
         return questions;
@@ -149,37 +118,6 @@ class QuestionEngine {
      */
     getRegisteredModules() {
         return Array.from(this.generators.keys());
-    }
-
-    /**
-     * Get question history statistics
-     * @returns {Object} History statistics
-     */
-    getHistoryStats() {
-        return questionHistory.getStats();
-    }
-
-    /**
-     * Clear question history
-     */
-    clearHistory() {
-        questionHistory.clear();
-    }
-
-    /**
-     * Set cooldown period for question history
-     * @param {number} hours - Cooldown period in hours
-     */
-    setCooldown(hours) {
-        questionHistory.setCooldown(hours);
-    }
-
-    /**
-     * Get current cooldown period
-     * @returns {number} Cooldown in hours
-     */
-    getCooldownHours() {
-        return questionHistory.getCooldownHours();
     }
 }
 

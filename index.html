@@ -2,43 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <meta name="description" content="Interactive mathematics practice for UK Key Stage 1 & 2 students">
-    <meta name="theme-color" content="#2563eb">
-    <title>Maths Practice - UK Key Stage 1 & 2</title>
-
-    <!-- Stylesheets -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Generator</title>
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/screens.css">
-    <link rel="stylesheet" href="styles/keyboard.css">
-    <link rel="stylesheet" href="styles/powerup.css">
-    <link rel="stylesheet" href="styles/completion.css">
-    <link rel="stylesheet" href="styles/progress.css">
-    <link rel="stylesheet" href="styles/adaptive.css">
-    <link rel="stylesheet" href="styles/responsive.css">
-
-    <!-- Favicon (optional) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Setup Screen -->
-        <div id="setupScreen" class="screen">
-            <!-- Content will be injected by JavaScript -->
+    <div class="container">
+        <header>
+            <h1>Question Generator</h1>
+            <p>Select a module to generate questions for all difficulty levels</p>
+        </header>
+
+        <div id="setupSection" class="section">
+            <div class="control-group">
+                <label for="questionCount">Number of questions per level:</label>
+                <input type="number" id="questionCount" min="1" max="20" value="5">
+            </div>
+
+            <div class="modules-grid">
+                <!-- Module cards will be inserted here by JavaScript -->
+            </div>
         </div>
 
-        <!-- Practice Screen -->
-        <div id="practiceScreen" class="screen hidden">
-            <!-- Content will be injected by JavaScript -->
+        <div id="questionsSection" class="section hidden">
+            <div class="questions-header">
+                <h2 id="moduleTitle"></h2>
+                <button id="backBtn" class="btn-secondary">← Back to Modules</button>
+            </div>
+
+            <div id="questionsContainer">
+                <!-- Questions will be inserted here by JavaScript -->
+            </div>
+
+            <div class="actions">
+                <button id="submitBtn" class="btn-primary">Submit Answers</button>
+                <button id="resetBtn" class="btn-secondary">Reset</button>
+            </div>
         </div>
 
-        <!-- Results Screen -->
-        <div id="resultsScreen" class="screen hidden">
-            <!-- Content will be injected by JavaScript -->
+        <div id="resultsSection" class="section hidden">
+            <h2>Results</h2>
+            <div id="resultsContainer">
+                <!-- Results will be shown here -->
+            </div>
+            <button id="newQuizBtn" class="btn-primary">Generate New Questions</button>
         </div>
     </div>
 
-    <!-- Application JavaScript (ES6 Modules) -->
     <script type="module" src="src/ui/app.js"></script>
 </body>
 </html>
