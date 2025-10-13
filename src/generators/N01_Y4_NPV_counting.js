@@ -1,8 +1,8 @@
 /**
- * Year 1 Counting in Multiples Question Generator
+ * Year 4 Count in Multiples Question Generator
  *
  * Generates counting sequence questions based on UK National Curriculum
- * Module: N01_Y1_NPV - "Count to and across 100, forwards and backwards"
+ * Module: N01_Y4_NPV - "Count in multiples of 6, 7, 9, 25 and 1000"
  */
 
 /**
@@ -138,7 +138,7 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
             answer: answers.join(','),  // Store as comma-separated
             answers: answers,  // Also store as array for validation
             hint: `The pattern counts ${direction} in ${step}s`,
-            module: 'N01_Y1_NPV',
+            module: 'N01_Y4_NPV',
             level: level
         };
     }
@@ -153,7 +153,7 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
             type: 'text_input',
             answer: answer.toString(),
             hint: `Count ${direction} in ${step}s`,
-            module: 'N01_Y1_NPV',
+            module: 'N01_Y4_NPV',
             level: level
         };
     }
@@ -186,7 +186,7 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
             options: options,
             answer: correctAnswer.toString(),
             hint: `Count ${direction} in ${step}s`,
-            module: 'N01_Y1_NPV',
+            module: 'N01_Y4_NPV',
             level: level
         };
     }
@@ -196,6 +196,6 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
  * Register this generator
  */
 export default {
-    moduleId: 'N01_Y1_NPV',
+    moduleId: 'N01_Y4_NPV',
     generate: generateQuestion
 };

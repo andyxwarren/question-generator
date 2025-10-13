@@ -6,10 +6,11 @@
  */
 
 import { getParameters } from '../curriculum/parameters.js';
-import countingGenerator from '../generators/N01_Y1_NPV_counting.js';
-import bondsGenerator from '../generators/C01_Y1_CALC_bonds.js';
-import multiplyGenerator from '../generators/C06_Y3_CALC_multiply.js';
-import fractionsGenerator from '../generators/F02_Y4_FRAC_fractions.js';
+import countingY1Generator from '../generators/N01_Y1_NPV_counting.js';
+import countingY2Generator from '../generators/N01_Y2_NPV_counting.js';
+import countingY3Generator from '../generators/N01_Y3_NPV_counting.js';
+import countingY4Generator from '../generators/N01_Y4_NPV_counting.js';
+import countingY5Generator from '../generators/N01_Y5_NPV_counting.js';
 
 /**
  * Question Engine Class
@@ -24,10 +25,11 @@ class QuestionEngine {
      * Register all default generators
      */
     registerDefaultGenerators() {
-        this.register(countingGenerator);
-        this.register(bondsGenerator);
-        this.register(multiplyGenerator);
-        this.register(fractionsGenerator);
+        this.register(countingY1Generator);
+        this.register(countingY2Generator);
+        this.register(countingY3Generator);
+        this.register(countingY4Generator);
+        this.register(countingY5Generator);
     }
 
     /**

@@ -254,6 +254,20 @@ header p {
     box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
 }
 
+/* Multi-gap input container */
+.multi-input-container {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.text-input.multi-gap {
+    width: auto;
+    min-width: 80px;
+    flex: 0 1 auto;
+}
+
 /* Hint */
 .hint {
     margin-top: 0.75rem;

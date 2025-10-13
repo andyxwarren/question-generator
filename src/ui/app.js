@@ -4,7 +4,7 @@
  * Simple interface to generate and display questions from all difficulty levels
  */
 
-import { MODULES } from '../curriculum/modules.js';
+import { MODULES } from '../curriculum/parameters.js';
 import questionEngine from '../core/questionEngine.js';
 import validator from '../core/validator.js';
 
@@ -155,14 +155,37 @@ class App {
                 </div>
             `;
         } else if (question.type === 'text_input') {
-            return `
-                <div class="question" data-question-id="${questionId}">
-                    <div class="question-text">${questionIdx + 1}. ${question.text}</div>
-                    <input type="text" class="text-input" id="${questionId}" placeholder="Your answer">
-                    ${question.hint ? `<div class="hint">💡 Hint: ${question.hint}</div>` : ''}
-                    <div class="feedback"></div>
-                </div>
-            `;
+            // Check if multi-gap question
+            const isMultiGap = question.answers && question.answers.length > 1;
+
+            if (isMultiGap) {
+                return `
+                    <div class="question" data-question-id="${questionId}">
+                        <div class="question-text">${questionIdx + 1}. ${question.text}</div>
+                        <div class="multi-input-container">
+                            ${question.answers.map((_, idx) => `
+                                <input type="text"
+                                       class="text-input multi-gap"
+                                       data-gap-index="${idx}"
+                                       placeholder="Answer ${idx + 1}"
+                                       size="8">
+                            `).join('')}
+                        </div>
+                        ${question.hint ? `<div class="hint">💡 Hint: ${question.hint}</div>` : ''}
+                        <div class="feedback"></div>
+                    </div>
+                `;
+            } else {
+                // Single input
+                return `
+                    <div class="question" data-question-id="${questionId}">
+                        <div class="question-text">${questionIdx + 1}. ${question.text}</div>
+                        <input type="text" class="text-input" id="${questionId}" placeholder="Your answer">
+                        ${question.hint ? `<div class="hint">💡 Hint: ${question.hint}</div>` : ''}
+                        <div class="feedback"></div>
+                    </div>
+                `;
+            }
         }
     }
 
@@ -186,19 +209,29 @@ class App {
                     const selected = questionElement.querySelector(`input[name="${questionId}"]:checked`);
                     userAnswer = selected ? selected.value : '';
                 } else if (question.type === 'text_input') {
-                    userAnswer = document.getElementById(questionId).value.trim();
+                    // Check for multi-gap inputs
+                    const multiGaps = questionElement.querySelectorAll('.text-input.multi-gap');
+                    if (multiGaps.length > 0) {
+                        // Collect all gap answers and join with comma
+                        const gapAnswers = Array.from(multiGaps).map(input => input.value.trim());
+                        userAnswer = gapAnswers.join(',');
+                    } else {
+                        // Single input
+                        const inputElement = document.getElementById(questionId);
+                        userAnswer = inputElement ? inputElement.value.trim() : '';
+                    }
                 }
 
                 // Validate answer
-                const isCorrect = validator.validate(userAnswer, question.answer, question.type);
+                const result = validator.validate(question, userAnswer);
                 totalQuestions++;
-                if (isCorrect) totalCorrect++;
+                if (result.isCorrect) totalCorrect++;
 
                 // Show feedback
                 questionElement.classList.remove('correct', 'incorrect');
                 if (userAnswer) {
-                    questionElement.classList.add(isCorrect ? 'correct' : 'incorrect');
-                    feedbackElement.innerHTML = isCorrect
+                    questionElement.classList.add(result.isCorrect ? 'correct' : 'incorrect');
+                    feedbackElement.innerHTML = result.isCorrect
                         ? '<span class="correct-mark">✓ Correct!</span>'
                         : `<span class="incorrect-mark">✗ Incorrect. Answer: ${question.answer}</span>`;
                 }

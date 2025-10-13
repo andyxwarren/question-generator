@@ -1,8 +1,8 @@
 /**
- * Year 1 Counting in Multiples Question Generator
+ * Year 2 Counting in Steps Question Generator
  *
  * Generates counting sequence questions based on UK National Curriculum
- * Module: N01_Y1_NPV - "Count to and across 100, forwards and backwards"
+ * Module: N01_Y2_NPV - "Count in steps of 2, 3, and 5 from 0, and in tens from any number"
  */
 
 /**
@@ -23,7 +23,12 @@ function randomInt(min, max) {
  * Helper: Get starting value based on start_from parameter
  */
 function getStartValue(params, step) {
-    const { start_from, min_value, max_value } = params;
+    const { start_from, min_value, max_value, tens_from_any, tens_range } = params;
+
+    // Special handling for tens from any number (Y2 specific)
+    if (tens_from_any && step === 10) {
+        return randomInt(tens_range[0], tens_range[1]);
+    }
 
     if (start_from === 'zero_only') {
         return 0;
@@ -138,7 +143,7 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
             answer: answers.join(','),  // Store as comma-separated
             answers: answers,  // Also store as array for validation
             hint: `The pattern counts ${direction} in ${step}s`,
-            module: 'N01_Y1_NPV',
+            module: 'N01_Y2_NPV',
             level: level
         };
     }
@@ -153,7 +158,7 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
             type: 'text_input',
             answer: answer.toString(),
             hint: `Count ${direction} in ${step}s`,
-            module: 'N01_Y1_NPV',
+            module: 'N01_Y2_NPV',
             level: level
         };
     }
@@ -186,7 +191,7 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
             options: options,
             answer: correctAnswer.toString(),
             hint: `Count ${direction} in ${step}s`,
-            module: 'N01_Y1_NPV',
+            module: 'N01_Y2_NPV',
             level: level
         };
     }
@@ -196,6 +201,6 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
  * Register this generator
  */
 export default {
-    moduleId: 'N01_Y1_NPV',
+    moduleId: 'N01_Y2_NPV',
     generate: generateQuestion
 };

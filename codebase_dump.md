@@ -1,7 +1,7 @@
 # 🧾 Codebase Export
-_Generated on 13/10/2025, 09:56:29_
+_Generated on 13/10/2025, 13:35:46_
 
-**Total files included:** 10
+**Total files included:** 11
 
 ---
 ### `index.html`
@@ -78,10 +78,11 @@ _Generated on 13/10/2025, 09:56:29_
  */
 
 import { getParameters } from '../curriculum/parameters.js';
-import countingGenerator from '../generators/N01_Y1_NPV_counting.js';
-import bondsGenerator from '../generators/C01_Y1_CALC_bonds.js';
-import multiplyGenerator from '../generators/C06_Y3_CALC_multiply.js';
-import fractionsGenerator from '../generators/F02_Y4_FRAC_fractions.js';
+import countingY1Generator from '../generators/N01_Y1_NPV_counting.js';
+import countingY2Generator from '../generators/N01_Y2_NPV_counting.js';
+import countingY3Generator from '../generators/N01_Y3_NPV_counting.js';
+import countingY4Generator from '../generators/N01_Y4_NPV_counting.js';
+import countingY5Generator from '../generators/N01_Y5_NPV_counting.js';
 
 /**
  * Question Engine Class
@@ -96,10 +97,11 @@ class QuestionEngine {
      * Register all default generators
      */
     registerDefaultGenerators() {
-        this.register(countingGenerator);
-        this.register(bondsGenerator);
-        this.register(multiplyGenerator);
-        this.register(fractionsGenerator);
+        this.register(countingY1Generator);
+        this.register(countingY2Generator);
+        this.register(countingY3Generator);
+        this.register(countingY4Generator);
+        this.register(countingY5Generator);
     }
 
     /**
@@ -262,6 +264,21 @@ export function validate(question, studentAnswer) {
         };
     }
 
+    // Handle comma-separated answers (multi-gap questions)
+    if (correctAnswer.includes(',')) {
+        const correctParts = correctAnswer.split(',').map(s => s.trim()).sort();
+        const submittedParts = submittedAnswer.split(',').map(s => s.trim()).sort();
+
+        if (correctParts.length === submittedParts.length &&
+            correctParts.every((val, idx) => val === submittedParts[idx])) {
+            return {
+                isCorrect: true,
+                feedback: 'Correct!',
+                normalizedAnswer: submittedAnswer
+            };
+        }
+    }
+
     // Try numeric comparison (handles decimal precision issues)
     const numSubmitted = parseFloat(studentAnswer);
     const numCorrect = parseFloat(question.answer);
@@ -351,7 +368,9 @@ export default {
 /**
  * Curriculum Module Definitions
  *
- * Defines all curriculum modules with parameters for 4 difficulty levels:
+ * Defines all curriculum modules with parameters for 4 difficulty levels.
+ * NEW STRUCTURE: Parameters organized by level, not by parameter type.
+ *
  * Level 1: Beginning
  * Level 2: Developing
  * Level 3: Meeting
@@ -363,7 +382,7 @@ export default {
 export const MODULES = {
     'N01_Y1_NPV': {
         id: 'N01_Y1_NPV',
-        name: 'Counting',
+        name: 'N01_Y1_NPV: Counting in Multiples',
         description: 'Count to and across 100, forwards and backwards, beginning with 0 or 1, or from any given number; count in multiples of twos, fives and tens',
         icon: '🔢',
         yearGroup: 'Year 1',
@@ -371,244 +390,269 @@ export const MODULES = {
         substrand: 'Counting (in multiples)',
         ref: 'N1',
         parameters: {
-            min_value: {
-                1: 0,
-                2: 0,
-                3: 0,
-                4: 0
+            1: {
+                step_sizes: [1, 2, 5, 10],
+                min_value: 0,
+                max_value: 30,
+                directions: ['forwards'],
+                start_from: 'zero_only',          // 'zero_only', 'zero_or_multiple', 'any'
+                sequence_length: 5,
+                gaps_count: 1,
+                gap_position: 'end'                // 'start', 'end', 'middle', 'random'
             },
-            max_value: {
-                1: 30,
-                2: 50,
-                3: 100,
-                4: 200
+            2: {
+                step_sizes: [1, 2, 5, 10],
+                min_value: 0,
+                max_value: 50,
+                directions: ['forwards', 'backwards'],
+                start_from: 'zero_or_multiple',
+                sequence_length: 8,
+                gaps_count: 1,
+                gap_position: 'middle'
             },
-            step_sizes: {
-                1: [1, 2, 5, 10],
-                2: [1, 2, 5, 10],
-                3: [1, 2, 5, 10],
-                4: [1, 2, 3, 5, 10]
+            3: {
+                step_sizes: [1, 2, 5, 10],
+                min_value: 0,
+                max_value: 100,
+                directions: ['forwards', 'backwards'],
+                start_from: 'any',
+                sequence_length: 10,
+                gaps_count: 2,
+                gap_position: 'random'
             },
-            sequence_length: {
-                1: 5,
-                2: 10,
-                3: 15,
-                4: 20
-            },
-            directions: {
-                1: ['forwards'],
-                2: ['forwards', 'backwards'],
-                3: ['forwards', 'backwards'],
-                4: ['forwards', 'backwards']
-            },
-            missing_numbers: {
-                1: 0,
-                2: 1,
-                3: 2,
-                4: 3
+            4: {
+                step_sizes: [1, 2, 3, 5, 10],
+                min_value: 0,
+                max_value: 200,
+                directions: ['forwards', 'backwards'],
+                start_from: 'any',
+                sequence_length: 12,
+                gaps_count: 3,
+                gap_position: 'random'
             }
         }
     },
 
-    'C01_Y1_CALC': {
-        id: 'C01_Y1_CALC',
-        name: 'Number Bonds',
-        description: 'Represent and use number bonds and related subtraction facts within 20',
-        icon: '➕',
-        yearGroup: 'Year 1',
-        strand: 'Calculations',
-        substrand: 'Add/subtract mentally',
-        ref: 'C1',
-        parameters: {
-            total_value: {
-                1: [5, 10],
-                2: [10],
-                3: [10, 20],
-                4: [20]
-            },
-            missing_part: {
-                1: 'second',  // Only second addend missing
-                2: 'either',  // Either addend can be missing
-                3: 'either',
-                4: 'any'      // Total or any part can be missing
-            },
-            include_subtraction: {
-                1: false,
-                2: true,
-                3: true,
-                4: true
-            },
-            visual_support: {
-                1: 'always',
-                2: 'often',
-                3: 'sometimes',
-                4: 'rarely'
-            },
-            time_limit: {
-                1: 15,
-                2: 10,
-                3: 5,
-                4: 3
-            },
-            questions_per_session: {
-                1: 5,
-                2: 8,
-                3: 10,
-                4: 15
-            }
-        }
-    },
-
-    'N03_Y2_NPV': {
-        id: 'N03_Y2_NPV',
-        name: 'Place Value',
-        description: 'Recognise the place value of each digit in a two-digit number (tens, ones)',
-        icon: '🔟',
+    'N01_Y2_NPV': {
+        id: 'N01_Y2_NPV',
+        name: 'N01_Y2_NPV: Counting in Steps',
+        description: 'Count in steps of 2, 3, and 5 from 0, and in tens from any number, forward and backward',
+        icon: '🔢',
         yearGroup: 'Year 2',
         strand: 'Number and Place Value',
-        substrand: 'Place value',
-        ref: 'N3',
+        substrand: 'Counting (in multiples)',
+        ref: 'N1',
         parameters: {
-            min_number: {
-                1: 10,
-                2: 10,
-                3: 10,
-                4: 10
+            1: {
+                step_sizes: [2, 5, 10],
+                min_value: 0,
+                max_value: 50,
+                directions: ['forwards'],
+                start_from: 'zero_only',
+                sequence_length: 6,
+                gaps_count: 1,
+                gap_position: 'end',
+                tens_from_any: false,
+                tens_range: [0, 50]
             },
-            max_number: {
-                1: 50,
-                2: 75,
-                3: 99,
-                4: 999
+            2: {
+                step_sizes: [2, 3, 5, 10],
+                min_value: 0,
+                max_value: 100,
+                directions: ['forwards', 'backwards'],
+                start_from: 'zero_or_multiple',
+                sequence_length: 8,
+                gaps_count: 1,
+                gap_position: 'middle',
+                tens_from_any: true,
+                tens_range: [0, 100]
             },
-            include_zero_placeholder: {
-                1: false,
-                2: true,
-                3: true,
-                4: true
+            3: {
+                step_sizes: [2, 3, 5, 10],
+                min_value: 0,
+                max_value: 100,
+                directions: ['forwards', 'backwards'],
+                start_from: 'any',
+                sequence_length: 10,
+                gaps_count: 2,
+                gap_position: 'random',
+                tens_from_any: true,
+                tens_range: [0, 100]
+            },
+            4: {
+                step_sizes: [2, 3, 4, 5, 10],
+                min_value: 0,
+                max_value: 200,
+                directions: ['forwards', 'backwards'],
+                start_from: 'any',
+                sequence_length: 12,
+                gaps_count: 3,
+                gap_position: 'random',
+                tens_from_any: true,
+                tens_range: [0, 200]
             }
         }
     },
 
-    'C06_Y3_CALC': {
-        id: 'C06_Y3_CALC',
-        name: 'Multiplication',
-        description: 'Recall and use multiplication and division facts for the 3, 4 and 8 multiplication tables',
-        icon: '✖️',
+    'N01_Y3_NPV': {
+        id: 'N01_Y3_NPV',
+        name: 'N01_Y3_NPV: Counting from 0',
+        description: 'Count from 0 in multiples of 4, 8, 50 and 100',
+        icon: '🔢',
         yearGroup: 'Year 3',
-        strand: 'Calculations',
-        substrand: 'Recall multiplication facts',
-        ref: 'C2',
+        strand: 'Number and Place Value',
+        substrand: 'Counting (in multiples)',
+        ref: 'N1',
         parameters: {
-            times_tables: {
-                1: [2, 5, 10],
-                2: [2, 3, 4, 5, 10],
-                3: [3, 4, 8],
-                4: [3, 4, 6, 7, 8, 9]
+            1: {
+                step_sizes: [4, 8, 10, 50],
+                min_value: 0,
+                max_value: 100,
+                directions: ['forwards'],
+                start_from: 'zero_only',
+                sequence_length: 6,
+                gaps_count: 1,
+                gap_position: 'end'
             },
-            max_multiplier: {
-                1: 5,
-                2: 10,
-                3: 12,
-                4: 12
+            2: {
+                step_sizes: [4, 8, 50, 100],
+                min_value: 0,
+                max_value: 400,
+                directions: ['forwards', 'backwards'],
+                start_from: 'zero_or_multiple',
+                sequence_length: 8,
+                gaps_count: 1,
+                gap_position: 'middle'
             },
-            include_division: {
-                1: false,
-                2: true,
-                3: true,
-                4: true
+            3: {
+                step_sizes: [4, 8, 50, 100],
+                min_value: 0,
+                max_value: 800,
+                directions: ['forwards', 'backwards'],
+                start_from: 'any',
+                sequence_length: 10,
+                gaps_count: 2,
+                gap_position: 'random'
             },
-            time_limit_seconds: {
-                1: 8,
-                2: 5,
-                3: 3,
-                4: 2
-            },
-            accuracy_target: {
-                1: 0.70,
-                2: 0.80,
-                3: 0.90,
-                4: 0.95
+            4: {
+                step_sizes: [4, 6, 8, 25, 50, 100],
+                min_value: 0,
+                max_value: 1000,
+                directions: ['forwards', 'backwards'],
+                start_from: 'any',
+                sequence_length: 12,
+                gaps_count: 3,
+                gap_position: 'random'
             }
         }
     },
 
-    'F02_Y4_FRAC': {
-        id: 'F02_Y4_FRAC',
-        name: 'Fractions',
-        description: 'Recognise and show, using diagrams, families of common equivalent fractions',
-        icon: '🍰',
+    'N01_Y4_NPV': {
+        id: 'N01_Y4_NPV',
+        name: 'N01_Y4_NPV: Count in Multiples',
+        description: 'Count in multiples of 6, 7, 9, 25 and 1000',
+        icon: '🔢',
         yearGroup: 'Year 4',
-        strand: 'Fractions, Decimals and Percentages',
-        substrand: 'Equivalent fractions',
-        ref: 'F1',
+        strand: 'Number and Place Value',
+        substrand: 'Counting (in multiples)',
+        ref: 'N1',
         parameters: {
-            denominators: {
-                1: [2, 4, 10],
-                2: [2, 3, 4, 5, 10],
-                3: [2, 3, 4, 5, 6, 8, 10, 12],
-                4: [2, 3, 4, 5, 6, 7, 8, 9, 10, 12]
+            1: {
+                step_sizes: [6, 7, 9, 25],
+                min_value: 0,
+                max_value: 200,
+                directions: ['forwards'],
+                start_from: 'zero_only',
+                sequence_length: 6,
+                gaps_count: 1,
+                gap_position: 'end'
             },
-            max_numerator: {
-                1: 3,
-                2: 5,
-                3: 8,
-                4: 10
+            2: {
+                step_sizes: [6, 7, 9, 25, 1000],
+                min_value: 0,
+                max_value: 500,
+                directions: ['forwards', 'backwards'],
+                start_from: 'zero_or_multiple',
+                sequence_length: 8,
+                gaps_count: 1,
+                gap_position: 'middle'
             },
-            equivalences_to_find: {
-                1: 2,
-                2: 3,
-                3: 4,
-                4: 5
+            3: {
+                step_sizes: [6, 7, 9, 25, 1000],
+                min_value: 0,
+                max_value: 10000,
+                directions: ['forwards', 'backwards'],
+                start_from: 'any',
+                sequence_length: 10,
+                gaps_count: 2,
+                gap_position: 'random'
             },
-            simplification_required: {
-                1: false,
-                2: false,
-                3: true,
-                4: true
-            },
-            visual_support: {
-                1: 'always',
-                2: 'often',
-                3: 'sometimes',
-                4: 'rarely'
+            4: {
+                step_sizes: [6, 7, 9, 11, 12, 25, 1000],
+                min_value: 0,
+                max_value: 20000,
+                directions: ['forwards', 'backwards'],
+                start_from: 'any',
+                sequence_length: 12,
+                gaps_count: 3,
+                gap_position: 'random'
             }
         }
     },
 
-    'F08_Y5_FRAC': {
-        id: 'F08_Y5_FRAC',
-        name: 'Decimals',
-        description: 'Read, write, order and compare numbers with up to three decimal places',
+    'N01_Y5_NPV': {
+        id: 'N01_Y5_NPV',
+        name: 'N01_Y5_NPV: Count Forwards and Backwards',
+        description: 'Count forwards and backwards with positive and negative whole numbers, including through zero',
         icon: '🔢',
         yearGroup: 'Year 5',
-        strand: 'Fractions, Decimals and Percentages',
-        substrand: 'Decimal place value',
-        ref: 'F2',
+        strand: 'Number and Place Value',
+        substrand: 'Counting (in multiples)',
+        ref: 'N1',
         parameters: {
-            decimal_places: {
-                1: 1,
-                2: 2,
-                3: 3,
-                4: 3
+            1: {
+                powers_of_10: [10, 100],           // Use powers_of_10 instead of step_sizes for Y5
+                min_value: -100,
+                max_value: 100,
+                directions: ['forwards'],
+                start_from: 'zero_only',
+                sequence_length: 6,
+                gaps_count: 1,
+                gap_position: 'end',
+                start_range: [-50, 50]             // Specific to Y5
             },
-            integer_range: {
-                1: [0, 10],
-                2: [0, 100],
-                3: [0, 1000],
-                4: [0, 10000]
+            2: {
+                powers_of_10: [10, 100, 1000],
+                min_value: -500,
+                max_value: 500,
+                directions: ['forwards', 'backwards'],
+                start_from: 'any',
+                sequence_length: 8,
+                gaps_count: 1,
+                gap_position: 'middle',
+                start_range: [-200, 200]
             },
-            number_count: {
-                1: 2,
-                2: 3,
-                3: 4,
-                4: 5
+            3: {
+                powers_of_10: [10, 100, 1000, 10000],
+                min_value: -10000,
+                max_value: 10000,
+                directions: ['forwards', 'backwards'],
+                start_from: 'any',
+                sequence_length: 10,
+                gaps_count: 2,
+                gap_position: 'random',
+                start_range: [-5000, 5000]
             },
-            include_trailing_zeros: {
-                1: false,
-                2: true,
-                3: true,
-                4: true
+            4: {
+                powers_of_10: [10, 100, 1000, 10000, 100000],
+                min_value: -100000,
+                max_value: 100000,
+                directions: ['forwards', 'backwards'],
+                start_from: 'any',
+                sequence_length: 12,
+                gaps_count: 3,
+                gap_position: 'random',
+                start_range: [-50000, 50000]
             }
         }
     }
@@ -627,17 +671,13 @@ export function getModule(moduleId) {
  * Get parameters for a specific module and level
  * @param {string} moduleId - The module identifier
  * @param {number} level - Difficulty level (1-4)
- * @returns {Object} Parameters object for the specified level
+ * @returns {Object|null} Parameters object for the specified level, or null if not found
  */
 export function getParameters(moduleId, level) {
     const module = MODULES[moduleId];
-    if (!module) return {};
+    if (!module) return null;
 
-    const params = {};
-    for (const [key, values] of Object.entries(module.parameters)) {
-        params[key] = values[level];
-    }
-    return params;
+    return module.parameters[level] || null;
 }
 
 /**
@@ -660,617 +700,194 @@ export function isValidLevel(level) {
 ```
 
 ---
-### `src\generators\C01_Y1_CALC_bonds.js`
-**Type:** js
-
-```js
-/**
- * Number Bonds Question Generator
- *
- * Generates addition and subtraction fact questions
- */
-
-/**
- * Helper: Choose random item from array
- */
-function randomChoice(array) {
-    return array[Math.floor(Math.random() * array.length)];
-}
-
-/**
- * Helper: Shuffle array
- */
-function shuffle(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-}
-
-/**
- * Helper: Pluralize a noun based on count
- * @param {number} count - The count of items
- * @param {string} singular - The singular form of the noun
- * @param {string} [plural] - Optional custom plural form (defaults to adding 's')
- * @returns {string} The correctly pluralized noun
- */
-function pluralize(count, singular, plural = null) {
-    if (count === 1) {
-        return singular;
-    }
-    return plural || (singular + 's');
-}
-
-/**
- * Helper: Get the correct verb form (handles third-person singular)
- * @param {string} verb - The base verb (e.g., 'find', 'receive', 'buy')
- * @param {boolean} thirdPersonSingular - Whether to use third-person singular form (e.g., 'finds')
- * @returns {string} The correctly conjugated verb
- */
-function conjugateVerb(verb, thirdPersonSingular = false) {
-    if (!thirdPersonSingular) {
-        return verb;
-    }
-
-    // Handle common irregular verbs
-    const irregulars = {
-        'have': 'has',
-        'do': 'does',
-        'go': 'goes'
-    };
-
-    if (irregulars[verb]) {
-        return irregulars[verb];
-    }
-
-    // Regular verbs: add 's' or 'es'
-    if (verb.endsWith('s') || verb.endsWith('sh') || verb.endsWith('ch') ||
-        verb.endsWith('x') || verb.endsWith('z')) {
-        return verb + 'es';
-    } else if (verb.endsWith('y') && !'aeiou'.includes(verb[verb.length - 2])) {
-        // e.g., 'carry' -> 'carries'
-        return verb.slice(0, -1) + 'ies';
-    } else {
-        return verb + 's';
-    }
-}
-
-/**
- * Generate number bonds question
- * @param {Object} params - Parameters for the current level
- * @param {number} level - Difficulty level (1-4)
- * @returns {Object} Question object
- */
-export function generateBondsQuestion(params, level) {
-    const total = randomChoice(params.total_value);
-    const part1 = Math.floor(Math.random() * (total + 1));
-    const part2 = total - part1;
-
-    // Decide operation type
-    const includeSubtraction = params.include_subtraction;
-    const operations = includeSubtraction
-        ? ['addition', 'subtraction', 'multiple_choice']
-        : ['addition', 'multiple_choice'];
-    const operation = randomChoice(operations);
-
-    // Choose question format
-    const questionTypes = ['standard', 'word_problem', 'missing_addend'];
-    const questionType = randomChoice(questionTypes);
-
-    if (operation === 'subtraction') {
-        if (questionType === 'word_problem') {
-            const contexts = [
-                { item: 'apple', action: 'give away', actionPresent: 'gives away' },
-                { item: 'sweet', action: 'eat', actionPresent: 'eats' },
-                { item: 'pencil', action: 'lose', actionPresent: 'loses' },
-                { item: 'sticker', action: 'give to friends', actionPresent: 'gives to friends' }
-            ];
-            const context = randomChoice(contexts);
-            const itemText = pluralize(total, context.item);
-
-            return {
-                text: `Sam has ${total} ${itemText}. He ${context.actionPresent} ${part1}. How many does he have left?`,
-                type: 'text_input',
-                answer: part2.toString(),
-                module: 'C01_Y1_CALC',
-                level: level
-            };
-        } else {
-            // Standard subtraction
-            return {
-                text: `${total} − ${part1} = ?`,
-                type: 'text_input',
-                answer: part2.toString(),
-                hint: `Think: What number plus ${part1} makes ${total}?`,
-                module: 'C01_Y1_CALC',
-                level: level
-            };
-        }
-    } else if (operation === 'multiple_choice') {
-        // Multiple choice format
-        const correctAnswer = part2;
-        const options = shuffle([
-            correctAnswer,
-            correctAnswer + 1,
-            correctAnswer - 1,
-            total - part1 - 2
-        ].filter(n => n >= 0 && n <= total));
-
-        // Ensure we have 4 unique options
-        while (options.length < 4) {
-            const newOption = Math.floor(Math.random() * (total + 1));
-            if (!options.includes(newOption)) {
-                options.push(newOption);
-            }
-        }
-
-        return {
-            text: `${part1} + ? = ${total}`,
-            type: 'multiple_choice',
-            options: shuffle(options.slice(0, 4)),
-            answer: correctAnswer.toString(),
-            module: 'C01_Y1_CALC',
-            level: level
-        };
-    } else {
-        // Addition (missing addend)
-        if (questionType === 'word_problem') {
-            const contexts = [
-                { item: 'marble', action: 'find', actionPresent: 'finds' },
-                { item: 'coin', action: 'get', actionPresent: 'gets' },
-                { item: 'toy', action: 'receive', actionPresent: 'receives' },
-                { item: 'book', action: 'buy', actionPresent: 'buys' }
-            ];
-            const context = randomChoice(contexts);
-            const itemText = pluralize(part1, context.item);
-
-            return {
-                text: `Lucy has ${part1} ${itemText}. She ${context.actionPresent} some more. Now she has ${total}. How many did she ${context.action}?`,
-                type: 'text_input',
-                answer: part2.toString(),
-                module: 'C01_Y1_CALC',
-                level: level
-            };
-        } else {
-            // Standard missing addend
-            return {
-                text: `${part1} + ? = ${total}`,
-                type: 'text_input',
-                answer: part2.toString(),
-                hint: `What number do you add to ${part1} to make ${total}?`,
-                module: 'C01_Y1_CALC',
-                level: level
-            };
-        }
-    }
-}
-
-/**
- * Register this generator
- */
-export default {
-    moduleId: 'C01_Y1_CALC',
-    generate: generateBondsQuestion
-};
-
-```
-
----
-### `src\generators\C06_Y3_CALC_multiply.js`
-**Type:** js
-
-```js
-/**
- * Multiplication Question Generator
- *
- * Generates multiplication and division questions
- */
-
-/**
- * Helper: Choose random item from array
- */
-function randomChoice(array) {
-    return array[Math.floor(Math.random() * array.length)];
-}
-
-/**
- * Helper: Shuffle array
- */
-function shuffle(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-}
-
-/**
- * Helper: Pluralize a noun based on count
- * @param {number} count - The count of items
- * @param {string} singular - The singular form of the noun
- * @param {string} [plural] - Optional custom plural form (defaults to adding 's')
- * @returns {string} The correctly pluralized noun
- */
-function pluralize(count, singular, plural = null) {
-    if (count === 1) {
-        return singular;
-    }
-    return plural || (singular + 's');
-}
-
-/**
- * Generate multiplication question
- * @param {Object} params - Parameters for the current level
- * @param {number} level - Difficulty level (1-4)
- * @returns {Object} Question object
- */
-export function generateMultiplyQuestion(params, level) {
-    const table = randomChoice(params.times_tables);
-    const multiplier = Math.floor(Math.random() * params.max_multiplier) + 1;
-    const product = table * multiplier;
-
-    // Decide operation type
-    const includeDivision = params.include_division;
-    const operations = includeDivision
-        ? ['multiplication', 'division', 'multiple_choice']
-        : ['multiplication', 'multiple_choice'];
-    const operation = randomChoice(operations);
-
-    // Choose question format
-    const questionTypes = ['standard', 'word_problem', 'missing_factor'];
-    const questionType = randomChoice(questionTypes);
-
-    if (operation === 'division') {
-        if (questionType === 'word_problem') {
-            const contexts = [
-                { item: 'sweet', itemPlural: 'sweets', container: 'bag', containerPlural: 'bags' },
-                { item: 'pencil', itemPlural: 'pencils', container: 'box', containerPlural: 'boxes' },
-                { item: 'apple', itemPlural: 'apples', container: 'basket', containerPlural: 'baskets' },
-                { item: 'book', itemPlural: 'books', container: 'shelf', containerPlural: 'shelves' }
-            ];
-            const context = randomChoice(contexts);
-            const itemText = pluralize(product, context.item, context.itemPlural);
-            const containerText = pluralize(table, context.container, context.containerPlural);
-            const containerSingular = context.container;
-            const verb = product === 1 ? 'is' : 'are';
-
-            return {
-                text: `${product} ${itemText} ${verb} shared equally into ${table} ${containerText}. How many ${itemText} in each ${containerSingular}?`,
-                type: 'text_input',
-                answer: multiplier.toString(),
-                module: 'C06_Y3_CALC',
-                level: level
-            };
-        } else {
-            // Standard division
-            return {
-                text: `${product} ÷ ${table} = ?`,
-                type: 'text_input',
-                answer: multiplier.toString(),
-                hint: `Think: ${table} times what equals ${product}?`,
-                module: 'C06_Y3_CALC',
-                level: level
-            };
-        }
-    } else if (operation === 'multiple_choice') {
-        // Multiple choice format
-        const correctAnswer = product;
-        const options = shuffle([
-            correctAnswer,
-            correctAnswer + table,
-            correctAnswer - table,
-            table + multiplier
-        ]);
-
-        return {
-            text: `${table} × ${multiplier} = ?`,
-            type: 'multiple_choice',
-            options: options,
-            answer: correctAnswer.toString(),
-            module: 'C06_Y3_CALC',
-            level: level
-        };
-    } else {
-        // Multiplication
-        if (questionType === 'word_problem') {
-            const contexts = [
-                { item: 'flower', itemPlural: 'flowers', container: 'vase', containerPlural: 'vases' },
-                { item: 'cookie', itemPlural: 'cookies', container: 'box', containerPlural: 'boxes' },
-                { item: 'student', itemPlural: 'students', container: 'group', containerPlural: 'groups' },
-                { item: 'toy', itemPlural: 'toys', container: 'bag', containerPlural: 'bags' }
-            ];
-            const context = randomChoice(contexts);
-            const containerText = pluralize(multiplier, context.container, context.containerPlural);
-            const itemText = pluralize(table, context.item, context.itemPlural);
-            const itemTextAnswer = pluralize(product, context.item, context.itemPlural);
-            const thereVerb = multiplier === 1 ? 'is' : 'are';
-
-            return {
-                text: `There ${thereVerb} ${multiplier} ${containerText} with ${table} ${itemText} in each. How many ${itemTextAnswer} in total?`,
-                type: 'text_input',
-                answer: product.toString(),
-                module: 'C06_Y3_CALC',
-                level: level
-            };
-        } else if (questionType === 'missing_factor') {
-            // Missing factor: ? × table = product
-            return {
-                text: `? × ${table} = ${product}`,
-                type: 'text_input',
-                answer: multiplier.toString(),
-                hint: `What times ${table} equals ${product}?`,
-                module: 'C06_Y3_CALC',
-                level: level
-            };
-        } else {
-            // Standard multiplication
-            return {
-                text: `${table} × ${multiplier} = ?`,
-                type: 'text_input',
-                answer: product.toString(),
-                module: 'C06_Y3_CALC',
-                level: level
-            };
-        }
-    }
-}
-
-/**
- * Register this generator
- */
-export default {
-    moduleId: 'C06_Y3_CALC',
-    generate: generateMultiplyQuestion
-};
-
-```
-
----
-### `src\generators\F02_Y4_FRAC_fractions.js`
-**Type:** js
-
-```js
-/**
- * Fractions Question Generator
- *
- * Generates equivalent fractions questions
- */
-
-/**
- * Helper: Choose random item from array
- */
-function randomChoice(array) {
-    return array[Math.floor(Math.random() * array.length)];
-}
-
-/**
- * Helper: Shuffle array
- */
-function shuffle(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-}
-
-/**
- * Helper: Find GCD for simplification
- */
-function gcd(a, b) {
-    return b === 0 ? a : gcd(b, a % b);
-}
-
-/**
- * Helper: Simplify fraction
- */
-function simplifyFraction(numerator, denominator) {
-    const divisor = gcd(numerator, denominator);
-    return {
-        numerator: numerator / divisor,
-        denominator: denominator / divisor
-    };
-}
-
-/**
- * Generate fractions question
- * @param {Object} params - Parameters for the current level
- * @param {number} level - Difficulty level (1-4)
- * @returns {Object} Question object
- */
-export function generateFractionsQuestion(params, level) {
-    const denom1 = randomChoice(params.denominators);
-    const multiplier = Math.floor(Math.random() * 3) + 2; // 2, 3, or 4
-    const denom2 = denom1 * multiplier;
-
-    // Generate numerator (must be less than denominator for proper fractions)
-    const maxNum = Math.min(denom1 - 1, params.max_numerator);
-    const num1 = Math.floor(Math.random() * maxNum) + 1;
-    const num2 = num1 * multiplier;
-
-    // Choose question type
-    const questionTypes = ['fill_blank', 'multiple_choice', 'identify_equivalent'];
-    const type = randomChoice(questionTypes);
-
-    if (type === 'multiple_choice') {
-        // "Which fraction equals...?"
-        const correctAnswer = `${num2}/${denom2}`;
-        const options = shuffle([
-            `${num2}/${denom2}`,
-            `${num2 + 1}/${denom2}`,
-            `${num2}/${denom2 + denom1}`,
-            `${num1}/${denom2}`
-        ]);
-
-        return {
-            text: `Which fraction equals ${num1}/${denom1}?`,
-            type: 'multiple_choice',
-            options: options,
-            answer: correctAnswer,
-            module: 'F02_Y4_FRAC',
-            level: level
-        };
-    } else if (type === 'identify_equivalent') {
-        // Show multiple fractions, identify which is equivalent
-        const correctAnswer = `${num2}/${denom2}`;
-        const otherFractions = [
-            `${num1 + 1}/${denom1}`,
-            `${num2}/${denom2 + 1}`,
-            `${num1}/${denom1 * 2}`
-        ];
-        const options = shuffle([correctAnswer, ...otherFractions.slice(0, 3)]);
-
-        return {
-            text: `Which of these is equivalent to ${num1}/${denom1}?`,
-            type: 'multiple_choice',
-            options: options,
-            answer: correctAnswer,
-            module: 'F02_Y4_FRAC',
-            level: level
-        };
-    } else {
-        // fill_blank: a/b = ?/c format
-        return {
-            text: `${num1}/${denom1} = ?/${denom2}`,
-            type: 'text_input',
-            answer: num2.toString(),
-            hint: `Type just the numerator (top number). The denominator is ${denom2}.`,
-            module: 'F02_Y4_FRAC',
-            level: level
-        };
-    }
-}
-
-/**
- * Register this generator
- */
-export default {
-    moduleId: 'F02_Y4_FRAC',
-    generate: generateFractionsQuestion
-};
-
-```
-
----
 ### `src\generators\N01_Y1_NPV_counting.js`
 **Type:** js
 
 ```js
 /**
- * Counting Question Generator
+ * Year 1 Counting in Multiples Question Generator
  *
- * Generates questions for counting sequences and patterns
+ * Generates counting sequence questions based on UK National Curriculum
+ * Module: N01_Y1_NPV - "Count to and across 100, forwards and backwards"
  */
 
 /**
  * Helper: Choose random item from array
- * @param {Array} array - Array to choose from
- * @returns {*} Random item
  */
 function randomChoice(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
 /**
- * Helper: Shuffle array
- * @param {Array} array - Array to shuffle
- * @returns {Array} Shuffled copy
+ * Helper: Generate random integer in range [min, max]
  */
-function shuffle(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 /**
- * Generate counting sequence question
- * @param {Object} params - Parameters for the current level
- * @param {number} level - Difficulty level (1-4)
- * @returns {Object} Question object
+ * Helper: Get starting value based on start_from parameter
  */
-export function generateCountingQuestion(params, level) {
+function getStartValue(params, step) {
+    const { start_from, min_value, max_value } = params;
+
+    if (start_from === 'zero_only') {
+        return 0;
+    } else if (start_from === 'zero_or_multiple') {
+        const multiples = [0, step, step * 2, step * 3, step * 4];
+        return randomChoice(multiples.filter(m => m <= max_value / 2));
+    } else if (start_from === 'any') {
+        // Pick random value and align to step
+        const range = max_value - min_value;
+        const rawStart = min_value + randomInt(0, Math.floor(range / 2));
+        return Math.floor(rawStart / step) * step;
+    }
+
+    return 0;
+}
+
+/**
+ * Helper: Generate sequence array
+ */
+function generateSequence(start, step, length, direction) {
+    const sequence = [];
+    const multiplier = direction === 'forwards' ? 1 : -1;
+
+    for (let i = 0; i < length; i++) {
+        sequence.push(start + (i * step * multiplier));
+    }
+
+    return sequence;
+}
+
+/**
+ * Helper: Get gap positions
+ */
+function getGapPositions(sequenceLength, gapsCount, gapPosition) {
+    const positions = [];
+
+    if (gapPosition === 'end') {
+        positions.push(sequenceLength - 1);
+    } else if (gapPosition === 'start') {
+        positions.push(0);
+    } else if (gapPosition === 'middle') {
+        positions.push(Math.floor(sequenceLength / 2));
+    } else if (gapPosition === 'random') {
+        // Generate unique random positions
+        const available = Array.from({length: sequenceLength}, (_, i) => i);
+        for (let i = 0; i < gapsCount; i++) {
+            const idx = randomInt(0, available.length - 1);
+            positions.push(available[idx]);
+            available.splice(idx, 1);
+        }
+    }
+
+    return positions.slice(0, gapsCount).sort((a, b) => a - b);
+}
+
+/**
+ * Generate question
+ */
+export function generateQuestion(params, level) {
+    // Extract parameters
     const step = randomChoice(params.step_sizes);
     const direction = randomChoice(params.directions);
-    const maxVal = params.max_value;
+    const { sequence_length, gaps_count, gap_position, min_value, max_value } = params;
 
-    // Generate starting value
-    let start = Math.floor(Math.random() * (maxVal / 2));
-    start = Math.floor(start / step) * step;
+    // Get starting value
+    let start = getStartValue(params, step);
 
-    // Ensure sequence doesn't go negative for backwards counting
-    if (direction === 'backwards' && start < step * 6) {
-        start = step * 6;
+    // Ensure sequence stays within bounds
+    if (direction === 'forwards') {
+        const maxStart = max_value - (step * (sequence_length - 1));
+        start = Math.min(start, maxStart);
+    } else {
+        const minStart = min_value + (step * (sequence_length - 1));
+        start = Math.max(start, minStart);
     }
 
-    // Generate sequence
-    const sequenceLength = 6;
-    const sequence = [];
-    for (let i = 0; i < sequenceLength; i++) {
-        const value = direction === 'forwards'
-            ? start + (i * step)
-            : start - (i * step);
-        sequence.push(value);
-    }
+    // Generate full sequence
+    const fullSequence = generateSequence(start, step, sequence_length, direction);
 
     // Choose question type
-    const questionTypes = ['fill_blank', 'multiple_choice', 'next_number'];
-    const type = randomChoice(questionTypes);
+    const questionTypes = ['fill_blanks', 'next_number', 'multiple_choice'];
+    const questionType = randomChoice(questionTypes);
+
+    return generateQuestionByType(questionType, fullSequence, params, step, direction, level);
+}
+
+/**
+ * Generate specific question type
+ */
+function generateQuestionByType(type, fullSequence, params, step, direction, level) {
+    const { gaps_count, gap_position, sequence_length } = params;
+
+    if (type === 'fill_blanks') {
+        // Get positions for blanks
+        const gapPositions = getGapPositions(sequence_length, gaps_count, gap_position);
+
+        // Create display sequence with blanks
+        const displaySequence = fullSequence.map((num, idx) =>
+            gapPositions.includes(idx) ? '___' : num.toString()
+        );
+
+        // Collect answers
+        const answers = gapPositions.map(pos => fullSequence[pos]);
+
+        return {
+            text: `Fill in the missing number${gaps_count > 1 ? 's' : ''}: ${displaySequence.join(', ')}`,
+            type: 'text_input',
+            answer: answers.join(','),  // Store as comma-separated
+            answers: answers,  // Also store as array for validation
+            hint: `The pattern counts ${direction} in ${step}s`,
+            module: 'N01_Y1_NPV',
+            level: level
+        };
+    }
+
+    if (type === 'next_number') {
+        // Show first N-1 numbers, ask for last
+        const shown = fullSequence.slice(0, -1);
+        const answer = fullSequence[fullSequence.length - 1];
+
+        return {
+            text: `What number comes next? ${shown.join(', ')}, ___`,
+            type: 'text_input',
+            answer: answer.toString(),
+            hint: `Count ${direction} in ${step}s`,
+            module: 'N01_Y1_NPV',
+            level: level
+        };
+    }
 
     if (type === 'multiple_choice') {
-        // "What comes next?"
-        const correctAnswer = sequence[4];
-        const options = shuffle([
-            correctAnswer,
-            correctAnswer + step,
-            correctAnswer - step,
-            correctAnswer + (2 * step)
-        ]);
+        // Show all but last, create options
+        const shown = fullSequence.slice(0, -1);
+        const correctAnswer = fullSequence[fullSequence.length - 1];
+
+        // Generate plausible distractors
+        const distractors = [
+            correctAnswer + step,      // One step too far
+            correctAnswer - step,      // One step back
+            correctAnswer + 1,         // Off by one
+            correctAnswer - 1          // Off by one other direction
+        ];
+
+        // Select 3 unique distractors
+        const uniqueDistractors = [...new Set(distractors)]
+            .filter(d => d !== correctAnswer)
+            .slice(0, 3);
+
+        // Create options and shuffle
+        const options = [correctAnswer, ...uniqueDistractors]
+            .sort(() => Math.random() - 0.5);
 
         return {
-            text: `What comes next? ${sequence.slice(0, 4).join(', ')}, ...`,
+            text: `Continue the pattern: ${shown.join(', ')}, ___`,
             type: 'multiple_choice',
             options: options,
             answer: correctAnswer.toString(),
-            module: 'N01_Y1_NPV',
-            level: level
-        };
-    } else if (type === 'next_number') {
-        // Similar to multiple choice but asking for next number explicitly
-        const correctAnswer = sequence[4];
-        const options = shuffle([
-            correctAnswer,
-            correctAnswer + step,
-            correctAnswer - step,
-            correctAnswer + step + 1
-        ]);
-
-        return {
-            text: `Continue the pattern: ${sequence.slice(0, 4).join(', ')}, ?`,
-            type: 'multiple_choice',
-            options: options,
-            answer: correctAnswer.toString(),
-            module: 'N01_Y1_NPV',
-            level: level
-        };
-    } else {
-        // fill_blank: Show sequence with gap in the middle
-        const display = [...sequence.slice(0, 5)];
-        const gapIndex = 2 + Math.floor(Math.random() * 2); // Gap at position 2 or 3
-        const correctAnswer = display[gapIndex];
-        display[gapIndex] = '___';
-
-        return {
-            text: `Fill in the missing number: ${display.join(', ')}`,
-            type: 'text_input',
-            answer: correctAnswer.toString(),
-            hint: `The pattern counts ${direction} in ${step}s`,
+            hint: `Count ${direction} in ${step}s`,
             module: 'N01_Y1_NPV',
             level: level
         };
@@ -1282,7 +899,826 @@ export function generateCountingQuestion(params, level) {
  */
 export default {
     moduleId: 'N01_Y1_NPV',
-    generate: generateCountingQuestion
+    generate: generateQuestion
+};
+
+```
+
+---
+### `src\generators\N01_Y2_NPV_counting.js`
+**Type:** js
+
+```js
+/**
+ * Year 2 Counting in Steps Question Generator
+ *
+ * Generates counting sequence questions based on UK National Curriculum
+ * Module: N01_Y2_NPV - "Count in steps of 2, 3, and 5 from 0, and in tens from any number"
+ */
+
+/**
+ * Helper: Choose random item from array
+ */
+function randomChoice(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+/**
+ * Helper: Generate random integer in range [min, max]
+ */
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * Helper: Get starting value based on start_from parameter
+ */
+function getStartValue(params, step) {
+    const { start_from, min_value, max_value, tens_from_any, tens_range } = params;
+
+    // Special handling for tens from any number (Y2 specific)
+    if (tens_from_any && step === 10) {
+        return randomInt(tens_range[0], tens_range[1]);
+    }
+
+    if (start_from === 'zero_only') {
+        return 0;
+    } else if (start_from === 'zero_or_multiple') {
+        const multiples = [0, step, step * 2, step * 3, step * 4];
+        return randomChoice(multiples.filter(m => m <= max_value / 2));
+    } else if (start_from === 'any') {
+        // Pick random value and align to step
+        const range = max_value - min_value;
+        const rawStart = min_value + randomInt(0, Math.floor(range / 2));
+        return Math.floor(rawStart / step) * step;
+    }
+
+    return 0;
+}
+
+/**
+ * Helper: Generate sequence array
+ */
+function generateSequence(start, step, length, direction) {
+    const sequence = [];
+    const multiplier = direction === 'forwards' ? 1 : -1;
+
+    for (let i = 0; i < length; i++) {
+        sequence.push(start + (i * step * multiplier));
+    }
+
+    return sequence;
+}
+
+/**
+ * Helper: Get gap positions
+ */
+function getGapPositions(sequenceLength, gapsCount, gapPosition) {
+    const positions = [];
+
+    if (gapPosition === 'end') {
+        positions.push(sequenceLength - 1);
+    } else if (gapPosition === 'start') {
+        positions.push(0);
+    } else if (gapPosition === 'middle') {
+        positions.push(Math.floor(sequenceLength / 2));
+    } else if (gapPosition === 'random') {
+        // Generate unique random positions
+        const available = Array.from({length: sequenceLength}, (_, i) => i);
+        for (let i = 0; i < gapsCount; i++) {
+            const idx = randomInt(0, available.length - 1);
+            positions.push(available[idx]);
+            available.splice(idx, 1);
+        }
+    }
+
+    return positions.slice(0, gapsCount).sort((a, b) => a - b);
+}
+
+/**
+ * Generate question
+ */
+export function generateQuestion(params, level) {
+    // Extract parameters
+    const step = randomChoice(params.step_sizes);
+    const direction = randomChoice(params.directions);
+    const { sequence_length, gaps_count, gap_position, min_value, max_value } = params;
+
+    // Get starting value
+    let start = getStartValue(params, step);
+
+    // Ensure sequence stays within bounds
+    if (direction === 'forwards') {
+        const maxStart = max_value - (step * (sequence_length - 1));
+        start = Math.min(start, maxStart);
+    } else {
+        const minStart = min_value + (step * (sequence_length - 1));
+        start = Math.max(start, minStart);
+    }
+
+    // Generate full sequence
+    const fullSequence = generateSequence(start, step, sequence_length, direction);
+
+    // Choose question type
+    const questionTypes = ['fill_blanks', 'next_number', 'multiple_choice'];
+    const questionType = randomChoice(questionTypes);
+
+    return generateQuestionByType(questionType, fullSequence, params, step, direction, level);
+}
+
+/**
+ * Generate specific question type
+ */
+function generateQuestionByType(type, fullSequence, params, step, direction, level) {
+    const { gaps_count, gap_position, sequence_length } = params;
+
+    if (type === 'fill_blanks') {
+        // Get positions for blanks
+        const gapPositions = getGapPositions(sequence_length, gaps_count, gap_position);
+
+        // Create display sequence with blanks
+        const displaySequence = fullSequence.map((num, idx) =>
+            gapPositions.includes(idx) ? '___' : num.toString()
+        );
+
+        // Collect answers
+        const answers = gapPositions.map(pos => fullSequence[pos]);
+
+        return {
+            text: `Fill in the missing number${gaps_count > 1 ? 's' : ''}: ${displaySequence.join(', ')}`,
+            type: 'text_input',
+            answer: answers.join(','),  // Store as comma-separated
+            answers: answers,  // Also store as array for validation
+            hint: `The pattern counts ${direction} in ${step}s`,
+            module: 'N01_Y2_NPV',
+            level: level
+        };
+    }
+
+    if (type === 'next_number') {
+        // Show first N-1 numbers, ask for last
+        const shown = fullSequence.slice(0, -1);
+        const answer = fullSequence[fullSequence.length - 1];
+
+        return {
+            text: `What number comes next? ${shown.join(', ')}, ___`,
+            type: 'text_input',
+            answer: answer.toString(),
+            hint: `Count ${direction} in ${step}s`,
+            module: 'N01_Y2_NPV',
+            level: level
+        };
+    }
+
+    if (type === 'multiple_choice') {
+        // Show all but last, create options
+        const shown = fullSequence.slice(0, -1);
+        const correctAnswer = fullSequence[fullSequence.length - 1];
+
+        // Generate plausible distractors
+        const distractors = [
+            correctAnswer + step,      // One step too far
+            correctAnswer - step,      // One step back
+            correctAnswer + 1,         // Off by one
+            correctAnswer - 1          // Off by one other direction
+        ];
+
+        // Select 3 unique distractors
+        const uniqueDistractors = [...new Set(distractors)]
+            .filter(d => d !== correctAnswer)
+            .slice(0, 3);
+
+        // Create options and shuffle
+        const options = [correctAnswer, ...uniqueDistractors]
+            .sort(() => Math.random() - 0.5);
+
+        return {
+            text: `Continue the pattern: ${shown.join(', ')}, ___`,
+            type: 'multiple_choice',
+            options: options,
+            answer: correctAnswer.toString(),
+            hint: `Count ${direction} in ${step}s`,
+            module: 'N01_Y2_NPV',
+            level: level
+        };
+    }
+}
+
+/**
+ * Register this generator
+ */
+export default {
+    moduleId: 'N01_Y2_NPV',
+    generate: generateQuestion
+};
+
+```
+
+---
+### `src\generators\N01_Y3_NPV_counting.js`
+**Type:** js
+
+```js
+/**
+ * Year 3 Counting from 0 Question Generator
+ *
+ * Generates counting sequence questions based on UK National Curriculum
+ * Module: N01_Y3_NPV - "Count from 0 in multiples of 4, 8, 50 and 100"
+ */
+
+/**
+ * Helper: Choose random item from array
+ */
+function randomChoice(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+/**
+ * Helper: Generate random integer in range [min, max]
+ */
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * Helper: Get starting value based on start_from parameter
+ */
+function getStartValue(params, step) {
+    const { start_from, min_value, max_value } = params;
+
+    if (start_from === 'zero_only') {
+        return 0;
+    } else if (start_from === 'zero_or_multiple') {
+        const multiples = [0, step, step * 2, step * 3, step * 4];
+        return randomChoice(multiples.filter(m => m <= max_value / 2));
+    } else if (start_from === 'any') {
+        // Pick random value and align to step
+        const range = max_value - min_value;
+        const rawStart = min_value + randomInt(0, Math.floor(range / 2));
+        return Math.floor(rawStart / step) * step;
+    }
+
+    return 0;
+}
+
+/**
+ * Helper: Generate sequence array
+ */
+function generateSequence(start, step, length, direction) {
+    const sequence = [];
+    const multiplier = direction === 'forwards' ? 1 : -1;
+
+    for (let i = 0; i < length; i++) {
+        sequence.push(start + (i * step * multiplier));
+    }
+
+    return sequence;
+}
+
+/**
+ * Helper: Get gap positions
+ */
+function getGapPositions(sequenceLength, gapsCount, gapPosition) {
+    const positions = [];
+
+    if (gapPosition === 'end') {
+        positions.push(sequenceLength - 1);
+    } else if (gapPosition === 'start') {
+        positions.push(0);
+    } else if (gapPosition === 'middle') {
+        positions.push(Math.floor(sequenceLength / 2));
+    } else if (gapPosition === 'random') {
+        // Generate unique random positions
+        const available = Array.from({length: sequenceLength}, (_, i) => i);
+        for (let i = 0; i < gapsCount; i++) {
+            const idx = randomInt(0, available.length - 1);
+            positions.push(available[idx]);
+            available.splice(idx, 1);
+        }
+    }
+
+    return positions.slice(0, gapsCount).sort((a, b) => a - b);
+}
+
+/**
+ * Generate question
+ */
+export function generateQuestion(params, level) {
+    // Extract parameters
+    const step = randomChoice(params.step_sizes);
+    const direction = randomChoice(params.directions);
+    const { sequence_length, gaps_count, gap_position, min_value, max_value } = params;
+
+    // Get starting value
+    let start = getStartValue(params, step);
+
+    // Ensure sequence stays within bounds
+    if (direction === 'forwards') {
+        const maxStart = max_value - (step * (sequence_length - 1));
+        start = Math.min(start, maxStart);
+    } else {
+        const minStart = min_value + (step * (sequence_length - 1));
+        start = Math.max(start, minStart);
+    }
+
+    // Generate full sequence
+    const fullSequence = generateSequence(start, step, sequence_length, direction);
+
+    // Choose question type
+    const questionTypes = ['fill_blanks', 'next_number', 'multiple_choice'];
+    const questionType = randomChoice(questionTypes);
+
+    return generateQuestionByType(questionType, fullSequence, params, step, direction, level);
+}
+
+/**
+ * Generate specific question type
+ */
+function generateQuestionByType(type, fullSequence, params, step, direction, level) {
+    const { gaps_count, gap_position, sequence_length } = params;
+
+    if (type === 'fill_blanks') {
+        // Get positions for blanks
+        const gapPositions = getGapPositions(sequence_length, gaps_count, gap_position);
+
+        // Create display sequence with blanks
+        const displaySequence = fullSequence.map((num, idx) =>
+            gapPositions.includes(idx) ? '___' : num.toString()
+        );
+
+        // Collect answers
+        const answers = gapPositions.map(pos => fullSequence[pos]);
+
+        return {
+            text: `Fill in the missing number${gaps_count > 1 ? 's' : ''}: ${displaySequence.join(', ')}`,
+            type: 'text_input',
+            answer: answers.join(','),  // Store as comma-separated
+            answers: answers,  // Also store as array for validation
+            hint: `The pattern counts ${direction} in ${step}s`,
+            module: 'N01_Y3_NPV',
+            level: level
+        };
+    }
+
+    if (type === 'next_number') {
+        // Show first N-1 numbers, ask for last
+        const shown = fullSequence.slice(0, -1);
+        const answer = fullSequence[fullSequence.length - 1];
+
+        return {
+            text: `What number comes next? ${shown.join(', ')}, ___`,
+            type: 'text_input',
+            answer: answer.toString(),
+            hint: `Count ${direction} in ${step}s`,
+            module: 'N01_Y3_NPV',
+            level: level
+        };
+    }
+
+    if (type === 'multiple_choice') {
+        // Show all but last, create options
+        const shown = fullSequence.slice(0, -1);
+        const correctAnswer = fullSequence[fullSequence.length - 1];
+
+        // Generate plausible distractors
+        const distractors = [
+            correctAnswer + step,      // One step too far
+            correctAnswer - step,      // One step back
+            correctAnswer + 1,         // Off by one
+            correctAnswer - 1          // Off by one other direction
+        ];
+
+        // Select 3 unique distractors
+        const uniqueDistractors = [...new Set(distractors)]
+            .filter(d => d !== correctAnswer)
+            .slice(0, 3);
+
+        // Create options and shuffle
+        const options = [correctAnswer, ...uniqueDistractors]
+            .sort(() => Math.random() - 0.5);
+
+        return {
+            text: `Continue the pattern: ${shown.join(', ')}, ___`,
+            type: 'multiple_choice',
+            options: options,
+            answer: correctAnswer.toString(),
+            hint: `Count ${direction} in ${step}s`,
+            module: 'N01_Y3_NPV',
+            level: level
+        };
+    }
+}
+
+/**
+ * Register this generator
+ */
+export default {
+    moduleId: 'N01_Y3_NPV',
+    generate: generateQuestion
+};
+
+```
+
+---
+### `src\generators\N01_Y4_NPV_counting.js`
+**Type:** js
+
+```js
+/**
+ * Year 4 Count in Multiples Question Generator
+ *
+ * Generates counting sequence questions based on UK National Curriculum
+ * Module: N01_Y4_NPV - "Count in multiples of 6, 7, 9, 25 and 1000"
+ */
+
+/**
+ * Helper: Choose random item from array
+ */
+function randomChoice(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+/**
+ * Helper: Generate random integer in range [min, max]
+ */
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * Helper: Get starting value based on start_from parameter
+ */
+function getStartValue(params, step) {
+    const { start_from, min_value, max_value } = params;
+
+    if (start_from === 'zero_only') {
+        return 0;
+    } else if (start_from === 'zero_or_multiple') {
+        const multiples = [0, step, step * 2, step * 3, step * 4];
+        return randomChoice(multiples.filter(m => m <= max_value / 2));
+    } else if (start_from === 'any') {
+        // Pick random value and align to step
+        const range = max_value - min_value;
+        const rawStart = min_value + randomInt(0, Math.floor(range / 2));
+        return Math.floor(rawStart / step) * step;
+    }
+
+    return 0;
+}
+
+/**
+ * Helper: Generate sequence array
+ */
+function generateSequence(start, step, length, direction) {
+    const sequence = [];
+    const multiplier = direction === 'forwards' ? 1 : -1;
+
+    for (let i = 0; i < length; i++) {
+        sequence.push(start + (i * step * multiplier));
+    }
+
+    return sequence;
+}
+
+/**
+ * Helper: Get gap positions
+ */
+function getGapPositions(sequenceLength, gapsCount, gapPosition) {
+    const positions = [];
+
+    if (gapPosition === 'end') {
+        positions.push(sequenceLength - 1);
+    } else if (gapPosition === 'start') {
+        positions.push(0);
+    } else if (gapPosition === 'middle') {
+        positions.push(Math.floor(sequenceLength / 2));
+    } else if (gapPosition === 'random') {
+        // Generate unique random positions
+        const available = Array.from({length: sequenceLength}, (_, i) => i);
+        for (let i = 0; i < gapsCount; i++) {
+            const idx = randomInt(0, available.length - 1);
+            positions.push(available[idx]);
+            available.splice(idx, 1);
+        }
+    }
+
+    return positions.slice(0, gapsCount).sort((a, b) => a - b);
+}
+
+/**
+ * Generate question
+ */
+export function generateQuestion(params, level) {
+    // Extract parameters
+    const step = randomChoice(params.step_sizes);
+    const direction = randomChoice(params.directions);
+    const { sequence_length, gaps_count, gap_position, min_value, max_value } = params;
+
+    // Get starting value
+    let start = getStartValue(params, step);
+
+    // Ensure sequence stays within bounds
+    if (direction === 'forwards') {
+        const maxStart = max_value - (step * (sequence_length - 1));
+        start = Math.min(start, maxStart);
+    } else {
+        const minStart = min_value + (step * (sequence_length - 1));
+        start = Math.max(start, minStart);
+    }
+
+    // Generate full sequence
+    const fullSequence = generateSequence(start, step, sequence_length, direction);
+
+    // Choose question type
+    const questionTypes = ['fill_blanks', 'next_number', 'multiple_choice'];
+    const questionType = randomChoice(questionTypes);
+
+    return generateQuestionByType(questionType, fullSequence, params, step, direction, level);
+}
+
+/**
+ * Generate specific question type
+ */
+function generateQuestionByType(type, fullSequence, params, step, direction, level) {
+    const { gaps_count, gap_position, sequence_length } = params;
+
+    if (type === 'fill_blanks') {
+        // Get positions for blanks
+        const gapPositions = getGapPositions(sequence_length, gaps_count, gap_position);
+
+        // Create display sequence with blanks
+        const displaySequence = fullSequence.map((num, idx) =>
+            gapPositions.includes(idx) ? '___' : num.toString()
+        );
+
+        // Collect answers
+        const answers = gapPositions.map(pos => fullSequence[pos]);
+
+        return {
+            text: `Fill in the missing number${gaps_count > 1 ? 's' : ''}: ${displaySequence.join(', ')}`,
+            type: 'text_input',
+            answer: answers.join(','),  // Store as comma-separated
+            answers: answers,  // Also store as array for validation
+            hint: `The pattern counts ${direction} in ${step}s`,
+            module: 'N01_Y4_NPV',
+            level: level
+        };
+    }
+
+    if (type === 'next_number') {
+        // Show first N-1 numbers, ask for last
+        const shown = fullSequence.slice(0, -1);
+        const answer = fullSequence[fullSequence.length - 1];
+
+        return {
+            text: `What number comes next? ${shown.join(', ')}, ___`,
+            type: 'text_input',
+            answer: answer.toString(),
+            hint: `Count ${direction} in ${step}s`,
+            module: 'N01_Y4_NPV',
+            level: level
+        };
+    }
+
+    if (type === 'multiple_choice') {
+        // Show all but last, create options
+        const shown = fullSequence.slice(0, -1);
+        const correctAnswer = fullSequence[fullSequence.length - 1];
+
+        // Generate plausible distractors
+        const distractors = [
+            correctAnswer + step,      // One step too far
+            correctAnswer - step,      // One step back
+            correctAnswer + 1,         // Off by one
+            correctAnswer - 1          // Off by one other direction
+        ];
+
+        // Select 3 unique distractors
+        const uniqueDistractors = [...new Set(distractors)]
+            .filter(d => d !== correctAnswer)
+            .slice(0, 3);
+
+        // Create options and shuffle
+        const options = [correctAnswer, ...uniqueDistractors]
+            .sort(() => Math.random() - 0.5);
+
+        return {
+            text: `Continue the pattern: ${shown.join(', ')}, ___`,
+            type: 'multiple_choice',
+            options: options,
+            answer: correctAnswer.toString(),
+            hint: `Count ${direction} in ${step}s`,
+            module: 'N01_Y4_NPV',
+            level: level
+        };
+    }
+}
+
+/**
+ * Register this generator
+ */
+export default {
+    moduleId: 'N01_Y4_NPV',
+    generate: generateQuestion
+};
+
+```
+
+---
+### `src\generators\N01_Y5_NPV_counting.js`
+**Type:** js
+
+```js
+/**
+ * Year 5 Count Forwards and Backwards Question Generator
+ *
+ * Generates counting sequence questions based on UK National Curriculum
+ * Module: N01_Y5_NPV - "Count forwards and backwards with positive and negative whole numbers, including through zero"
+ */
+
+/**
+ * Helper: Choose random item from array
+ */
+function randomChoice(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+/**
+ * Helper: Generate random integer in range [min, max]
+ */
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * Helper: Get starting value based on start_from parameter
+ * Y5 specific: Uses start_range instead of calculating from min/max
+ */
+function getStartValue(params, step) {
+    const { start_from, start_range } = params;
+
+    if (start_from === 'zero_only') {
+        return 0;
+    } else {
+        // For Y5, use the start_range parameter
+        return randomInt(start_range[0], start_range[1]);
+    }
+}
+
+/**
+ * Helper: Generate sequence array
+ */
+function generateSequence(start, step, length, direction) {
+    const sequence = [];
+    const multiplier = direction === 'forwards' ? 1 : -1;
+
+    for (let i = 0; i < length; i++) {
+        sequence.push(start + (i * step * multiplier));
+    }
+
+    return sequence;
+}
+
+/**
+ * Helper: Get gap positions
+ */
+function getGapPositions(sequenceLength, gapsCount, gapPosition) {
+    const positions = [];
+
+    if (gapPosition === 'end') {
+        positions.push(sequenceLength - 1);
+    } else if (gapPosition === 'start') {
+        positions.push(0);
+    } else if (gapPosition === 'middle') {
+        positions.push(Math.floor(sequenceLength / 2));
+    } else if (gapPosition === 'random') {
+        // Generate unique random positions
+        const available = Array.from({length: sequenceLength}, (_, i) => i);
+        for (let i = 0; i < gapsCount; i++) {
+            const idx = randomInt(0, available.length - 1);
+            positions.push(available[idx]);
+            available.splice(idx, 1);
+        }
+    }
+
+    return positions.slice(0, gapsCount).sort((a, b) => a - b);
+}
+
+/**
+ * Generate question
+ */
+export function generateQuestion(params, level) {
+    // Y5 uses powers_of_10 instead of step_sizes
+    const step = randomChoice(params.powers_of_10);
+    const direction = randomChoice(params.directions);
+    const { sequence_length, gaps_count, gap_position, min_value, max_value } = params;
+
+    // Get starting value (uses start_range for Y5)
+    let start = getStartValue(params, step);
+
+    // Ensure sequence stays within bounds
+    if (direction === 'forwards') {
+        const maxStart = max_value - (step * (sequence_length - 1));
+        start = Math.min(start, maxStart);
+    } else {
+        const minStart = min_value + (step * (sequence_length - 1));
+        start = Math.max(start, minStart);
+    }
+
+    // Generate full sequence
+    const fullSequence = generateSequence(start, step, sequence_length, direction);
+
+    // Choose question type
+    const questionTypes = ['fill_blanks', 'next_number', 'multiple_choice'];
+    const questionType = randomChoice(questionTypes);
+
+    return generateQuestionByType(questionType, fullSequence, params, step, direction, level);
+}
+
+/**
+ * Generate specific question type
+ */
+function generateQuestionByType(type, fullSequence, params, step, direction, level) {
+    const { gaps_count, gap_position, sequence_length } = params;
+
+    if (type === 'fill_blanks') {
+        // Get positions for blanks
+        const gapPositions = getGapPositions(sequence_length, gaps_count, gap_position);
+
+        // Create display sequence with blanks
+        const displaySequence = fullSequence.map((num, idx) =>
+            gapPositions.includes(idx) ? '___' : num.toString()
+        );
+
+        // Collect answers
+        const answers = gapPositions.map(pos => fullSequence[pos]);
+
+        return {
+            text: `Fill in the missing number${gaps_count > 1 ? 's' : ''}: ${displaySequence.join(', ')}`,
+            type: 'text_input',
+            answer: answers.join(','),  // Store as comma-separated
+            answers: answers,  // Also store as array for validation
+            hint: `The pattern counts ${direction} in ${step}s`,
+            module: 'N01_Y5_NPV',
+            level: level
+        };
+    }
+
+    if (type === 'next_number') {
+        // Show first N-1 numbers, ask for last
+        const shown = fullSequence.slice(0, -1);
+        const answer = fullSequence[fullSequence.length - 1];
+
+        return {
+            text: `What number comes next? ${shown.join(', ')}, ___`,
+            type: 'text_input',
+            answer: answer.toString(),
+            hint: `Count ${direction} in ${step}s`,
+            module: 'N01_Y5_NPV',
+            level: level
+        };
+    }
+
+    if (type === 'multiple_choice') {
+        // Show all but last, create options
+        const shown = fullSequence.slice(0, -1);
+        const correctAnswer = fullSequence[fullSequence.length - 1];
+
+        // Generate plausible distractors
+        const distractors = [
+            correctAnswer + step,      // One step too far
+            correctAnswer - step,      // One step back
+            correctAnswer + 1,         // Off by one
+            correctAnswer - 1          // Off by one other direction
+        ];
+
+        // Select 3 unique distractors
+        const uniqueDistractors = [...new Set(distractors)]
+            .filter(d => d !== correctAnswer)
+            .slice(0, 3);
+
+        // Create options and shuffle
+        const options = [correctAnswer, ...uniqueDistractors]
+            .sort(() => Math.random() - 0.5);
+
+        return {
+            text: `Continue the pattern: ${shown.join(', ')}, ___`,
+            type: 'multiple_choice',
+            options: options,
+            answer: correctAnswer.toString(),
+            hint: `Count ${direction} in ${step}s`,
+            module: 'N01_Y5_NPV',
+            level: level
+        };
+    }
+}
+
+/**
+ * Register this generator
+ */
+export default {
+    moduleId: 'N01_Y5_NPV',
+    generate: generateQuestion
 };
 
 ```
@@ -1298,7 +1734,7 @@ export default {
  * Simple interface to generate and display questions from all difficulty levels
  */
 
-import { MODULES } from '../curriculum/modules.js';
+import { MODULES } from '../curriculum/parameters.js';
 import questionEngine from '../core/questionEngine.js';
 import validator from '../core/validator.js';
 
@@ -1449,14 +1885,37 @@ class App {
                 </div>
             `;
         } else if (question.type === 'text_input') {
-            return `
-                <div class="question" data-question-id="${questionId}">
-                    <div class="question-text">${questionIdx + 1}. ${question.text}</div>
-                    <input type="text" class="text-input" id="${questionId}" placeholder="Your answer">
-                    ${question.hint ? `<div class="hint">💡 Hint: ${question.hint}</div>` : ''}
-                    <div class="feedback"></div>
-                </div>
-            `;
+            // Check if multi-gap question
+            const isMultiGap = question.answers && question.answers.length > 1;
+
+            if (isMultiGap) {
+                return `
+                    <div class="question" data-question-id="${questionId}">
+                        <div class="question-text">${questionIdx + 1}. ${question.text}</div>
+                        <div class="multi-input-container">
+                            ${question.answers.map((_, idx) => `
+                                <input type="text"
+                                       class="text-input multi-gap"
+                                       data-gap-index="${idx}"
+                                       placeholder="Answer ${idx + 1}"
+                                       size="8">
+                            `).join('')}
+                        </div>
+                        ${question.hint ? `<div class="hint">💡 Hint: ${question.hint}</div>` : ''}
+                        <div class="feedback"></div>
+                    </div>
+                `;
+            } else {
+                // Single input
+                return `
+                    <div class="question" data-question-id="${questionId}">
+                        <div class="question-text">${questionIdx + 1}. ${question.text}</div>
+                        <input type="text" class="text-input" id="${questionId}" placeholder="Your answer">
+                        ${question.hint ? `<div class="hint">💡 Hint: ${question.hint}</div>` : ''}
+                        <div class="feedback"></div>
+                    </div>
+                `;
+            }
         }
     }
 
@@ -1480,19 +1939,29 @@ class App {
                     const selected = questionElement.querySelector(`input[name="${questionId}"]:checked`);
                     userAnswer = selected ? selected.value : '';
                 } else if (question.type === 'text_input') {
-                    userAnswer = document.getElementById(questionId).value.trim();
+                    // Check for multi-gap inputs
+                    const multiGaps = questionElement.querySelectorAll('.text-input.multi-gap');
+                    if (multiGaps.length > 0) {
+                        // Collect all gap answers and join with comma
+                        const gapAnswers = Array.from(multiGaps).map(input => input.value.trim());
+                        userAnswer = gapAnswers.join(',');
+                    } else {
+                        // Single input
+                        const inputElement = document.getElementById(questionId);
+                        userAnswer = inputElement ? inputElement.value.trim() : '';
+                    }
                 }
 
                 // Validate answer
-                const isCorrect = validator.validate(userAnswer, question.answer, question.type);
+                const result = validator.validate(question, userAnswer);
                 totalQuestions++;
-                if (isCorrect) totalCorrect++;
+                if (result.isCorrect) totalCorrect++;
 
                 // Show feedback
                 questionElement.classList.remove('correct', 'incorrect');
                 if (userAnswer) {
-                    questionElement.classList.add(isCorrect ? 'correct' : 'incorrect');
-                    feedbackElement.innerHTML = isCorrect
+                    questionElement.classList.add(result.isCorrect ? 'correct' : 'incorrect');
+                    feedbackElement.innerHTML = result.isCorrect
                         ? '<span class="correct-mark">✓ Correct!</span>'
                         : `<span class="incorrect-mark">✗ Incorrect. Answer: ${question.answer}</span>`;
                 }
@@ -1860,6 +2329,20 @@ header p {
     outline: none;
     border-color: #764ba2;
     box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+}
+
+/* Multi-gap input container */
+.multi-input-container {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.text-input.multi-gap {
+    width: auto;
+    min-width: 80px;
+    flex: 0 1 auto;
 }
 
 /* Hint */

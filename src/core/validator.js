@@ -56,6 +56,21 @@ export function validate(question, studentAnswer) {
         };
     }
 
+    // Handle comma-separated answers (multi-gap questions)
+    if (correctAnswer.includes(',')) {
+        const correctParts = correctAnswer.split(',').map(s => s.trim()).sort();
+        const submittedParts = submittedAnswer.split(',').map(s => s.trim()).sort();
+
+        if (correctParts.length === submittedParts.length &&
+            correctParts.every((val, idx) => val === submittedParts[idx])) {
+            return {
+                isCorrect: true,
+                feedback: 'Correct!',
+                normalizedAnswer: submittedAnswer
+            };
+        }
+    }
+
     // Try numeric comparison (handles decimal precision issues)
     const numSubmitted = parseFloat(studentAnswer);
     const numCorrect = parseFloat(question.answer);

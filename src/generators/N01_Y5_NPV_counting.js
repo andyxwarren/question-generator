@@ -1,8 +1,8 @@
 /**
- * Year 1 Counting in Multiples Question Generator
+ * Year 5 Count Forwards and Backwards Question Generator
  *
  * Generates counting sequence questions based on UK National Curriculum
- * Module: N01_Y1_NPV - "Count to and across 100, forwards and backwards"
+ * Module: N01_Y5_NPV - "Count forwards and backwards with positive and negative whole numbers, including through zero"
  */
 
 /**
@@ -21,23 +21,17 @@ function randomInt(min, max) {
 
 /**
  * Helper: Get starting value based on start_from parameter
+ * Y5 specific: Uses start_range instead of calculating from min/max
  */
 function getStartValue(params, step) {
-    const { start_from, min_value, max_value } = params;
+    const { start_from, start_range } = params;
 
     if (start_from === 'zero_only') {
         return 0;
-    } else if (start_from === 'zero_or_multiple') {
-        const multiples = [0, step, step * 2, step * 3, step * 4];
-        return randomChoice(multiples.filter(m => m <= max_value / 2));
-    } else if (start_from === 'any') {
-        // Pick random value and align to step
-        const range = max_value - min_value;
-        const rawStart = min_value + randomInt(0, Math.floor(range / 2));
-        return Math.floor(rawStart / step) * step;
+    } else {
+        // For Y5, use the start_range parameter
+        return randomInt(start_range[0], start_range[1]);
     }
-
-    return 0;
 }
 
 /**
@@ -83,12 +77,12 @@ function getGapPositions(sequenceLength, gapsCount, gapPosition) {
  * Generate question
  */
 export function generateQuestion(params, level) {
-    // Extract parameters
-    const step = randomChoice(params.step_sizes);
+    // Y5 uses powers_of_10 instead of step_sizes
+    const step = randomChoice(params.powers_of_10);
     const direction = randomChoice(params.directions);
     const { sequence_length, gaps_count, gap_position, min_value, max_value } = params;
 
-    // Get starting value
+    // Get starting value (uses start_range for Y5)
     let start = getStartValue(params, step);
 
     // Ensure sequence stays within bounds
@@ -138,7 +132,7 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
             answer: answers.join(','),  // Store as comma-separated
             answers: answers,  // Also store as array for validation
             hint: `The pattern counts ${direction} in ${step}s`,
-            module: 'N01_Y1_NPV',
+            module: 'N01_Y5_NPV',
             level: level
         };
     }
@@ -153,7 +147,7 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
             type: 'text_input',
             answer: answer.toString(),
             hint: `Count ${direction} in ${step}s`,
-            module: 'N01_Y1_NPV',
+            module: 'N01_Y5_NPV',
             level: level
         };
     }
@@ -186,7 +180,7 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
             options: options,
             answer: correctAnswer.toString(),
             hint: `Count ${direction} in ${step}s`,
-            module: 'N01_Y1_NPV',
+            module: 'N01_Y5_NPV',
             level: level
         };
     }
@@ -196,6 +190,6 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
  * Register this generator
  */
 export default {
-    moduleId: 'N01_Y1_NPV',
+    moduleId: 'N01_Y5_NPV',
     generate: generateQuestion
 };
