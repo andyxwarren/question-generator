@@ -5,7 +5,7 @@
  * Manages generator registry and question creation
  */
 
-import { getModule, getParameters } from '../curriculum/modules.js';
+import { getParameters } from '../curriculum/parameters.js';
 import countingGenerator from '../generators/N01_Y1_NPV_counting.js';
 import bondsGenerator from '../generators/C01_Y1_CALC_bonds.js';
 import multiplyGenerator from '../generators/C06_Y3_CALC_multiply.js';

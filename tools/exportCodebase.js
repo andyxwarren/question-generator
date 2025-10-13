@@ -92,7 +92,10 @@ function exportCodebase(rootDir) {
     "__pycache__",
     ".idea",
     "env",
-    "tools"
+    "tools",
+    "archive",
+    ".claude",
+    "references"
   ];
 
   const ignoreFiles = [
@@ -104,7 +107,6 @@ function exportCodebase(rootDir) {
     "codebase_dump.md", // ✅ exclude markdown files
     'gitignore',
     "*.md", // ✅ exclude markdown files
-    "*.csv",
     "*.png"
   ];
 

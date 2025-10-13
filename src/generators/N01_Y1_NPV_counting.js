@@ -4,8 +4,6 @@
  * Generates questions for counting sequences and patterns
  */
 
-import { getParameters } from '../curriculum/modules.js';
-
 /**
  * Helper: Choose random item from array
  * @param {Array} array - Array to choose from
