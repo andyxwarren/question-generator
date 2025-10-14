@@ -11,6 +11,11 @@ import countingY2Generator from '../generators/N01_Y2_NPV_counting.js';
 import countingY3Generator from '../generators/N01_Y3_NPV_counting.js';
 import countingY4Generator from '../generators/N01_Y4_NPV_counting.js';
 import countingY5Generator from '../generators/N01_Y5_NPV_counting.js';
+import readwriteY2Generator from '../generators/N02_Y2_NPV_readwrite.js';
+import readwriteY3Generator from '../generators/N02_Y3_NPV_readwrite.js';
+import readwriteY4Generator from '../generators/N02_Y4_NPV_readwrite.js';
+import readwriteY5Generator from '../generators/N02_Y5_NPV_readwrite.js';
+import readwriteY6Generator from '../generators/N02_Y6_NPV_readwrite.js';
 
 /**
  * Question Engine Class
@@ -30,6 +35,11 @@ class QuestionEngine {
         this.register(countingY3Generator);
         this.register(countingY4Generator);
         this.register(countingY5Generator);
+        this.register(readwriteY2Generator);
+        this.register(readwriteY3Generator);
+        this.register(readwriteY4Generator);
+        this.register(readwriteY5Generator);
+        this.register(readwriteY6Generator);
     }
 
     /**
