@@ -2,294 +2,202 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
-
-This is a UK National Curriculum mathematics practice application for Key Stage 1 & 2 students (ages 5-11). It generates unlimited unique counting sequence questions across 5 year groups (Year 1-5) with 4 difficulty levels per year group. The application is built with vanilla JavaScript ES6 modules, no dependencies, and runs entirely client-side.
-
 ## Running the Application
 
-**IMPORTANT:** ES6 modules require a web server. Do NOT open `index.html` directly via `file://` protocol.
+This is a pure JavaScript application using ES6 modules. It requires a web server to run due to CORS restrictions:
 
-### Python (Recommended)
 ```bash
-# Python 3
+# Python (recommended)
 python -m http.server 8000
 
-# Then open: http://localhost:8000
+# Node.js
+npx http-server -p 8000
+
+# VS Code
+# Install "Live Server" extension and right-click index.html → "Open with Live Server"
 ```
 
-### Node.js
-```bash
-npm install -g http-server
-http-server -p 8000
-```
+Then navigate to `http://localhost:8000` in a browser.
 
-### VS Code
-Install "Live Server" extension, right-click `index.html`, and select "Open with Live Server"
+⚠️ **Important**: Do NOT open `index.html` directly with `file://` protocol - ES6 modules will fail due to CORS.
 
-## Architecture
+## Architecture Overview
 
-### Core System Components
+This is a UK National Curriculum-aligned mathematics practice application following a **parameter-based architecture** with three core layers:
 
-The application uses a **three-layer parameter-driven architecture**:
+### 1. Curriculum Layer (`src/curriculum/`)
+- `parameters.js` - Defines all curriculum modules with 4 difficulty levels each
+- Each module has an ID based on UK National Curriculum codes (e.g., `N01_Y1_NPV`)
+- Parameters are organized **by level** (not by parameter type)
+- Levels: 1=Beginning, 2=Developing, 3=Meeting, 4=Exceeding
 
-```
-CURRICULUM PARAMETERS (src/curriculum/parameters.js)
-    ↓ defines ranges and constraints per level
-QUESTION GENERATORS (src/generators/*.js)
-    ↓ generates questions using parameters
-DELIVERY APPLICATION (src/ui/app.js + src/core/)
-    ↓ presents questions to students
-```
+### 2. Generator Layer (`src/generators/`)
+- Each file generates questions for one curriculum module (e.g., `N01_Y1_NPV_counting.js`)
+- Generators are **pure functions** that take parameters and level, return question objects
+- Question types: `text_input`, `multiple_choice`, `fill_blanks`, `next_number`
+- All generators must export: `{ moduleId, generate }`
+
+### 3. Engine & UI Layer (`src/core/` and `src/ui/`)
+- `questionEngine.js` - Registry pattern for generators, orchestrates question creation
+- `validator.js` - Validates student answers (handles text, numbers, multi-gap)
+- `app.js` - Main UI controller, renders questions grouped by difficulty level
 
 ### Key Design Patterns
+- **Registry Pattern**: QuestionEngine maintains a Map of generators keyed by moduleId
+- **Pure Functions**: Generators have no side effects, can be called repeatedly
+- **Parameter-Driven**: All question constraints come from `parameters.js`, not hardcoded
+- **Singleton**: QuestionEngine is exported as a singleton instance
 
-1. **Registry Pattern**: `QuestionEngine` (src/core/questionEngine.js) maintains a Map of registered generators. All generators must export `{ moduleId, generate }`.
+## Adding New Curriculum Modules
 
-2. **Level-Centric Parameter Structure**: Parameters are organized by level (1-4), not by parameter type. Each level contains all its configuration together:
-   ```javascript
-   parameters: {
-       1: { step_sizes: [...], min_value: 0, max_value: 30, ... },
-       2: { step_sizes: [...], min_value: 0, max_value: 50, ... },
-       // etc.
-   }
-   ```
+1. **Define parameters** in `src/curriculum/parameters.js`:
+```javascript
+'MODULE_ID': {
+    id: 'MODULE_ID',
+    name: 'Display name',
+    description: '...',
+    icon: '🔢',
+    yearGroup: 'Year N',
+    strand: 'Number and Place Value',
+    parameters: {
+        1: { /* level 1 params */ },
+        2: { /* level 2 params */ },
+        3: { /* level 3 params */ },
+        4: { /* level 4 params */ }
+    }
+}
+```
 
-3. **Singleton Pattern**: QuestionEngine and Validator are exported as singleton instances.
+2. **Create generator** in `src/generators/MODULE_ID_*.js`:
+```javascript
+export function generateQuestion(params, level) {
+    // Use params to generate question
+    return {
+        text: 'Question text',
+        type: 'text_input' | 'multiple_choice',
+        answer: 'correct answer',
+        // For multiple choice: options: [...]
+        // For text input: hint: '...'
+        module: 'MODULE_ID',
+        level: level
+    };
+}
 
-4. **Pure Functions**: Generator functions have no side effects and always return new question objects.
+export default {
+    moduleId: 'MODULE_ID',
+    generate: generateQuestion
+};
+```
+
+3. **Register generator** in `src/core/questionEngine.js`:
+```javascript
+import newGenerator from '../generators/MODULE_ID_*.js';
+
+registerDefaultGenerators() {
+    // ... existing
+    this.register(newGenerator);
+}
+```
+
+## Question Object Schema
+
+All generators must return objects with this structure:
+
+```javascript
+{
+    text: string,           // Question text shown to student
+    type: 'text_input' | 'multiple_choice',
+    answer: string,         // Correct answer (always string, even for numbers)
+    // For multiple choice:
+    options: number[],      // Array of options to choose from
+    // For text input:
+    hint: string,           // Optional hint
+    answers: any[],         // For multi-gap questions (array of answers)
+    // Added automatically:
+    id: string,             // Unique ID (added by QuestionEngine)
+    timestamp: number,      // Generation timestamp (added by QuestionEngine)
+    module: string,         // Module ID
+    level: number           // Difficulty level (1-4)
+}
+```
+
+## Common Parameters Structure
+
+Parameters vary by module but typically include:
+
+- `step_sizes` or `powers_of_10`: Array of counting increments
+- `min_value`, `max_value`: Bounds for generated numbers
+- `directions`: Array of `'forwards'` and/or `'backwards'`
+- `start_from`: Where sequences start (`'zero_only'`, `'any'`, `'zero_or_multiple'`, etc.)
+- `sequence_length`: How many numbers in a sequence
+- `gaps_count`: Number of blanks in fill-in questions
+- `gap_position`: Where gaps appear (`'end'`, `'middle'`, `'random'`, `'start'`)
 
 ## File Structure
 
 ```
 src/
 ├── curriculum/
-│   └── parameters.js          # Module definitions with level-based parameters
+│   └── parameters.js          # All module definitions
 ├── generators/
-│   ├── N01_Y1_NPV_counting.js # Year 1 counting generator
-│   ├── N01_Y2_NPV_counting.js # Year 2 (special: tens_from_any)
-│   ├── N01_Y3_NPV_counting.js # Year 3
-│   ├── N01_Y4_NPV_counting.js # Year 4
-│   └── N01_Y5_NPV_counting.js # Year 5 (special: powers_of_10, negative numbers)
+│   ├── N01_Y1_NPV_counting.js # Year 1 counting
+│   ├── N01_Y2_NPV_counting.js # Year 2 counting
+│   ├── N01_Y3_NPV_counting.js # Year 3 counting
+│   ├── N01_Y4_NPV_counting.js # Year 4 counting
+│   └── N01_Y5_NPV_counting.js # Year 5 counting (with negatives)
 ├── core/
-│   ├── questionEngine.js      # Generator registry and orchestration
-│   └── validator.js           # Answer validation (handles comma-separated multi-gap)
+│   ├── questionEngine.js      # Generator registry & orchestration
+│   └── validator.js           # Answer validation
 └── ui/
-    └── app.js                 # Main application UI logic
+    └── app.js                 # Main UI controller
+
+styles/                        # CSS files
+tools/                         # Utility scripts (exportCodebase.js)
+index.html                     # Entry point
 ```
 
-## Working with Modules and Generators
+## Year 5 Special Case
 
-### Module Naming Convention
-
-Module IDs follow the pattern: `N01_Y[X]_NPV` where:
-- `N01` = Number strand, objective 1
-- `Y[X]` = Year group (1-5)
-- `NPV` = Number and Place Value
-
-### Parameter Structure
-
-Each module has 4 difficulty levels (1-4):
-- **Level 1**: Beginning
-- **Level 2**: Developing
-- **Level 3**: Meeting
-- **Level 4**: Exceeding
-
-Access parameters via: `getParameters(moduleId, level)` from `src/curriculum/parameters.js`
-
-### Generator Requirements
-
-Every generator must:
-1. Export a default object with `{ moduleId, generate }`
-2. Implement `generate(params, level)` function
-3. Return question objects with structure:
-   ```javascript
-   {
-       text: string,           // Question text
-       type: 'text_input' | 'multiple_choice',
-       answer: string,         // Correct answer (comma-separated for multi-gap)
-       answers?: array,        // Array of answers for multi-gap questions
-       hint?: string,          // Optional hint
-       module: string,         // Module ID
-       level: number          // Difficulty level (1-4)
-   }
-   ```
-
-### Question Types
-
-1. **fill_blanks**: Shows sequence with gaps, student fills in missing numbers
-   - Multi-gap support: answer stored as comma-separated string AND array
-
-2. **next_number**: Shows sequence minus last number, ask for next
-
-3. **multiple_choice**: Shows sequence minus last, provides 4 options
-
-### Special Cases
-
-**Year 2 (N01_Y2_NPV)**:
-- Has `tens_from_any` parameter for counting in tens from any starting number
-- Special handling in `getStartValue()` function
-
-**Year 5 (N01_Y5_NPV)**:
-- Uses `powers_of_10` parameter instead of `step_sizes`
-- Supports negative numbers (min_value can be negative)
-- Uses `start_range` parameter instead of calculating from min/max
-
-## Multi-Gap Questions
-
-Multi-gap questions (gaps_count > 1) are supported:
-
-**Generator side:**
-```javascript
-return {
-    answer: answers.join(','),  // "10,20,30"
-    answers: answers,           // [10, 20, 30]
-    // ...
-};
-```
-
-**Validator side:**
-- Handles comma-separated validation
-- Normalizes and sorts values for comparison
-
-**UI side:**
-- Renders multiple text inputs when `question.answers.length > 1`
-- Collects all inputs and joins with commas before validation
-
-## Common Helper Functions
-
-All generators share these helpers (copy into new generators):
-
-- `randomChoice(array)`: Select random item from array
-- `randomInt(min, max)`: Generate random integer in range
-- `getStartValue(params, step)`: Determine starting value based on `start_from` parameter
-- `generateSequence(start, step, length, direction)`: Create number sequence
-- `getGapPositions(sequenceLength, gapsCount, gapPosition)`: Calculate where gaps should appear
-
-## Validation System
-
-The validator (src/core/validator.js) supports:
-- Exact string matching (normalized, lowercase, whitespace removed)
-- Numeric comparison with tolerance (handles floating point precision)
-- Comma-separated answers for multi-gap questions
-- Multiple choice validation
-
-Always use: `validator.validate(question, studentAnswer)` which returns `{ isCorrect, feedback, normalizedAnswer }`
-
-## Adding a New Module
-
-1. **Define module** in `src/curriculum/parameters.js`:
-   - Add to `MODULES` object with all 4 levels of parameters
-   - Ensure `moduleId` matches across all locations
-
-2. **Create generator** in `src/generators/`:
-   - Copy an existing generator as template
-   - Update `moduleId` in export
-   - Modify question generation logic if needed
-   - Handle any special parameters (like Year 2's `tens_from_any`)
-
-3. **Register generator** in `src/core/questionEngine.js`:
-   - Import the new generator
-   - Add to `registerDefaultGenerators()` method
-
-4. **Test thoroughly**:
-   - Generate questions for all 4 levels
-   - Verify answers validate correctly
-   - Check that parameters produce valid sequences
-   - Ensure no out-of-bounds values
-
-## Important Implementation Notes
-
-### Sequence Bounds Checking
-
-**Critical**: Always ensure generated sequences stay within `min_value` and `max_value`:
+Year 5 counting includes **negative numbers** and uses `powers_of_10` instead of `step_sizes`:
 
 ```javascript
-if (direction === 'forwards') {
-    const maxStart = max_value - (step * (sequence_length - 1));
-    start = Math.min(start, maxStart);
-} else {
-    const minStart = min_value + (step * (sequence_length - 1));
-    start = Math.max(start, minStart);
+parameters: {
+    1: {
+        powers_of_10: [10, 100],    // NOT step_sizes
+        min_value: -100,
+        max_value: 100,
+        start_range: [-50, 50],     // Specific to Y5
+        // ...
+    }
 }
 ```
 
-### Question Uniqueness
+The generator must handle negative number sequences and crossing zero.
 
-Questions are given unique IDs: `${moduleId}_${timestamp}_${randomString}` but there's currently no deduplication system across sessions.
+## Validation System
 
-### Answer Normalization
+The validator (`src/core/validator.js`) handles:
 
-The validator normalizes answers by:
-- Converting to string
-- Trimming whitespace
-- Converting to lowercase
-- Removing all internal whitespace
+- **Exact string matching** (normalized: trimmed, lowercase, no spaces)
+- **Numeric comparison** with tolerance (handles floating point precision)
+- **Multi-gap answers** (comma-separated values, order-independent)
+- **Empty answer detection**
 
-This means "10, 20, 30" equals "10,20,30"
+Multi-gap questions store answers two ways:
+- `answer`: Comma-separated string (e.g., `"5,10,15"`)
+- `answers`: Array (e.g., `[5, 10, 15]`)
 
-## Module Card Rendering
+## ES6 Modules
 
-Module cards are auto-generated from the `MODULES` object in parameters.js. Each module should have:
-- `id`: Module identifier
-- `name`: Display name (shown on card)
-- `description`: Curriculum objective
-- `icon`: Emoji icon (currently all use 🔢)
-- `yearGroup`: "Year 1" through "Year 5"
-- `strand`: "Number and Place Value"
-- `substrand`: "Counting (in multiples)"
+All files use ES6 modules:
+- Use `export` for functions/objects
+- Use `import` with `.js` extensions
+- No bundler required (native browser support)
+- Module paths must be relative and include `.js`
 
-## Question Flow
+## No Build Process
 
-1. User selects module from grid
-2. App calls `questionEngine.generate(moduleId, level, count)` for each of 4 levels
-3. Questions are rendered with level grouping
-4. User submits answers
-5. Validator checks each answer
-6. Results shown with per-level breakdown
-
-## CSS Architecture
-
-Styles use:
-- CSS Grid for module cards (responsive)
-- Flexbox for question layout
-- CSS animations (fadeIn) for section transitions
-- Gradient backgrounds (purple theme: #667eea to #764ba2)
-- Visual feedback: green borders for correct, red for incorrect
-
-Multi-gap inputs have special styling in `.multi-input-container` class.
-
-## Known Patterns to Follow
-
-1. **Don't modify `questionEngine.js` logic** when adding modules - it's generic and handles all modules through registration
-2. **Keep generators pure** - no side effects, localStorage access, or DOM manipulation
-3. **Always provide both forms of answers** for multi-gap questions (string and array)
-4. **Module IDs must be consistent** across parameters.js, generator file export, and imports in questionEngine.js
-5. **Level numbering is 1-indexed** (levels 1, 2, 3, 4) not 0-indexed
-
-## Testing Checklist for New Modules
-
-- [ ] Module appears in UI grid
-- [ ] All 4 levels generate questions without errors
-- [ ] Generated numbers stay within min/max bounds
-- [ ] Sequences use correct step sizes from parameters
-- [ ] Direction (forwards/backwards) matches parameter
-- [ ] Multi-gap questions display correct number of inputs
-- [ ] Single-gap questions display single input
-- [ ] Multiple choice has 4 options
-- [ ] All question types validate correctly
-- [ ] Hints display when present
-- [ ] Module ID matches everywhere
-
-## Common Pitfalls
-
-1. **Forgetting to update moduleId** in generator export - causes registration failures
-2. **Sequences going out of bounds** - always check maxStart/minStart calculations
-3. **Year 5 using step_sizes** instead of powers_of_10 - causes errors
-4. **Not handling negative numbers** in Year 5 - breaks start value calculations
-5. **Inconsistent parameter names** between levels - causes undefined errors
-6. **Not sorting comma-separated answers** in validator - causes false negatives
-
-## References
-
-See `plan.md` for detailed migration guide from old parameter structure to new level-centric structure. This document contains step-by-step instructions for implementing new modules following the current architecture.
+- No npm dependencies
+- No compilation or transpilation
+- Pure HTML/CSS/JavaScript
+- Works offline after first load

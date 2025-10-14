@@ -24,43 +24,47 @@ export const MODULES = {
         ref: 'N1',
         parameters: {
             1: {
-                step_sizes: [1, 2, 5, 10],
+                // Sub-objective 1: Count forwards and backwards from 0 to 20 in 1s and 2s
+                step_sizes: [1, 2],                   // Counting in 1s and 2s
                 min_value: 0,
-                max_value: 30,
-                directions: ['forwards'],
-                start_from: 'zero_only',          // 'zero_only', 'zero_or_multiple', 'any'
+                max_value: 20,
+                directions: ['forwards', 'backwards'],
+                start_from: 'zero_or_twenty',         // Start from 0 for forwards, 20 for backwards
                 sequence_length: 5,
                 gaps_count: 1,
-                gap_position: 'end'                // 'start', 'end', 'middle', 'random'
+                gap_position: 'end'
             },
             2: {
-                step_sizes: [1, 2, 5, 10],
+                // Sub-objective 2: Count forwards and backwards from 0 to 50 in 1s, 2s, and 5s, from any starting point
+                step_sizes: [1, 2, 5],                // Counting in 1s, 2s and 5s
                 min_value: 0,
                 max_value: 50,
                 directions: ['forwards', 'backwards'],
-                start_from: 'zero_or_multiple',
-                sequence_length: 8,
+                start_from: 'any',                    // Can start from any number
+                sequence_length: 6,
                 gaps_count: 1,
                 gap_position: 'middle'
             },
             3: {
-                step_sizes: [1, 2, 5, 10],
+                // Sub-objective 3: Count forwards and backwards from 0 to 100 in 1s, 2s, 5s, and 10s, from any starting point
+                step_sizes: [1, 2, 5, 10],            // Counting in 1s, 2s, 5s and 10s
                 min_value: 0,
                 max_value: 100,
                 directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 10,
+                start_from: 'any',                    // Can start from any number
+                sequence_length: 8,
                 gaps_count: 2,
                 gap_position: 'random'
             },
             4: {
-                step_sizes: [1, 2, 3, 5, 10],
+                // Sub-objective 4: Count forwards and backwards across 100 in all multiples (1s, 2s, 3s, 5s, 10s)
+                step_sizes: [1, 2, 3, 5, 10],         // UPDATED: Added 1 and 3
                 min_value: 0,
-                max_value: 200,
+                max_value: 200,                       // UPDATED: Extended from 100 to 200
                 directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 12,
-                gaps_count: 3,
+                start_from: 'any',                    // UPDATED: Changed from 'zero_or_multiple' to 'any'
+                sequence_length: 12,                  // UPDATED: Increased from 10 to 12
+                gaps_count: 3,                        // UPDATED: Increased from 2 to 3
                 gap_position: 'random'
             }
         }

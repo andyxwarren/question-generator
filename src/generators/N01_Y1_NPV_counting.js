@@ -3,6 +3,12 @@
  *
  * Generates counting sequence questions based on UK National Curriculum
  * Module: N01_Y1_NPV - "Count to and across 100, forwards and backwards"
+ * 
+ * UPDATED: Now supports progressive sub-learning objectives:
+ * Level 1: Count in 1s and 2s from 0-20
+ * Level 2: Count in 1s, 2s, and 5s from 0-50 (any start)
+ * Level 3: Count in 1s, 2s, 5s, and 10s from 0-100 (any start)
+ * Level 4: Count in 1s, 2s, 3s, 5s, and 10s from 0-200 (any start)
  */
 
 /**
@@ -27,6 +33,10 @@ function getStartValue(params, step) {
 
     if (start_from === 'zero_only') {
         return 0;
+    } else if (start_from === 'zero_or_twenty') {
+        // For Level 1 - start from 0 or 20 depending on context
+        // This will be adjusted in the main generate function based on direction
+        return 0;  // Default to 0, will be overridden for backwards
     } else if (start_from === 'zero_or_multiple') {
         const multiples = [0, step, step * 2, step * 3, step * 4];
         return randomChoice(multiples.filter(m => m <= max_value / 2));
@@ -91,17 +101,27 @@ export function generateQuestion(params, level) {
     // Get starting value
     let start = getStartValue(params, step);
 
+    // Special handling for Level 1 (zero_or_twenty)
+    // This provides structure for beginners: always start from 0 or 20
+    if (params.start_from === 'zero_or_twenty') {
+        if (direction === 'forwards') {
+            start = 0;  // Always start from 0 for forwards
+        } else {
+            start = 20; // Always start from 20 for backwards
+        }
+    }
+
     // Ensure sequence stays within bounds
     if (direction === 'forwards') {
         // For forwards: ensure start >= min_value AND end <= max_value
         const maxStart = max_value - (step * (sequence_length - 1));
         start = Math.min(start, maxStart);
-        start = Math.max(start, min_value);  // NEW: Also enforce minimum
+        start = Math.max(start, min_value);
     } else {
         // For backwards: ensure start <= max_value AND end >= min_value
         const minStart = min_value + (step * (sequence_length - 1));
         start = Math.max(start, minStart);
-        start = Math.min(start, max_value);  // NEW: Also enforce maximum
+        start = Math.min(start, max_value);
     }
 
     // Generate full sequence
