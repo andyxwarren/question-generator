@@ -11,7 +11,7 @@ import {
     getStartValue,
     generateSequence,
     getGapPositions
-} from './helpers/countingHelpers.js';
+} from './helpers/N01_countingHelpers.js';
 
 /**
  * Generate question
