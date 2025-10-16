@@ -10,13 +10,12 @@ import {
     shuffle,
     formatNumber,
     numberToWord,
-    wordToNumber,
     generateDistractors,
     getComparisonSymbol,
     applyStep,
     generateUniqueNumbers,
     sortAscending
-} from './helpers/numberHelpers.js';
+} from './helpers/N02_numberHelpers.js';
 
 /**
  * Main question generator

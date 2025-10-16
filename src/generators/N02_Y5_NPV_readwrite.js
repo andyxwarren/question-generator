@@ -17,7 +17,7 @@ import {
     getPlaceValue,
     roundToNearest,
     generateNonMultiple
-} from './helpers/numberHelpers.js';
+} from './helpers/N02_numberHelpers.js';
 
 /**
  * Main question generator

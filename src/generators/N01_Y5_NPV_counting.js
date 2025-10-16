@@ -5,73 +5,13 @@
  * Module: N01_Y5_NPV - "Count forwards and backwards with positive and negative whole numbers, including through zero"
  */
 
-/**
- * Helper: Choose random item from array
- */
-function randomChoice(array) {
-    return array[Math.floor(Math.random() * array.length)];
-}
-
-/**
- * Helper: Generate random integer in range [min, max]
- */
-function randomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-/**
- * Helper: Get starting value based on start_from parameter
- * Y5 specific: Uses start_range instead of calculating from min/max
- */
-function getStartValue(params, step) {
-    const { start_from, start_range } = params;
-
-    if (start_from === 'zero_only') {
-        return 0;
-    } else {
-        // For Y5, use the start_range parameter
-        return randomInt(start_range[0], start_range[1]);
-    }
-}
-
-/**
- * Helper: Generate sequence array
- */
-function generateSequence(start, step, length, direction) {
-    const sequence = [];
-    const multiplier = direction === 'forwards' ? 1 : -1;
-
-    for (let i = 0; i < length; i++) {
-        sequence.push(start + (i * step * multiplier));
-    }
-
-    return sequence;
-}
-
-/**
- * Helper: Get gap positions
- */
-function getGapPositions(sequenceLength, gapsCount, gapPosition) {
-    const positions = [];
-
-    if (gapPosition === 'end') {
-        positions.push(sequenceLength - 1);
-    } else if (gapPosition === 'start') {
-        positions.push(0);
-    } else if (gapPosition === 'middle') {
-        positions.push(Math.floor(sequenceLength / 2));
-    } else if (gapPosition === 'random') {
-        // Generate unique random positions
-        const available = Array.from({length: sequenceLength}, (_, i) => i);
-        for (let i = 0; i < gapsCount; i++) {
-            const idx = randomInt(0, available.length - 1);
-            positions.push(available[idx]);
-            available.splice(idx, 1);
-        }
-    }
-
-    return positions.slice(0, gapsCount).sort((a, b) => a - b);
-}
+import {
+    randomChoice,
+    randomInt,
+    getStartValue,
+    generateSequence,
+    getGapPositions
+} from './helpers/N01_countingHelpers.js/index.js';
 
 /**
  * Generate question

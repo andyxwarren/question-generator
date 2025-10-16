@@ -5,84 +5,13 @@
  * Module: N01_Y2_NPV - "Count in steps of 2, 3, and 5 from 0, and in tens from any number"
  */
 
-/**
- * Helper: Choose random item from array
- */
-function randomChoice(array) {
-    return array[Math.floor(Math.random() * array.length)];
-}
-
-/**
- * Helper: Generate random integer in range [min, max]
- */
-function randomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-/**
- * Helper: Get starting value based on start_from parameter
- */
-function getStartValue(params, step) {
-    const { start_from, min_value, max_value, tens_from_any, tens_range } = params;
-
-    // Special handling for tens from any number (Y2 specific)
-    if (tens_from_any && step === 10) {
-        return randomInt(tens_range[0], tens_range[1]);
-    }
-
-    if (start_from === 'zero_only') {
-        return 0;
-    } else if (start_from === 'zero_or_multiple') {
-        const multiples = [0, step, step * 2, step * 3, step * 4];
-        return randomChoice(multiples.filter(m => m <= max_value / 2));
-    } else if (start_from === 'any') {
-        // Pick random value and align to step
-        const range = max_value - min_value;
-        const rawStart = min_value + randomInt(0, Math.floor(range / 2));
-        return Math.floor(rawStart / step) * step;
-    }
-
-    return 0;
-}
-
-/**
- * Helper: Generate sequence array
- */
-function generateSequence(start, step, length, direction) {
-    const sequence = [];
-    const multiplier = direction === 'forwards' ? 1 : -1;
-
-    for (let i = 0; i < length; i++) {
-        sequence.push(start + (i * step * multiplier));
-    }
-
-    return sequence;
-}
-
-/**
- * Helper: Get gap positions
- */
-function getGapPositions(sequenceLength, gapsCount, gapPosition) {
-    const positions = [];
-
-    if (gapPosition === 'end') {
-        positions.push(sequenceLength - 1);
-    } else if (gapPosition === 'start') {
-        positions.push(0);
-    } else if (gapPosition === 'middle') {
-        positions.push(Math.floor(sequenceLength / 2));
-    } else if (gapPosition === 'random') {
-        // Generate unique random positions
-        const available = Array.from({length: sequenceLength}, (_, i) => i);
-        for (let i = 0; i < gapsCount; i++) {
-            const idx = randomInt(0, available.length - 1);
-            positions.push(available[idx]);
-            available.splice(idx, 1);
-        }
-    }
-
-    return positions.slice(0, gapsCount).sort((a, b) => a - b);
-}
+import {
+    randomChoice,
+    randomInt,
+    getStartValue,
+    generateSequence,
+    getGapPositions
+} from './helpers/N01_countingHelpers.js/index.js';
 
 /**
  * Generate question
@@ -91,10 +20,15 @@ export function generateQuestion(params, level) {
     // Extract parameters
     const step = randomChoice(params.step_sizes);
     const direction = randomChoice(params.directions);
-    const { sequence_length, gaps_count, gap_position, min_value, max_value } = params;
+    const { sequence_length, gaps_count, gap_position, min_value, max_value, tens_from_any, tens_range } = params;
 
     // Get starting value
     let start = getStartValue(params, step);
+
+    // Special handling for tens from any number (Y2 specific)
+    if (tens_from_any && step === 10) {
+        start = randomInt(tens_range[0], tens_range[1]);
+    }
 
     // Ensure sequence stays within bounds
     if (direction === 'forwards') {
