@@ -13,6 +13,7 @@ class App {
         this.currentModule = null;
         this.questions = [];
         this.questionCount = 5;
+        this.answerData = []; // Store detailed results for each question
     }
 
     init() {
@@ -274,6 +275,7 @@ class App {
     submitAnswers() {
         let totalCorrect = 0;
         let totalQuestions = 0;
+        this.answerData = []; // Reset answer data
 
         this.questions.forEach((levelGroup, levelIdx) => {
             levelGroup.questions.forEach((question, qIdx) => {
@@ -305,6 +307,18 @@ class App {
                 const result = validator.validate(question, userAnswer);
                 totalQuestions++;
                 if (result.isCorrect) totalCorrect++;
+
+                // Store detailed answer data
+                this.answerData.push({
+                    level: levelGroup.level,
+                    levelName: levelGroup.levelName,
+                    questionNumber: qIdx + 1,
+                    questionText: question.text,
+                    userAnswer: userAnswer || '(No answer)',
+                    correctAnswer: question.answer,
+                    isCorrect: result.isCorrect,
+                    questionType: question.type
+                });
 
                 // Show feedback with enhanced animations
                 questionElement.classList.remove('correct', 'incorrect');
@@ -353,6 +367,18 @@ class App {
         const percentage = Math.round((correct / total) * 100);
         const resultsContainer = document.getElementById('resultsContainer');
 
+        // Group answer data by level
+        const answersByLevel = {};
+        this.answerData.forEach(answer => {
+            if (!answersByLevel[answer.level]) {
+                answersByLevel[answer.level] = {
+                    levelName: answer.levelName,
+                    answers: []
+                };
+            }
+            answersByLevel[answer.level].answers.push(answer);
+        });
+
         resultsContainer.innerHTML = `
             <div class="results-summary">
                 <div class="score-display">
@@ -372,6 +398,56 @@ class App {
                         `;
                     }).join('')}
                 </div>
+            </div>
+
+            <div class="detailed-results">
+                <h3>Detailed Results</h3>
+                ${Object.keys(answersByLevel).sort().map(level => `
+                    <div class="level-results-section">
+                        <h4 class="level-results-title">Level ${level}: ${answersByLevel[level].levelName}</h4>
+                        <div class="question-results-list">
+                            ${answersByLevel[level].answers.map(answer => `
+                                <div class="question-result ${answer.isCorrect ? 'correct' : 'incorrect'}">
+                                    <div class="question-result-header">
+                                        <span class="result-icon">
+                                            ${answer.isCorrect ? `
+                                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <path d="M16.7 5.3L8.5 13.5L3.3 8.3"
+                                                          stroke="currentColor"
+                                                          stroke-width="2"
+                                                          stroke-linecap="round"
+                                                          stroke-linejoin="round"/>
+                                                </svg>
+                                            ` : `
+                                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <path d="M15 5L5 15M5 5L15 15"
+                                                          stroke="currentColor"
+                                                          stroke-width="2"
+                                                          stroke-linecap="round"
+                                                          stroke-linejoin="round"/>
+                                                </svg>
+                                            `}
+                                        </span>
+                                        <span class="question-number">Question ${answer.questionNumber}</span>
+                                    </div>
+                                    <div class="question-result-text">${answer.questionText}</div>
+                                    <div class="answer-comparison">
+                                        <div class="answer-row">
+                                            <span class="answer-label">Your answer:</span>
+                                            <span class="answer-value ${answer.isCorrect ? 'correct' : 'incorrect'}">${answer.userAnswer}</span>
+                                        </div>
+                                        ${!answer.isCorrect ? `
+                                            <div class="answer-row">
+                                                <span class="answer-label">Correct answer:</span>
+                                                <span class="answer-value correct">${answer.correctAnswer}</span>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('')}
             </div>
         `;
 

@@ -16,6 +16,11 @@ import readwriteY3Generator from '../generators/N02_Y3_NPV_readwrite.js';
 import readwriteY4Generator from '../generators/N02_Y4_NPV_readwrite.js';
 import readwriteY5Generator from '../generators/N02_Y5_NPV_readwrite.js';
 import readwriteY6Generator from '../generators/N02_Y6_NPV_readwrite.js';
+import placeValueY2Generator from '../generators/N03_Y2_NPV_placevalue.js';
+import placeValueY3Generator from '../generators/N03_Y3_NPV_placevalue.js';
+import placeValueY4Generator from '../generators/N03_Y4_NPV_placevalue.js';
+import placeValueY5Generator from '../generators/N03_Y5_NPV_placevalue.js';
+import placeValueY6Generator from '../generators/N03_Y6_NPV_placevalue.js';
 
 /**
  * Question Engine Class
@@ -40,6 +45,11 @@ class QuestionEngine {
         this.register(readwriteY4Generator);
         this.register(readwriteY5Generator);
         this.register(readwriteY6Generator);
+        this.register(placeValueY2Generator);
+        this.register(placeValueY3Generator);
+        this.register(placeValueY4Generator);
+        this.register(placeValueY5Generator);
+        this.register(placeValueY6Generator);
     }
 
     /**
