@@ -21,31 +21,101 @@ class App {
     }
 
     /**
-     * Render module cards
+     * Render module cards grouped by strand, substrand, and year
      */
     renderModules() {
         const modulesGrid = document.querySelector('.modules-grid');
 
-        modulesGrid.innerHTML = Object.values(MODULES).map(module => `
-            <div class="module-card" data-module-id="${module.id}">
-                <div class="module-icon">${module.icon}</div>
-                <h3>${module.name}</h3>
-                <p class="module-year">${module.yearGroup}</p>
-                <p class="module-desc">${module.description}</p>
+        // Group modules by strand -> substrand -> year
+        const groupedModules = this.groupModulesByStrandAndSubstrand();
+
+        // Generate HTML for each strand
+        modulesGrid.innerHTML = Object.entries(groupedModules).map(([strand, substrands]) => `
+            <div class="strand-section">
+                <h2 class="strand-title">${strand}</h2>
+                ${Object.entries(substrands).map(([substrand, modules]) =>
+                    this.renderSubstrandGrid(substrand, modules)
+                ).join('')}
             </div>
         `).join('');
+    }
+
+    /**
+     * Group modules by strand and substrand
+     */
+    groupModulesByStrandAndSubstrand() {
+        const grouped = {};
+
+        Object.values(MODULES).forEach(module => {
+            const strand = module.strand;
+            const substrand = module.substrand;
+
+            if (!grouped[strand]) {
+                grouped[strand] = {};
+            }
+
+            if (!grouped[strand][substrand]) {
+                grouped[strand][substrand] = {};
+            }
+
+            // Extract year number from yearGroup (e.g., "Year 1" -> 1)
+            const yearMatch = module.yearGroup.match(/Year (\d+)/);
+            const year = yearMatch ? parseInt(yearMatch[1]) : null;
+
+            if (year) {
+                grouped[strand][substrand][year] = module;
+            }
+        });
+
+        return grouped;
+    }
+
+    /**
+     * Render a substrand grid with years as columns
+     */
+    renderSubstrandGrid(substrand, modulesByYear) {
+        // Find all years (1-6)
+        const allYears = [1, 2, 3, 4, 5, 6];
+
+        return `
+            <div class="substrand-section">
+                <h3 class="substrand-title">${substrand}</h3>
+                <div class="year-grid">
+                    ${allYears.map(year => {
+                        const module = modulesByYear[year];
+                        return `
+                            <div class="year-column">
+                                <div class="year-header">Year ${year}</div>
+                                ${module ? `
+                                    <div class="module-cell" data-module-id="${module.id}">
+                                        <div class="module-ref">${module.ref || module.name.split(':')[0]}</div>
+                                        <div class="module-name">${module.name}</div>
+                                        <div class="module-description">${module.description}</div>
+                                    </div>
+                                ` : `
+                                    <div class="module-cell empty">
+                                        <span class="empty-cell">-</span>
+                                    </div>
+                                `}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
     }
 
     /**
      * Attach event listeners
      */
     attachEventListeners() {
-        // Module selection
-        document.querySelectorAll('.module-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                const moduleId = card.dataset.moduleId;
+        // Module selection (delegated to handle dynamically created elements)
+        document.querySelector('.modules-grid').addEventListener('click', (e) => {
+            const moduleCell = e.target.closest('.module-cell[data-module-id]');
+            if (moduleCell) {
+                const moduleId = moduleCell.dataset.moduleId;
                 this.selectModule(moduleId);
-            });
+            }
         });
 
         // Question count input
