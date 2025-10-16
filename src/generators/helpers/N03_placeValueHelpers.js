@@ -31,10 +31,11 @@ export function shuffle(array) {
 }
 
 /**
- * Format number with commas
+ * Format number with commas (1234567 → "1,234,567")
+ * Uses 'en-US' locale to ensure consistent comma formatting
  */
 export function formatNumber(num) {
-    return num.toLocaleString();
+    return num.toLocaleString('en-US');
 }
 
 /**
