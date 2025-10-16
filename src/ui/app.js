@@ -195,12 +195,21 @@ class App {
 
         container.innerHTML = this.questions.map((levelGroup, levelIdx) => `
             <div class="level-section">
-                <h3 class="level-title">Level ${levelGroup.level}: ${levelGroup.levelName}</h3>
+                <h3 class="level-title" data-level="${levelGroup.level}">${levelGroup.levelName}</h3>
                 <div class="questions-list">
                     ${levelGroup.questions.map((q, qIdx) => this.renderQuestion(q, levelIdx, qIdx)).join('')}
                 </div>
             </div>
         `).join('');
+
+        // Add entrance animations with stagger
+        setTimeout(() => {
+            const questions = document.querySelectorAll('.question');
+            questions.forEach((q, idx) => {
+                q.style.animationDelay = `${idx * 0.05}s`;
+                q.classList.add('animate-slide-in');
+            });
+        }, 10);
     }
 
     /**
@@ -297,13 +306,38 @@ class App {
                 totalQuestions++;
                 if (result.isCorrect) totalCorrect++;
 
-                // Show feedback
+                // Show feedback with enhanced animations
                 questionElement.classList.remove('correct', 'incorrect');
                 if (userAnswer) {
                     questionElement.classList.add(result.isCorrect ? 'correct' : 'incorrect');
-                    feedbackElement.innerHTML = result.isCorrect
-                        ? '<span class="correct-mark">✓ Correct!</span>'
-                        : `<span class="incorrect-mark">✗ Incorrect. Answer: ${question.answer}</span>`;
+
+                    if (result.isCorrect) {
+                        feedbackElement.innerHTML = `
+                            <div class="correct-mark">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M16.7 5.3L8.5 13.5L3.3 8.3"
+                                          stroke="#10b981"
+                                          stroke-width="2"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"/>
+                                </svg>
+                                Excellent work!
+                            </div>
+                        `;
+                    } else {
+                        feedbackElement.innerHTML = `
+                            <div class="incorrect-mark">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M15 5L5 15M5 5L15 15"
+                                          stroke="#ef4444"
+                                          stroke-width="2"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"/>
+                                </svg>
+                                Not quite. The answer is ${question.answer}
+                            </div>
+                        `;
+                    }
                 }
             });
         });
