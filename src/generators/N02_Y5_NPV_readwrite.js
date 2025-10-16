@@ -195,15 +195,17 @@ function generateOrder(params, level, count) {
 }
 
 function generateCompleteStatement(params, level) {
-    const num1 = randomInt(params.min_value, params.max_value - 10000);
-    const num2 = num1 + randomInt(5000, 20000);
-    const missing = randomInt(num1 + 1, num2 - 1);
+    const num1 = randomInt(params.min_value, params.max_value - 20000);
+    // Ensure even difference for whole number midpoint
+    const difference = Math.floor(randomInt(2500, 10000)) * 2; // 5000, 5002, ..., 19998, 20000
+    const num2 = num1 + difference;
+    const midpoint = (num1 + num2) / 2;
 
     return {
-        text: `Complete the statement:\n${formatNumber(num1)} < ___ < ${formatNumber(num2)}`,
+        text: `What number is exactly halfway between ${formatNumber(num1)} and ${formatNumber(num2)}?`,
         type: 'text_input',
-        answer: missing.toString(),
-        hint: `Find a number between ${formatNumber(num1)} and ${formatNumber(num2)}`,
+        answer: midpoint.toString(),
+        hint: `Find the number in the middle`,
         module: 'N02_Y5_NPV',
         level: level
     };

@@ -22,8 +22,22 @@ export function generateQuestion(params, level) {
     const direction = randomChoice(params.directions);
     const { sequence_length, gaps_count, gap_position, min_value, max_value } = params;
 
+    // Choose question type FIRST (before generating sequence)
+    const questionTypes = ['fill_blanks', 'next_number', 'multiple_choice'];
+    const questionType = randomChoice(questionTypes);
+
     // Get starting value
     let start = getStartValue(params, step);
+
+    // Vary starting value by question type to prevent sequence overlap
+    if (questionType === 'fill_blanks') {
+        // Force even multiples of step
+        start = Math.floor(start / (step * 2)) * (step * 2);
+    } else if (questionType === 'next_number') {
+        // Force odd multiples of step
+        start = Math.floor(start / (step * 2)) * (step * 2) + step;
+    }
+    // multiple_choice keeps original start (any value)
 
     // Ensure sequence stays within bounds
     if (direction === 'forwards') {
@@ -41,10 +55,6 @@ export function generateQuestion(params, level) {
     // Generate full sequence
     const fullSequence = generateSequence(start, step, sequence_length, direction);
 
-    // Choose question type
-    const questionTypes = ['fill_blanks', 'next_number', 'multiple_choice'];
-    const questionType = randomChoice(questionTypes);
-
     return generateQuestionByType(questionType, fullSequence, params, step, direction, level);
 }
 
@@ -55,8 +65,19 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
     const { gaps_count, gap_position, sequence_length } = params;
 
     if (type === 'fill_blanks') {
+        // Force internal gaps - never at the end to avoid duplication with 'next_number' type
+        let effectiveGapPosition = gap_position;
+        if (gap_position === 'end') {
+            effectiveGapPosition = 'middle';
+        }
+
         // Get positions for blanks
-        const gapPositions = getGapPositions(sequence_length, gaps_count, gap_position);
+        let gapPositions = getGapPositions(sequence_length, gaps_count, effectiveGapPosition);
+
+        // Additional safeguard: if any gap ended up at the last position, move it to middle
+        gapPositions = gapPositions.map(pos =>
+            pos === sequence_length - 1 ? Math.floor(sequence_length / 2) : pos
+        );
 
         // Create display sequence with blanks
         const displaySequence = fullSequence.map((num, idx) =>

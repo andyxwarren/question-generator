@@ -57,18 +57,24 @@ export function generateQuestion(params, level) {
 
 /**
  * Identify numeral question
+ * Shows a numeral and asks student to identify it from word-based options
  */
 function generateIdentifyNumeral(params, level) {
-    const number = randomInt(params.min_value, params.max_value);
-    const distractors = generateDistractors(number, 3, params.min_value, params.max_value);
-    const options = shuffle([number, ...distractors]);
+    // Generate within word range to ensure we can convert to words
+    const number = randomInt(params.word_min, params.word_max);
+    const correctWord = numberToWord(number);
+
+    // Generate distractor words
+    const distractorNumbers = generateDistractors(number, 3, params.word_min, params.word_max);
+    const distractorWords = distractorNumbers.map(n => numberToWord(n)).filter(w => w !== null);
+    const options = shuffle([correctWord, ...distractorWords.slice(0, 3)]);
 
     return {
         text: `What number is ${formatNumber(number)}?`,
         type: 'multiple_choice',
         options: options,
-        answer: number.toString(),
-        hint: `Look at the digits carefully`,
+        answer: correctWord,
+        hint: `Read the number and find its word form`,
         module: 'N02_Y2_NPV',
         level: level
     };
@@ -234,18 +240,20 @@ function generateOrder(params, level, count) {
 }
 
 /**
- * Complete statement (fill in missing number)
+ * Complete statement (find midpoint between two numbers)
  */
 function generateCompleteStatement(params, level) {
     const num1 = randomInt(params.min_value, params.max_value - 10);
-    const num2 = num1 + randomInt(5, 10);
-    const missing = randomInt(num1 + 1, num2 - 1);
+    // Ensure even difference for whole number midpoint
+    const difference = randomInt(3, 5) * 2; // 6, 8, or 10
+    const num2 = num1 + difference;
+    const midpoint = (num1 + num2) / 2;
 
     return {
-        text: `Complete the statement:\n${formatNumber(num1)} < ___ < ${formatNumber(num2)}`,
+        text: `What number is exactly halfway between ${formatNumber(num1)} and ${formatNumber(num2)}?`,
         type: 'text_input',
-        answer: missing.toString(),
-        hint: `Find a number between ${formatNumber(num1)} and ${formatNumber(num2)}`,
+        answer: midpoint.toString(),
+        hint: `Find the number in the middle`,
         module: 'N02_Y2_NPV',
         level: level
     };
