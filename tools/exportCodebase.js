@@ -95,7 +95,9 @@ function exportCodebase(rootDir) {
     "tools",
     "archive",
     ".claude",
-    "references"
+    "references",
+    "archive",
+    "new_questions"
   ];
 
   const ignoreFiles = [

@@ -142,8 +142,10 @@ Examples:
 Currently implemented modules:
 - **N01 series**: Years 1-5 (Counting in multiples)
 - **N02 series**: Years 2-6 (Read, write, order and compare numbers)
+- **N03 series**: Years 2-6 (Place value)
+- **N04 series**: Years 1-6 (Representation, estimation, and rounding)
 
-The architecture supports easy addition of remaining 326+ modules.
+The architecture supports easy addition of remaining modules across all curriculum strands.
 
 ---
 
@@ -614,6 +616,45 @@ Generator must handle:
 - **Year 5**: To 1,000,000, place value of each digit
 - **Year 6**: To 10,000,000, complex comparisons
 
+### Representation and Estimation Modules (N04 series)
+
+**Common Parameters**:
+- `min_value`, `max_value`: Range for numbers
+- `number_line_max`: Maximum value for number line questions
+- `place_value_max`: Maximum value for place value representation
+- `operations`: Array of question types
+  - `'number_line_position'`: Identify position on number line
+  - `'number_line_between'`: Find numbers between two values
+  - `'number_line_jump'`: Calculate landing position after jumps
+  - `'estimate_position'`: Estimate which range a number falls in
+  - `'estimate_calculation'`: Estimate results of calculations
+  - `'round_to_ten'`, `'round_to_hundred'`, `'round_to_thousand'`: Rounding to specific place values
+  - `'round_to_ten_thousand'`, `'round_to_hundred_thousand'`: Rounding for larger numbers
+  - `'place_value_representation'`: Understand digit values
+  - `'partition_number'`: Break numbers into place values
+  - `'compare_rounded'`: Compare rounded values
+  - `'choose_appropriate_rounding'`: Context-based rounding decisions
+  - `'error_bounds'`: Find range of original values from rounded numbers
+- `estimation_ranges`: Array of [min, max] pairs for estimation questions
+- `rounding_bases`: Array of place values for rounding (e.g., `[10, 100, 1000]`)
+
+**Progressive Complexity**:
+- **Year 1**: Basic number line position (0-100), counting objects, comparison language
+- **Year 2**: Number lines, estimation, basic place value (0-100)
+- **Year 3**: Extended number lines (0-1000), midpoint estimation, partitioning
+- **Year 4**: Rounding to 10, 100, 1000 (up to 10,000)
+- **Year 5**: Rounding to large place values (up to 1,000,000)
+- **Year 6**: Advanced rounding (up to 10 million), error bounds, contextual rounding
+
+**Helper Functions** (`N04_representationHelpers.js`):
+Over 30 specialized functions including:
+- Number line generation and position finding
+- Rounding and distractor generation
+- Place value representation
+- Estimation range calculations
+- Comparison language generation
+- Error bound calculations
+
 ---
 
 ## Adding New Curriculum Modules
@@ -981,21 +1022,34 @@ question-generator/
 │   └── main.css                        # All styling
 ├── src/
 │   ├── curriculum/
-│   │   └── parameters.js               # All module definitions
+│   │   └── parameters.js                       # All module definitions
 │   ├── generators/
 │   │   ├── helpers/
-│   │   │   ├── N01_countingHelpers.js  # Counting utilities
-│   │   │   └── N02_numberHelpers.js    # Number utilities
-│   │   ├── N01_Y1_NPV_counting.js      # Year 1 counting generator
-│   │   ├── N01_Y2_NPV_counting.js      # Year 2 counting generator
-│   │   ├── N01_Y3_NPV_counting.js      # Year 3 counting generator
-│   │   ├── N01_Y4_NPV_counting.js      # Year 4 counting generator
-│   │   ├── N01_Y5_NPV_counting.js      # Year 5 counting generator
-│   │   ├── N02_Y2_NPV_readwrite.js     # Year 2 read/write generator
-│   │   ├── N02_Y3_NPV_readwrite.js     # Year 3 read/write generator
-│   │   ├── N02_Y4_NPV_readwrite.js     # Year 4 read/write generator
-│   │   ├── N02_Y5_NPV_readwrite.js     # Year 5 read/write generator
-│   │   └── N02_Y6_NPV_readwrite.js     # Year 6 read/write generator
+│   │   │   ├── N01_countingHelpers.js          # Counting utilities
+│   │   │   ├── N02_numberHelpers.js            # Number utilities
+│   │   │   ├── N03_placevalueHelpers.js        # Place value utilities
+│   │   │   └── N04_representationHelpers.js    # Representation utilities
+│   │   ├── N01_Y1_NPV_counting.js              # Year 1 counting generator
+│   │   ├── N01_Y2_NPV_counting.js              # Year 2 counting generator
+│   │   ├── N01_Y3_NPV_counting.js              # Year 3 counting generator
+│   │   ├── N01_Y4_NPV_counting.js              # Year 4 counting generator
+│   │   ├── N01_Y5_NPV_counting.js              # Year 5 counting generator
+│   │   ├── N02_Y2_NPV_readwrite.js             # Year 2 read/write generator
+│   │   ├── N02_Y3_NPV_readwrite.js             # Year 3 read/write generator
+│   │   ├── N02_Y4_NPV_readwrite.js             # Year 4 read/write generator
+│   │   ├── N02_Y5_NPV_readwrite.js             # Year 5 read/write generator
+│   │   ├── N02_Y6_NPV_readwrite.js             # Year 6 read/write generator
+│   │   ├── N03_Y2_NPV_placevalue.js            # Year 2 place value generator
+│   │   ├── N03_Y3_NPV_placevalue.js            # Year 3 place value generator
+│   │   ├── N03_Y4_NPV_placevalue.js            # Year 4 place value generator
+│   │   ├── N03_Y5_NPV_placevalue.js            # Year 5 place value generator
+│   │   ├── N03_Y6_NPV_placevalue.js            # Year 6 place value generator
+│   │   ├── N04_Y1_NPV_representation.js        # Year 1 representation generator
+│   │   ├── N04_Y2_NPV_representation.js        # Year 2 representation generator
+│   │   ├── N04_Y3_NPV_representation.js        # Year 3 representation generator
+│   │   ├── N04_Y4_NPV_representation.js        # Year 4 representation generator
+│   │   ├── N04_Y5_NPV_representation.js        # Year 5 representation generator
+│   │   └── N04_Y6_NPV_representation.js        # Year 6 representation generator
 │   ├── core/
 │   │   ├── questionEngine.js           # Generator registry & orchestration
 │   │   └── validator.js                # Answer validation

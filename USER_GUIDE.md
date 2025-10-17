@@ -200,6 +200,21 @@ Currently, the application includes questions for:
   - Year 5: Numbers to 1,000,000
   - Year 6: Numbers to 10,000,000
 
+- **N03 series**: Place value (Years 2-6)
+  - Year 2: Recognize place value of tens and ones
+  - Year 3: Understand place value in 3-digit numbers
+  - Year 4: Place value in numbers beyond 1,000
+  - Year 5: Place value in numbers to 1,000,000
+  - Year 6: Place value in numbers to 10,000,000
+
+- **N04 series**: Representation, estimation, and rounding (Years 1-6)
+  - Year 1: Number line position, counting objects, comparison language
+  - Year 2: Number lines, estimation, basic place value representation
+  - Year 3: Number lines to 1,000, estimate position and midpoints
+  - Year 4: Round to 10, 100, 1,000; estimate calculations
+  - Year 5: Round to 10,000 and 100,000; numbers to 1,000,000
+  - Year 6: Round any number to 10,000,000; error bounds; contextual rounding
+
 *More topics are continuously being added to cover the full curriculum.*
 
 ## Technical Requirements

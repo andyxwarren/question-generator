@@ -21,6 +21,12 @@ import placeValueY3Generator from '../generators/N03_Y3_NPV_placevalue.js';
 import placeValueY4Generator from '../generators/N03_Y4_NPV_placevalue.js';
 import placeValueY5Generator from '../generators/N03_Y5_NPV_placevalue.js';
 import placeValueY6Generator from '../generators/N03_Y6_NPV_placevalue.js';
+import representationY1Generator from '../generators/N04_Y1_NPV_representation.js';
+import representationY2Generator from '../generators/N04_Y2_NPV_representation.js';
+import representationY3Generator from '../generators/N04_Y3_NPV_representation.js';
+import representationY4Generator from '../generators/N04_Y4_NPV_representation.js';
+import representationY5Generator from '../generators/N04_Y5_NPV_representation.js';
+import representationY6Generator from '../generators/N04_Y6_NPV_representation.js';
 
 /**
  * Question Engine Class
@@ -50,6 +56,12 @@ class QuestionEngine {
         this.register(placeValueY4Generator);
         this.register(placeValueY5Generator);
         this.register(placeValueY6Generator);
+        this.register(representationY1Generator);
+        this.register(representationY2Generator);
+        this.register(representationY3Generator);
+        this.register(representationY4Generator);
+        this.register(representationY5Generator);
+        this.register(representationY6Generator);
     }
 
     /**

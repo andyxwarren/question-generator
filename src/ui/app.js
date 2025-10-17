@@ -224,12 +224,16 @@ class App {
                 <div class="question" data-question-id="${questionId}">
                     <div class="question-text">${questionIdx + 1}. ${question.text}</div>
                     <div class="options">
-                        ${question.options.map((option, optIdx) => `
-                            <label class="option">
-                                <input type="radio" name="${questionId}" value="${option}">
-                                <span>${option}</span>
-                            </label>
-                        `).join('')}
+                        ${question.options.map((option, optIdx) => {
+                            // Format number options with commas
+                            const displayValue = typeof option === 'number' ? option.toLocaleString('en-US') : option;
+                            return `
+                                <label class="option">
+                                    <input type="radio" name="${questionId}" value="${option}">
+                                    <span>${displayValue}</span>
+                                </label>
+                            `;
+                        }).join('')}
                     </div>
                     <div class="feedback"></div>
                 </div>
@@ -339,6 +343,10 @@ class App {
                             </div>
                         `;
                     } else {
+                        // Format answer for display
+                        const answerNum = parseFloat(question.answer);
+                        const displayAnswer = !isNaN(answerNum) ? answerNum.toLocaleString('en-US') : question.answer;
+
                         feedbackElement.innerHTML = `
                             <div class="incorrect-mark">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -348,7 +356,7 @@ class App {
                                           stroke-linecap="round"
                                           stroke-linejoin="round"/>
                                 </svg>
-                                Not quite. The answer is ${question.answer}
+                                Not quite. The answer is ${displayAnswer}
                             </div>
                         `;
                     }
@@ -358,6 +366,23 @@ class App {
 
         // Show results summary
         this.showResults(totalCorrect, totalQuestions);
+    }
+
+    /**
+     * Format answer for display (add commas to numbers)
+     */
+    formatAnswerForDisplay(answer) {
+        // Handle comma-separated answers (multi-gap questions)
+        if (answer.includes(',')) {
+            return answer.split(',').map(part => {
+                const num = parseFloat(part.trim());
+                return !isNaN(num) ? num.toLocaleString('en-US') : part.trim();
+            }).join(', ');
+        }
+
+        // Handle single number
+        const num = parseFloat(answer);
+        return !isNaN(num) ? num.toLocaleString('en-US') : answer;
     }
 
     /**
@@ -434,12 +459,12 @@ class App {
                                     <div class="answer-comparison">
                                         <div class="answer-row">
                                             <span class="answer-label">Your answer:</span>
-                                            <span class="answer-value ${answer.isCorrect ? 'correct' : 'incorrect'}">${answer.userAnswer}</span>
+                                            <span class="answer-value ${answer.isCorrect ? 'correct' : 'incorrect'}">${this.formatAnswerForDisplay(answer.userAnswer)}</span>
                                         </div>
                                         ${!answer.isCorrect ? `
                                             <div class="answer-row">
                                                 <span class="answer-label">Correct answer:</span>
-                                                <span class="answer-value correct">${answer.correctAnswer}</span>
+                                                <span class="answer-value correct">${this.formatAnswerForDisplay(answer.correctAnswer)}</span>
                                             </div>
                                         ` : ''}
                                     </div>
