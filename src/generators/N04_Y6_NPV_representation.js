@@ -156,7 +156,8 @@ function generateEstimateCalculation(params, level) {
 /**
  * Compare rounded values
  */
-function generateCompareRounded(params, level) {
+function generateCompareRounded(params, level, attempt = 0) {
+    const MAX_ATTEMPTS = 10;
     const { min_value, max_value, rounding_bases } = params;
 
     const base = randomChoice(rounding_bases.filter(b => b >= 1000));
@@ -170,7 +171,10 @@ function generateCompareRounded(params, level) {
 
     // Ensure they're different when rounded
     if (rounded1 === rounded2) {
-        return generateCompareRounded(params, level);
+        if (attempt >= MAX_ATTEMPTS) {
+            return generateRounding(params, level, base);
+        }
+        return generateCompareRounded(params, level, attempt + 1);
     }
 
     const larger = Math.max(rounded1, rounded2);

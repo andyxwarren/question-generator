@@ -18,7 +18,7 @@ import {
     evaluateComparison,
     generateUniqueNumbers
 } from './helpers/N04_representationHelpers.js';
-import { createSimpleNumberLineHTML, createSimpleDotsHTML } from './helpers/simpleVisuals.js';
+import { createSimpleNumberLineHTML, createSimpleDotsHTML, createTenFrameHTML, createBase10BlocksHTML, createTallyMarksHTML } from './helpers/simpleVisuals.js';
 
 /**
  * Main question generator
@@ -77,10 +77,30 @@ function generateCountObjects(params, level) {
     const count = randomInt(min_value, max_value);
     const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
     const color = randomChoice(colors);
-    const dotsHTML = createSimpleDotsHTML(count, 5, color);
+
+    // Use different visual representations based on count and level
+    let visualHTML, questionText;
+
+    if (count <= 10 && level <= 2) {
+        // Use ten frames for numbers 1-10 at lower levels
+        visualHTML = createTenFrameHTML(count, color);
+        questionText = 'How many cells are filled in the ten frame?';
+    } else if (count >= 10 && count % 5 === 0 && level >= 3) {
+        // Use tally marks for multiples of 5 at higher levels
+        visualHTML = createTallyMarksHTML(count);
+        questionText = 'How many tally marks do you see?';
+    } else if (count >= 10 && level >= 3) {
+        // Use base-10 blocks for larger numbers at level 3-4
+        visualHTML = createBase10BlocksHTML(count);
+        questionText = 'How many blocks do you see in total?';
+    } else {
+        // Default to dots
+        visualHTML = createSimpleDotsHTML(count, 5, color);
+        questionText = 'How many dots do you see?';
+    }
 
     return {
-        text: `How many dots do you see?\n\n${dotsHTML}`,
+        text: `${questionText}\n\n${visualHTML}`,
         type: 'text_input',
         answer: String(count),
         hint: 'Count carefully, one at a time',
@@ -92,15 +112,21 @@ function generateCountObjects(params, level) {
 /**
  * Compare language question (equal to, more than, less than, fewer)
  */
-function generateCompareLanguage(params, level) {
+function generateCompareLanguage(params, level, attempt = 0) {
+    const MAX_ATTEMPTS = 10;
     const { min_value, max_value, comparison_words } = params;
 
-    const num1 = randomInt(min_value, max_value);
-    const num2 = randomInt(min_value, max_value);
+    let num1 = randomInt(min_value, max_value);
+    let num2 = randomInt(min_value, max_value);
 
     // Ensure they're different for "more than" and "less than" questions
     if (num1 === num2) {
-        return generateCompareLanguage(params, level);
+        if (attempt >= MAX_ATTEMPTS) {
+            // Fallback: force them to be different
+            num2 = num1 + 1 <= max_value ? num1 + 1 : num1 - 1;
+        } else {
+            return generateCompareLanguage(params, level, attempt + 1);
+        }
     }
 
     const word = randomChoice(comparison_words);
@@ -187,11 +213,21 @@ function generateEstimateGroup(params, level) {
 /**
  * Number line between two numbers
  */
-function generateNumberLineBetween(params, level) {
+function generateNumberLineBetween(params, level, attempt = 0) {
+    const MAX_ATTEMPTS = 10;
     const { number_line_max } = params;
 
     const num1 = randomInt(0, number_line_max - 2);
     const num2 = num1 + randomInt(2, 5);
+
+    // Check if there's room for a number between
+    if (num2 - num1 <= 1) {
+        if (attempt >= MAX_ATTEMPTS) {
+            // Fallback to number line position
+            return generateNumberLinePosition(params, level);
+        }
+        return generateNumberLineBetween(params, level, attempt + 1);
+    }
 
     const between = randomInt(num1 + 1, num2 - 1);
 

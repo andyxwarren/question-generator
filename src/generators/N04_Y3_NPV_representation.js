@@ -115,7 +115,8 @@ function generateNumberLineBetween(params, level) {
 /**
  * Number line jump question
  */
-function generateNumberLineJump(params, level) {
+function generateNumberLineJump(params, level, attempt = 0) {
+    const MAX_ATTEMPTS = 10;
     const { number_line_max } = params;
 
     const start = randomInt(0, number_line_max - 200);
@@ -124,7 +125,11 @@ function generateNumberLineJump(params, level) {
     const end = start + (jump * numJumps);
 
     if (end > number_line_max) {
-        return generateNumberLineJump(params, level);
+        if (attempt >= MAX_ATTEMPTS) {
+            // Fallback to number line position
+            return generateNumberLinePosition(params, level);
+        }
+        return generateNumberLineJump(params, level, attempt + 1);
     }
 
     return {
@@ -168,7 +173,8 @@ function generateEstimatePosition(params, level) {
 /**
  * Place value representation
  */
-function generatePlaceValueQuestion(params, level) {
+function generatePlaceValueQuestion(params, level, attempt = 0) {
+    const MAX_ATTEMPTS = 10;
     const { min_value, max_value, place_value_max } = params;
 
     const number = randomInt(Math.max(min_value, 100), Math.min(max_value, place_value_max));
@@ -176,7 +182,10 @@ function generatePlaceValueQuestion(params, level) {
 
     const places = Object.keys(representation);
     if (places.length === 0) {
-        return generatePlaceValueQuestion(params, level);
+        if (attempt >= MAX_ATTEMPTS) {
+            return generateNumberLinePosition(params, level);
+        }
+        return generatePlaceValueQuestion(params, level, attempt + 1);
     }
 
     const chosenPlace = randomChoice(places);
@@ -185,12 +194,14 @@ function generatePlaceValueQuestion(params, level) {
     const allValues = Object.values(representation);
     const distractors = allValues.filter(v => v !== value);
 
-    // Add the digit itself as a distractor
-    const placeNames = ['ones', 'tens', 'hundreds'];
-    const placeIndex = placeNames.indexOf(chosenPlace);
-    if (placeIndex >= 0) {
-        const digit = Math.floor(value / Math.pow(10, placeIndex));
-        distractors.push(digit);
+    // Add the digit itself as a distractor (without place value)
+    const placeValues = { 'ones': 1, 'tens': 10, 'hundreds': 100, 'thousands': 1000 };
+    const placeValue = placeValues[chosenPlace];
+    if (placeValue) {
+        const digit = Math.floor((number % (placeValue * 10)) / placeValue);
+        if (digit !== value) {
+            distractors.push(digit);
+        }
     }
 
     const options = shuffle([value, ...distractors.slice(0, 3)]);

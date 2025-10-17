@@ -92,8 +92,103 @@ export function createNumberLineWithRange(min, max, rangeStart, rangeEnd) {
     return html;
 }
 
+/**
+ * Create a ten frame visualization (2x5 grid)
+ * @param {number} count - Number to show (0-10)
+ * @param {string} fillColor - Color for filled cells
+ * @param {string} emptyColor - Color for empty cells
+ * @returns {string} HTML string for ten frame
+ */
+export function createTenFrameHTML(count, fillColor = '#3b82f6', emptyColor = '#e5e7eb') {
+    if (count < 0 || count > 10) {
+        count = Math.min(10, Math.max(0, count));
+    }
+
+    let html = '<div class="ten-frame">';
+
+    for (let i = 0; i < 10; i++) {
+        const isFilled = i < count;
+        const color = isFilled ? fillColor : emptyColor;
+        html += `<div class="ten-frame-cell ${isFilled ? 'filled' : 'empty'}" style="background-color: ${color}"></div>`;
+    }
+
+    html += '</div>';
+    return html;
+}
+
+/**
+ * Create base-10 blocks representation
+ * @param {number} number - Number to represent (up to 100)
+ * @returns {string} HTML string for base-10 blocks
+ */
+export function createBase10BlocksHTML(number) {
+    const tens = Math.floor(number / 10);
+    const ones = number % 10;
+
+    let html = '<div class="base10-container">';
+
+    // Tens rods
+    if (tens > 0) {
+        html += '<div class="tens-group">';
+        for (let i = 0; i < tens; i++) {
+            html += '<div class="tens-rod"></div>';
+        }
+        html += '</div>';
+    }
+
+    // Ones cubes
+    if (ones > 0) {
+        html += '<div class="ones-group">';
+        for (let i = 0; i < ones; i++) {
+            html += '<div class="ones-cube"></div>';
+        }
+        html += '</div>';
+    }
+
+    html += '</div>';
+    return html;
+}
+
+/**
+ * Create tally marks representation
+ * @param {number} count - Number to show
+ * @returns {string} HTML string for tally marks
+ */
+export function createTallyMarksHTML(count) {
+    const groups = Math.floor(count / 5);
+    const remainder = count % 5;
+
+    let html = '<div class="tally-marks-container">';
+
+    // Full groups of 5
+    for (let i = 0; i < groups; i++) {
+        html += '<div class="tally-group">';
+        html += '<span class="tally-line">|</span>';
+        html += '<span class="tally-line">|</span>';
+        html += '<span class="tally-line">|</span>';
+        html += '<span class="tally-line">|</span>';
+        html += '<span class="tally-diagonal">/</span>';
+        html += '</div>';
+    }
+
+    // Remaining marks
+    if (remainder > 0) {
+        html += '<div class="tally-group incomplete">';
+        for (let i = 0; i < remainder; i++) {
+            html += '<span class="tally-line">|</span>';
+        }
+        html += '</div>';
+    }
+
+    html += '</div>';
+    return html;
+}
+
 export default {
     createSimpleNumberLineHTML,
     createSimpleDotsHTML,
-    createNumberLineWithRange
+    createNumberLineWithRange,
+    createTenFrameHTML,
+    createBase10BlocksHTML,
+    createTallyMarksHTML
 };

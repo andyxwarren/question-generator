@@ -159,9 +159,15 @@ function generatePlaceValueQuestion(params, level) {
     const allValues = Object.values(representation);
     const distractors = allValues.filter(v => v !== value);
 
-    // Add some calculated distractors
-    const digit = Math.floor(value / Math.pow(10, places.indexOf(chosenPlace)));
-    distractors.push(digit); // Just the digit without place value
+    // Add the digit itself as a distractor (without place value)
+    const placeValues = { 'ones': 1, 'tens': 10, 'hundreds': 100, 'thousands': 1000, 'ten_thousands': 10000 };
+    const placeValue = placeValues[chosenPlace];
+    if (placeValue) {
+        const digit = Math.floor((number % (placeValue * 10)) / placeValue);
+        if (digit !== value) {
+            distractors.push(digit);
+        }
+    }
 
     const options = shuffle([value, ...distractors.slice(0, 3)]);
 
@@ -310,13 +316,21 @@ function generateCompareRounded(params, level) {
 /**
  * Number line jump question
  */
-function generateNumberLineJump(params, level) {
+function generateNumberLineJump(params, level, attempt = 0) {
+    const MAX_ATTEMPTS = 10;
     const { number_line_max } = params;
 
     const start = randomInt(0, number_line_max - 500);
     const jump = randomChoice([10, 50, 100, 200]);
     const numJumps = randomInt(2, 5);
     const end = start + (jump * numJumps);
+
+    if (end > number_line_max) {
+        if (attempt >= MAX_ATTEMPTS) {
+            return generateNumberLinePosition(params, level);
+        }
+        return generateNumberLineJump(params, level, attempt + 1);
+    }
 
     return {
         text: `Start at ${formatNumber(start)} on a number line. ` +

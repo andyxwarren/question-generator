@@ -29,6 +29,10 @@ export function generateQuestion(params, level) {
     const operation = randomChoice(params.operations);
 
     switch(operation) {
+        case 'round_to_ten':
+            return generateRounding(params, level, 10);
+        case 'round_to_hundred':
+            return generateRounding(params, level, 100);
         case 'round_to_thousand':
             return generateRounding(params, level, 1000);
         case 'round_to_ten_thousand':
@@ -65,6 +69,8 @@ function generateRounding(params, level, base) {
     const options = shuffle([rounded, ...distractors.slice(0, 3)]);
 
     const baseName = {
+        10: 'nearest 10',
+        100: 'nearest 100',
         1000: 'nearest thousand',
         10000: 'nearest ten thousand',
         100000: 'nearest hundred thousand'
@@ -146,7 +152,8 @@ function generateEstimateCalculation(params, level) {
 /**
  * Compare rounded values
  */
-function generateCompareRounded(params, level) {
+function generateCompareRounded(params, level, attempt = 0) {
+    const MAX_ATTEMPTS = 10;
     const { min_value, max_value, rounding_bases } = params;
 
     const base = randomChoice(rounding_bases);
@@ -157,6 +164,8 @@ function generateCompareRounded(params, level) {
     const rounded2 = roundToNearest(num2, base);
 
     const baseName = {
+        10: '10',
+        100: '100',
         1000: 'thousand',
         10000: 'ten thousand',
         100000: 'hundred thousand'
@@ -164,7 +173,10 @@ function generateCompareRounded(params, level) {
 
     // Ensure they're different when rounded
     if (rounded1 === rounded2) {
-        return generateCompareRounded(params, level);
+        if (attempt >= MAX_ATTEMPTS) {
+            return generateRounding(params, level, base);
+        }
+        return generateCompareRounded(params, level, attempt + 1);
     }
 
     const larger = Math.max(rounded1, rounded2);
@@ -263,7 +275,8 @@ function generateNumberLinePosition(params, level) {
 /**
  * Number line jump question
  */
-function generateNumberLineJump(params, level) {
+function generateNumberLineJump(params, level, attempt = 0) {
+    const MAX_ATTEMPTS = 10;
     const { number_line_max } = params;
 
     const start = randomInt(0, number_line_max - 50000);
@@ -272,7 +285,10 @@ function generateNumberLineJump(params, level) {
     const end = start + (jump * numJumps);
 
     if (end > number_line_max) {
-        return generateNumberLineJump(params, level);
+        if (attempt >= MAX_ATTEMPTS) {
+            return generateNumberLinePosition(params, level);
+        }
+        return generateNumberLineJump(params, level, attempt + 1);
     }
 
     return {

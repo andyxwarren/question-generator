@@ -197,24 +197,24 @@ export const N04_MODULES = {
             1: {
                 min_value: 1000,
                 max_value: 100000,
-                operations: ['round_to_thousand', 'round_to_ten_thousand', 'estimate_position', 'number_line_position'],
-                rounding_bases: [1000, 10000],
+                operations: ['round_to_ten', 'round_to_hundred', 'round_to_thousand', 'round_to_ten_thousand', 'estimate_position', 'number_line_position'],
+                rounding_bases: [10, 100, 1000, 10000],
                 number_line_max: 100000,
                 estimation_ranges: [[0, 25000], [25000, 50000], [50000, 75000], [75000, 100000]]
             },
             2: {
                 min_value: 10000,
                 max_value: 500000,
-                operations: ['round_to_ten_thousand', 'round_to_hundred_thousand', 'estimate_position', 'estimate_calculation', 'number_line_jump'],
-                rounding_bases: [10000, 100000],
+                operations: ['round_to_hundred', 'round_to_thousand', 'round_to_ten_thousand', 'round_to_hundred_thousand', 'estimate_position', 'estimate_calculation', 'number_line_jump'],
+                rounding_bases: [100, 1000, 10000, 100000],
                 number_line_max: 500000,
                 estimation_ranges: [[0, 100000], [100000, 300000], [300000, 500000]]
             },
             3: {
                 min_value: 10000,
                 max_value: 1000000,
-                operations: ['round_to_thousand', 'round_to_ten_thousand', 'round_to_hundred_thousand', 'estimate_position', 'estimate_calculation', 'compare_rounded'],
-                rounding_bases: [1000, 10000, 100000],
+                operations: ['round_to_ten', 'round_to_hundred', 'round_to_thousand', 'round_to_ten_thousand', 'round_to_hundred_thousand', 'estimate_position', 'estimate_calculation', 'compare_rounded'],
+                rounding_bases: [10, 100, 1000, 10000, 100000],
                 number_line_max: 1000000,
                 estimation_ranges: [[0, 250000], [250000, 500000], [500000, 750000], [750000, 1000000]]
             },
