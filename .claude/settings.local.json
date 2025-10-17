@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(python -m http.server:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []
