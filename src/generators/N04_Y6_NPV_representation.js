@@ -16,6 +16,7 @@ import {
     getErrorBounds,
     chooseAppropriateRoundingBase
 } from './helpers/N04_representationHelpers.js';
+import { createSimpleNumberLineHTML } from './helpers/simpleVisuals.js';
 
 /**
  * Main question generator

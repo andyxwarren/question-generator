@@ -48,10 +48,12 @@ export function validate(question, studentAnswer) {
     }
 
     // Check for range validation (e.g., "between" questions)
-    if (question.validRange) {
+    // Support both 'validRange' and 'acceptableRange' properties
+    const rangeCheck = question.validRange || question.acceptableRange;
+    if (rangeCheck) {
         const numSubmitted = parseFloat(studentAnswer);
         if (!isNaN(numSubmitted)) {
-            const { min, max } = question.validRange;
+            const { min, max } = rangeCheck;
             // Check if answer is strictly between min and max (exclusive)
             if (numSubmitted > min && numSubmitted < max && Number.isInteger(numSubmitted)) {
                 return {

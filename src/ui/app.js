@@ -303,7 +303,7 @@ class App {
         if (question.type === 'multiple_choice') {
             return `
                 <div class="question" data-question-id="${questionId}">
-                    <div class="question-text">${questionIdx + 1}. ${question.text}</div>
+                    <div class="question-text">${questionIdx + 1}. ${this.renderQuestionText(question.text)}</div>
                     <div class="options">
                         ${question.options.map((option, optIdx) => {
                             // Format number options with commas
@@ -326,7 +326,7 @@ class App {
             if (isMultiGap) {
                 return `
                     <div class="question" data-question-id="${questionId}">
-                        <div class="question-text">${questionIdx + 1}. ${question.text}</div>
+                        <div class="question-text">${questionIdx + 1}. ${this.renderQuestionText(question.text)}</div>
                         <div class="multi-input-container">
                             ${question.answers.map((_, idx) => `
                                 <input type="text"
@@ -344,7 +344,7 @@ class App {
                 // Single input
                 return `
                     <div class="question" data-question-id="${questionId}">
-                        <div class="question-text">${questionIdx + 1}. ${question.text}</div>
+                        <div class="question-text">${questionIdx + 1}. ${this.renderQuestionText(question.text)}</div>
                         <input type="text" class="text-input" id="${questionId}" placeholder="Your answer">
                         ${question.hint ? `<div class="hint">💡 Hint: ${question.hint}</div>` : ''}
                         <div class="feedback"></div>
@@ -464,6 +464,27 @@ class App {
         // Handle single number
         const num = parseFloat(answer);
         return !isNaN(num) ? num.toLocaleString('en-US') : answer;
+    }
+
+    /**
+     * Escape HTML to prevent XSS, but allow specific visual classes
+     * @param {string} text - Text that may contain HTML
+     * @returns {string} Safe HTML
+     */
+    renderQuestionText(text) {
+        // Check if text contains our safe visual HTML classes
+        const hasSafeVisuals = text.includes('class="simple-number-line"') ||
+                              text.includes('class="simple-dots-container"');
+
+        if (hasSafeVisuals) {
+            // Text contains our visual HTML - render as-is
+            return text;
+        } else {
+            // Plain text - escape HTML entities
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
     }
 
     /**

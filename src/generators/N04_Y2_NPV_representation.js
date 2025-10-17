@@ -22,6 +22,7 @@ import {
     calculateRoughEstimate,
     generateUniqueNumbers
 } from './helpers/N04_representationHelpers.js';
+import { createSimpleNumberLineHTML } from './helpers/simpleVisuals.js';
 
 /**
  * Main question generator
@@ -59,29 +60,19 @@ export function generateQuestion(params, level) {
 function generateNumberLinePosition(params, level) {
     const { number_line_max } = params;
 
-    const number = randomInt(0, number_line_max);
-
-    // Generate marks on the number line
-    const marks = generateNumberLineMarks(0, number_line_max, 10);
-    const visibleMarks = [marks[0], marks[5], marks[10]];
-
-    // Create description
-    const description = describeNumberLinePosition(number, 0, number_line_max);
-
-    // Generate options
-    const correctMark = findClosestMark(number, marks);
-    const distractors = marks.filter(m => m !== correctMark).slice(0, 3);
-    const options = shuffle([number, ...distractors]);
+    const targetNumber = randomInt(0, number_line_max);
+    const numberLineHTML = createSimpleNumberLineHTML(
+        0,
+        number_line_max,
+        targetNumber,
+        level === 1  // Only show all labels at level 1
+    );
 
     return {
-        text: `A number line goes from 0 to ${number_line_max}. ` +
-              `Marks are shown at ${visibleMarks.map(m => formatNumber(m)).join(', ')}. ` +
-              `Which number is ${description}?\n` +
-              `(The number is approximately ${number})`,
-        type: 'multiple_choice',
-        options: options,
-        answer: number.toString(),
-        hint: `Think about where ${number} sits between the marks`,
+        text: `What number is marked on the number line?\n\n${numberLineHTML}`,
+        type: 'text_input',
+        answer: String(targetNumber),
+        hint: 'Look at the position between the marked numbers',
         module: 'N04_Y2_NPV',
         level: level
     };
@@ -93,28 +84,18 @@ function generateNumberLinePosition(params, level) {
 function generateNumberLineBetween(params, level) {
     const { number_line_max } = params;
 
-    const num1 = randomInt(0, number_line_max - 10);
-    const num2 = num1 + randomInt(5, 10);
+    const range = number_line_max;
+    const point1 = randomInt(Math.floor(range * 0.3), Math.floor(range * 0.4));
+    const point2 = randomInt(Math.floor(range * 0.6), Math.floor(range * 0.7));
 
-    const between = randomInt(num1 + 1, num2 - 1);
-
-    // Generate distractors
-    const distractors = [
-        num1,
-        num2,
-        between - 1,
-        between + 1,
-        Math.floor((num1 + num2) / 2)
-    ].filter(d => d > num1 && d < num2 && d !== between);
-
-    const options = shuffle([between, ...distractors.slice(0, 3)]);
+    const numberLineHTML = createSimpleNumberLineHTML(0, number_line_max, null, true);
 
     return {
-        text: `Which number comes between ${num1} and ${num2} on a number line?`,
-        type: 'multiple_choice',
-        options: options,
-        answer: between.toString(),
-        hint: `Find a number that's bigger than ${num1} but smaller than ${num2}`,
+        text: `Name a number that lies between ${formatNumber(point1)} and ${formatNumber(point2)} on this number line:\n\n${numberLineHTML}`,
+        type: 'text_input',
+        answer: String(randomInt(point1 + 1, point2 - 1)), // Any valid number
+        acceptableRange: { min: point1 + 1, max: point2 - 1 }, // For validator to check
+        hint: 'Choose any number greater than the first and less than the second',
         module: 'N04_Y2_NPV',
         level: level
     };

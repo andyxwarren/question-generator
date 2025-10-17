@@ -1033,3 +1033,145 @@ header p {
         font-size: 0.65rem;
     }
 }
+
+/* ============================================
+   MVP Visual Representations
+   Simple HTML/CSS visuals for number lines and objects
+   ============================================ */
+
+/* Number Lines */
+.simple-number-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    padding: 40px 0 30px 0;
+    margin: 20px 0;
+    background: linear-gradient(to right, #2563eb 0%, #2563eb 100%);
+    background-size: 100% 3px;
+    background-position: center 40px;
+    background-repeat: no-repeat;
+}
+
+.number-line-tick {
+    position: relative;
+    width: 2px;
+    height: 20px;
+    background: #2563eb;
+    margin-top: 30px;
+    flex-shrink: 0;
+}
+
+.number-line-tick.marked {
+    background: #ef4444;
+    width: 4px;
+    height: 30px;
+    margin-top: 25px;
+}
+
+.number-line-tick.in-range {
+    background: #10b981;
+    width: 3px;
+    height: 25px;
+}
+
+.number-line-tick .marker {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ef4444;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.number-line-tick .tick-label {
+    position: absolute;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+}
+
+/* Object/Dot Counting */
+.simple-dots-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 15px 0;
+}
+
+.simple-dot {
+    width: 30px;
+    height: 30px;
+    background: #3b82f6;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dot-spacer {
+    width: 20px;
+    flex-shrink: 0;
+}
+
+/* Responsive adjustments for visuals */
+@media (max-width: 768px) {
+    .simple-number-line {
+        padding: 30px 0 25px 0;
+        background-position: center 30px;
+    }
+
+    .number-line-tick {
+        height: 15px;
+        margin-top: 22px;
+    }
+
+    .number-line-tick.marked {
+        height: 20px;
+        margin-top: 20px;
+    }
+
+    .number-line-tick .marker {
+        font-size: 18px;
+        top: -25px;
+    }
+
+    .number-line-tick .tick-label {
+        font-size: 0.75rem;
+        top: 20px;
+    }
+
+    .simple-dots-container {
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .simple-dot {
+        width: 25px;
+        height: 25px;
+    }
+
+    .dot-spacer {
+        width: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .number-line-tick .tick-label {
+        font-size: 0.7rem;
+    }
+
+    .simple-dot {
+        width: 22px;
+        height: 22px;
+    }
+}

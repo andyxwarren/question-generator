@@ -20,6 +20,7 @@ import {
     calculateRoughEstimate,
     chooseAppropriateRoundingBase
 } from './helpers/N04_representationHelpers.js';
+import { createSimpleNumberLineHTML } from './helpers/simpleVisuals.js';
 
 /**
  * Main question generator
@@ -241,27 +242,19 @@ function generateChooseAppropriateRounding(params, level) {
 function generateNumberLinePosition(params, level) {
     const { min_value, max_value, number_line_max } = params;
 
-    const lineMin = 0;
-    const lineMax = number_line_max;
-
-    const number = randomInt(min_value, Math.min(max_value, lineMax));
-
-    const marks = generateNumberLineMarks(lineMin, lineMax, 10);
-    const visibleMarks = [marks[0], marks[5], marks[10]];
-
-    // Generate options
-    const correctMark = findClosestMark(number, marks);
-    const distractors = marks.filter(m => m !== correctMark).slice(0, 3);
-    const options = shuffle([number, ...distractors]);
+    const targetNumber = randomInt(min_value, Math.min(max_value, number_line_max));
+    const numberLineHTML = createSimpleNumberLineHTML(
+        0,
+        number_line_max,
+        targetNumber,
+        false
+    );
 
     return {
-        text: `A number line goes from ${formatNumber(lineMin)} to ${formatNumber(lineMax)}. ` +
-              `Marks are shown at ${visibleMarks.map(m => formatNumber(m)).join(', ')}. ` +
-              `Which number is approximately ${formatNumber(number)}?`,
-        type: 'multiple_choice',
-        options: options,
-        answer: number.toString(),
-        hint: `Think about where ${formatNumber(number)} sits between the marks`,
+        text: `What number is marked on the number line?\n\n${numberLineHTML}`,
+        type: 'text_input',
+        answer: String(targetNumber),
+        hint: 'Consider the scale and intervals',
         module: 'N04_Y5_NPV',
         level: level
     };

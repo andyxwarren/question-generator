@@ -18,6 +18,7 @@ import {
     evaluateComparison,
     generateUniqueNumbers
 } from './helpers/N04_representationHelpers.js';
+import { createSimpleNumberLineHTML, createSimpleDotsHTML } from './helpers/simpleVisuals.js';
 
 /**
  * Main question generator
@@ -49,27 +50,19 @@ export function generateQuestion(params, level) {
 function generateNumberLinePosition(params, level) {
     const { number_line_max } = params;
 
-    const number = randomInt(0, number_line_max);
-
-    // For Year 1, use a simple number line with clear marks
-    const marks = generateNumberLineMarks(0, number_line_max, number_line_max);
-
-    // Generate options around the correct number
-    const distractors = [
-        number - 1,
-        number + 1,
-        Math.max(0, number - 2),
-        Math.min(number_line_max, number + 2)
-    ].filter(d => d >= 0 && d <= number_line_max && d !== number);
-
-    const options = shuffle([number, ...distractors.slice(0, 3)]);
+    const targetNumber = randomInt(0, number_line_max);
+    const numberLineHTML = createSimpleNumberLineHTML(
+        0,
+        number_line_max,
+        targetNumber,
+        level <= 2  // Show all labels for easier levels
+    );
 
     return {
-        text: `On a number line from 0 to ${number_line_max}, which number is shown at position ${number}?`,
-        type: 'multiple_choice',
-        options: options,
-        answer: number.toString(),
-        hint: `Count along the number line from 0`,
+        text: `What number is marked on the number line?\n\n${numberLineHTML}`,
+        type: 'text_input',
+        answer: String(targetNumber),
+        hint: 'Look at where the arrow points between the labeled numbers',
         module: 'N04_Y1_NPV',
         level: level
     };
@@ -79,29 +72,18 @@ function generateNumberLinePosition(params, level) {
  * Count objects question
  */
 function generateCountObjects(params, level) {
-    const { min_value, max_value, object_types } = params;
+    const { min_value, max_value } = params;
 
     const count = randomInt(min_value, max_value);
-    const objectType = randomChoice(object_types);
-
-    const description = describeObjectRepresentation(count, objectType);
-
-    // Generate distractors
-    const distractors = [
-        count - 1,
-        count + 1,
-        Math.max(min_value, count - 2),
-        Math.min(max_value, count + 2)
-    ].filter(d => d >= min_value && d <= max_value && d !== count);
-
-    const options = shuffle([count, ...distractors.slice(0, 3)]);
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+    const color = randomChoice(colors);
+    const dotsHTML = createSimpleDotsHTML(count, 5, color);
 
     return {
-        text: `How many objects are there if you see ${description}?`,
-        type: 'multiple_choice',
-        options: options,
-        answer: count.toString(),
-        hint: `Count the objects carefully`,
+        text: `How many dots do you see?\n\n${dotsHTML}`,
+        type: 'text_input',
+        answer: String(count),
+        hint: 'Count carefully, one at a time',
         module: 'N04_Y1_NPV',
         level: level
     };
