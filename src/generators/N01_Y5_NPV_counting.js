@@ -59,10 +59,20 @@ export function generateQuestion(params, level) {
 }
 
 /**
+ * Check if sequence crosses zero (has both positive and negative numbers)
+ */
+function sequenceCrossesZero(sequence) {
+    const hasPositive = sequence.some(n => n > 0);
+    const hasNegative = sequence.some(n => n < 0);
+    return hasPositive && hasNegative;
+}
+
+/**
  * Generate specific question type
  */
 function generateQuestionByType(type, fullSequence, params, step, direction, level) {
     const { gaps_count, gap_position, sequence_length } = params;
+    const crossesZero = sequenceCrossesZero(fullSequence);
 
     if (type === 'fill_blanks') {
         // Force internal gaps - never at the end to avoid duplication with 'next_number' type
@@ -87,12 +97,16 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
         // Collect answers
         const answers = gapPositions.map(pos => fullSequence[pos]);
 
+        const hint = crossesZero
+            ? `The pattern counts ${direction} in ${step}s through zero`
+            : `The pattern counts ${direction} in ${step}s`;
+
         return {
             text: `Fill in the missing number${gaps_count > 1 ? 's' : ''}: ${displaySequence.join(', ')}`,
             type: 'text_input',
             answer: answers.join(','),  // Store as comma-separated
             answers: answers,  // Also store as array for validation
-            hint: `The pattern counts ${direction} in ${step}s`,
+            hint: hint,
             module: 'N01_Y5_NPV',
             level: level
         };
@@ -103,11 +117,15 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
         const shown = fullSequence.slice(0, -1);
         const answer = fullSequence[fullSequence.length - 1];
 
+        const hint = crossesZero
+            ? `Count ${direction} in ${step}s (the sequence crosses zero)`
+            : `Count ${direction} in ${step}s`;
+
         return {
             text: `What number comes next? ${shown.join(', ')}, ___`,
             type: 'text_input',
             answer: answer.toString(),
-            hint: `Count ${direction} in ${step}s`,
+            hint: hint,
             module: 'N01_Y5_NPV',
             level: level
         };
@@ -135,12 +153,16 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
         const options = [correctAnswer, ...uniqueDistractors]
             .sort(() => Math.random() - 0.5);
 
+        const hint = crossesZero
+            ? `Count ${direction} in ${step}s (remember the sequence crosses zero)`
+            : `Count ${direction} in ${step}s`;
+
         return {
             text: `Continue the pattern: ${shown.join(', ')}, ___`,
             type: 'multiple_choice',
             options: options,
             answer: correctAnswer.toString(),
-            hint: `Count ${direction} in ${step}s`,
+            hint: hint,
             module: 'N01_Y5_NPV',
             level: level
         };

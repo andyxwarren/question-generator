@@ -26,12 +26,21 @@ export function generateQuestion(params, level) {
     const questionTypes = ['fill_blanks', 'next_number', 'multiple_choice'];
     const questionType = randomChoice(questionTypes);
 
-    // Get starting value
-    let start = getStartValue(params, step);
+    // Get starting value with Y2-specific logic
+    // Curriculum: "Count in steps of 2, 3, and 5 from 0, and in tens from any number"
+    let start;
 
-    // Special handling for tens from any number (Y2 specific)
-    if (tens_from_any && step === 10) {
+    if (step === 10 && tens_from_any) {
+        // Tens from any number - allow any starting position within range
         start = randomInt(tens_range[0], tens_range[1]);
+    } else {
+        // Steps of 2, 3, 5 should start from 0 or multiples
+        // Override start_from to ensure proper behavior
+        const modifiedParams = {
+            ...params,
+            start_from: params.start_from === 'zero_only' ? 'zero_only' : 'zero_or_multiple'
+        };
+        start = getStartValue(modifiedParams, step);
     }
 
     // Vary starting value by question type to prevent sequence overlap

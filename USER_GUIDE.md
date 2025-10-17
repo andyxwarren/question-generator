@@ -227,12 +227,12 @@ To use this application:
 
 ## Getting Started Quickly
 
-1. Open the application in your web browser
-2. Choose how many questions you want (default is 5 per level)
-3. Click on a topic card (e.g., "N01_Y1_NPV: Counting in Multiples")
-4. Answer the questions in the input boxes or select from multiple choice options
-5. Click "Submit Answers" to check your work
-6. Review your results and try again or select a new topic
+1. **Start the Server**: Open your terminal, navigate to the project folder, and run the command `python custom_server.py`.
+2. **Open the Application**: The terminal will provide a link (usually `http://localhost:8000`). Open this link in your web browser.
+3. **Choose Number of Questions**: Select how many questions you want for each difficulty level.
+4. **Select a Topic**: Click on a topic card to start.
+5. **Answer Questions**: Fill in your answers for each level.
+6. **Submit and Review**: Click "Submit Answers" to see your results and review the correct answers.
 
 ## Support and Questions
 

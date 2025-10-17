@@ -27,20 +27,16 @@ A UK National Curriculum-aligned mathematics practice application that generates
 
 ### Installation & Running
 
-#### Option 1: Using Python (Recommended)
+#### Option 1: Using the Custom Server (Recommended)
+
+This project includes a custom server script that simplifies the setup process.
 
 ```bash
-# Navigate to project directory
-cd question-generator
-
-# Python 3
-python -m http.server 8000
-
-# Python 2
-python -m SimpleHTTPServer 8000
-
-# Then open: http://localhost:8000
+# Navigate to the project directory and run the custom server
+python custom_server.py
 ```
+
+This will start the server and provide you with a direct link to open the application.
 
 #### Option 2: Using Node.js
 

@@ -38,7 +38,8 @@ export function getStartValue(params, step) {
     } else if (start_from === 'any') {
         // For Y5, use start_range if provided
         if (start_range) {
-            return randomInt(start_range[0], start_range[1]);
+            // Round to step multiple to ensure valid sequences
+            return Math.floor(randomInt(start_range[0], start_range[1]) / step) * step;
         }
         // Otherwise calculate from min/max
         const range = max_value - min_value;

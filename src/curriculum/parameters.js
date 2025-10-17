@@ -57,15 +57,15 @@ export const MODULES = {
                 gap_position: 'random'
             },
             4: {
-                // Sub-objective 4: Count forwards and backwards across 100 in all multiples (1s, 2s, 3s, 5s, 10s)
-                step_sizes: [1, 2, 3, 5, 10],         // UPDATED: Added 1 and 3
+                // Sub-objective 4: Exceeding - Master counting across 100 in curriculum multiples
+                step_sizes: [2, 5, 10],               // Only curriculum multiples (twos, fives, tens)
                 min_value: 0,
-                max_value: 200,                       // UPDATED: Extended from 100 to 200
+                max_value: 120,                       // "Across" 100 but not too far beyond
                 directions: ['forwards', 'backwards'],
-                start_from: 'any',                    // UPDATED: Changed from 'zero_or_multiple' to 'any'
-                sequence_length: 12,                  // UPDATED: Increased from 10 to 12
-                gaps_count: 3,                        // UPDATED: Increased from 2 to 3
-                gap_position: 'random'
+                start_from: 'any',                    // Any starting point increases challenge
+                sequence_length: 10,                  // Longer sequences for mastery
+                gaps_count: 3,                        // Multiple gaps increase difficulty
+                gap_position: 'random'                // Random placement = more challenging
             }
         }
     },
@@ -81,7 +81,7 @@ export const MODULES = {
         ref: 'N1',
         parameters: {
             1: {
-                step_sizes: [2, 5, 10],
+                step_sizes: [2, 3, 5],                // Count in 2, 3, 5 from 0 (not tens yet)
                 min_value: 0,
                 max_value: 50,
                 directions: ['forwards'],
@@ -117,7 +117,7 @@ export const MODULES = {
                 tens_range: [0, 100]
             },
             4: {
-                step_sizes: [2, 3, 4, 5, 10],
+                step_sizes: [2, 3, 5, 10],            // Removed 4 (not in curriculum)
                 min_value: 0,
                 max_value: 200,
                 directions: ['forwards', 'backwards'],
@@ -142,7 +142,7 @@ export const MODULES = {
         ref: 'N1',
         parameters: {
             1: {
-                step_sizes: [4, 8, 10, 50],
+                step_sizes: [4, 8, 50],               // Removed 10 (not in Y3 curriculum)
                 min_value: 0,
                 max_value: 100,
                 directions: ['forwards'],
@@ -172,7 +172,7 @@ export const MODULES = {
                 gap_position: 'random'
             },
             4: {
-                step_sizes: [4, 6, 8, 25, 50, 100],
+                step_sizes: [4, 8, 50, 100],          // Removed 6 and 25 (not in Y3 curriculum)
                 min_value: 0,
                 max_value: 1000,
                 directions: ['forwards', 'backwards'],
@@ -225,7 +225,7 @@ export const MODULES = {
                 gap_position: 'random'
             },
             4: {
-                step_sizes: [6, 7, 9, 11, 12, 25, 1000],
+                step_sizes: [6, 7, 9, 25, 1000],      // Removed 11 and 12 (not in Y4 curriculum)
                 min_value: 0,
                 max_value: 20000,
                 directions: ['forwards', 'backwards'],
