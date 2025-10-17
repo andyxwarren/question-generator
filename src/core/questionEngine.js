@@ -27,6 +27,9 @@ import representationY3Generator from '../generators/N04_Y3_NPV_representation.j
 import representationY4Generator from '../generators/N04_Y4_NPV_representation.js';
 import representationY5Generator from '../generators/N04_Y5_NPV_representation.js';
 import representationY6Generator from '../generators/N04_Y6_NPV_representation.js';
+import negativesY4Generator from '../generators/N05_Y4_NPV_negatives.js';
+import negativesY5Generator from '../generators/N05_Y5_NPV_negatives.js';
+import negativesY6Generator from '../generators/N05_Y6_NPV_negatives.js';
 
 /**
  * Question Engine Class
@@ -62,6 +65,9 @@ class QuestionEngine {
         this.register(representationY4Generator);
         this.register(representationY5Generator);
         this.register(representationY6Generator);
+        this.register(negativesY4Generator);
+        this.register(negativesY5Generator);
+        this.register(negativesY6Generator);
     }
 
     /**

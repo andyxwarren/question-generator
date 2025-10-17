@@ -9,12 +9,14 @@
  * - N02_readwrite.js - Read, write, order and compare (Years 2-6)
  * - N03_placevalue.js - Place value & Roman numerals (Years 2-6)
  * - N04_representation.js - Identify, represent, estimate (Years 1-6)
+ * - N05_negatives.js - Negative numbers (Years 4-6)
  */
 
 import { N01_MODULES } from './parameters/N01_counting.js';
 import { N02_MODULES } from './parameters/N02_readwrite.js';
 import { N03_MODULES } from './parameters/N03_placevalue.js';
 import { N04_MODULES } from './parameters/N04_representation.js';
+import { N05_MODULES } from './parameters/N05_negatives.js';
 
 /**
  * Merged modules object
@@ -24,7 +26,8 @@ export const MODULES = {
     ...N01_MODULES,
     ...N02_MODULES,
     ...N03_MODULES,
-    ...N04_MODULES
+    ...N04_MODULES,
+    ...N05_MODULES
 };
 
 /**
