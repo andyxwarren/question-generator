@@ -12,7 +12,10 @@
       "Read(//c/Users/Andyx/**)",
       "Bash(timeout 3 python:*)",
       "Bash(netstat:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(for file in N02_Y2_NPV_readwrite.js N02_Y3_NPV_readwrite.js N02_Y4_NPV_readwrite.js N02_Y5_NPV_readwrite.js N02_Y6_NPV_readwrite.js)",
+      "Bash(do sed -i '/answer: between.toString(),/a\\        validRange: { min: num1, max: num2 },  // Accept any value in range' \"$file\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

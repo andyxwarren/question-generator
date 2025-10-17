@@ -47,6 +47,30 @@ export function validate(question, studentAnswer) {
         };
     }
 
+    // Check for range validation (e.g., "between" questions)
+    if (question.validRange) {
+        const numSubmitted = parseFloat(studentAnswer);
+        if (!isNaN(numSubmitted)) {
+            const { min, max } = question.validRange;
+            // Check if answer is strictly between min and max (exclusive)
+            if (numSubmitted > min && numSubmitted < max && Number.isInteger(numSubmitted)) {
+                return {
+                    isCorrect: true,
+                    feedback: 'Correct!',
+                    normalizedAnswer: submittedAnswer
+                };
+            }
+            // Provide helpful feedback if out of range
+            if (numSubmitted <= min || numSubmitted >= max) {
+                return {
+                    isCorrect: false,
+                    feedback: `Please give a number between ${min} and ${max}`,
+                    normalizedAnswer: submittedAnswer
+                };
+            }
+        }
+    }
+
     // Exact match
     if (submittedAnswer === correctAnswer) {
         return {

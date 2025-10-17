@@ -269,6 +269,7 @@ function generateBetween(params, level) {
         text: `Give a number that is between ${formatNumber(num1)} and ${formatNumber(num2)}`,
         type: 'text_input',
         answer: between.toString(),
+        validRange: { min: num1, max: num2 },  // Accept any value in range
         hint: `Any number greater than ${formatNumber(num1)} and less than ${formatNumber(num2)}`,
         module: 'N02_Y3_NPV',
         level: level

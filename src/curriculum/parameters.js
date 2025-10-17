@@ -399,7 +399,7 @@ export const MODULES = {
                 max_value: 2000,
                 word_min: 0,
                 word_max: 20,
-                operations: ['identify_numeral', 'ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_two', 'order_three', 'round_to_ten', 'round_to_hundred'],
+                operations: ['identify_numeral', 'ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_two', 'order_three'],  // Removed rounding
                 order_count_max: 3
             },
             2: {
@@ -407,24 +407,24 @@ export const MODULES = {
                 max_value: 10000,
                 word_min: 0,
                 word_max: 50,
-                operations: ['ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false', 'round_to_ten', 'round_to_hundred', 'round_to_thousand'],
+                operations: ['ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false'],  // Removed rounding
                 order_count_max: 5
             },
             3: {
                 min_value: 100,
-                max_value: 100000,
+                max_value: 50000,                        // Reduced from 100,000
                 word_min: 0,
                 word_max: 100,
-                operations: ['hundred_more', 'hundred_less', 'thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'round_to_hundred', 'round_to_thousand'],
-                order_count_max: 10
+                operations: ['hundred_more', 'hundred_less', 'thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison'],  // Removed rounding
+                order_count_max: 6                       // Reduced from 10
             },
             4: {
                 min_value: 1000,
-                max_value: 1000000,
+                max_value: 200000,                       // Reduced from 1,000,000
                 word_min: 0,
                 word_max: 100,
-                operations: ['thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'round_to_thousand', 'complex_more_less'],
-                order_count_max: 15
+                operations: ['thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'complex_more_less'],  // Removed rounding
+                order_count_max: 8                       // Reduced from 15
             }
         }
     },
@@ -444,7 +444,7 @@ export const MODULES = {
                 max_value: 100000,
                 word_min: 0,
                 word_max: 20,
-                operations: ['identify_numeral', 'thousand_more', 'thousand_less', 'ten_thousand_more', 'ten_thousand_less', 'compare_two', 'use_symbols', 'order_two', 'order_three', 'round_to_thousand', 'round_to_ten_thousand'],
+                operations: ['identify_numeral', 'thousand_more', 'thousand_less', 'ten_thousand_more', 'ten_thousand_less', 'compare_two', 'use_symbols', 'order_two', 'order_three'],  // Removed rounding
                 order_count_max: 3
             },
             2: {
@@ -452,7 +452,7 @@ export const MODULES = {
                 max_value: 500000,
                 word_min: 0,
                 word_max: 50,
-                operations: ['ten_thousand_more', 'ten_thousand_less', 'hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false', 'round_to_ten_thousand', 'round_to_hundred_thousand'],
+                operations: ['ten_thousand_more', 'ten_thousand_less', 'hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false'],  // Removed rounding
                 order_count_max: 5
             },
             3: {
@@ -460,16 +460,16 @@ export const MODULES = {
                 max_value: 1000000,
                 word_min: 0,
                 word_max: 100,
-                operations: ['ten_thousand_more', 'ten_thousand_less', 'hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'place_value_digit', 'round_to_ten_thousand', 'round_to_hundred_thousand'],
-                order_count_max: 10
+                operations: ['ten_thousand_more', 'ten_thousand_less', 'hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'place_value_digit'],  // Removed rounding
+                order_count_max: 6                       // Reduced from 10
             },
             4: {
                 min_value: 100000,
-                max_value: 10000000,
+                max_value: 5000000,                      // Reduced from 10,000,000
                 word_min: 0,
                 word_max: 100,
-                operations: ['hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'place_value_digit', 'round_to_hundred_thousand', 'complex_more_less'],
-                order_count_max: 15
+                operations: ['hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'place_value_digit', 'complex_more_less'],  // Removed rounding
+                order_count_max: 8                       // Reduced from 15
             }
         }
     },
@@ -489,7 +489,7 @@ export const MODULES = {
                 max_value: 1000000,
                 word_min: 0,
                 word_max: 20,
-                operations: ['identify_numeral', 'hundred_thousand_more', 'hundred_thousand_less', 'million_more', 'million_less', 'compare_two', 'use_symbols', 'order_two', 'order_three', 'round_to_hundred_thousand', 'round_to_million'],
+                operations: ['identify_numeral', 'hundred_thousand_more', 'hundred_thousand_less', 'million_more', 'million_less', 'compare_two', 'use_symbols', 'order_two', 'order_three'],  // Removed rounding
                 order_count_max: 3
             },
             2: {
@@ -497,7 +497,7 @@ export const MODULES = {
                 max_value: 5000000,
                 word_min: 0,
                 word_max: 50,
-                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false', 'round_to_million'],
+                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false'],  // Removed rounding
                 order_count_max: 5
             },
             3: {
@@ -505,16 +505,16 @@ export const MODULES = {
                 max_value: 10000000,
                 word_min: 0,
                 word_max: 100,
-                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'place_value_digit', 'round_to_million'],
-                order_count_max: 10
+                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'place_value_digit'],  // Removed rounding
+                order_count_max: 6                       // Reduced from 10
             },
             4: {
                 min_value: 1000000,
                 max_value: 10000000,
                 word_min: 0,
                 word_max: 100,
-                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'place_value_digit', 'round_to_million', 'complex_more_less'],
-                order_count_max: 20
+                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'place_value_digit', 'complex_more_less'],  // Removed rounding
+                order_count_max: 8                       // Reduced from 20
             }
         }
     },
