@@ -344,10 +344,31 @@ header p {
 }
 
 .question-text {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 1rem;
-    color: #111827;
+    font-size: 1.375rem;      /* 22px - optimal for young readers */
+    font-weight: 600;         /* Semibold for emphasis */
+    line-height: 1.65;        /* Generous spacing for readability */
+    margin-bottom: 1.5rem;    /* Clear separation from inputs */
+    color: #111827;           /* High contrast black */
+    max-width: 65ch;          /* Optimal line length */
+
+    /* Improve text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Progressive sizing by difficulty level */
+.level-section[data-level="1"] .question-text {
+    font-size: 1.5rem;    /* 24px for Beginning level (Years 1-2) */
+    line-height: 1.7;     /* Extra spacing for early readers */
+}
+
+.level-section[data-level="2"] .question-text {
+    font-size: 1.4rem;    /* 22.4px for Developing level */
+}
+
+.level-section[data-level="3"] .question-text,
+.level-section[data-level="4"] .question-text {
+    font-size: 1.25rem;   /* 20px for Meeting/Exceeding (Years 4-6) */
 }
 
 /* Options for Multiple Choice */
@@ -363,31 +384,89 @@ header p {
     align-items: center;
     padding: 1rem 1.25rem;
     background: #f9fafb;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 2px solid #e5e7eb;
+    border: 3px solid #e5e7eb;  /* Thicker border for visibility */
+    min-height: 56px;  /* WCAG AAA touch target */
+    position: relative;
 }
 
 .option:hover {
     background: #eff6ff;
     border-color: #2563eb;
     transform: translateX(4px);
+    box-shadow: -4px 0 0 0 #2563eb;  /* Left accent bar */
 }
 
+/* Selected state - highly visible */
+.option:has(input[type="radio"]:checked) {
+    background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+    border-color: #2563eb;
+    border-width: 3px;
+    box-shadow: -6px 0 0 0 #2563eb;
+}
+
+/* Custom radio button - larger and more visible */
 .option input[type="radio"] {
-    margin-right: 0.75rem;
-    width: 18px;
-    height: 18px;
+    /* Hide native radio but keep accessible */
+    appearance: none;
+    -webkit-appearance: none;
+    width: 28px;   /* Increased from 18px */
+    height: 28px;  /* Increased from 18px */
+    margin-right: 1rem;
+    border: 3px solid #9ca3af;
+    border-radius: 50%;
     cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;  /* Prevent squishing */
+    position: relative;
+    background: white;
+}
+
+/* Radio button hover state */
+.option input[type="radio"]:hover {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+/* Radio button checked state */
+.option input[type="radio"]:checked {
+    border-color: #2563eb;
+    border-width: 3px;
+    background: #2563eb;
+}
+
+/* Inner dot for checked state - highly visible */
+.option input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+}
+
+/* Focus state - keyboard navigation */
+.option input[type="radio"]:focus {
+    outline: 3px solid #2563eb;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.2);
 }
 
 .option input[type="radio"]:checked + span {
-    font-weight: 600;
+    font-weight: 700;  /* Bold for selected */
+    color: #1e40af;    /* Darker blue for contrast */
 }
 
 .option span {
-    font-size: 1rem;
+    font-size: 1.125rem;  /* Increased from 1rem */
+    font-weight: 500;
+    color: #111827;
+    line-height: 1.5;
 }
 
 /* Text Input */
@@ -402,9 +481,28 @@ header p {
 }
 
 .text-input:focus {
-    outline: none;
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
     border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+
+/* Auto-focus visual indicator - helps students see where to start */
+.text-input.initial-focus,
+.option:has(input.initial-focus) {
+    animation: focusPulse 1.5s ease-out;
+}
+
+@keyframes focusPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(37, 99, 235, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    }
 }
 
 /* Multi-gap input container */
@@ -490,26 +588,74 @@ header p {
     20%, 40%, 60%, 80% { transform: translateX(4px); }
 }
 
-/* Actions */
+/* Actions - Sticky action bar that follows user */
 .actions {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+
     display: flex;
     gap: 1rem;
-    justify-content: center;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 2px solid #e5e7eb;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 1.25rem 2rem;
+    background: white;
+    border-top: 3px solid #2563eb;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+
+    /* Smooth entry animation */
+    animation: slideUpBar 0.4s ease-out;
+}
+
+@keyframes slideUpBar {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Progress indicator inside action bar - centered */
+.actions::after {
+    content: attr(data-progress);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4b5563;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* Keep Reset and Submit buttons together on the right */
+#resetBtn,
+#submitBtn {
+    margin-left: auto;
+}
+
+#resetBtn {
+    margin-left: auto;
+    margin-right: 0;
 }
 
 /* Buttons */
 .btn-primary,
 .btn-secondary {
-    padding: 0.875rem 2rem;
-    font-size: 1rem;
-    font-weight: 600;
+    padding: 1rem 2.5rem;  /* Increased padding for better touch target */
+    font-size: 1.125rem;   /* Larger text */
+    font-weight: 700;      /* Bolder */
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 48px;      /* WCAG AA touch target */
 }
 
 .btn-primary {
@@ -526,6 +672,18 @@ header p {
 
 .btn-primary:active {
     transform: translateY(0);
+}
+
+/* Visual feedback when all questions answered */
+.btn-primary.ready-to-submit {
+    background: #10b981;  /* Green to indicate readiness */
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    animation: readyPulse 2s ease-in-out infinite;
+}
+
+@keyframes readyPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
 }
 
 .btn-secondary {
@@ -812,13 +970,40 @@ header p {
         gap: 1rem;
     }
 
+    /* Responsive question text sizing */
+    .question-text {
+        font-size: 1.25rem;  /* Slightly smaller on mobile but still readable */
+        line-height: 1.6;
+    }
+
+    .level-section[data-level="1"] .question-text {
+        font-size: 1.375rem;
+    }
+
     .actions {
-        flex-direction: column;
+        padding: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .actions::after {
+        position: static;
+        transform: none;
+        width: 100%;
+        text-align: center;
+        order: -1;
+        margin-bottom: 0.5rem;
     }
 
     .btn-primary,
     .btn-secondary {
-        width: 100%;
+        flex: 1 1 auto;
+        min-width: 140px;
+    }
+
+    #backBtn {
+        flex-basis: 100%;
     }
 
     .detailed-results h3 {

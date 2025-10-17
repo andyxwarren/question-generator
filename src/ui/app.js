@@ -203,6 +203,15 @@ class App {
             </div>
         `).join('');
 
+        // Calculate total questions
+        const totalQuestions = this.questions.reduce((sum, level) => sum + level.questions.length, 0);
+
+        // Set progress text on actions bar
+        const actionsBar = document.querySelector('.actions');
+        if (actionsBar) {
+            actionsBar.setAttribute('data-progress', `0 of ${totalQuestions} answered`);
+        }
+
         // Add entrance animations with stagger
         setTimeout(() => {
             const questions = document.querySelectorAll('.question');
@@ -210,7 +219,79 @@ class App {
                 q.style.animationDelay = `${idx * 0.05}s`;
                 q.classList.add('animate-slide-in');
             });
+
+            // Auto-focus first input after animations start
+            this.focusFirstInput();
         }, 10);
+
+        // Setup progress tracking
+        this.setupProgressTracking(totalQuestions);
+    }
+
+    /**
+     * Focus first input with visual pulse animation
+     */
+    focusFirstInput() {
+        // Find first text input or first question's first option
+        const firstTextInput = document.querySelector('.text-input');
+        const firstRadio = document.querySelector('input[type="radio"]');
+
+        const elementToFocus = firstTextInput || firstRadio;
+
+        if (elementToFocus) {
+            setTimeout(() => {
+                elementToFocus.focus();
+                // Add pulsing animation to draw attention
+                elementToFocus.classList.add('initial-focus');
+
+                // Remove the class after animation completes
+                setTimeout(() => {
+                    elementToFocus.classList.remove('initial-focus');
+                }, 1500);
+            }, 300); // Wait for slide-in animation
+        }
+    }
+
+    /**
+     * Setup progress tracking for answered questions
+     */
+    setupProgressTracking(totalQuestions) {
+        const actionsBar = document.querySelector('.actions');
+        const submitBtn = document.getElementById('submitBtn');
+
+        const updateProgress = () => {
+            let answered = 0;
+
+            // Count filled text inputs
+            document.querySelectorAll('.text-input').forEach(input => {
+                if (input.value.trim()) answered++;
+            });
+
+            // Count selected radio buttons (by unique name)
+            const radioGroups = new Set();
+            document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+                radioGroups.add(radio.name);
+            });
+            answered += radioGroups.size;
+
+            // Update progress text
+            if (actionsBar) {
+                actionsBar.setAttribute('data-progress', `${answered} of ${totalQuestions} answered`);
+            }
+
+            // Enable/highlight submit when all answered
+            if (submitBtn) {
+                if (answered === totalQuestions) {
+                    submitBtn.classList.add('ready-to-submit');
+                } else {
+                    submitBtn.classList.remove('ready-to-submit');
+                }
+            }
+        };
+
+        // Listen to all inputs
+        document.addEventListener('input', updateProgress);
+        document.addEventListener('change', updateProgress);
     }
 
     /**
@@ -517,6 +598,19 @@ class App {
             q.classList.remove('correct', 'incorrect');
             q.querySelector('.feedback').innerHTML = '';
         });
+
+        // Reset progress indicator
+        const totalQuestions = this.questions.reduce((sum, level) => sum + level.questions.length, 0);
+        const actionsBar = document.querySelector('.actions');
+        if (actionsBar) {
+            actionsBar.setAttribute('data-progress', `0 of ${totalQuestions} answered`);
+        }
+
+        // Remove ready-to-submit class
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            submitBtn.classList.remove('ready-to-submit');
+        }
     }
 
     /**
