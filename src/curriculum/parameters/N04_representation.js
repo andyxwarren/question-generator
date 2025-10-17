@@ -44,6 +44,7 @@ export const N04_MODULES = {
                 operations: ['number_line_position', 'number_line_between', 'number_line_jump', 'compare_language', 'estimate_position', 'estimate_group'],
                 number_line_max: 100,
                 estimation_ranges: [[0, 20], [20, 50], [50, 100]],
+                object_types: ['dots', 'stars', 'circles', 'blocks', 'tallies'],
                 comparison_words: ['equal to', 'more than', 'less than', 'fewer', 'most', 'least']
             }
         }

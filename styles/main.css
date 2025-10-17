@@ -1175,3 +1175,203 @@ header p {
         height: 22px;
     }
 }
+
+/* ============================================
+   Ten Frame (2x5 grid for numbers 1-10)
+   ============================================ */
+.ten-frame {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 6px;
+    width: fit-content;
+    padding: 15px;
+    background: white;
+    border: 3px solid #2563eb;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.ten-frame-cell {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #9ca3af;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.ten-frame-cell.filled {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    border-color: #2563eb;
+}
+
+.ten-frame-cell.empty {
+    background-color: #f3f4f6;
+    border-style: dashed;
+}
+
+/* ============================================
+   Base-10 Blocks (tens rods and ones cubes)
+   ============================================ */
+.base10-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.tens-group,
+.ones-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.tens-rod {
+    width: 20px;
+    height: 200px;
+    background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+    border: 2px solid #1e40af;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* Add visual lines to show it represents 10 units */
+.tens-rod::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 18px,
+        rgba(255, 255, 255, 0.3) 18px,
+        rgba(255, 255, 255, 0.3) 20px
+    );
+}
+
+.ones-cube {
+    width: 20px;
+    height: 20px;
+    background: #10b981;
+    border: 2px solid #059669;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   Tally Marks (groups of 5)
+   ============================================ */
+.tally-marks-container {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.tally-group {
+    display: inline-flex;
+    position: relative;
+    gap: 5px;
+    align-items: center;
+    height: 60px;
+}
+
+.tally-line {
+    display: inline-block;
+    width: 3px;
+    height: 50px;
+    background: #1f2937;
+    border-radius: 2px;
+}
+
+.tally-diagonal {
+    display: inline-block;
+    width: 60px;
+    height: 3px;
+    background: #ef4444;
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-65deg);
+    transform-origin: center;
+    border-radius: 2px;
+}
+
+.tally-group.incomplete .tally-diagonal {
+    display: none;
+}
+
+/* Responsive adjustments for new visuals */
+@media (max-width: 768px) {
+    .ten-frame {
+        gap: 4px;
+        padding: 10px;
+    }
+
+    .ten-frame-cell {
+        width: 40px;
+        height: 40px;
+    }
+
+    .tens-rod {
+        width: 16px;
+        height: 160px;
+    }
+
+    .ones-cube {
+        width: 16px;
+        height: 16px;
+    }
+
+    .tally-line {
+        height: 40px;
+    }
+
+    .tally-diagonal {
+        width: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ten-frame-cell {
+        width: 32px;
+        height: 32px;
+    }
+
+    .tens-rod {
+        width: 14px;
+        height: 140px;
+    }
+
+    .ones-cube {
+        width: 14px;
+        height: 14px;
+    }
+
+    .tally-line {
+        height: 35px;
+    }
+
+    .tally-diagonal {
+        width: 45px;
+    }
+}

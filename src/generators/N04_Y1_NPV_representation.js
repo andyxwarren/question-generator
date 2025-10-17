@@ -186,7 +186,9 @@ function generateEstimateGroup(params, level) {
     const { min_value, max_value, object_types } = params;
 
     const actualCount = randomInt(min_value, max_value);
-    const objectType = randomChoice(object_types);
+    // Default object types if not provided
+    const availableTypes = object_types || ['objects', 'items', 'things'];
+    const objectType = randomChoice(availableTypes);
 
     // Generate estimation options around the actual count
     const options = [

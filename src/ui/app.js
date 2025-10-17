@@ -474,7 +474,10 @@ class App {
     renderQuestionText(text) {
         // Check if text contains our safe visual HTML classes
         const hasSafeVisuals = text.includes('class="simple-number-line"') ||
-                              text.includes('class="simple-dots-container"');
+                              text.includes('class="simple-dots-container"') ||
+                              text.includes('class="ten-frame"') ||
+                              text.includes('class="base10-container"') ||
+                              text.includes('class="tally-marks-container"');
 
         if (hasSafeVisuals) {
             // Text contains our visual HTML - render as-is
