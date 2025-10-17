@@ -18,15 +18,29 @@ export function createSimpleNumberLineHTML(min, max, markedPosition = null, show
     const divisions = 10;
     const step = (max - min) / divisions;
 
+    // Find the closest tick index to the marked position
+    let markedTickIndex = null;
+    if (markedPosition !== null) {
+        let closestDistance = Infinity;
+        for (let i = 0; i <= divisions; i++) {
+            const value = min + (i * step);
+            const distance = Math.abs(value - markedPosition);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                markedTickIndex = i;
+            }
+        }
+    }
+
     let html = '<div class="simple-number-line">';
 
     for (let i = 0; i <= divisions; i++) {
         const value = min + (i * step);
-        const isMarked = markedPosition !== null &&
-                         Math.abs(value - markedPosition) < step * 0.4;
+        const isMarked = markedTickIndex === i;
 
         // Show labels at start, middle, end, or all depending on parameter
-        const showLabel = showAllLabels || i === 0 || i === divisions || i === 5;
+        // BUT never show label on the marked position (to avoid giving away answer)
+        const showLabel = !isMarked && (showAllLabels || i === 0 || i === divisions || i === Math.floor(divisions / 2));
 
         html += `
             <div class="number-line-tick ${isMarked ? 'marked' : ''}">
