@@ -89,8 +89,8 @@ class App {
                                 <div class="year-header">Year ${year}</div>
                                 ${module ? `
                                     <div class="module-cell" data-module-id="${module.id}">
-                                        <div class="module-ref">${module.ref || module.name.split(':')[0]}</div>
-                                        <div class="module-name">${module.name}</div>
+                                        <div class="module-name">${module.name.includes(':') ? module.name.split(':')[1].trim() : module.name}</div>
+                                        <div class="module-ref">${module.id}</div>
                                         <div class="module-description">${module.description}</div>
                                     </div>
                                 ` : `
