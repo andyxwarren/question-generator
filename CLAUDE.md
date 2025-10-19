@@ -201,3 +201,123 @@ All files use ES6 modules:
 - No compilation or transpilation
 - Pure HTML/CSS/JavaScript
 - Works offline after first load
+
+## Visual Display Philosophy: Low-Overhead Solutions
+
+When implementing visual representations for mathematical concepts, **prioritize simple, low-overhead solutions** that achieve the right balance between visual appeal and implementation effort.
+
+### Guiding Principles
+
+1. **90/10 Rule**: Aim for solutions that deliver 90% of the visual benefits for 10% of the implementation effort
+2. **HTML/CSS First**: Leverage native HTML/CSS capabilities before considering complex solutions
+3. **Progressive Enhancement**: Start simple, add complexity only when necessary
+4. **Maintenance Cost**: Consider long-term maintenance - simpler code is easier to debug and modify
+
+### Example: Columnar Calculations (C02 Modules)
+
+The UK National Curriculum requires "formal written methods of columnar addition and subtraction" for Years 3-5. Rather than implementing a complex interactive canvas or SVG solution, we use a **styled `<pre>` tag approach**:
+
+```javascript
+// Helper function returns simple HTML string
+export function formatColumnar(num1, num2, operator) {
+    const num1Padded = num1.toLocaleString().padStart(maxLen + 2, ' ');
+    const num2Padded = num2.toLocaleString().padStart(maxLen + 2, ' ');
+    const line = '─'.repeat(maxLen + 2);
+
+    return `<pre class="columnar-calc">  ${num1Padded}
+${operator} ${num2Padded}
+${line}
+  ?</pre>`;
+}
+```
+
+**Benefits of this approach:**
+- ✅ Uses monospace font for natural alignment
+- ✅ Single CSS file for styling (`styles/columnar.css`)
+- ✅ No JavaScript runtime overhead
+- ✅ Works in all browsers, print-friendly
+- ✅ Easy to maintain and modify
+- ✅ Accessible and screen-reader friendly
+
+**What we avoided:**
+- ❌ Complex Canvas rendering requiring draw loops
+- ❌ SVG generation requiring coordinate calculations
+- ❌ Third-party libraries adding bundle size
+- ❌ Interactive animations requiring state management
+
+### Decision Framework
+
+When implementing visual displays, ask:
+
+1. **Can this be solved with HTML/CSS alone?** (e.g., styled text, flexbox, grid)
+2. **Does this need to be interactive?** (e.g., number lines with draggable markers vs static displays)
+3. **What's the effort-to-benefit ratio?** (hours to implement vs educational value added)
+4. **Will this need frequent updates?** (simple solutions are easier to modify)
+
+### Recommended Approaches by Complexity
+
+**Low Overhead (Preferred):**
+- Styled `<pre>` tags for formatted text (columnar calculations)
+- CSS Grid/Flexbox for structured layouts (ten frames, base-10 blocks)
+- Unicode characters for symbols (tally marks, arrows, dots)
+- Simple HTML generation functions (no state, no lifecycle)
+
+**Medium Overhead (When Justified):**
+- Inline SVG for geometric shapes (number lines, bar models)
+- Simple Canvas for pixel-perfect rendering (rare cases)
+- Minimal JavaScript for interactivity (drag-and-drop if pedagogically valuable)
+
+**High Overhead (Avoid Unless Critical):**
+- Complex interactive visualizations requiring state management
+- Third-party charting/graphing libraries
+- Animations requiring requestAnimationFrame
+- WebGL or advanced rendering techniques
+
+### File Organization for Visual Helpers
+
+Keep visual helpers organized and reusable:
+
+```
+src/generators/helpers/
+├── columnarHelpers.js      # Columnar calculation formatting
+├── numberLineHelpers.js    # Number line HTML generation
+├── visualHelpers.js        # Shared visual utilities
+└── ...
+```
+
+Each helper should:
+- Export pure functions that return HTML strings or simple objects
+- Include clear JSDoc comments with examples
+- Avoid side effects and global state
+- Be testable in isolation
+
+### Example: Avoiding Over-Engineering
+
+**❌ Over-engineered approach:**
+```javascript
+class ColumnarCalculationRenderer {
+    constructor(config) { /* complex setup */ }
+    setNumbers(a, b) { /* state management */ }
+    render() { /* multi-step rendering */ }
+    update() { /* DOM manipulation */ }
+    destroy() { /* cleanup */ }
+}
+```
+
+**✅ Simple approach:**
+```javascript
+export function formatColumnar(num1, num2, operator) {
+    // Returns HTML string - done!
+    return `<pre class="columnar-calc">...</pre>`;
+}
+```
+
+### When to Increase Complexity
+
+Add complexity **only when**:
+- Simple solutions fail to meet curriculum requirements
+- Interactivity is pedagogically essential (not just "nice to have")
+- User testing shows students benefit significantly
+- The feature is used across many modules (justify the investment)
+
+**Remember**: The goal is effective mathematics practice, not impressive visual effects. A simple, working solution deployed today is better than a perfect solution still in development.

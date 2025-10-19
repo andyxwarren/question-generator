@@ -26,6 +26,10 @@ import {
     getRandomItem
 } from './helpers/calculationHelpers.js';
 
+import {
+    formatColumnar
+} from './helpers/columnarHelpers.js';
+
 /**
  * Main question generator
  */
@@ -93,16 +97,16 @@ function generateAdditionNoCarry(params, level) {
             text: randomChoice(contexts),
             type: 'text_input',
             answer: answer.toString(),
-            hint: `${params.instruction_hint}: ${a} + ${b}`,
+            hint: `Use column method: ${a} + ${b}`,
             module: 'C02_Y3_CALC',
             level: level
         };
     } else {
         return {
-            text: `Calculate:\n${a} + ${b} = ?`,
+            text: `Calculate using the column method:\n\n${formatColumnar(a, b, '+')}`,
             type: 'text_input',
             answer: answer.toString(),
-            hint: params.instruction_hint,
+            hint: 'Start with the ones column. No carrying needed for this question.',
             module: 'C02_Y3_CALC',
             level: level
         };
@@ -149,10 +153,10 @@ function generateSubtractionNoBorrow(params, level) {
         };
     } else {
         return {
-            text: `Calculate:\n${a} - ${b} = ?`,
+            text: `Calculate using the column method:\n\n${formatColumnar(a, b, '-')}`,
             type: 'text_input',
             answer: answer.toString(),
-            hint: params.instruction_hint,
+            hint: 'Start with the ones column. Remember to borrow if needed.',
             module: 'C02_Y3_CALC',
             level: level
         };
@@ -188,7 +192,7 @@ function generateAdditionSimpleCarry(params, level) {
     } while (attempts++ < 100);
 
     return {
-        text: `Calculate:\n${a} + ${b} = ?`,
+        text: `Calculate:\n${a.toLocaleString()} + ${b.toLocaleString()} = ?`,
         type: 'text_input',
         answer: answer.toString(),
         hint: `${params.instruction_hint}. Remember to carry.`,
@@ -223,7 +227,7 @@ function generateSubtractionSimpleBorrow(params, level) {
     } while (attempts++ < 100);
 
     return {
-        text: `Calculate:\n${a} - ${b} = ?`,
+        text: `Calculate:\n${a.toLocaleString()} - ${b.toLocaleString()} = ?`,
         type: 'text_input',
         answer: answer.toString(),
         hint: `${params.instruction_hint}. Remember to borrow/regroup.`,
@@ -270,10 +274,10 @@ function generateAdditionWithCarry(params, level) {
         };
     } else {
         return {
-            text: `Calculate:\n${a} + ${b} = ?`,
+            text: `Calculate using the column method:\n\n${formatColumnar(a, b, '+')}`,
             type: 'text_input',
             answer: answer.toString(),
-            hint: params.instruction_hint,
+            hint: 'Start with the ones column. Remember to carry if needed.',
             module: 'C02_Y3_CALC',
             level: level
         };
@@ -315,10 +319,10 @@ function generateSubtractionWithBorrow(params, level) {
         };
     } else {
         return {
-            text: `Calculate:\n${a} - ${b} = ?`,
+            text: `Calculate using the column method:\n\n${formatColumnar(a, b, '-')}`,
             type: 'text_input',
             answer: answer.toString(),
-            hint: params.instruction_hint,
+            hint: 'Start with the ones column. Remember to borrow if needed.',
             module: 'C02_Y3_CALC',
             level: level
         };
@@ -364,7 +368,7 @@ function generateCrossing1000(params, level) {
     } while (attempts++ < 100);
 
     return {
-        text: `Calculate:\n${a} + ${b} = ?`,
+        text: `Calculate:\n${a.toLocaleString()} + ${b.toLocaleString()} = ?`,
         type: 'text_input',
         answer: answer.toString(),
         hint: `${params.instruction_hint}. The answer will be over 1000.`,

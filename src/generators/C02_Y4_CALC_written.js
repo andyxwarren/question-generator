@@ -24,6 +24,10 @@ import {
     getRandomItem
 } from './helpers/calculationHelpers.js';
 
+import {
+    formatColumnar
+} from './helpers/columnarHelpers.js';
+
 /**
  * Main question generator
  */
@@ -93,10 +97,10 @@ function generateAdditionNoCarry(params, level) {
         };
     } else {
         return {
-            text: `Calculate:\n${a.toLocaleString()} + ${b.toLocaleString()} = ?`,
+            text: `Calculate using the column method:\n\n${formatColumnar(a, b, '+')}`,
             type: 'text_input',
             answer: answer.toString(),
-            hint: params.instruction_hint,
+            hint: 'Use the column method. Start with the ones column.',
             module: 'C02_Y4_CALC',
             level: level
         };
@@ -139,10 +143,10 @@ function generateSubtractionNoBorrow(params, level) {
         };
     } else {
         return {
-            text: `Calculate:\n${a.toLocaleString()} - ${b.toLocaleString()} = ?`,
+            text: `Calculate using the column method:\n\n${formatColumnar(a, b, '-')}`,
             type: 'text_input',
             answer: answer.toString(),
-            hint: params.instruction_hint,
+            hint: 'Use the column method. Remember to borrow if needed.',
             module: 'C02_Y4_CALC',
             level: level
         };
@@ -251,10 +255,10 @@ function generateAdditionWithCarry(params, level) {
         };
     } else {
         return {
-            text: `Calculate:\n${a.toLocaleString()} + ${b.toLocaleString()} = ?`,
+            text: `Calculate using the column method:\n\n${formatColumnar(a, b, '+')}`,
             type: 'text_input',
             answer: answer.toString(),
-            hint: params.instruction_hint,
+            hint: 'Use the column method. Start with the ones column.',
             module: 'C02_Y4_CALC',
             level: level
         };
@@ -295,10 +299,10 @@ function generateSubtractionWithBorrow(params, level) {
         };
     } else {
         return {
-            text: `Calculate:\n${a.toLocaleString()} - ${b.toLocaleString()} = ?`,
+            text: `Calculate using the column method:\n\n${formatColumnar(a, b, '-')}`,
             type: 'text_input',
             answer: answer.toString(),
-            hint: params.instruction_hint,
+            hint: 'Use the column method. Remember to borrow if needed.',
             module: 'C02_Y4_CALC',
             level: level
         };

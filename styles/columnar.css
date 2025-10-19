@@ -1,0 +1,113 @@
+/**
+ * Columnar Calculation Styles
+ *
+ * Styles for displaying formal written methods of columnar addition and subtraction
+ * Used in C02 modules (Years 3-5)
+ */
+
+.columnar-calc {
+    /* Typography */
+    font-family: 'Courier New', 'Consolas', 'Monaco', 'Lucida Console', monospace;
+    font-size: 1.3em;
+    line-height: 1.6;
+    font-weight: 400;
+
+    /* Spacing */
+    padding: 12px 0;
+    margin: 12px 0;
+
+    /* Layout */
+    display: inline-block;
+    text-align: left;
+
+    /* Minimal styling - no background or borders */
+    background: transparent;
+    border: none;
+
+    /* Colors */
+    color: inherit;
+
+    /* Prevent text selection issues */
+    white-space: pre;
+    overflow-x: auto;
+}
+
+/* Carry row (numbers shown above calculation) */
+.columnar-calc .carry-row {
+    font-size: 0.7em;
+    color: #e74c3c;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+/* Borrow row (marks shown above calculation for subtraction) */
+.columnar-calc .borrow-row {
+    font-size: 0.7em;
+    color: #9b59b6;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+/* Removed hover effect - keep it simple */
+
+/* Dark mode support - minimal changes needed with transparent background */
+@media (prefers-color-scheme: dark) {
+    .columnar-calc {
+        color: inherit;
+    }
+}
+
+/* Print styles - clean, black and white for worksheets */
+@media print {
+    .columnar-calc {
+        color: #000;
+        font-size: 1.2em;
+        page-break-inside: avoid;
+    }
+
+    .columnar-calc .carry-row {
+        color: #666;
+    }
+
+    .columnar-calc .borrow-row {
+        color: #666;
+    }
+}
+
+/* Mobile responsive - maintain readability */
+@media (max-width: 768px) {
+    .columnar-calc {
+        font-size: 1.2em;
+        padding: 10px 0;
+        margin: 10px 0;
+    }
+}
+
+/* Very small screens - still readable */
+@media (max-width: 480px) {
+    .columnar-calc {
+        font-size: 1.1em;
+        padding: 8px 0;
+        margin: 8px 0;
+    }
+}
+
+/* High contrast mode for accessibility */
+@media (prefers-contrast: high) {
+    .columnar-calc {
+        color: #000;
+        font-weight: 600;
+    }
+
+    .columnar-calc .carry-row {
+        color: #c00;
+        font-weight: 900;
+    }
+
+    .columnar-calc .borrow-row {
+        color: #808;
+        font-weight: 900;
+    }
+}
+
+/* Removed animations and utility classes - keep it simple */

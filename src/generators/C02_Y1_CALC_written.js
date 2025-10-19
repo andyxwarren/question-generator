@@ -251,7 +251,7 @@ function generateMissingMinuend(params, level) {
             answer: a
         },
         {
-            text: `What number subtract ${b} equals ${answer}?`,
+            text: `What number minus ${b} equals ${answer}?`,
             answer: a
         }
     ];

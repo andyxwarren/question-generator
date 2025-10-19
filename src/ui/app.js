@@ -477,7 +477,8 @@ class App {
                               text.includes('class="simple-dots-container"') ||
                               text.includes('class="ten-frame"') ||
                               text.includes('class="base10-container"') ||
-                              text.includes('class="tally-marks-container"');
+                              text.includes('class="tally-marks-container"') ||
+                              text.includes('class="columnar-calc"');
 
         if (hasSafeVisuals) {
             // Text contains our visual HTML - render as-is
