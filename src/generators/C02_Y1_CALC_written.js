@@ -274,16 +274,42 @@ function generateMissingMinuend(params, level) {
 /**
  * OPERATION 6: Symbol Interpretation
  * Understanding +, -, = symbols
+ *
+ * IMPORTANT: Excludes cases where multiple symbols work
+ * (e.g., "10 ___ 0 = 10" is true for both + and -)
  */
 function generateSymbolInterpretation(params, level) {
     const opType = randomChoice(['addition', 'subtraction']);
 
     if (opType === 'addition') {
-        const { a, b, answer } = generateAddition(
-            params.result_range[0],
-            params.result_range[1],
-            { allowZero: params.allow_zero }
-        );
+        let a, b, answer;
+        let attempts = 0;
+
+        do {
+            const result = generateAddition(
+                params.result_range[0],
+                params.result_range[1],
+                { allowZero: params.allow_zero }
+            );
+
+            a = result.a;
+            b = result.b;
+            answer = result.answer;
+
+            // CRITICAL: Exclude b=0 because a + 0 = a AND a - 0 = a
+            // This would make both + and - correct answers
+            if (b === 0) {
+                attempts++;
+                continue;
+            }
+
+            break;
+        } while (attempts < 50);
+
+        // If we couldn't find a non-zero case after 50 attempts, try subtraction
+        if (b === 0) {
+            return generateSymbolInterpretation(params, level);
+        }
 
         const questionTypes = [
             {
@@ -310,14 +336,37 @@ function generateSymbolInterpretation(params, level) {
             level: level
         };
     } else {
-        const { a, b, answer } = generateSubtraction(
-            params.result_range[0],
-            params.result_range[1],
-            {
-                allowZero: params.allow_zero,
-                maxMinuend: params.max_value
+        let a, b, answer;
+        let attempts = 0;
+
+        do {
+            const result = generateSubtraction(
+                params.result_range[0],
+                params.result_range[1],
+                {
+                    allowZero: params.allow_zero,
+                    maxMinuend: params.max_value
+                }
+            );
+
+            a = result.a;
+            b = result.b;
+            answer = result.answer;
+
+            // CRITICAL: Exclude b=0 because a - 0 = a AND a + 0 = a
+            // This would make both - and + correct answers
+            if (b === 0) {
+                attempts++;
+                continue;
             }
-        );
+
+            break;
+        } while (attempts < 50);
+
+        // If we couldn't find a non-zero case after 50 attempts, try addition
+        if (b === 0) {
+            return generateSymbolInterpretation(params, level);
+        }
 
         return {
             text: `Which symbol goes here: ${a} ___ ${b} = ${answer}?`,
