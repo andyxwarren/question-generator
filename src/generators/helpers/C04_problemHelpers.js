@@ -604,65 +604,379 @@ export function generateTwoStepDistractors(correctAnswer, problemData) {
 // ============================================================================
 
 /**
+ * Get context templates appropriate for the number scale
+ * Ensures realistic contexts (schools for hundreds, cities for millions)
+ * @param {number} maxValue - Maximum value in the problem
+ * @param {string} operationType - 'addition', 'subtraction', or 'mixed'
+ * @returns {Array} Array of context templates with constraints
+ */
+function getScaledContexts(maxValue, operationType) {
+    // SMALL SCALE: 1-10,000 (schools, local shops, small libraries)
+    if (maxValue <= 10000) {
+        if (operationType === 'addition') {
+            return [
+                {
+                    template: (nums) => {
+                        const yearGroups = nums.map((n, i) => `Year ${i + 3} has ${n.toLocaleString()} students`).join(', ');
+                        return `A school has ${nums.length} year groups. ${yearGroups}. How many students in total?`;
+                    },
+                    items: 'students',
+                    perItemMax: 500
+                },
+                {
+                    template: (nums) => {
+                        const sections = nums.map((n, i) => `${n.toLocaleString()} books in section ${String.fromCharCode(65 + i)}`).join(', ');
+                        return `A library has ${nums.length} sections with ${sections}. How many books altogether?`;
+                    },
+                    items: 'books',
+                    perItemMax: 3000
+                },
+                {
+                    template: (nums) => {
+                        const stores = nums.map((n, i) => `Store ${i + 1} has ${n.toLocaleString()} items`).join(', ');
+                        return `A chain has ${nums.length} stores. ${stores}. What is the total stock across all stores?`;
+                    },
+                    items: 'items',
+                    perItemMax: 2000
+                }
+            ];
+        } else if (operationType === 'subtraction') {
+            return [
+                {
+                    template: (start, nums) => {
+                        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                        const sales = nums.map((n, i) => `${n.toLocaleString()} items on ${days[i]}`).join(', ');
+                        return `A shop has ${start.toLocaleString()} items. Items are sold: ${sales}. How many items remain?`;
+                    },
+                    items: 'items',
+                    perItemMax: 2000
+                },
+                {
+                    template: (start, nums) => {
+                        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                        const borrowed = nums.map((n, i) => `${n.toLocaleString()} books on ${days[i]}`).join(', ');
+                        return `A library has ${start.toLocaleString()} books. Books are borrowed: ${borrowed}. How many books remain?`;
+                    },
+                    items: 'books',
+                    perItemMax: 3000
+                }
+            ];
+        } else if (operationType === 'mixed') {
+            return [
+                {
+                    template: (start, ops) => {
+                        const changes = ops.map((op) => {
+                            const action = op.type === 'add' ? 'arrive' : 'leave';
+                            return `${op.value.toLocaleString()} students ${action}`;
+                        }).join(', then ');
+                        return `A school has ${start.toLocaleString()} students. Over the term, ${changes}. How many students does the school have now?`;
+                    },
+                    items: 'students',
+                    perItemMax: 500
+                },
+                {
+                    template: (start, ops) => {
+                        const changes = ops.map((op) => {
+                            const action = op.type === 'add' ? 'delivered' : 'sold';
+                            return `${op.value.toLocaleString()} items ${action}`;
+                        }).join(', then ');
+                        return `A shop has ${start.toLocaleString()} items. ${changes}. How many items are in stock now?`;
+                    },
+                    items: 'items',
+                    perItemMax: 2000
+                }
+            ];
+        }
+    }
+
+    // MEDIUM SCALE: 10,001-100,000 (school districts, warehouses, stadium attendance)
+    if (maxValue <= 100000) {
+        if (operationType === 'addition') {
+            return [
+                {
+                    template: (nums) => {
+                        const schools = nums.map((n, i) => `${n.toLocaleString()} students at School ${String.fromCharCode(65 + i)}`).join(', ');
+                        return `A school district has ${nums.length} schools with ${schools}. How many students in total across the district?`;
+                    },
+                    items: 'students',
+                    perItemMax: 20000
+                },
+                {
+                    template: (nums) => {
+                        const warehouses = nums.map((n, i) => `Warehouse ${i + 1} has ${n.toLocaleString()} items`).join(', ');
+                        return `A company has ${nums.length} warehouses. ${warehouses}. What is the total inventory?`;
+                    },
+                    items: 'items',
+                    perItemMax: 40000
+                },
+                {
+                    template: (nums) => {
+                        const matches = ['match 1', 'match 2', 'match 3', 'match 4', 'match 5'];
+                        const attendance = nums.map((n, i) => `${n.toLocaleString()} at ${matches[i]}`).join(', ');
+                        return `A stadium records attendance: ${attendance}. What was the total attendance across all matches?`;
+                    },
+                    items: 'spectators',
+                    perItemMax: 50000
+                }
+            ];
+        } else if (operationType === 'subtraction') {
+            return [
+                {
+                    template: (start, nums) => {
+                        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+                        const dispatched = nums.map((n, i) => `${n.toLocaleString()} items on ${days[i]}`).join(', ');
+                        return `A warehouse has ${start.toLocaleString()} items in stock. Items are dispatched: ${dispatched}. How many items remain?`;
+                    },
+                    items: 'items',
+                    perItemMax: 40000
+                },
+                {
+                    template: (start, nums) => {
+                        const months = ['January', 'February', 'March', 'April', 'May'];
+                        const spending = nums.map((n, i) => `£${n.toLocaleString()} in ${months[i]}`).join(', ');
+                        return `A business account starts with £${start.toLocaleString()}. Expenses: ${spending}. How much remains?`;
+                    },
+                    items: 'pounds',
+                    perItemMax: 50000
+                }
+            ];
+        } else if (operationType === 'mixed') {
+            return [
+                {
+                    template: (start, ops) => {
+                        const changes = ops.map((op) => {
+                            const action = op.type === 'add' ? 'received' : 'dispatched';
+                            return `${op.value.toLocaleString()} items ${action}`;
+                        }).join(', then ');
+                        return `A warehouse has ${start.toLocaleString()} items. Over the week, ${changes}. How many items are in the warehouse now?`;
+                    },
+                    items: 'items',
+                    perItemMax: 40000
+                },
+                {
+                    template: (start, ops) => {
+                        const transactions = ops.map((op) => {
+                            const action = op.type === 'add' ? 'deposits' : 'withdraws';
+                            return `${action} £${op.value.toLocaleString()}`;
+                        }).join(', then ');
+                        return `A business account has £${start.toLocaleString()}. ${transactions}. What is the final balance?`;
+                    },
+                    items: 'pounds',
+                    perItemMax: 50000
+                }
+            ];
+        }
+    }
+
+    // LARGE SCALE: 100,001-1,000,000 (towns, regional operations, major events)
+    if (maxValue <= 1000000) {
+        if (operationType === 'addition') {
+            return [
+                {
+                    template: (nums) => {
+                        const towns = nums.map((n, i) => `Town ${String.fromCharCode(65 + i)} has ${n.toLocaleString()} residents`).join(', ');
+                        return `A region consists of ${nums.length} towns. ${towns}. What is the total population of the region?`;
+                    },
+                    items: 'residents',
+                    perItemMax: 500000
+                },
+                {
+                    template: (nums) => {
+                        const regions = ['North', 'South', 'East', 'West', 'Central'];
+                        const sales = nums.map((n, i) => `${regions[i]} region: £${n.toLocaleString()}`).join(', ');
+                        return `A company tracks quarterly sales by region: ${sales}. What were the total sales?`;
+                    },
+                    items: 'pounds',
+                    perItemMax: 600000
+                },
+                {
+                    template: (nums) => {
+                        const months = ['January', 'February', 'March', 'April', 'May'];
+                        const passengers = nums.map((n, i) => `${n.toLocaleString()} passengers in ${months[i]}`).join(', ');
+                        return `An airport records: ${passengers}. How many total passengers?`;
+                    },
+                    items: 'passengers',
+                    perItemMax: 400000
+                }
+            ];
+        } else if (operationType === 'subtraction') {
+            return [
+                {
+                    template: (start, nums) => {
+                        const centers = nums.map((n, i) => `${n.toLocaleString()} units to Center ${i + 1}`).join(', ');
+                        return `A regional warehouse has ${start.toLocaleString()} units. Shipments sent: ${centers}. How many units remain?`;
+                    },
+                    items: 'units',
+                    perItemMax: 400000
+                },
+                {
+                    template: (start, nums) => {
+                        const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+                        const expenses = nums.map((n, i) => `£${n.toLocaleString()} in ${quarters[i]}`).join(', ');
+                        return `A department budget is £${start.toLocaleString()}. Spending: ${expenses}. How much budget remains?`;
+                    },
+                    items: 'pounds',
+                    perItemMax: 500000
+                }
+            ];
+        } else if (operationType === 'mixed') {
+            return [
+                {
+                    template: (start, ops) => {
+                        const changes = ops.map((op) => {
+                            const action = op.type === 'add' ? 'arrived' : 'departed';
+                            return `${op.value.toLocaleString()} passengers ${action}`;
+                        }).join(', then ');
+                        return `An airport terminal has ${start.toLocaleString()} passengers. ${changes}. How many passengers are in the terminal now?`;
+                    },
+                    items: 'passengers',
+                    perItemMax: 400000
+                },
+                {
+                    template: (start, ops) => {
+                        const transactions = ops.map((op) => {
+                            const action = op.type === 'add' ? 'receives' : 'spends';
+                            return `${action} £${op.value.toLocaleString()}`;
+                        }).join(', then ');
+                        return `A company budget starts at £${start.toLocaleString()}. ${transactions}. What is the final budget?`;
+                    },
+                    items: 'pounds',
+                    perItemMax: 600000
+                }
+            ];
+        }
+    }
+
+    // VERY LARGE SCALE: 1,000,001-10,000,000 (cities, national operations, major corporations)
+    if (operationType === 'addition') {
+        return [
+            {
+                template: (nums) => {
+                    const districts = nums.map((n, i) => `District ${i + 1} has ${n.toLocaleString()} residents`).join(', ');
+                    return `A city is divided into ${nums.length} districts. ${districts}. What is the total city population?`;
+                },
+                items: 'residents',
+                perItemMax: 3000000
+            },
+            {
+                template: (nums) => {
+                    const divisions = ['Manufacturing', 'Retail', 'Services', 'Technology', 'Finance'];
+                    const revenue = nums.map((n, i) => `${divisions[i]}: £${n.toLocaleString()}`).join(', ');
+                    return `A corporation's annual revenue by division: ${revenue}. What is the total annual revenue?`;
+                },
+                items: 'pounds',
+                perItemMax: 5000000
+            },
+            {
+                template: (nums) => {
+                    const years = nums.map((n, i) => `Year ${2019 + i}: ${n.toLocaleString()} units`).join(', ');
+                    return `A factory's annual production: ${years}. What is the total production across all years?`;
+                },
+                items: 'units',
+                perItemMax: 4000000
+            }
+        ];
+    } else if (operationType === 'subtraction') {
+        return [
+            {
+                template: (start, nums) => {
+                    const regions = ['North', 'South', 'East', 'West', 'Central', 'Overseas'];
+                    const distributed = nums.map((n, i) => `${n.toLocaleString()} units to ${regions[i] || `Region ${i + 1}`}`).join(', ');
+                    return `A national distribution center has ${start.toLocaleString()} units. Stock distributed: ${distributed}. How many units remain?`;
+                },
+                items: 'units',
+                perItemMax: 4000000
+            },
+            {
+                template: (start, nums) => {
+                    const programs = nums.map((n, i) => `£${n.toLocaleString()} to Program ${i + 1}`).join(', ');
+                    return `A government department has a budget of £${start.toLocaleString()}. Allocated: ${programs}. How much budget remains?`;
+                },
+                items: 'pounds',
+                perItemMax: 3000000
+            }
+        ];
+    } else if (operationType === 'mixed') {
+        return [
+            {
+                template: (start, ops) => {
+                    const changes = ops.map((op) => {
+                        const action = op.type === 'add' ? 'moved in' : 'moved out';
+                        return `${op.value.toLocaleString()} people ${action}`;
+                    }).join(', then ');
+                    return `A city district starts with ${start.toLocaleString()} residents. Over the year, ${changes}. What is the current population?`;
+                },
+                items: 'residents',
+                perItemMax: 3000000
+            },
+            {
+                template: (start, ops) => {
+                    const transactions = ops.map((op) => {
+                        const action = op.type === 'add' ? 'gains' : 'spends';
+                        return `${action} £${op.value.toLocaleString()}`;
+                    }).join(', then ');
+                    return `A corporation starts with £${start.toLocaleString()} in reserves. ${transactions}. What are the final reserves?`;
+                },
+                items: 'pounds',
+                perItemMax: 5000000
+            }
+        ];
+    }
+
+    // Default fallback (should not reach here)
+    return operationType === 'addition' ?
+        [{ template: (nums) => `Add these numbers: ${nums.join(', ')}`, items: 'numbers', perItemMax: maxValue }] :
+        [{ template: (start, nums) => `Start: ${start}. Subtract: ${nums.join(', ')}`, items: 'numbers', perItemMax: maxValue }];
+}
+
+/**
  * Generate multi-step addition problem (3+ sequential additions)
  * Example: "Year 3 has 142, Year 4 has 156, Year 5 has 138. Total students?"
  */
 export function generateMultiStepAddition(minValue, maxValue, params, steps = 3) {
     const numSteps = Array.isArray(steps) ? randomChoice(steps) : steps;
 
+    // Get appropriate contexts for this number scale
+    const scaledContexts = getScaledContexts(maxValue, 'addition');
+    const context = randomChoice(scaledContexts);
+
     // Generate target total
     const total = randomInt(minValue + (numSteps * 10), maxValue);
 
-    // Generate addends that sum to total
+    // Generate addends that sum to total, respecting per-item constraints
     const addends = [];
     let remaining = total;
 
     for (let i = 0; i < numSteps - 1; i++) {
         const minPart = Math.floor(remaining * 0.15);
-        const maxPart = Math.floor(remaining * 0.35);
+        const maxPart = Math.min(
+            Math.floor(remaining * 0.35),
+            context.perItemMax || maxValue
+        );
         const addend = randomInt(minPart, maxPart);
         addends.push(addend);
         remaining -= addend;
+    }
+    // Ensure last addend also respects per-item constraint
+    if (context.perItemMax && remaining > context.perItemMax) {
+        // Regenerate with tighter constraints if last value is too large
+        const perItemMax = context.perItemMax;
+        addends.length = 0;
+        remaining = total;
+        for (let i = 0; i < numSteps - 1; i++) {
+            const minPart = Math.floor(remaining * 0.2);
+            const maxPart = Math.min(Math.floor(remaining * 0.3), perItemMax);
+            const addend = randomInt(minPart, maxPart);
+            addends.push(addend);
+            remaining -= addend;
+        }
     }
     addends.push(remaining); // Last addend is whatever's left
 
     // Shuffle to avoid predictable patterns
     const shuffledAddends = shuffle([...addends]);
 
-    // Create context
-    const contexts = [
-        {
-            template: (nums) => {
-                const yearGroups = nums.map((n, i) => `Year ${i + 3} has ${n} students`).join(', ');
-                return `A school has ${nums.length} year groups. ${yearGroups}. How many students in total?`;
-            },
-            items: 'students'
-        },
-        {
-            template: (nums) => {
-                const sections = nums.map((n, i) => `${n} books in section ${String.fromCharCode(65 + i)}`).join(', ');
-                return `A library has ${nums.length} sections with ${sections}. How many books altogether?`;
-            },
-            items: 'books'
-        },
-        {
-            template: (nums) => {
-                const stores = nums.map((n, i) => `Store ${i + 1} has ${n} items`).join(', ');
-                return `A chain has ${nums.length} stores. ${stores}. What is the total stock across all stores?`;
-            },
-            items: 'items'
-        },
-        {
-            template: (nums) => {
-                const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-                const sales = nums.map((n, i) => `${n} on ${days[i]}`).join(', ');
-                return `A shop sells ${sales}. How many items were sold in total?`;
-            },
-            items: 'items'
-        }
-    ];
-
-    const context = randomChoice(contexts);
+    // Create question text using scaled context template
     const text = context.template(shuffledAddends);
 
     // Build working string
@@ -695,15 +1009,22 @@ export function generateMultiStepAddition(minValue, maxValue, params, steps = 3)
 export function generateMultiStepSubtraction(minValue, maxValue, params, steps = 3) {
     const numSteps = Array.isArray(steps) ? randomChoice(steps) : steps;
 
+    // Get appropriate contexts for this number scale
+    const scaledContexts = getScaledContexts(maxValue, 'subtraction');
+    const context = randomChoice(scaledContexts);
+
     // Generate starting amount
     const start = randomInt(minValue + (numSteps * 50), maxValue);
 
-    // Generate subtractions (ensure we don't go negative)
+    // Generate subtractions (ensure we don't go negative), respecting per-item constraints
     const subtractions = [];
     let remaining = start;
 
     for (let i = 0; i < numSteps; i++) {
-        const maxSubtract = Math.floor(remaining * 0.3); // Don't subtract too much at once
+        const maxSubtract = Math.min(
+            Math.floor(remaining * 0.3),
+            context.perItemMax || maxValue
+        ); // Don't subtract too much at once
         const minSubtract = Math.floor(remaining * 0.1);
         const subtract = randomInt(minSubtract, maxSubtract);
         subtractions.push(subtract);
@@ -712,37 +1033,7 @@ export function generateMultiStepSubtraction(minValue, maxValue, params, steps =
 
     const finalAnswer = remaining;
 
-    // Create context
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-    const contexts = [
-        {
-            template: (start, subs) => {
-                const sales = subs.map((s, i) => `${s} items on ${days[i]}`).join(', ');
-                return `A shop has ${start} items in stock. During the week, the shop sells ${sales}. How many items are left?`;
-            }
-        },
-        {
-            template: (start, subs) => {
-                const withdrawals = subs.map((s, i) => `withdraws ${s} on ${days[i]}`).join(', ');
-                return `A bank account starts with ${start}. Over the week, money is withdrawn: ${withdrawals}. What is the remaining balance?`;
-            }
-        },
-        {
-            template: (start, subs) => {
-                const borrowed = subs.map((s, i) => `${s} books on ${days[i]}`).join(', ');
-                return `A library has ${start} books. Books are borrowed throughout the week: ${borrowed}. How many books remain?`;
-            }
-        },
-        {
-            template: (start, subs) => {
-                const deliveries = subs.map((s, i) => `${s} parcels on ${days[i]}`).join(', ');
-                return `A warehouse has ${start} parcels. Parcels are dispatched: ${deliveries}. How many parcels are left in the warehouse?`;
-            }
-        }
-    ];
-
-    const context = randomChoice(contexts);
+    // Create question text using scaled context template
     const text = context.template(start, subtractions);
 
     // Build working string
@@ -778,10 +1069,14 @@ export function generateMultiStepSubtraction(minValue, maxValue, params, steps =
 export function generateMultiStepMixed(minValue, maxValue, params, steps = 3) {
     const numSteps = Array.isArray(steps) ? randomChoice(steps) : steps;
 
+    // Get appropriate contexts for this number scale
+    const scaledContexts = getScaledContexts(maxValue, 'mixed');
+    const context = randomChoice(scaledContexts);
+
     // Generate starting amount
     const start = randomInt(minValue + 50, maxValue - 100);
 
-    // Generate operations (mix of add/subtract)
+    // Generate operations (mix of add/subtract), respecting per-item constraints
     const operations = [];
     let remaining = start;
 
@@ -789,11 +1084,17 @@ export function generateMultiStepMixed(minValue, maxValue, params, steps = 3) {
         const isAddition = Math.random() < 0.5;
 
         if (isAddition) {
-            const addAmount = randomInt(Math.floor(start * 0.05), Math.floor(start * 0.15));
+            const addAmount = randomInt(
+                Math.floor(start * 0.05),
+                Math.min(Math.floor(start * 0.15), context.perItemMax || maxValue)
+            );
             operations.push({ type: 'add', value: addAmount });
             remaining += addAmount;
         } else {
-            const maxSubtract = Math.floor(remaining * 0.25);
+            const maxSubtract = Math.min(
+                Math.floor(remaining * 0.25),
+                context.perItemMax || maxValue
+            );
             const minSubtract = Math.floor(remaining * 0.05);
             const subtractAmount = randomInt(minSubtract, maxSubtract);
             operations.push({ type: 'subtract', value: subtractAmount });
@@ -803,38 +1104,7 @@ export function generateMultiStepMixed(minValue, maxValue, params, steps = 3) {
 
     const finalAnswer = remaining;
 
-    // Create context - ensure operations match context
-    const contexts = [
-        {
-            template: (start, ops) => {
-                const changes = ops.map((op, i) => {
-                    const action = op.type === 'add' ? 'arrive' : 'leave';
-                    return `${op.value} students ${action}`;
-                }).join(', then ');
-                return `A school has ${start} students. Over the term, ${changes}. How many students does the school have now?`;
-            }
-        },
-        {
-            template: (start, ops) => {
-                const transactions = ops.map((op, i) => {
-                    const action = op.type === 'add' ? 'deposits' : 'withdraws';
-                    return `${action} ${op.value}`;
-                }).join(', then ');
-                return `A bank account has ${start}. Someone ${transactions}. What is the final balance?`;
-            }
-        },
-        {
-            template: (start, ops) => {
-                const changes = ops.map((op, i) => {
-                    const action = op.type === 'add' ? 'delivered' : 'sold';
-                    return `${op.value} items ${action}`;
-                }).join(', then ');
-                return `A shop has ${start} items in stock. ${changes}. How many items are in stock now?`;
-            }
-        }
-    ];
-
-    const context = randomChoice(contexts);
+    // Create question text using scaled context template
     const text = context.template(start, operations);
 
     // Build working
@@ -879,25 +1149,79 @@ export function generateMultiStepWithInference(minValue, maxValue, params, steps
 
     // Type 1: Equal groups problem (requires division thinking + add/subtract)
     const numGroups = randomChoice([3, 4, 5]);
-    const perGroup = randomInt(Math.floor(minValue / numGroups), Math.floor(maxValue / numGroups));
+
+    // Apply context-appropriate constraints
+    let perGroupMax;
+    if (maxValue <= 10000) {
+        perGroupMax = 500; // Schools with ~500 students per year
+    } else if (maxValue <= 100000) {
+        perGroupMax = 5000; // Warehouses with ~5k items per section
+    } else if (maxValue <= 1000000) {
+        perGroupMax = 50000; // Regional centers with ~50k units per location
+    } else {
+        perGroupMax = 500000; // City districts with ~500k residents per district
+    }
+
+    const perGroup = randomInt(Math.floor(minValue / numGroups), Math.min(Math.floor(maxValue / numGroups), perGroupMax));
     const total = numGroups * perGroup;
     const absent = randomInt(Math.floor(total * 0.1), Math.floor(total * 0.2));
     const present = total - absent;
 
-    const contexts = [
-        {
-            text: `A school has ${numGroups} year groups with the same number of students in each. Today ${absent} students are absent and ${present} students are present. How many students are in each year group?`,
-            answer: perGroup,
-            working: `Total = ${present} + ${absent} = ${total}. Per group = ${total} ÷ ${numGroups} = ${perGroup}`,
-            inferenceType: 'equal_groups_with_change'
-        },
-        {
-            text: `A shop has ${numGroups} shelves with equal numbers of books. ${absent} books are sold, leaving ${present} books. How many books were on each shelf originally?`,
-            answer: perGroup,
-            working: `Total originally = ${present} + ${absent} = ${total}. Per shelf = ${total} ÷ ${numGroups} = ${perGroup}`,
-            inferenceType: 'equal_groups_with_change'
-        }
-    ];
+    // Scale contexts based on maxValue
+    let contexts;
+    if (maxValue <= 10000) {
+        // SMALL SCALE: schools, shops
+        contexts = [
+            {
+                text: `A school has ${numGroups} year groups with the same number of students in each. Today ${absent.toLocaleString()} students are absent and ${present.toLocaleString()} students are present. How many students are in each year group?`,
+                answer: perGroup,
+                working: `Total = ${present.toLocaleString()} + ${absent.toLocaleString()} = ${total.toLocaleString()}. Per group = ${total.toLocaleString()} ÷ ${numGroups} = ${perGroup.toLocaleString()}`,
+                inferenceType: 'equal_groups_with_change'
+            },
+            {
+                text: `A library has ${numGroups} sections with equal numbers of books. ${absent.toLocaleString()} books are borrowed, leaving ${present.toLocaleString()} books. How many books were in each section originally?`,
+                answer: perGroup,
+                working: `Total originally = ${present.toLocaleString()} + ${absent.toLocaleString()} = ${total.toLocaleString()}. Per section = ${total.toLocaleString()} ÷ ${numGroups} = ${perGroup.toLocaleString()}`,
+                inferenceType: 'equal_groups_with_change'
+            }
+        ];
+    } else if (maxValue <= 100000) {
+        // MEDIUM SCALE: warehouses, multi-location stores
+        contexts = [
+            {
+                text: `A company has ${numGroups} warehouses with equal stock levels. ${absent.toLocaleString()} items are sold from total stock, leaving ${present.toLocaleString()} items. How many items were in each warehouse originally?`,
+                answer: perGroup,
+                working: `Total originally = ${present.toLocaleString()} + ${absent.toLocaleString()} = ${total.toLocaleString()}. Per warehouse = ${total.toLocaleString()} ÷ ${numGroups} = ${perGroup.toLocaleString()}`,
+                inferenceType: 'equal_groups_with_change'
+            },
+            {
+                text: `A school district has ${numGroups} schools with equal enrollment. Today ${absent.toLocaleString()} students are absent district-wide and ${present.toLocaleString()} students are present. How many students are enrolled at each school?`,
+                answer: perGroup,
+                working: `Total enrolled = ${present.toLocaleString()} + ${absent.toLocaleString()} = ${total.toLocaleString()}. Per school = ${total.toLocaleString()} ÷ ${numGroups} = ${perGroup.toLocaleString()}`,
+                inferenceType: 'equal_groups_with_change'
+            }
+        ];
+    } else if (maxValue <= 1000000) {
+        // LARGE SCALE: regional operations
+        contexts = [
+            {
+                text: `A company operates ${numGroups} regional centers with equal capacity. ${absent.toLocaleString()} units are dispatched from the network, leaving ${present.toLocaleString()} units. What is the capacity of each regional center?`,
+                answer: perGroup,
+                working: `Total capacity = ${present.toLocaleString()} + ${absent.toLocaleString()} = ${total.toLocaleString()}. Per center = ${total.toLocaleString()} ÷ ${numGroups} = ${perGroup.toLocaleString()}`,
+                inferenceType: 'equal_groups_with_change'
+            }
+        ];
+    } else {
+        // VERY LARGE SCALE: cities, national operations
+        contexts = [
+            {
+                text: `A city is divided into ${numGroups} districts with equal populations. During the year, ${absent.toLocaleString()} people moved away and ${present.toLocaleString()} residents remain. What was the original population of each district?`,
+                answer: perGroup,
+                working: `Total originally = ${present.toLocaleString()} + ${absent.toLocaleString()} = ${total.toLocaleString()}. Per district = ${total.toLocaleString()} ÷ ${numGroups} = ${perGroup.toLocaleString()}`,
+                inferenceType: 'equal_groups_with_change'
+            }
+        ];
+    }
 
     const context = randomChoice(contexts);
 

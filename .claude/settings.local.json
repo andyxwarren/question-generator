@@ -6,7 +6,9 @@
       "Bash(findstr:*)",
       "Bash(node temp_test_c04.js)",
       "Bash(node --version)",
-      "Bash(node test_Y5_Y6_generators.js)"
+      "Bash(node test_Y5_Y6_generators.js)",
+      "Bash(node -e \"\nimport(''./src/generators/C04_Y6_CALC_problems.js'').then(mod => {\n  const gen = mod.default;\n  import(''./src/curriculum/parameters/C04_problems.js'').then(paramMod => {\n    const params = paramMod.C04_MODULES[''C04_Y6_CALC''].parameters[4];\n    console.log(''=== Year 6 Level 4 Sample Questions ===\\n'');\n    for(let i = 0; i < 6; i++) {\n      const q = gen.generate(params, 4);\n      console.log(''Question '' + (i+1) + '':'', q.text);\n      console.log(''Answer:'', q.answer);\n      console.log(''---\\n'');\n    }\n  });\n}).catch(e => console.error(e));\n\")",
+      "Bash(node test_C04_Y5_Y6_contexts.js)"
     ],
     "deny": [],
     "ask": []
