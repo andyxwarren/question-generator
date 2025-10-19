@@ -477,16 +477,20 @@ class App {
                               text.includes('class="simple-dots-container"') ||
                               text.includes('class="ten-frame"') ||
                               text.includes('class="base10-container"') ||
-                              text.includes('class="tally-marks-container"');
+                              text.includes('class="tally-marks-container"') ||
+                              text.includes('class="box-method-grid"') ||
+                              text.includes('class="calculation-grid"') ||
+                              text.includes('class="partial-products"');
 
         if (hasSafeVisuals) {
-            // Text contains our visual HTML - render as-is
-            return text;
+            // Text contains our visual HTML - render as-is, converting \n to <br>
+            // But preserve the structure around visual elements
+            return text.replace(/\n/g, '<br>');
         } else {
-            // Plain text - escape HTML entities
+            // Plain text - escape HTML entities and convert newlines to <br>
             const div = document.createElement('div');
             div.textContent = text;
-            return div.innerHTML;
+            return div.innerHTML.replace(/\n/g, '<br>');
         }
     }
 

@@ -1375,3 +1375,167 @@ header p {
         width: 45px;
     }
 }
+
+/* ============================================
+   C07 BOX METHOD AND WRITTEN METHODS STYLING
+   ============================================ */
+
+/* Container for box method grid */
+.box-method-grid {
+    margin: 12px auto;
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    clear: both;
+}
+
+/* The calculation grid table */
+.calculation-grid {
+    border-collapse: collapse;
+    font-family: 'Courier New', Monaco, monospace;
+    font-size: 18px;
+    margin: 0 auto;
+    background-color: #ffffff;
+}
+
+/* Corner cell (top-left × symbol) */
+.calculation-grid .corner-cell {
+    background-color: #e8e8e8;
+    padding: 10px 15px;
+    border: 2px solid #333;
+    font-weight: bold;
+    text-align: center;
+    min-width: 50px;
+}
+
+/* Column headers (top row with place values) */
+.calculation-grid .col-header {
+    background-color: #f0f0f0;
+    padding: 10px 15px;
+    border: 2px solid #333;
+    font-weight: bold;
+    text-align: center;
+    min-width: 80px;
+    color: #2c5aa0;
+}
+
+/* Row headers (left column with place values) */
+.calculation-grid .row-header {
+    background-color: #f0f0f0;
+    padding: 10px 15px;
+    border: 2px solid #333;
+    font-weight: bold;
+    text-align: center;
+    min-width: 50px;
+    color: #2c5aa0;
+}
+
+/* Product cells (the answers in the grid) */
+.calculation-grid .product-cell {
+    padding: 12px 15px;
+    border: 1px solid #666;
+    text-align: center;
+    min-width: 80px;
+    background-color: #fafafa;
+    font-size: 16px;
+}
+
+/* Highlighted/gap cells (for fill-in questions) */
+.calculation-grid .gap {
+    color: #999;
+    font-style: italic;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+/* Hover effect for product cells */
+.calculation-grid .product-cell:hover {
+    background-color: #fff8e1;
+}
+
+/* ============================================
+   PARTIAL PRODUCTS LINEAR FORMAT
+   ============================================ */
+
+.partial-products {
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-left: 4px solid #4CAF50;
+    font-family: 'Courier New', Monaco, monospace;
+    max-width: 400px;
+    border-radius: 4px;
+}
+
+.partial-products .product-line {
+    margin: 8px 0;
+    padding: 6px 10px;
+    font-size: 16px;
+    background-color: #ffffff;
+    border-radius: 3px;
+}
+
+.partial-products .total-line {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 3px solid #333;
+    font-weight: bold;
+    font-size: 18px;
+    color: #2c5aa0;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN FOR MOBILE
+   ============================================ */
+
+@media screen and (max-width: 768px) {
+    .calculation-grid {
+        font-size: 14px;
+    }
+
+    .calculation-grid th,
+    .calculation-grid td {
+        padding: 8px 10px;
+        min-width: 60px;
+    }
+
+    .partial-products {
+        font-size: 14px;
+        padding: 15px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .calculation-grid {
+        font-size: 12px;
+    }
+
+    .calculation-grid th,
+    .calculation-grid td {
+        padding: 6px 8px;
+        min-width: 50px;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .calculation-grid {
+        border: 3px solid #000;
+    }
+
+    .calculation-grid th,
+    .calculation-grid td {
+        border: 2px solid #000;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .calculation-grid .product-cell:hover {
+        transition: none;
+    }
+}

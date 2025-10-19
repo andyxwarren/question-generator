@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 1 Foundation Tests - C07 Box Method</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-header {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 1.5rem;
+            margin: -2rem -2rem 2rem -2rem;
+            border-radius: 12px 12px 0 0;
+        }
+        .test-header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        .test-header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+        }
+        .test-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f9fafb;
+            border-left: 4px solid #2563eb;
+            border-radius: 8px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #2563eb;
+            font-size: 1.5rem;
+        }
+        .test-case {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+        .test-case h3 {
+            margin: 0 0 0.75rem 0;
+            color: #111827;
+            font-size: 1.1rem;
+        }
+        .test-result {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        .pass {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 3px solid #10b981;
+            padding-left: 0.5rem;
+        }
+        .fail {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 3px solid #ef4444;
+            padding-left: 0.5rem;
+        }
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 3px solid #2563eb;
+            padding-left: 0.5rem;
+        }
+        .code-block {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 0.5rem 0;
+        }
+        .summary {
+            position: sticky;
+            top: 20px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 2rem;
+        }
+        .summary h2 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .stat:last-child {
+            border-bottom: none;
+        }
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .stat-value.success { color: #10b981; }
+        .stat-value.error { color: #ef4444; }
+        .visual-test {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: white;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="summary" id="summary">
+        <h2>📊 Test Summary</h2>
+        <div class="stat">
+            <span>Total Tests:</span>
+            <span class="stat-value" id="totalTests">0</span>
+        </div>
+        <div class="stat">
+            <span>Passed:</span>
+            <span class="stat-value success" id="passedTests">0</span>
+        </div>
+        <div class="stat">
+            <span>Failed:</span>
+            <span class="stat-value error" id="failedTests">0</span>
+        </div>
+        <div class="stat">
+            <span>Pass Rate:</span>
+            <span class="stat-value" id="passRate">0%</span>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🧪 Week 1 Foundation Tests (v2)</h1>
+            <p>Comprehensive testing of C07 Box Method helpers, templates, and CSS</p>
+        </div>
+
+        <div id="testResults"></div>
+    </div>
+
+    <script type="module">
+        // Use async imports to avoid blocking errors
+        async function runTests() {
+            try {
+                console.log('Starting test suite...');
+
+                const { getPlaceValueArray } = await import('../src/generators/helpers/N03_placeValueHelpers.js');
+                const {
+                    decomposePlaceValue,
+                    generateBoxGrid,
+                    selectGapPositions,
+                    renderBoxMethodHTML,
+                    generatePartialProducts,
+                    renderPartialProductsHTML,
+                    generateWrongDecomposition,
+                    createFullBoxMethodWorkflow,
+                    getRandomProduct
+                } = await import('../src/generators/helpers/boxMethodHelpers.js');
+                const {
+                    generateFillBoxQuestion,
+                    generatePartialProductsQuestion,
+                    generateBoxTotalQuestion,
+                    generateSetupQuestion,
+                    generateSingleProductQuestion,
+                    generateErrorIdentificationQuestion,
+                    generateBoxMethodWordProblem
+                } = await import('../src/generators/helpers/c07QuestionTemplates.js');
+
+                console.log('All modules loaded successfully!');
+
+                let totalTests = 0;
+                let passedTests = 0;
+                let failedTests = 0;
+
+                const resultsDiv = document.getElementById('testResults');
+
+                function createSection(title) {
+                    const section = document.createElement('div');
+                    section.className = 'test-section';
+                    section.innerHTML = `<h2>${title}</h2>`;
+                    resultsDiv.appendChild(section);
+                    return section;
+                }
+
+                function addTest(section, name, testFn) {
+                    totalTests++;
+                    const testCase = document.createElement('div');
+                    testCase.className = 'test-case';
+                    testCase.innerHTML = `<h3>Test: ${name}</h3>`;
+
+                    try {
+                        const result = testFn();
+                        if (result.pass) {
+                            passedTests++;
+                            testCase.innerHTML += `<div class="test-result pass">✓ PASS: ${result.message}</div>`;
+                            if (result.details) {
+                                testCase.innerHTML += `<div class="test-result info">${result.details}</div>`;
+                            }
+                        } else {
+                            failedTests++;
+                            testCase.innerHTML += `<div class="test-result fail">✗ FAIL: ${result.message}</div>`;
+                            if (result.error) {
+                                testCase.innerHTML += `<div class="code-block">${result.error}</div>`;
+                            }
+                        }
+
+                        if (result.visual) {
+                            const visualDiv = document.createElement('div');
+                            visualDiv.className = 'visual-test';
+                            visualDiv.innerHTML = result.visual;
+                            testCase.appendChild(visualDiv);
+                        }
+                    } catch (error) {
+                        failedTests++;
+                        testCase.innerHTML += `<div class="test-result fail">✗ ERROR: ${error.message}</div>`;
+                        testCase.innerHTML += `<div class="code-block">${error.stack}</div>`;
+                        console.error(`Test "${name}" threw error:`, error);
+                    }
+
+                    section.appendChild(testCase);
+                    updateSummary();
+                }
+
+                function updateSummary() {
+                    document.getElementById('totalTests').textContent = totalTests;
+                    document.getElementById('passedTests').textContent = passedTests;
+                    document.getElementById('failedTests').textContent = failedTests;
+                    const passRate = totalTests > 0 ? ((passedTests / totalTests) * 100).toFixed(1) : 0;
+                    document.getElementById('passRate').textContent = passRate + '%';
+                    document.getElementById('passRate').className = passRate === '100.0' ? 'stat-value success' : 'stat-value';
+                }
+
+                // ========================================
+                // TEST SUITE 1: N03 Place Value Helpers
+                // ========================================
+                const section1 = createSection('1️⃣ N03 Place Value Helpers');
+
+                addTest(section1, 'getPlaceValueArray(347) returns [300, 40, 7]', () => {
+                    const result = getPlaceValueArray(347);
+                    const expected = [300, 40, 7];
+                    const pass = JSON.stringify(result) === JSON.stringify(expected);
+                    return {
+                        pass,
+                        message: pass ? `Correctly decomposed 347 → ${result.join(', ')}` : `Expected ${expected}, got ${result}`,
+                        details: `Input: 347 | Output: [${result.join(', ')}]`
+                    };
+                });
+
+                addTest(section1, 'getPlaceValueArray(47) returns [40, 7]', () => {
+                    const result = getPlaceValueArray(47);
+                    const expected = [40, 7];
+                    const pass = JSON.stringify(result) === JSON.stringify(expected);
+                    return {
+                        pass,
+                        message: pass ? `Correctly decomposed 47 → ${result.join(', ')}` : `Expected ${expected}, got ${result}`,
+                        details: `Input: 47 | Output: [${result.join(', ')}]`
+                    };
+                });
+
+                addTest(section1, 'getPlaceValueArray(5) returns [5]', () => {
+                    const result = getPlaceValueArray(5);
+                    const expected = [5];
+                    const pass = JSON.stringify(result) === JSON.stringify(expected);
+                    return {
+                        pass,
+                        message: pass ? `Correctly handled single digit: ${result}` : `Expected ${expected}, got ${result}`,
+                        details: `Input: 5 | Output: [${result.join(', ')}]`
+                    };
+                });
+
+                addTest(section1, 'getPlaceValueArray(1234) returns [1000, 200, 30, 4]', () => {
+                    const result = getPlaceValueArray(1234);
+                    const expected = [1000, 200, 30, 4];
+                    const pass = JSON.stringify(result) === JSON.stringify(expected);
+                    return {
+                        pass,
+                        message: pass ? `Correctly decomposed 1234 → ${result.join(', ')}` : `Expected ${expected}, got ${result}`,
+                        details: `Input: 1234 | Output: [${result.join(', ')}]`
+                    };
+                });
+
+                // ========================================
+                // TEST SUITE 2: Box Method Helpers
+                // ========================================
+                const section2 = createSection('2️⃣ Box Method Helpers');
+
+                addTest(section2, 'decomposePlaceValue(47) works correctly', () => {
+                    const result = decomposePlaceValue(47);
+                    const expected = [40, 7];
+                    const pass = JSON.stringify(result) === JSON.stringify(expected);
+                    return {
+                        pass,
+                        message: pass ? 'Wrapper function works' : 'Wrapper failed',
+                        details: `Input: 47 | Output: [${result.join(', ')}]`
+                    };
+                });
+
+                addTest(section2, 'generateBoxGrid(47, 26) creates correct structure', () => {
+                    const grid = generateBoxGrid(47, 26);
+                    const hasRows = Array.isArray(grid.rows) && grid.rows.length === 2;
+                    const hasCols = Array.isArray(grid.cols) && grid.cols.length === 2;
+                    const hasTotal = grid.total === 1222;
+                    const pass = hasRows && hasCols && hasTotal;
+
+                    return {
+                        pass,
+                        message: pass ? 'Grid structure correct: 47 × 26 = 1222' : 'Grid structure invalid',
+                        details: `Rows: [${grid.rows.join(', ')}] | Cols: [${grid.cols.join(', ')}] | Total: ${grid.total}`,
+                        visual: renderBoxMethodHTML(grid)
+                    };
+                });
+
+                addTest(section2, 'generateBoxGrid(12, 5) handles smaller numbers', () => {
+                    const grid = generateBoxGrid(12, 5);
+                    const hasCorrectTotal = grid.total === 60;
+                    const pass = hasCorrectTotal;
+
+                    return {
+                        pass,
+                        message: pass ? '12 × 5 = 60' : `Expected 60, got ${grid.total}`,
+                        details: `Rows: [${grid.rows.join(', ')}] | Cols: [${grid.cols.join(', ')}] | Total: ${grid.total}`,
+                        visual: renderBoxMethodHTML(grid)
+                    };
+                });
+
+                addTest(section2, 'selectGapPositions returns valid positions', () => {
+                    const grid = generateBoxGrid(47, 26);
+                    const gaps = selectGapPositions(grid.cells, 2);
+                    const pass = Array.isArray(gaps) && gaps.length === 2 && gaps[0].hasOwnProperty('row') && gaps[0].hasOwnProperty('col');
+
+                    return {
+                        pass,
+                        message: pass ? `Generated ${gaps.length} gap positions` : 'Gap positions invalid',
+                        details: `Gaps: ${JSON.stringify(gaps)}`
+                    };
+                });
+
+                addTest(section2, 'renderBoxMethodHTML generates valid HTML', () => {
+                    const grid = generateBoxGrid(47, 26);
+                    const html = renderBoxMethodHTML(grid);
+                    const hasTable = html.includes('<table');
+                    const hasCorner = html.includes('corner-cell');
+                    const pass = hasTable && hasCorner;
+
+                    return {
+                        pass,
+                        message: pass ? 'HTML contains table structure' : 'HTML structure invalid',
+                        details: `HTML length: ${html.length} characters`,
+                        visual: html
+                    };
+                });
+
+                addTest(section2, 'generatePartialProducts(47, 26) creates correct products', () => {
+                    const partials = generatePartialProducts(47, 26);
+                    const hasProducts = Array.isArray(partials.products) && partials.products.length === 4;
+                    const hasCorrectTotal = partials.total === 1222;
+                    const pass = hasProducts && hasCorrectTotal;
+
+                    return {
+                        pass,
+                        message: pass ? 'Partial products: 4 products, total 1222' : 'Partial products invalid',
+                        details: `Products: ${partials.products.length} | Total: ${partials.total}`,
+                        visual: renderPartialProductsHTML(partials)
+                    };
+                });
+
+                addTest(section2, 'generateWrongDecomposition creates plausible errors', () => {
+                    const wrong = generateWrongDecomposition(47);
+                    const isDifferent = JSON.stringify(wrong) !== JSON.stringify([40, 7]);
+                    const pass = Array.isArray(wrong) && wrong.length > 0 && isDifferent;
+
+                    return {
+                        pass,
+                        message: pass ? `Generated wrong decomposition: [${wrong.join(', ')}]` : 'Error generation failed',
+                        details: `Correct: [40, 7] | Wrong: [${wrong.join(', ')}]`
+                    };
+                });
+
+                addTest(section2, 'createFullBoxMethodWorkflow provides complete data', () => {
+                    const workflow = createFullBoxMethodWorkflow(47, 26);
+                    const hasDecomp = workflow.decomposition !== undefined;
+                    const hasGrid = workflow.grid !== undefined;
+                    const hasPartials = workflow.partials !== undefined;
+                    const hasTotal = workflow.total === 1222;
+                    const pass = hasDecomp && hasGrid && hasPartials && hasTotal;
+
+                    return {
+                        pass,
+                        message: pass ? 'Workflow contains all components' : 'Workflow incomplete',
+                        details: `Components: decomposition, grid, partials, total=${workflow.total}`
+                    };
+                });
+
+                addTest(section2, 'getRandomProduct returns valid cell', () => {
+                    const grid = generateBoxGrid(47, 26);
+                    const cell = getRandomProduct(grid);
+                    const hasValue = cell.hasOwnProperty('product');
+                    const hasRow = cell.hasOwnProperty('rowValue');
+                    const hasCol = cell.hasOwnProperty('colValue');
+                    const pass = hasValue && hasRow && hasCol;
+
+                    return {
+                        pass,
+                        message: pass ? `Random cell: ${cell.colValue} × ${cell.rowValue} = ${cell.product}` : 'Cell structure invalid',
+                        details: `Product: ${cell.product} | Row: ${cell.rowValue} | Col: ${cell.colValue}`
+                    };
+                });
+
+                // ========================================
+                // TEST SUITE 3: Question Templates
+                // ========================================
+                const section3 = createSection('3️⃣ Question Templates');
+
+                addTest(section3, 'generateFillBoxQuestion creates valid question', () => {
+                    const q = generateFillBoxQuestion(47, 26, 2);
+                    const hasText = typeof q.text === 'string' && q.text.length > 0;
+                    const hasType = q.type === 'text_input';
+                    const hasAnswer = typeof q.answer === 'string';
+                    const hasHint = typeof q.hint === 'string';
+                    const pass = hasText && hasType && hasAnswer && hasHint;
+
+                    return {
+                        pass,
+                        message: pass ? 'Fill box question valid' : 'Question structure invalid',
+                        details: `Type: ${q.type} | Answer: ${q.answer} | Has hint: ${!!q.hint}`,
+                        visual: `<div style="white-space: pre-wrap;">${q.text}</div>`
+                    };
+                });
+
+                addTest(section3, 'generatePartialProductsQuestion creates multiple choice', () => {
+                    const q = generatePartialProductsQuestion(47, 26, 2);
+                    const hasText = typeof q.text === 'string';
+                    const hasType = q.type === 'multiple_choice';
+                    const hasOptions = Array.isArray(q.options) && q.options.length === 4;
+                    const hasAnswer = typeof q.answer === 'string';
+                    const pass = hasText && hasType && hasOptions && hasAnswer;
+
+                    return {
+                        pass,
+                        message: pass ? 'Partial products question valid' : 'Question invalid',
+                        details: `Type: ${q.type} | Options: ${q.options.length} | Answer included: ${q.options.includes(q.answer)}`
+                    };
+                });
+
+                addTest(section3, 'generateBoxTotalQuestion works at level 1', () => {
+                    const q = generateBoxTotalQuestion(12, 5, 1);
+                    const hasText = typeof q.text === 'string';
+                    const hasCorrectType = q.type === 'text_input';
+                    const pass = hasText && hasCorrectType && q.answer === '60';
+
+                    return {
+                        pass,
+                        message: pass ? 'Box total question (L1) valid' : 'Question invalid',
+                        details: `Type: ${q.type} | Answer: ${q.answer}`,
+                        visual: `<div style="white-space: pre-wrap;">${q.text}</div>`
+                    };
+                });
+
+                addTest(section3, 'generateBoxTotalQuestion works at level 3 (multiple choice)', () => {
+                    const q = generateBoxTotalQuestion(12, 5, 3);
+                    const hasText = typeof q.text === 'string';
+                    const hasCorrectType = q.type === 'multiple_choice';
+                    const hasOptions = Array.isArray(q.options) && q.options.length === 4;
+                    const pass = hasText && hasCorrectType && hasOptions;
+
+                    return {
+                        pass,
+                        message: pass ? 'Box total question (L3) uses multiple choice' : 'Question invalid',
+                        details: `Type: ${q.type} | Options: ${q.options.length}`
+                    };
+                });
+
+                addTest(section3, 'generateSetupQuestion creates valid options', () => {
+                    const q = generateSetupQuestion(47, 26, 2);
+                    const hasText = typeof q.text === 'string';
+                    const hasType = q.type === 'multiple_choice';
+                    const hasOptions = Array.isArray(q.options) && q.options.length === 4;
+                    const answerInOptions = q.options.includes(q.answer);
+                    const pass = hasText && hasType && hasOptions && answerInOptions;
+
+                    return {
+                        pass,
+                        message: pass ? 'Setup question valid with 4 options' : 'Question invalid',
+                        details: `Correct answer: "${q.answer}"`
+                    };
+                });
+
+                addTest(section3, 'generateSingleProductQuestion works', () => {
+                    const q = generateSingleProductQuestion(47, 26, 1);
+                    const hasText = typeof q.text === 'string';
+                    const hasAnswer = typeof q.answer === 'string' && !isNaN(parseInt(q.answer));
+                    const pass = hasText && hasAnswer;
+
+                    return {
+                        pass,
+                        message: pass ? 'Single product question valid' : 'Question invalid',
+                        details: `Answer: ${q.answer} | Type: ${q.type}`
+                    };
+                });
+
+                addTest(section3, 'generateErrorIdentificationQuestion creates error', () => {
+                    const q = generateErrorIdentificationQuestion(47, 26, 4);
+                    const hasText = typeof q.text === 'string' && q.text.includes('error');
+                    const hasAnswer = typeof q.answer === 'string' && q.answer.includes('×');
+                    const pass = hasText && hasAnswer;
+
+                    return {
+                        pass,
+                        message: pass ? 'Error identification question valid' : 'Question invalid',
+                        details: `Answer format: "${q.answer}"`
+                    };
+                });
+
+                addTest(section3, 'generateBoxMethodWordProblem creates context', () => {
+                    const q = generateBoxMethodWordProblem(12, 5, 2);
+                    const hasText = typeof q.text === 'string';
+                    const hasContext = q.text.includes('pencils') || q.text.includes('books') || q.text.includes('apples') || q.text.includes('stickers');
+                    const hasAnswer = q.answer === '60';
+                    const pass = hasText && hasContext && hasAnswer;
+
+                    return {
+                        pass,
+                        message: pass ? 'Word problem has context and correct answer' : 'Question invalid',
+                        details: `Answer: ${q.answer} | Has context: ${hasContext}`,
+                        visual: `<div style="white-space: pre-wrap;">${q.text}</div>`
+                    };
+                });
+
+                // ========================================
+                // TEST SUITE 4: CSS Styling
+                // ========================================
+                const section4 = createSection('4️⃣ CSS Styling Tests');
+
+                addTest(section4, 'Box method grid CSS classes exist', () => {
+                    const grid = generateBoxGrid(47, 26);
+                    const html = renderBoxMethodHTML(grid);
+                    const hasBoxMethodGrid = html.includes('box-method-grid');
+                    const hasCalculationGrid = html.includes('calculation-grid');
+                    const hasCornerCell = html.includes('corner-cell');
+                    const hasColHeader = html.includes('col-header');
+                    const hasRowHeader = html.includes('row-header');
+                    const hasProductCell = html.includes('product-cell');
+                    const pass = hasBoxMethodGrid && hasCalculationGrid && hasCornerCell && hasColHeader && hasRowHeader && hasProductCell;
+
+                    return {
+                        pass,
+                        message: pass ? 'All CSS classes present in generated HTML' : 'Missing CSS classes',
+                        details: `Classes found: box-method-grid, calculation-grid, corner-cell, col-header, row-header, product-cell`,
+                        visual: html
+                    };
+                });
+
+                addTest(section4, 'Partial products CSS classes exist', () => {
+                    const partials = generatePartialProducts(47, 26);
+                    const html = renderPartialProductsHTML(partials);
+                    const hasPartialProducts = html.includes('partial-products');
+                    const hasProductLine = html.includes('product-line');
+                    const hasTotalLine = html.includes('total-line');
+                    const pass = hasPartialProducts && hasProductLine && hasTotalLine;
+
+                    return {
+                        pass,
+                        message: pass ? 'Partial products CSS classes present' : 'Missing CSS classes',
+                        details: 'Classes found: partial-products, product-line, total-line',
+                        visual: html
+                    };
+                });
+
+                addTest(section4, 'Gap cells render with correct class', () => {
+                    const grid = generateBoxGrid(47, 26);
+                    const gaps = [{row: 0, col: 0}];
+                    const html = renderBoxMethodHTML(grid, gaps);
+                    const hasGapClass = html.includes('class="gap"');
+                    const hasGapPlaceholder = html.includes('____');
+                    const pass = hasGapClass && hasGapPlaceholder;
+
+                    return {
+                        pass,
+                        message: pass ? 'Gap cells render correctly' : 'Gap rendering issue',
+                        details: 'Gap class and placeholder (____) present',
+                        visual: html
+                    };
+                });
+
+                // Final summary message
+                setTimeout(() => {
+                    const finalSection = createSection('✅ Test Completion');
+                    const passRate = totalTests > 0 ? ((passedTests / totalTests) * 100).toFixed(1) : 0;
+                    let statusMessage = '';
+                    let statusClass = '';
+
+                    if (passRate === '100.0') {
+                        statusMessage = '🎉 All tests passed! Week 1 foundation is solid. Ready to proceed to Week 2.';
+                        statusClass = 'pass';
+                    } else if (passRate >= 80) {
+                        statusMessage = '⚠️ Most tests passed. Review failed tests before proceeding.';
+                        statusClass = 'info';
+                    } else {
+                        statusMessage = '❌ Multiple test failures. Critical issues need to be resolved.';
+                        statusClass = 'fail';
+                    }
+
+                    finalSection.innerHTML += `<div class="test-result ${statusClass}"><strong>${statusMessage}</strong></div>`;
+                    finalSection.innerHTML += `<div class="test-result info">Total: ${totalTests} | Passed: ${passedTests} | Failed: ${failedTests} | Pass Rate: ${passRate}%</div>`;
+                }, 100);
+
+                console.log(`Tests complete: ${passedTests}/${totalTests} passed`);
+
+            } catch (error) {
+                console.error('Fatal error loading test modules:', error);
+                document.getElementById('testResults').innerHTML = `
+                    <div class="test-result fail">
+                        <strong>✗ FATAL ERROR:</strong> Failed to load test modules
+                        <div class="code-block">${error.toString()}\n${error.stack}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Run tests when page loads
+        runTests();
+    </script>
+</body>
+</html>

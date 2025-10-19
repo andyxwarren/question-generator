@@ -35,6 +35,11 @@ import problemsY3Generator from '../generators/N06_Y3_NPV_problems.js';
 import problemsY4Generator from '../generators/N06_Y4_NPV_problems.js';
 import problemsY5Generator from '../generators/N06_Y5_NPV_problems.js';
 import problemsY6Generator from '../generators/N06_Y6_NPV_problems.js';
+import writtenMethodsY2Generator from '../generators/C07_Y2_CALC_statements.js';
+import writtenMethodsY3Generator from '../generators/C07_Y3_CALC_written_methods.js';
+import writtenMethodsY4Generator from '../generators/C07_Y4_CALC_formal_written.js';
+import writtenMethodsY5Generator from '../generators/C07_Y5_CALC_long_mult_short_div.js';
+import writtenMethodsY6Generator from '../generators/C07_Y6_CALC_long_division.js';
 
 /**
  * Question Engine Class
@@ -78,6 +83,11 @@ class QuestionEngine {
         this.register(problemsY4Generator);
         this.register(problemsY5Generator);
         this.register(problemsY6Generator);
+        this.register(writtenMethodsY2Generator);
+        this.register(writtenMethodsY3Generator);
+        this.register(writtenMethodsY4Generator);
+        this.register(writtenMethodsY5Generator);
+        this.register(writtenMethodsY6Generator);
     }
 
     /**

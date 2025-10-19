@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Import Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #10b981;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #ef4444;
+        }
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #2563eb;
+        }
+        pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Simple Import Diagnostic Test</h1>
+    <p>Testing if ES6 module imports work...</p>
+
+    <div id="results"></div>
+
+    <script type="module">
+        const results = document.getElementById('results');
+
+        function logSuccess(message) {
+            results.innerHTML += `<div class="success">✓ ${message}</div>`;
+        }
+
+        function logError(message, error) {
+            results.innerHTML += `<div class="error">✗ ${message}</div>`;
+            if (error) {
+                results.innerHTML += `<pre>${error.toString()}\n${error.stack}</pre>`;
+            }
+        }
+
+        function logInfo(message) {
+            results.innerHTML += `<div class="info">ℹ ${message}</div>`;
+        }
+
+        // Test 1: Check if module script runs
+        logInfo('Module script is executing...');
+
+        // Test 2: Try importing N03 helper
+        try {
+            const module1 = await import('../src/generators/helpers/N03_placeValueHelpers.js');
+            logSuccess('N03_placeValueHelpers.js imported successfully');
+
+            if (module1.getPlaceValueArray) {
+                const result = module1.getPlaceValueArray(47);
+                logSuccess(`getPlaceValueArray(47) = [${result.join(', ')}]`);
+            } else {
+                logError('getPlaceValueArray function not found in module');
+            }
+        } catch (error) {
+            logError('Failed to import N03_placeValueHelpers.js', error);
+        }
+
+        // Test 3: Try importing box method helpers
+        try {
+            const module2 = await import('../src/generators/helpers/boxMethodHelpers.js');
+            logSuccess('boxMethodHelpers.js imported successfully');
+
+            if (module2.decomposePlaceValue) {
+                const result = module2.decomposePlaceValue(47);
+                logSuccess(`decomposePlaceValue(47) = [${result.join(', ')}]`);
+            } else {
+                logError('decomposePlaceValue function not found in module');
+            }
+        } catch (error) {
+            logError('Failed to import boxMethodHelpers.js', error);
+        }
+
+        // Test 4: Try importing question templates
+        try {
+            const module3 = await import('../src/generators/helpers/c07QuestionTemplates.js');
+            logSuccess('c07QuestionTemplates.js imported successfully');
+
+            if (module3.generateFillBoxQuestion) {
+                logSuccess('generateFillBoxQuestion function found');
+            } else {
+                logError('generateFillBoxQuestion function not found in module');
+            }
+        } catch (error) {
+            logError('Failed to import c07QuestionTemplates.js', error);
+        }
+
+        // Test 5: Try generating a simple question
+        try {
+            const { generateFillBoxQuestion } = await import('../src/generators/helpers/c07QuestionTemplates.js');
+            const question = generateFillBoxQuestion(12, 5, 1);
+            logSuccess('Successfully generated a test question!');
+            logInfo(`Question type: ${question.type}`);
+            logInfo(`Answer: ${question.answer}`);
+        } catch (error) {
+            logError('Failed to generate question', error);
+        }
+
+        logInfo('✅ Diagnostic complete! Check results above.');
+    </script>
+</body>
+</html>

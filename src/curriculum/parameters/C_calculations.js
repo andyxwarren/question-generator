@@ -1138,30 +1138,28 @@ export const C_MODULES = {
         icon: '✖️',
         yearGroup: 'Year 2',
         strand: 'Addition, subtraction, multiplication and division (calculations)',
+        substrand: 'Written Methods',
+        ref: 'C07',
         parameters: {
             1: {
-                // 2 times table statements
-                tables: [2],
-                max_multiplier: 5,
-                operations: ['write_multiplication', 'write_division', 'read_statements']
+                // Simple statements (to 50)
+                max_value: 50,
+                operations: ['write_multiplication', 'write_division', 'identify_symbols']
             },
             2: {
-                // 2 and 5 times tables
-                tables: [2, 5],
-                max_multiplier: 10,
-                operations: ['write_multiplication', 'write_division', 'read_statements', 'complete_statements']
+                // Statements (to 75)
+                max_value: 75,
+                operations: ['write_multiplication', 'write_division', 'identify_symbols']
             },
             3: {
-                // 2, 5 and 10 times tables
-                tables: [2, 5, 10],
-                max_multiplier: 10,
-                operations: ['write_multiplication', 'write_division', 'read_statements', 'complete_statements', 'missing_numbers']
+                // Statements (to 100)
+                max_value: 100,
+                operations: ['write_multiplication', 'write_division', 'identify_symbols']
             },
             4: {
-                // All tables with complex statements
-                tables: [2, 5, 10],
-                max_multiplier: 12,
-                operations: ['write_multiplication', 'write_division', 'read_statements', 'complete_statements', 'missing_numbers', 'word_to_equation']
+                // All statements (to 120)
+                max_value: 120,
+                operations: ['write_multiplication', 'write_division', 'identify_symbols']
             }
         }
     },
@@ -1173,37 +1171,32 @@ export const C_MODULES = {
         icon: '✖️',
         yearGroup: 'Year 3',
         strand: 'Addition, subtraction, multiplication and division (calculations)',
+        substrand: 'Written Methods',
+        ref: 'C07',
         parameters: {
             1: {
-                // Single-digit × single-digit
-                max_multiplier: 10,
-                max_multiplicand: 10,
-                operations: ['single_by_single', 'simple_division'],
-                use_formal_method: false
+                // 2-digit × 1-digit (10-30 × 2-5)
+                max_value: 30,
+                multiplier: 5,
+                operations: ['box_method_2x1', 'partial_products', 'identify_decomposition', 'calculate_product', 'find_total']
             },
             2: {
-                // Introduce 2-digit × 1-digit
-                max_multiplier: 10,
-                max_multiplicand: 30,
-                operations: ['single_by_single', 'two_digit_by_one', 'simple_division'],
-                use_formal_method: true,
-                include_partitioning: true
+                // 2-digit × 1-digit (10-50 × 2-7)
+                max_value: 50,
+                multiplier: 7,
+                operations: ['box_method_2x1', 'partial_products', 'identify_decomposition', 'calculate_product', 'find_total']
             },
             3: {
-                // 2-digit × 1-digit (to 99)
-                max_multiplier: 10,
-                max_multiplicand: 99,
-                operations: ['two_digit_by_one', 'division_with_remainder', 'formal_layout'],
-                use_formal_method: true,
-                include_partitioning: true
+                // 2-digit × 1-digit (10-80 × 2-9)
+                max_value: 80,
+                multiplier: 9,
+                operations: ['box_method_2x1', 'partial_products', 'identify_decomposition', 'calculate_product', 'find_total']
             },
             4: {
-                // All written methods
-                max_multiplier: 12,
-                max_multiplicand: 99,
-                operations: ['two_digit_by_one', 'division_with_remainder', 'formal_layout', 'choose_method'],
-                use_formal_method: true,
-                include_partitioning: true
+                // 2-digit × 1-digit (10-99 × 2-9)
+                max_value: 99,
+                multiplier: 9,
+                operations: ['box_method_2x1', 'partial_products', 'identify_decomposition', 'calculate_product', 'find_total']
             }
         }
     },
@@ -1215,34 +1208,32 @@ export const C_MODULES = {
         icon: '✖️',
         yearGroup: 'Year 4',
         strand: 'Addition, subtraction, multiplication and division (calculations)',
+        substrand: 'Written Methods',
+        ref: 'C07',
         parameters: {
             1: {
-                // 2-digit × 1-digit
-                max_multiplicand: 99,
-                multipliers: [2, 3, 4, 5],
-                operations: ['formal_multiplication'],
-                use_grid_method: true
+                // 3-digit × 1-digit (100-200 × 2-5)
+                max_value: 200,
+                multiplier: 5,
+                operations: ['box_method_3x1', 'partial_products', 'setup_method', 'word_problem', 'find_total']
             },
             2: {
-                // 3-digit × 1-digit (hundreds to 500)
-                max_multiplicand: 500,
-                multipliers: [2, 3, 4, 5, 6, 7, 8, 9],
-                operations: ['formal_multiplication', 'columnar_method'],
-                use_grid_method: true
+                // 3-digit × 1-digit (100-500 × 2-7)
+                max_value: 500,
+                multiplier: 7,
+                operations: ['box_method_3x1', 'partial_products', 'setup_method', 'word_problem', 'find_total']
             },
             3: {
-                // 3-digit × 1-digit (all)
-                max_multiplicand: 999,
-                multipliers: [2, 3, 4, 5, 6, 7, 8, 9],
-                operations: ['formal_multiplication', 'columnar_method', 'with_carrying'],
-                use_grid_method: false
+                // 3-digit × 1-digit (100-800 × 2-9)
+                max_value: 800,
+                multiplier: 9,
+                operations: ['box_method_3x1', 'partial_products', 'setup_method', 'word_problem', 'find_total']
             },
             4: {
-                // Complex 3-digit × 1-digit
-                max_multiplicand: 999,
-                multipliers: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                operations: ['formal_multiplication', 'columnar_method', 'with_carrying', 'problem_solving'],
-                use_grid_method: false
+                // 3-digit × 1-digit (100-999 × 2-9)
+                max_value: 999,
+                multiplier: 9,
+                operations: ['box_method_3x1', 'partial_products', 'setup_method', 'word_problem', 'find_total']
             }
         }
     },
@@ -1254,6 +1245,8 @@ export const C_MODULES = {
         icon: '✖️',
         yearGroup: 'Year 5',
         strand: 'Addition, subtraction, multiplication and division (calculations)',
+        substrand: 'Written Methods',
+        ref: 'C07',
         parameters: {
             1: {
                 // 4-digit × 1-digit
@@ -1262,7 +1255,7 @@ export const C_MODULES = {
                 multipliers_2_digit: [],
                 operations: ['multiply_4_by_1', 'short_division'],
                 include_division: true,
-                max_dividend: 999
+                max_dividend: 2999
             },
             2: {
                 // 4-digit × 2-digit (long multiplication)
@@ -1301,6 +1294,8 @@ export const C_MODULES = {
         icon: '✖️',
         yearGroup: 'Year 6',
         strand: 'Addition, subtraction, multiplication and division (calculations)',
+        substrand: 'Written Methods',
+        ref: 'C07',
         parameters: {
             1: {
                 // 4-digit × 2-digit (long multiplication)

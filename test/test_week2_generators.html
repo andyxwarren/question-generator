@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 2 Generators Test Suite</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-card.total { background: #ebf8ff; border-left: 4px solid #3182ce; }
+        .stat-card.passed { background: #f0fff4; border-left: 4px solid #38a169; }
+        .stat-card.failed { background: #fff5f5; border-left: 4px solid #e53e3e; }
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #718096;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        .category {
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .category-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .category-body {
+            padding: 20px;
+        }
+        .test-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            background: #f7fafc;
+            transition: all 0.2s;
+        }
+        .test-item:hover {
+            background: #edf2f7;
+            transform: translateX(5px);
+        }
+        .test-item.passed {
+            border-left: 4px solid #38a169;
+        }
+        .test-item.failed {
+            border-left: 4px solid #e53e3e;
+            background: #fff5f5;
+        }
+        .test-icon {
+            font-size: 20px;
+            margin-right: 12px;
+            min-width: 24px;
+        }
+        .test-name {
+            flex: 1;
+            color: #2d3748;
+            font-weight: 500;
+        }
+        .test-details {
+            font-size: 12px;
+            color: #718096;
+            margin-left: 36px;
+            margin-top: 5px;
+        }
+        .error-message {
+            background: #feb2b2;
+            color: #742a2a;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+            font-size: 18px;
+        }
+        .spinner {
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .completion-banner {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 600;
+            display: none;
+        }
+        .completion-banner.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Week 2 Generators Test Suite</h1>
+        <p class="subtitle">Testing C07_Y2_CALC, C07_Y3_CALC, and C07_Y4_CALC generators</p>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <div>Running tests...</div>
+        </div>
+
+        <div id="completion-banner" class="completion-banner"></div>
+
+        <div id="summary" class="summary" style="display: none;">
+            <div class="stat-card total">
+                <div class="stat-label">Total Tests</div>
+                <div class="stat-value" id="total-tests">0</div>
+            </div>
+            <div class="stat-card passed">
+                <div class="stat-label">Passed</div>
+                <div class="stat-value" id="passed-tests">0</div>
+            </div>
+            <div class="stat-card failed">
+                <div class="stat-label">Failed</div>
+                <div class="stat-value" id="failed-tests">0</div>
+            </div>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script type="module">
+        let totalTests = 0;
+        let passedTests = 0;
+        let failedTests = 0;
+
+        const results = document.getElementById('results');
+        const loading = document.getElementById('loading');
+        const summary = document.getElementById('summary');
+        const completionBanner = document.getElementById('completion-banner');
+
+        function createCategory(title) {
+            const category = document.createElement('div');
+            category.className = 'category';
+            category.innerHTML = `
+                <div class="category-header">${title}</div>
+                <div class="category-body"></div>
+            `;
+            results.appendChild(category);
+            return category.querySelector('.category-body');
+        }
+
+        function logTest(container, name, passed, details = '', error = null) {
+            totalTests++;
+            if (passed) passedTests++;
+            else failedTests++;
+
+            const testItem = document.createElement('div');
+            testItem.className = `test-item ${passed ? 'passed' : 'failed'}`;
+
+            let html = `
+                <span class="test-icon">${passed ? '✓' : '✗'}</span>
+                <span class="test-name">${name}</span>
+            `;
+
+            if (details) {
+                html += `<div class="test-details">${details}</div>`;
+            }
+
+            if (error) {
+                html += `<div class="error-message">${error.toString()}</div>`;
+            }
+
+            testItem.innerHTML = html;
+            container.appendChild(testItem);
+
+            updateSummary();
+        }
+
+        function updateSummary() {
+            document.getElementById('total-tests').textContent = totalTests;
+            document.getElementById('passed-tests').textContent = passedTests;
+            document.getElementById('failed-tests').textContent = failedTests;
+        }
+
+        async function runTests() {
+            try {
+                // Import generators
+                const Y2_CALC = await import('../src/generators/C07_Y2_CALC_statements.js');
+                const Y3_CALC = await import('../src/generators/C07_Y3_CALC_written_methods.js');
+                const Y4_CALC = await import('../src/generators/C07_Y4_CALC_formal_written.js');
+
+                // ================================================================
+                // YEAR 2 TESTS - C07_Y2_CALC
+                // ================================================================
+                const y2Container = createCategory('📝 Year 2: Multiplication & Division Statements');
+
+                // Test Year 2 operations at all 4 levels
+                for (let level = 1; level <= 4; level++) {
+                    // Test write_multiplication
+                    try {
+                        const params = {
+                            max_value: 100,
+                            operations: ['write_multiplication']
+                        };
+                        const question = Y2_CALC.generateQuestion(params, level);
+
+                        const hasText = question.text && question.text.length > 0;
+                        const hasType = ['text_input', 'multiple_choice'].includes(question.type);
+                        const hasAnswer = question.answer && question.answer.length > 0;
+                        const hasModule = question.module === 'C07_Y2_CALC';
+                        const hasLevel = question.level === level;
+
+                        const passed = hasText && hasType && hasAnswer && hasModule && hasLevel;
+                        logTest(
+                            y2Container,
+                            `Write Multiplication (Level ${level})`,
+                            passed,
+                            `Type: ${question.type}, Module: ${question.module}`
+                        );
+                    } catch (error) {
+                        logTest(y2Container, `Write Multiplication (Level ${level})`, false, '', error);
+                    }
+
+                    // Test write_division
+                    try {
+                        const params = {
+                            max_value: 100,
+                            operations: ['write_division']
+                        };
+                        const question = Y2_CALC.generateQuestion(params, level);
+
+                        const hasText = question.text && question.text.length > 0;
+                        const hasType = ['text_input', 'multiple_choice'].includes(question.type);
+                        const hasAnswer = question.answer && question.answer.length > 0;
+                        const hasModule = question.module === 'C07_Y2_CALC';
+                        const hasLevel = question.level === level;
+
+                        const passed = hasText && hasType && hasAnswer && hasModule && hasLevel;
+                        logTest(
+                            y2Container,
+                            `Write Division (Level ${level})`,
+                            passed,
+                            `Type: ${question.type}, Module: ${question.module}`
+                        );
+                    } catch (error) {
+                        logTest(y2Container, `Write Division (Level ${level})`, false, '', error);
+                    }
+
+                    // Test identify_symbols
+                    try {
+                        const params = {
+                            max_value: 100,
+                            operations: ['identify_symbols']
+                        };
+                        const question = Y2_CALC.generateQuestion(params, level);
+
+                        const hasText = question.text && question.text.length > 0;
+                        const hasType = ['text_input', 'multiple_choice'].includes(question.type);
+                        const hasAnswer = question.answer && question.answer.length > 0;
+                        const hasModule = question.module === 'C07_Y2_CALC';
+                        const hasLevel = question.level === level;
+
+                        const passed = hasText && hasType && hasAnswer && hasModule && hasLevel;
+                        logTest(
+                            y2Container,
+                            `Identify Symbols (Level ${level})`,
+                            passed,
+                            `Type: ${question.type}, Module: ${question.module}`
+                        );
+                    } catch (error) {
+                        logTest(y2Container, `Identify Symbols (Level ${level})`, false, '', error);
+                    }
+                }
+
+                // ================================================================
+                // YEAR 3 TESTS - C07_Y3_CALC
+                // ================================================================
+                const y3Container = createCategory('🔢 Year 3: Written Methods (2-digit × 1-digit)');
+
+                // Test Year 3 operations at all 4 levels
+                const y3Operations = [
+                    'box_method_2x1',
+                    'partial_products',
+                    'identify_decomposition',
+                    'calculate_product',
+                    'find_total'
+                ];
+
+                for (let level = 1; level <= 4; level++) {
+                    for (const operation of y3Operations) {
+                        try {
+                            const params = {
+                                max_value: level === 1 ? 30 : level === 2 ? 50 : level === 3 ? 80 : 99,
+                                multiplier: level <= 2 ? 7 : 9,
+                                operations: [operation]
+                            };
+                            const question = Y3_CALC.generateQuestion(params, level);
+
+                            const hasText = question.text && question.text.length > 0;
+                            const hasType = ['text_input', 'multiple_choice'].includes(question.type);
+                            const hasAnswer = question.answer !== undefined && question.answer !== null;
+                            const hasModule = question.module === 'C07_Y3_CALC';
+                            const hasLevel = question.level === level;
+
+                            const passed = hasText && hasType && hasAnswer && hasModule && hasLevel;
+                            logTest(
+                                y3Container,
+                                `${operation.replace(/_/g, ' ')} (Level ${level})`,
+                                passed,
+                                `Type: ${question.type}, Module: ${question.module}`
+                            );
+                        } catch (error) {
+                            logTest(y3Container, `${operation.replace(/_/g, ' ')} (Level ${level})`, false, '', error);
+                        }
+                    }
+                }
+
+                // ================================================================
+                // YEAR 4 TESTS - C07_Y4_CALC
+                // ================================================================
+                const y4Container = createCategory('📊 Year 4: Formal Written Methods (3-digit × 1-digit)');
+
+                // Test Year 4 operations at all 4 levels
+                const y4Operations = [
+                    'box_method_3x1',
+                    'partial_products',
+                    'setup_method',
+                    'word_problem',
+                    'find_total'
+                ];
+
+                for (let level = 1; level <= 4; level++) {
+                    for (const operation of y4Operations) {
+                        try {
+                            const params = {
+                                max_value: level === 1 ? 300 : level === 2 ? 500 : level === 3 ? 800 : 999,
+                                multiplier: level <= 2 ? 7 : 9,
+                                operations: [operation]
+                            };
+                            const question = Y4_CALC.generateQuestion(params, level);
+
+                            const hasText = question.text && question.text.length > 0;
+                            const hasType = ['text_input', 'multiple_choice'].includes(question.type);
+                            const hasAnswer = question.answer !== undefined && question.answer !== null;
+                            const hasModule = question.module === 'C07_Y4_CALC';
+                            const hasLevel = question.level === level;
+
+                            const passed = hasText && hasType && hasAnswer && hasModule && hasLevel;
+                            logTest(
+                                y4Container,
+                                `${operation.replace(/_/g, ' ')} (Level ${level})`,
+                                passed,
+                                `Type: ${question.type}, Module: ${question.module}`
+                            );
+                        } catch (error) {
+                            logTest(y4Container, `${operation.replace(/_/g, ' ')} (Level ${level})`, false, '', error);
+                        }
+                    }
+                }
+
+                // ================================================================
+                // INTEGRATION TESTS
+                // ================================================================
+                const integrationContainer = createCategory('🔗 Integration Tests');
+
+                // Test that generators export correct structure
+                try {
+                    const hasY2ModuleId = Y2_CALC.default.moduleId === 'C07_Y2_CALC';
+                    const hasY2Generate = typeof Y2_CALC.default.generate === 'function';
+                    logTest(
+                        integrationContainer,
+                        'Y2 Generator Export Structure',
+                        hasY2ModuleId && hasY2Generate,
+                        `moduleId: ${Y2_CALC.default.moduleId}, generate: ${typeof Y2_CALC.default.generate}`
+                    );
+                } catch (error) {
+                    logTest(integrationContainer, 'Y2 Generator Export Structure', false, '', error);
+                }
+
+                try {
+                    const hasY3ModuleId = Y3_CALC.default.moduleId === 'C07_Y3_CALC';
+                    const hasY3Generate = typeof Y3_CALC.default.generate === 'function';
+                    logTest(
+                        integrationContainer,
+                        'Y3 Generator Export Structure',
+                        hasY3ModuleId && hasY3Generate,
+                        `moduleId: ${Y3_CALC.default.moduleId}, generate: ${typeof Y3_CALC.default.generate}`
+                    );
+                } catch (error) {
+                    logTest(integrationContainer, 'Y3 Generator Export Structure', false, '', error);
+                }
+
+                try {
+                    const hasY4ModuleId = Y4_CALC.default.moduleId === 'C07_Y4_CALC';
+                    const hasY4Generate = typeof Y4_CALC.default.generate === 'function';
+                    logTest(
+                        integrationContainer,
+                        'Y4 Generator Export Structure',
+                        hasY4ModuleId && hasY4Generate,
+                        `moduleId: ${Y4_CALC.default.moduleId}, generate: ${typeof Y4_CALC.default.generate}`
+                    );
+                } catch (error) {
+                    logTest(integrationContainer, 'Y4 Generator Export Structure', false, '', error);
+                }
+
+                // Test that box method questions contain HTML
+                try {
+                    const params = {
+                        max_value: 99,
+                        multiplier: 9,
+                        operations: ['box_method_2x1']
+                    };
+                    const question = Y3_CALC.generateQuestion(params, 2);
+                    const containsHTML = question.text.includes('<div') || question.text.includes('<table');
+                    logTest(
+                        integrationContainer,
+                        'Box Method Question Contains HTML',
+                        containsHTML,
+                        'Checking for <div> or <table> tags in question text'
+                    );
+                } catch (error) {
+                    logTest(integrationContainer, 'Box Method Question Contains HTML', false, '', error);
+                }
+
+                // Test randomization - generate 5 questions and check they're different
+                try {
+                    const params = {
+                        max_value: 99,
+                        multiplier: 9,
+                        operations: ['box_method_2x1', 'partial_products', 'find_total']
+                    };
+                    const questions = [];
+                    for (let i = 0; i < 5; i++) {
+                        questions.push(Y3_CALC.generateQuestion(params, 2));
+                    }
+
+                    // Check if at least some questions are different
+                    const uniqueTexts = new Set(questions.map(q => q.text));
+                    const hasVariety = uniqueTexts.size >= 2; // At least 2 different questions out of 5
+
+                    logTest(
+                        integrationContainer,
+                        'Question Randomization',
+                        hasVariety,
+                        `Generated ${uniqueTexts.size} unique questions out of 5`
+                    );
+                } catch (error) {
+                    logTest(integrationContainer, 'Question Randomization', false, '', error);
+                }
+
+                // Show completion
+                loading.style.display = 'none';
+                summary.style.display = 'grid';
+
+                const percentage = Math.round((passedTests / totalTests) * 100);
+                const allPassed = failedTests === 0;
+
+                completionBanner.textContent = allPassed
+                    ? `🎉 All ${totalTests} tests passed! (100%)`
+                    : `⚠️ ${passedTests}/${totalTests} tests passed (${percentage}%)`;
+                completionBanner.className = allPassed ? 'completion-banner show' : 'completion-banner show';
+                completionBanner.style.background = allPassed
+                    ? 'linear-gradient(135deg, #38a169 0%, #2f855a 100%)'
+                    : 'linear-gradient(135deg, #ed8936 0%, #dd6b20 100%)';
+
+            } catch (error) {
+                loading.innerHTML = `
+                    <div style="color: #e53e3e;">
+                        <strong>Fatal Error:</strong><br>
+                        ${error.toString()}<br><br>
+                        <pre style="text-align: left; background: #fff5f5; padding: 15px; border-radius: 4px; font-size: 12px;">${error.stack}</pre>
+                    </div>
+                `;
+                console.error('Fatal error in test suite:', error);
+            }
+        }
+
+        // Run tests
+        runTests();
+    </script>
+</body>
+</html>

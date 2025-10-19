@@ -3,7 +3,8 @@
     "allow": [
       "Bash(python -m http.server:*)",
       "Bash(curl:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(netstat:*)"
     ],
     "deny": [],
     "ask": []

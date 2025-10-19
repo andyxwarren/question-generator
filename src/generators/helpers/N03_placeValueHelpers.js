@@ -122,6 +122,42 @@ export function getExpandedForm(num) {
 }
 
 /**
+ * Get place value parts as array (optimized for box method)
+ * Returns only non-zero place values in descending order
+ *
+ * @param {number} num - Number to decompose
+ * @returns {Array<number>} Array of place value parts in descending order
+ *
+ * @example
+ * getPlaceValueArray(347)  // Returns [300, 40, 7]
+ * getPlaceValueArray(1205) // Returns [1000, 200, 5]
+ * getPlaceValueArray(50)   // Returns [50]
+ * getPlaceValueArray(0)    // Returns [0]
+ *
+ * @note
+ * This function is specifically designed for box method multiplication
+ * where we need to decompose numbers into place value components.
+ * Handles numbers up to 10,000 (adequate for primary school)
+ */
+export function getPlaceValueArray(num) {
+    const parts = [];
+    let remaining = Math.abs(num);
+
+    // Handle numbers up to 10,000 (covers primary school range)
+    const powers = [10000, 1000, 100, 10, 1];
+
+    powers.forEach(power => {
+        const digit = Math.floor(remaining / power);
+        if (digit > 0) {
+            parts.push(digit * power);
+        }
+        remaining = remaining % power;
+    });
+
+    return parts.length > 0 ? parts : [0];
+}
+
+/**
  * Parse expanded form back to number
  * @param {string} expandedForm - E.g., "300 + 40 + 7"
  * @returns {number} The standard form number
@@ -383,6 +419,7 @@ export default {
     getPlaceValue,
     decomposeNumber,
     getExpandedForm,
+    getPlaceValueArray,
     parseExpandedForm,
     getAlternativeDecomposition,
     generateNumberWithZero,

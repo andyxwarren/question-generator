@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C07 Complete Test Suite</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-card.total { background: #ebf8ff; border-left: 4px solid #3182ce; }
+        .stat-card.passed { background: #f0fff4; border-left: 4px solid #38a169; }
+        .stat-card.failed { background: #fff5f5; border-left: 4px solid #e53e3e; }
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #718096;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        .category {
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .category-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .category-body {
+            padding: 20px;
+        }
+        .test-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            background: #f7fafc;
+            transition: all 0.2s;
+        }
+        .test-item:hover {
+            background: #edf2f7;
+            transform: translateX(5px);
+        }
+        .test-item.passed {
+            border-left: 4px solid #38a169;
+        }
+        .test-item.failed {
+            border-left: 4px solid #e53e3e;
+            background: #fff5f5;
+        }
+        .test-icon {
+            font-size: 20px;
+            margin-right: 12px;
+            min-width: 24px;
+        }
+        .test-name {
+            flex: 1;
+            color: #2d3748;
+            font-weight: 500;
+        }
+        .test-details {
+            font-size: 12px;
+            color: #718096;
+            margin-left: 36px;
+            margin-top: 5px;
+        }
+        .error-message {
+            background: #feb2b2;
+            color: #742a2a;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+            font-size: 18px;
+        }
+        .spinner {
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .completion-banner {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 600;
+            display: none;
+        }
+        .completion-banner.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 C07 Complete Test Suite</h1>
+        <p class="subtitle">Testing all C07 Written Methods generators (Years 2-6) with QuestionEngine integration</p>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <div>Running comprehensive tests...</div>
+        </div>
+
+        <div id="completion-banner" class="completion-banner"></div>
+
+        <div id="summary" class="summary" style="display: none;">
+            <div class="stat-card total">
+                <div class="stat-label">Total Tests</div>
+                <div class="stat-value" id="total-tests">0</div>
+            </div>
+            <div class="stat-card passed">
+                <div class="stat-label">Passed</div>
+                <div class="stat-value" id="passed-tests">0</div>
+            </div>
+            <div class="stat-card failed">
+                <div class="stat-label">Failed</div>
+                <div class="stat-value" id="failed-tests">0</div>
+            </div>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script type="module">
+        import questionEngine from '../src/core/questionEngine.js';
+
+        let totalTests = 0;
+        let passedTests = 0;
+        let failedTests = 0;
+
+        const results = document.getElementById('results');
+        const loading = document.getElementById('loading');
+        const summary = document.getElementById('summary');
+        const completionBanner = document.getElementById('completion-banner');
+
+        function createCategory(title) {
+            const category = document.createElement('div');
+            category.className = 'category';
+            category.innerHTML = `
+                <div class="category-header">${title}</div>
+                <div class="category-body"></div>
+            `;
+            results.appendChild(category);
+            return category.querySelector('.category-body');
+        }
+
+        function logTest(container, name, passed, details = '', error = null) {
+            totalTests++;
+            if (passed) passedTests++;
+            else failedTests++;
+
+            const testItem = document.createElement('div');
+            testItem.className = `test-item ${passed ? 'passed' : 'failed'}`;
+
+            let html = `
+                <span class="test-icon">${passed ? '✓' : '✗'}</span>
+                <span class="test-name">${name}</span>
+            `;
+
+            if (details) {
+                html += `<div class="test-details">${details}</div>`;
+            }
+
+            if (error) {
+                html += `<div class="error-message">${error.toString()}</div>`;
+            }
+
+            testItem.innerHTML = html;
+            container.appendChild(testItem);
+
+            updateSummary();
+        }
+
+        function updateSummary() {
+            document.getElementById('total-tests').textContent = totalTests;
+            document.getElementById('passed-tests').textContent = passedTests;
+            document.getElementById('failed-tests').textContent = failedTests;
+        }
+
+        async function runTests() {
+            try {
+                // ================================================================
+                // REGISTRATION TESTS
+                // ================================================================
+                const registrationContainer = createCategory('🔧 Registration Tests');
+
+                const modules = ['C07_Y2_CALC', 'C07_Y3_CALC', 'C07_Y4_CALC', 'C07_Y5_CALC', 'C07_Y6_CALC'];
+
+                for (const moduleId of modules) {
+                    const hasGenerator = questionEngine.hasGenerator(moduleId);
+                    logTest(
+                        registrationContainer,
+                        `${moduleId} registered`,
+                        hasGenerator,
+                        hasGenerator ? 'Generator found in registry' : 'Generator NOT found'
+                    );
+                }
+
+                // ================================================================
+                // GENERATION TESTS - All modules, all levels
+                // ================================================================
+                const generationContainer = createCategory('⚙️ Question Generation Tests');
+
+                for (const moduleId of modules) {
+                    for (let level = 1; level <= 4; level++) {
+                        try {
+                            const question = questionEngine.generateOne(moduleId, level);
+
+                            const hasText = question && question.text && question.text.length > 0;
+                            const hasType = question && ['text_input', 'multiple_choice'].includes(question.type);
+                            const hasAnswer = question && question.answer !== undefined && question.answer !== null;
+                            const hasModule = question && question.module === moduleId;
+                            const hasLevel = question && question.level === level;
+                            const hasId = question && question.id && question.id.length > 0;
+
+                            const passed = hasText && hasType && hasAnswer && hasModule && hasLevel && hasId;
+
+                            logTest(
+                                generationContainer,
+                                `${moduleId} Level ${level}`,
+                                passed,
+                                passed ? `Type: ${question.type}, Module: ${question.module}` : 'Missing required fields'
+                            );
+                        } catch (error) {
+                            logTest(generationContainer, `${moduleId} Level ${level}`, false, '', error);
+                        }
+                    }
+                }
+
+                // ================================================================
+                // MULTI-GENERATION TESTS
+                // ================================================================
+                const multiGenContainer = createCategory('📊 Multiple Question Generation');
+
+                for (const moduleId of modules) {
+                    try {
+                        const questions = questionEngine.generate(moduleId, 2, 5);
+
+                        const hasCorrectCount = questions.length === 5;
+                        const allValid = questions.every(q =>
+                            q.text && q.type && q.answer !== undefined && q.module === moduleId && q.id
+                        );
+                        const uniqueIds = new Set(questions.map(q => q.id)).size === 5;
+
+                        const passed = hasCorrectCount && allValid && uniqueIds;
+
+                        logTest(
+                            multiGenContainer,
+                            `${moduleId} - Generate 5 questions`,
+                            passed,
+                            `Generated: ${questions.length}, Unique IDs: ${uniqueIds}`
+                        );
+                    } catch (error) {
+                        logTest(multiGenContainer, `${moduleId} - Generate 5 questions`, false, '', error);
+                    }
+                }
+
+                // ================================================================
+                // RANDOMIZATION TESTS
+                // ================================================================
+                const randomContainer = createCategory('🎲 Randomization Tests');
+
+                for (const moduleId of modules) {
+                    try {
+                        const questions = questionEngine.generate(moduleId, 2, 10);
+                        const uniqueTexts = new Set(questions.map(q => q.text)).size;
+
+                        // At least 50% unique questions
+                        const hasVariety = uniqueTexts >= 5;
+
+                        logTest(
+                            randomContainer,
+                            `${moduleId} variety`,
+                            hasVariety,
+                            `${uniqueTexts}/10 unique questions`
+                        );
+                    } catch (error) {
+                        logTest(randomContainer, `${moduleId} variety`, false, '', error);
+                    }
+                }
+
+                // ================================================================
+                // INTEGRATION TESTS
+                // ================================================================
+                const integrationContainer = createCategory('🔗 Integration Tests');
+
+                // Test that all registered modules match parameters
+                const registeredModules = questionEngine.getRegisteredModules();
+                const c07Modules = registeredModules.filter(m => m.startsWith('C07'));
+
+                logTest(
+                    integrationContainer,
+                    'All C07 modules registered',
+                    c07Modules.length === 5,
+                    `Found ${c07Modules.length} C07 modules: ${c07Modules.join(', ')}`
+                );
+
+                // Test that question IDs are unique across modules
+                try {
+                    const allQuestions = [];
+                    for (const moduleId of modules) {
+                        allQuestions.push(...questionEngine.generate(moduleId, 2, 2));
+                    }
+
+                    const allIds = allQuestions.map(q => q.id);
+                    const uniqueIds = new Set(allIds);
+
+                    logTest(
+                        integrationContainer,
+                        'Unique IDs across all modules',
+                        uniqueIds.size === allIds.length,
+                        `Generated ${allIds.length} questions with ${uniqueIds.size} unique IDs`
+                    );
+                } catch (error) {
+                    logTest(integrationContainer, 'Unique IDs across all modules', false, '', error);
+                }
+
+                // Show completion
+                loading.style.display = 'none';
+                summary.style.display = 'grid';
+
+                const percentage = Math.round((passedTests / totalTests) * 100);
+                const allPassed = failedTests === 0;
+
+                completionBanner.textContent = allPassed
+                    ? `🎉 All ${totalTests} tests passed! (100%)`
+                    : `⚠️ ${passedTests}/${totalTests} tests passed (${percentage}%)`;
+                completionBanner.className = allPassed ? 'completion-banner show' : 'completion-banner show';
+                completionBanner.style.background = allPassed
+                    ? 'linear-gradient(135deg, #38a169 0%, #2f855a 100%)'
+                    : 'linear-gradient(135deg, #ed8936 0%, #dd6b20 100%)';
+
+            } catch (error) {
+                loading.innerHTML = `
+                    <div style="color: #e53e3e;">
+                        <strong>Fatal Error:</strong><br>
+                        ${error.toString()}<br><br>
+                        <pre style="text-align: left; background: #fff5f5; padding: 15px; border-radius: 4px; font-size: 12px;">${error.stack}</pre>
+                    </div>
+                `;
+                console.error('Fatal error in test suite:', error);
+            }
+        }
+
+        // Run tests
+        runTests();
+    </script>
+</body>
+</html>
