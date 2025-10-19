@@ -23,7 +23,7 @@ import {
     generateSubtraction,
     generateMultiplication,
     roundTo
-} from './helpers/calculationHelpers.js';
+} from './helpers/C01_C03_calculationHelpers.js';
 
 /**
  * Main question generator
@@ -46,6 +46,8 @@ export function generateQuestion(params, level) {
             return generateDetermineAccuracyLevel(params, level);
         case 'compare_accuracy_methods':
             return generateCompareAccuracyMethods(params, level);
+        case 'check_with_inverse_large_numbers':
+            return generateCheckWithInverseLargeNumbers(params, level);
         default:
             return generateRoundToCheck(params, level);
     }
@@ -94,28 +96,31 @@ function generateContextualMeasurement(params, level) {
             value: randomInt(1000, 50000),
             unit: 'metres',
             item: randomChoice(['bridge', 'road', 'river', 'railway line']),
-            roundings: [10, 100, 1000, 10000]
+            roundings: [10, 100, 1000, 10000],
+            audience: 'When casually describing this to a friend, you would say it is'
         },
         {
             type: 'capacity',
             value: randomInt(5000, 100000),
             unit: 'litres',
             item: randomChoice(['swimming pool', 'water tank', 'reservoir', 'lake']),
-            roundings: [100, 1000, 10000]
+            roundings: [100, 1000, 10000],
+            audience: 'When telling someone about this in conversation, you would say it holds'
         },
         {
             type: 'mass',
             value: randomInt(2000, 50000),
             unit: 'kilograms',
             item: randomChoice(['elephant', 'car', 'lorry', 'container']),
-            roundings: [100, 1000, 10000]
+            roundings: [100, 1000, 10000],
+            audience: 'When describing this to a friend, you would say it weighs'
         }
     ];
 
     const context = randomChoice(contexts);
     const value = context.value;
 
-    const text = `A ${context.item} is ${value.toLocaleString()} ${context.unit} long.\n\nWhat is the most appropriate way to describe this?`;
+    const text = `A ${context.item} is ${value.toLocaleString()} ${context.unit}.\n\n${context.audience}:`;
 
     // Generate options with different rounding levels
     const options = context.roundings.map(place => {
@@ -123,7 +128,7 @@ function generateContextualMeasurement(params, level) {
         return `About ${rounded.toLocaleString()} ${context.unit}`;
     });
 
-    // The "best" answer is typically rounding to the nearest 1000 or 100 for these contexts
+    // The "best" answer for casual conversation is typically rounding to the nearest 1000 or 100
     // For very large numbers, round to 10000
     let bestRounding;
     if (value > 50000) {
@@ -141,7 +146,7 @@ function generateContextualMeasurement(params, level) {
         type: 'multiple_choice',
         options: shuffle(options),
         answer: correctAnswer,
-        hint: 'Consider what level of accuracy is sensible for this measurement',
+        hint: 'In casual conversation, round to a sensible place value for easy communication',
         module: 'C03_Y5_CALC',
         level: level
     };
@@ -223,7 +228,7 @@ function generateContextualMoney(params, level) {
     const item = randomChoice(items);
     const price = randomInt(item.range[0], item.range[1]);
 
-    const text = `A ${item.name} costs £${price.toLocaleString()}.\n\nWhat is the most sensible way to describe this price?`;
+    const text = `A ${item.name} costs £${price.toLocaleString()}.\n\nWhen telling a friend about this price, you would most likely say it costs:`;
 
     const options = [
         `About £${roundTo(price, 10).toLocaleString()}`,
@@ -239,7 +244,7 @@ function generateContextualMoney(params, level) {
         type: 'multiple_choice',
         options: shuffle(options),
         answer: correctAnswer,
-        hint: 'Think about how people usually talk about prices for this item',
+        hint: 'Think about how you naturally round prices when talking to friends',
         module: 'C03_Y5_CALC',
         level: level
     };
@@ -396,6 +401,82 @@ function generateCompareAccuracyMethods(params, level) {
         options: shuffle(optionTexts),
         answer: correctAnswer,
         hint: hint,
+        module: 'C03_Y5_CALC',
+        level: level
+    };
+}
+
+/**
+ * OPERATION 8: Check with Inverse (Large Numbers)
+ * "Check this calculation using inverse operations: 234,567 + 123,456 = 358,023. Is it correct?"
+ */
+function generateCheckWithInverseLargeNumbers(params, level) {
+    const calcType = randomChoice(['addition', 'subtraction', 'multiplication', 'division']);
+
+    let a, b, correctAnswer, givenAnswer, isCorrect, inverseOp, checkText;
+
+    if (calcType === 'addition') {
+        const result = generateAddition(params.min_value, params.max_value);
+        a = result.a;
+        b = result.b;
+        correctAnswer = result.answer;
+
+        isCorrect = Math.random() < 0.7;
+        givenAnswer = isCorrect ? correctAnswer : correctAnswer + randomChoice([1000, -1000, 5000, -5000, 10000]);
+
+        inverseOp = `${givenAnswer.toLocaleString()} - ${b.toLocaleString()} = ${a.toLocaleString()}`;
+        checkText = `Check this calculation using inverse operations:\n\n${a.toLocaleString()} + ${b.toLocaleString()} = ${givenAnswer.toLocaleString()}\n\nIs it correct?`;
+
+    } else if (calcType === 'subtraction') {
+        const result = generateSubtraction(params.min_value, params.max_value);
+        a = result.a;
+        b = result.b;
+        correctAnswer = result.answer;
+
+        isCorrect = Math.random() < 0.7;
+        givenAnswer = isCorrect ? correctAnswer : Math.max(0, correctAnswer + randomChoice([1000, -1000, 5000, -5000]));
+
+        inverseOp = `${givenAnswer.toLocaleString()} + ${b.toLocaleString()} = ${a.toLocaleString()}`;
+        checkText = `Check this calculation using inverse operations:\n\n${a.toLocaleString()} - ${b.toLocaleString()} = ${givenAnswer.toLocaleString()}\n\nIs it correct?`;
+
+    } else if (calcType === 'multiplication') {
+        // Use smaller numbers for multiplication to keep products reasonable
+        const multiplier = randomInt(2, 99);
+        const multiplicand = randomInt(100, 9999);
+        a = multiplicand;
+        b = multiplier;
+        correctAnswer = a * b;
+
+        isCorrect = Math.random() < 0.7;
+        givenAnswer = isCorrect ? correctAnswer : correctAnswer + randomChoice([100, -100, 500, -500, 1000]);
+
+        inverseOp = `${givenAnswer.toLocaleString()} ÷ ${b} = ${a.toLocaleString()}`;
+        checkText = `Check this calculation using inverse operations:\n\n${a.toLocaleString()} × ${b} = ${givenAnswer.toLocaleString()}\n\nIs it correct?`;
+
+    } else { // division
+        // Generate division that gives whole number result
+        const divisor = randomInt(2, 99);
+        const quotient = randomInt(100, 9999);
+        a = divisor * quotient; // dividend
+        b = divisor;
+        correctAnswer = quotient;
+
+        isCorrect = Math.random() < 0.7;
+        givenAnswer = isCorrect ? correctAnswer : correctAnswer + randomChoice([10, -10, 50, -50, 100]);
+
+        inverseOp = `${givenAnswer.toLocaleString()} × ${b} = ${a.toLocaleString()}`;
+        checkText = `Check this calculation using inverse operations:\n\n${a.toLocaleString()} ÷ ${b} = ${givenAnswer.toLocaleString()}\n\nIs it correct?`;
+    }
+
+    const options = ['Yes', 'No'];
+    const correctOption = isCorrect ? 'Yes' : 'No';
+
+    return {
+        text: checkText,
+        type: 'multiple_choice',
+        options: options,
+        answer: correctOption,
+        hint: `Use the inverse operation to check: ${inverseOp}`,
         module: 'C03_Y5_CALC',
         level: level
     };

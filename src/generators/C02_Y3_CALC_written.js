@@ -24,11 +24,11 @@ import {
     checkBorrow,
     getRandomName,
     getRandomItem
-} from './helpers/calculationHelpers.js';
+} from './helpers/C01_C03_calculationHelpers.js';
 
 import {
     formatColumnar
-} from './helpers/columnarHelpers.js';
+} from './helpers/C02_columnarHelpers.js';
 
 /**
  * Main question generator

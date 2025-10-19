@@ -25,7 +25,7 @@ import {
     generateSubtraction,
     generateMultiplication,
     roundTo
-} from './helpers/calculationHelpers.js';
+} from './helpers/C01_C03_calculationHelpers.js';
 
 /**
  * Main question generator
@@ -48,6 +48,8 @@ export function generateQuestion(params, level) {
             return generateJustifyAccuracyChoice(params, level);
         case 'multi_step_estimation':
             return generateMultiStepEstimation(params, level);
+        case 'check_with_inverse_large_numbers':
+            return generateCheckWithInverseLargeNumbers(params, level);
         default:
             return generateChooseRoundingStrategy(params, level);
     }
@@ -162,27 +164,27 @@ function generateContextualRounding(params, level) {
             ]
         },
         {
-            context: 'A bus holds 52 people. You have 347 people to transport.',
-            question: 'How many buses do you need at minimum?',
-            value: 347,
+            context: 'You calculated that you need 6.67 buses to transport everyone.',
+            question: 'How many buses should you actually book?',
+            value: 6.67,
             correct: '7 buses (round UP from 6.67)',
             why: 'You need enough buses for everyone, so round up',
             wrongOptions: [
                 '6 buses (round DOWN)',
-                '5 buses',
+                '6.67 buses',
                 '10 buses'
             ]
         },
         {
-            context: 'You have £45.67 and items cost £8 each.',
-            question: 'How many items can you definitely afford?',
-            value: 45.67,
+            context: 'You calculated that you can afford 5.7 items with your money.',
+            question: 'How many items should you actually buy?',
+            value: 5.7,
             correct: '5 items (round DOWN from 5.7)',
             why: 'You can only buy whole items you can afford, so round down',
             wrongOptions: [
                 '6 items (round UP)',
-                '4 items',
-                '7 items'
+                '5.7 items',
+                '4 items'
             ]
         },
         {
@@ -268,34 +270,34 @@ function generateCompareStrategies(params, level) {
 function generateDetermineAppropriateAccuracy(params, level) {
     const scenarios = [
         {
-            situation: 'measuring medicine dosage (5.25ml)',
+            situation: 'giving someone medicine (dosage is 5.25ml)',
             correct: 'Exact amount - do not round',
             why: 'Medicine must be exact for safety'
         },
         {
-            situation: 'estimating journey distance (287.3km)',
+            situation: 'planning a car journey (distance is 287.3km)',
             correct: 'Nearest 10km (290km)',
-            why: 'Journey distances are usually rounded to nearest 10km'
+            why: 'When planning journeys, distances are usually rounded to nearest 10km'
         },
         {
-            situation: 'counting votes in an election (45,678 votes)',
+            situation: 'reporting the final election result (45,678 votes)',
             correct: 'Exact count - do not round',
-            why: 'Election votes must be counted exactly'
+            why: 'Final election vote counts must be exact'
         },
         {
-            situation: 'reporting stadium attendance (67,834 people)',
+            situation: 'a news report about stadium attendance (67,834 people)',
             correct: 'Nearest 1,000 (68,000)',
-            why: 'Large attendances are typically rounded to nearest thousand'
+            why: 'News reports typically round large attendances to nearest thousand'
         },
         {
-            situation: 'measuring ingredients for cooking (234g flour)',
+            situation: 'following a recipe for home cooking (234g flour)',
             correct: 'Nearest 10g (230g)',
-            why: 'Cooking ingredients can be approximate to nearest 10g'
+            why: 'Home cooking ingredients can be approximate to nearest 10g'
         },
         {
-            situation: 'calculating building costs (£234,567)',
+            situation: 'giving someone a rough building quote (actual cost £234,567)',
             correct: 'Nearest £1,000 (£235,000)',
-            why: 'Large costs are usually rounded to nearest thousand pounds'
+            why: 'Rough quotes are usually rounded to nearest thousand pounds'
         }
     ];
 
@@ -420,6 +422,82 @@ function generateMultiStepEstimation(params, level) {
         options: options.map(o => o.toLocaleString()),
         answer: estimate.toLocaleString(),
         hint: `${aRounded.toLocaleString()} + ${bRounded.toLocaleString()} - ${cRounded.toLocaleString()}`,
+        module: 'C03_Y6_CALC',
+        level: level
+    };
+}
+
+/**
+ * OPERATION 8: Check with Inverse (Large Numbers)
+ * "Check this calculation using inverse operations: 2,345,678 + 1,234,567 = 3,580,245. Is it correct?"
+ */
+function generateCheckWithInverseLargeNumbers(params, level) {
+    const calcType = randomChoice(['addition', 'subtraction', 'multiplication', 'division']);
+
+    let a, b, correctAnswer, givenAnswer, isCorrect, inverseOp, checkText;
+
+    if (calcType === 'addition') {
+        const result = generateAddition(params.min_value, params.max_value);
+        a = result.a;
+        b = result.b;
+        correctAnswer = result.answer;
+
+        isCorrect = Math.random() < 0.7;
+        givenAnswer = isCorrect ? correctAnswer : correctAnswer + randomChoice([10000, -10000, 50000, -50000, 100000]);
+
+        inverseOp = `${givenAnswer.toLocaleString()} - ${b.toLocaleString()} = ${a.toLocaleString()}`;
+        checkText = `Check this calculation using inverse operations:\n\n${a.toLocaleString()} + ${b.toLocaleString()} = ${givenAnswer.toLocaleString()}\n\nIs it correct?`;
+
+    } else if (calcType === 'subtraction') {
+        const result = generateSubtraction(params.min_value, params.max_value);
+        a = result.a;
+        b = result.b;
+        correctAnswer = result.answer;
+
+        isCorrect = Math.random() < 0.7;
+        givenAnswer = isCorrect ? correctAnswer : Math.max(0, correctAnswer + randomChoice([10000, -10000, 50000, -50000]));
+
+        inverseOp = `${givenAnswer.toLocaleString()} + ${b.toLocaleString()} = ${a.toLocaleString()}`;
+        checkText = `Check this calculation using inverse operations:\n\n${a.toLocaleString()} - ${b.toLocaleString()} = ${givenAnswer.toLocaleString()}\n\nIs it correct?`;
+
+    } else if (calcType === 'multiplication') {
+        // Use smaller numbers for multiplication to keep products reasonable
+        const multiplier = randomInt(2, 999);
+        const multiplicand = randomInt(100, 99999);
+        a = multiplicand;
+        b = multiplier;
+        correctAnswer = a * b;
+
+        isCorrect = Math.random() < 0.7;
+        givenAnswer = isCorrect ? correctAnswer : correctAnswer + randomChoice([1000, -1000, 5000, -5000, 10000]);
+
+        inverseOp = `${givenAnswer.toLocaleString()} ÷ ${b.toLocaleString()} = ${a.toLocaleString()}`;
+        checkText = `Check this calculation using inverse operations:\n\n${a.toLocaleString()} × ${b.toLocaleString()} = ${givenAnswer.toLocaleString()}\n\nIs it correct?`;
+
+    } else { // division
+        // Generate division that gives whole number result
+        const divisor = randomInt(2, 999);
+        const quotient = randomInt(100, 99999);
+        a = divisor * quotient; // dividend
+        b = divisor;
+        correctAnswer = quotient;
+
+        isCorrect = Math.random() < 0.7;
+        givenAnswer = isCorrect ? correctAnswer : correctAnswer + randomChoice([100, -100, 500, -500, 1000]);
+
+        inverseOp = `${givenAnswer.toLocaleString()} × ${b.toLocaleString()} = ${a.toLocaleString()}`;
+        checkText = `Check this calculation using inverse operations:\n\n${a.toLocaleString()} ÷ ${b.toLocaleString()} = ${givenAnswer.toLocaleString()}\n\nIs it correct?`;
+    }
+
+    const options = ['Yes', 'No'];
+    const correctOption = isCorrect ? 'Yes' : 'No';
+
+    return {
+        text: checkText,
+        type: 'multiple_choice',
+        options: options,
+        answer: correctOption,
+        hint: `Use the inverse operation to check: ${inverseOp}`,
         module: 'C03_Y6_CALC',
         level: level
     };

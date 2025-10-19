@@ -22,7 +22,7 @@ import {
     calculateMidpoint,
     generateUniqueNumbers
 } from './helpers/N04_representationHelpers.js';
-import { createSimpleNumberLineHTML } from './helpers/simpleVisuals.js';
+import { createSimpleNumberLineHTML } from './helpers/N04_simpleVisuals.js';
 
 /**
  * Main question generator

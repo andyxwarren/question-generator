@@ -25,7 +25,7 @@ import {
 import {
     getRandomName,
     getRandomItem
-} from './helpers/calculationHelpers.js';
+} from './helpers/C01_C03_calculationHelpers.js';
 
 /**
  * Main question generator

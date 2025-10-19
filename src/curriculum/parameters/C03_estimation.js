@@ -257,7 +257,8 @@ export const C03_MODULES = {
                 operations: [
                     'round_to_check',                 // Use rounding to verify
                     'contextual_measurement',         // Appropriate accuracy for measurement
-                    'is_reasonable_context'           // Reasonableness in context
+                    'is_reasonable_context',          // Reasonableness in context
+                    'check_with_inverse_large_numbers' // Use inverse operations with 5-6 digit numbers
                 ],
                 contexts: ['measurement', 'counting', 'distance'],
                 calculation_types: ['addition', 'subtraction', 'multiplication', 'division'],
@@ -273,7 +274,8 @@ export const C03_MODULES = {
                     'contextual_measurement',
                     'is_reasonable_context',
                     'contextual_money',               // Appropriate accuracy for money
-                    'detect_error_context'            // Find unreasonable answer in context
+                    'detect_error_context',           // Find unreasonable answer in context
+                    'check_with_inverse_large_numbers' // Use inverse operations with 5-6 digit numbers
                 ],
                 contexts: ['measurement', 'counting', 'distance', 'money', 'capacity'],
                 calculation_types: ['addition', 'subtraction', 'multiplication', 'division'],
@@ -291,7 +293,8 @@ export const C03_MODULES = {
                     'is_reasonable_context',
                     'contextual_money',
                     'detect_error_context',
-                    'determine_accuracy_level'        // Choose appropriate accuracy
+                    'determine_accuracy_level',       // Choose appropriate accuracy
+                    'check_with_inverse_large_numbers' // Use inverse operations with 5-6 digit numbers
                 ],
                 contexts: ['measurement', 'counting', 'distance', 'money', 'capacity', 'mass', 'population'],
                 calculation_types: ['addition', 'subtraction', 'multiplication', 'division'],
@@ -310,7 +313,8 @@ export const C03_MODULES = {
                     'contextual_money',
                     'detect_error_context',
                     'determine_accuracy_level',
-                    'compare_accuracy_methods'        // Which rounding is best for this context?
+                    'compare_accuracy_methods',       // Which rounding is best for this context?
+                    'check_with_inverse_large_numbers' // Use inverse operations with 5-6 digit numbers
                 ],
                 contexts: ['measurement', 'counting', 'distance', 'money', 'capacity', 'mass', 'population', 'temperature'],
                 calculation_types: ['addition', 'subtraction', 'multiplication', 'division'],
@@ -339,7 +343,8 @@ export const C03_MODULES = {
                 operations: [
                     'choose_rounding_strategy',       // Select appropriate method
                     'decimal_estimation',             // Estimate with decimals
-                    'contextual_rounding'             // Round up/down based on context
+                    'contextual_rounding',            // Round up/down based on context
+                    'check_with_inverse_large_numbers' // Use inverse operations with 6-7 digit numbers
                 ],
                 contexts: ['measurement', 'money', 'distance', 'capacity', 'mass'],
                 include_decimals: true,
@@ -356,7 +361,8 @@ export const C03_MODULES = {
                     'decimal_estimation',
                     'contextual_rounding',
                     'compare_strategies',             // Which estimation method is better?
-                    'determine_appropriate_accuracy'  // What accuracy is needed?
+                    'determine_appropriate_accuracy', // What accuracy is needed?
+                    'check_with_inverse_large_numbers' // Use inverse operations with 6-7 digit numbers
                 ],
                 contexts: ['measurement', 'money', 'distance', 'capacity', 'mass', 'population', 'area', 'volume'],
                 include_decimals: true,
@@ -374,7 +380,8 @@ export const C03_MODULES = {
                     'contextual_rounding',
                     'compare_strategies',
                     'determine_appropriate_accuracy',
-                    'justify_accuracy_choice'         // Explain why this accuracy is appropriate
+                    'justify_accuracy_choice',        // Explain why this accuracy is appropriate
+                    'check_with_inverse_large_numbers' // Use inverse operations with 6-7 digit numbers
                 ],
                 contexts: ['measurement', 'money', 'distance', 'capacity', 'mass', 'population', 'area', 'volume', 'speed', 'temperature'],
                 include_decimals: true,
@@ -393,7 +400,8 @@ export const C03_MODULES = {
                     'compare_strategies',
                     'determine_appropriate_accuracy',
                     'justify_accuracy_choice',
-                    'multi_step_estimation'           // Estimate multi-step calculations
+                    'multi_step_estimation',          // Estimate multi-step calculations
+                    'check_with_inverse_large_numbers' // Use inverse operations with 6-7 digit numbers
                 ],
                 contexts: ['measurement', 'money', 'distance', 'capacity', 'mass', 'population', 'area', 'volume', 'speed', 'temperature', 'percentage'],
                 include_decimals: true,

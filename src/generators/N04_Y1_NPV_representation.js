@@ -18,7 +18,7 @@ import {
     evaluateComparison,
     generateUniqueNumbers
 } from './helpers/N04_representationHelpers.js';
-import { createSimpleNumberLineHTML, createSimpleDotsHTML, createTenFrameHTML, createBase10BlocksHTML, createTallyMarksHTML } from './helpers/simpleVisuals.js';
+import { createSimpleNumberLineHTML, createSimpleDotsHTML, createTenFrameHTML, createBase10BlocksHTML, createTallyMarksHTML } from './helpers/N04_simpleVisuals.js';
 
 /**
  * Main question generator

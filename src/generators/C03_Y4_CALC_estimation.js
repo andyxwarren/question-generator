@@ -24,7 +24,7 @@ import {
     generateMultiplication,
     generateDivision,
     roundTo
-} from './helpers/calculationHelpers.js';
+} from './helpers/C01_C03_calculationHelpers.js';
 
 /**
  * Main question generator
