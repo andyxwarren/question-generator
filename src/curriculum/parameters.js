@@ -13,6 +13,7 @@
  * - N06_problems.js - Number problems (Years 2-6)
  * - C01_mental.js - Mental addition and subtraction (Years 1, 2, 3, 5)
  * - C02_written.js - Written addition and subtraction methods (Years 1-5)
+ * - C03_estimation.js - Estimation, inverses and checking (Years 2-6)
  */
 
 import { N01_MODULES } from './parameters/N01_counting.js';
@@ -23,6 +24,7 @@ import { N05_MODULES } from './parameters/N05_negatives.js';
 import { N06_MODULES } from './parameters/N06_problems.js';
 import { C01_MODULES } from './parameters/C01_mental.js';
 import { C02_MODULES } from './parameters/C02_written.js';
+import { C03_MODULES } from './parameters/C03_estimation.js';
 
 /**
  * Merged modules object
@@ -37,6 +39,7 @@ export const MODULES = {
     ...N06_MODULES,
     ...C01_MODULES,
     ...C02_MODULES,
+    ...C03_MODULES,
 };
 
 /**
