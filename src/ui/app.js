@@ -78,9 +78,17 @@ class App {
         // Find all years (1-6)
         const allYears = [1, 2, 3, 4, 5, 6];
 
+        // Get all module IDs in this substrand for the generate button
+        const substrandModuleIds = Object.values(modulesByYear).map(m => m.id).join(',');
+
         return `
             <div class="substrand-section">
-                <h3 class="substrand-title">${substrand}</h3>
+                <div class="substrand-header">
+                    <h3 class="substrand-title">${substrand}</h3>
+                    <button class="btn-substrand" data-substrand-modules="${substrandModuleIds}">
+                        🎯 Generate for All in ${substrand}
+                    </button>
+                </div>
                 <div class="year-grid">
                     ${allYears.map(year => {
                         const module = modulesByYear[year];
@@ -112,16 +120,31 @@ class App {
     attachEventListeners() {
         // Module selection (delegated to handle dynamically created elements)
         document.querySelector('.modules-grid').addEventListener('click', (e) => {
+            // Check if the click was on a substrand button
+            const substrandBtn = e.target.closest('.btn-substrand');
+            if (substrandBtn) {
+                const moduleIds = substrandBtn.dataset.substrandModules.split(',');
+                this.generateQuestionsForMultipleModules(moduleIds);
+                e.stopPropagation();
+                return;
+            }
+
+            // Otherwise, handle regular module selection
             const moduleCell = e.target.closest('.module-cell[data-module-id]');
             if (moduleCell) {
                 const moduleId = moduleCell.dataset.moduleId;
-                this.selectModule(moduleId);
+                this.generateQuestionsForSingleModule(moduleId);
             }
         });
 
         // Question count input
         document.getElementById('questionCount').addEventListener('change', (e) => {
             this.questionCount = parseInt(e.target.value);
+        });
+
+        // Generate all modules button
+        document.getElementById('generateAllModulesBtn').addEventListener('click', () => {
+            this.generateQuestionsForAllModules();
         });
 
         // Back button
@@ -146,30 +169,98 @@ class App {
     }
 
     /**
-     * Select a module and generate questions
+     * Generate questions for a single module
      */
-    selectModule(moduleId) {
+    generateQuestionsForSingleModule(moduleId) {
         this.currentModule = MODULES[moduleId];
-        this.generateQuestions(moduleId);
+        this.questions = this.generateQuestionsForModule(moduleId, this.questionCount);
         this.renderQuestions();
         this.showSection('questions');
     }
 
     /**
-     * Generate questions for all 4 difficulty levels
+     * Generate questions for multiple modules (substrand or custom selection)
      */
-    generateQuestions(moduleId) {
+    generateQuestionsForMultipleModules(moduleIds) {
+        // Filter out any empty strings
+        const validModuleIds = moduleIds.filter(id => id && MODULES[id]);
+
+        if (validModuleIds.length === 0) {
+            alert('No valid modules selected!');
+            return;
+        }
+
+        this.currentModule = {
+            name: `${validModuleIds.length} Module${validModuleIds.length > 1 ? 's' : ''} Selected`,
+            icon: '🎯'
+        };
+
         this.questions = [];
+        validModuleIds.forEach(moduleId => {
+            const moduleQuestions = this.generateQuestionsForModule(moduleId, this.questionCount);
+            this.questions.push(...moduleQuestions);
+        });
+
+        this.renderQuestions();
+        this.showSection('questions');
+    }
+
+    /**
+     * Generate questions for all available modules in the curriculum
+     */
+    generateQuestionsForAllModules() {
+        const allModuleIds = Object.keys(MODULES);
+
+        if (allModuleIds.length === 0) {
+            alert('No modules available!');
+            return;
+        }
+
+        this.currentModule = {
+            name: `All Modules (${allModuleIds.length} modules)`,
+            icon: '📚'
+        };
+
+        this.questions = [];
+        allModuleIds.forEach(moduleId => {
+            const moduleQuestions = this.generateQuestionsForModule(moduleId, this.questionCount);
+            this.questions.push(...moduleQuestions);
+        });
+
+        this.renderQuestions();
+        this.showSection('questions');
+    }
+
+    /**
+     * Generate questions for a single module, returning grouped structure
+     * @param {string} moduleId - The module ID
+     * @param {number} count - Number of questions per level
+     * @returns {Array} Array of level groups with questions
+     */
+    generateQuestionsForModule(moduleId, count) {
+        const levelGroups = [];
+        const moduleInfo = MODULES[moduleId];
 
         // Generate questions for each level (1-4)
         for (let level = 1; level <= 4; level++) {
-            const levelQuestions = questionEngine.generate(moduleId, level, this.questionCount);
-            this.questions.push({
+            const levelQuestions = questionEngine.generate(moduleId, level, count);
+
+            // Add module info to each question for display purposes
+            const questionsWithModuleInfo = levelQuestions.map(q => ({
+                ...q,
+                moduleInfo: moduleInfo
+            }));
+
+            levelGroups.push({
                 level: level,
                 levelName: this.getLevelName(level),
-                questions: levelQuestions
+                questions: questionsWithModuleInfo,
+                moduleId: moduleId,
+                moduleName: moduleInfo.name
             });
         }
+
+        return levelGroups;
     }
 
     /**
@@ -300,9 +391,14 @@ class App {
     renderQuestion(question, levelIdx, questionIdx) {
         const questionId = `q_${levelIdx}_${questionIdx}`;
 
+        // Show module badge if this is from mixed questions
+        const moduleBadge = question.moduleInfo ?
+            `<div class="module-badge">${question.moduleInfo.icon} ${question.moduleInfo.name}</div>` : '';
+
         if (question.type === 'multiple_choice') {
             return `
                 <div class="question" data-question-id="${questionId}">
+                    ${moduleBadge}
                     <div class="question-text">${questionIdx + 1}. ${this.renderQuestionText(question.text)}</div>
                     <div class="options">
                         ${question.options.map((option, optIdx) => {
@@ -326,6 +422,7 @@ class App {
             if (isMultiGap) {
                 return `
                     <div class="question" data-question-id="${questionId}">
+                        ${moduleBadge}
                         <div class="question-text">${questionIdx + 1}. ${this.renderQuestionText(question.text)}</div>
                         <div class="multi-input-container">
                             ${question.answers.map((_, idx) => `
@@ -344,6 +441,7 @@ class App {
                 // Single input
                 return `
                     <div class="question" data-question-id="${questionId}">
+                        ${moduleBadge}
                         <div class="question-text">${questionIdx + 1}. ${this.renderQuestionText(question.text)}</div>
                         <input type="text" class="text-input" id="${questionId}" placeholder="Your answer">
                         ${question.hint ? `<div class="hint">💡 Hint: ${question.hint}</div>` : ''}
