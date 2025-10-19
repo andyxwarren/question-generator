@@ -49,6 +49,12 @@ import estimationY3Generator from '../generators/C03_Y3_CALC_estimation.js';
 import estimationY4Generator from '../generators/C03_Y4_CALC_estimation.js';
 import estimationY5Generator from '../generators/C03_Y5_CALC_estimation.js';
 import estimationY6Generator from '../generators/C03_Y6_CALC_estimation.js';
+import problemsolvingY1Generator from '../generators/C04_Y1_CALC_problems.js';
+import problemsolvingY2Generator from '../generators/C04_Y2_CALC_problems.js';
+import problemsolvingY3Generator from '../generators/C04_Y3_CALC_problems.js';
+import problemsolvingY4Generator from '../generators/C04_Y4_CALC_problems.js';
+import problemsolvingY5Generator from '../generators/C04_Y5_CALC_problems.js';
+import problemsolvingY6Generator from '../generators/C04_Y6_CALC_problems.js';
 
 /**
  * Question Engine Class
@@ -106,6 +112,12 @@ class QuestionEngine {
         this.register(estimationY4Generator);
         this.register(estimationY5Generator);
         this.register(estimationY6Generator);
+        this.register(problemsolvingY1Generator);
+        this.register(problemsolvingY2Generator);
+        this.register(problemsolvingY3Generator);
+        this.register(problemsolvingY4Generator);
+        this.register(problemsolvingY5Generator);
+        this.register(problemsolvingY6Generator);
     }
 
     /**

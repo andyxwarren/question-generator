@@ -3,7 +3,10 @@
     "allow": [
       "Bash(python -m http.server:*)",
       "Bash(curl:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(node temp_test_c04.js)",
+      "Bash(node --version)",
+      "Bash(node test_Y5_Y6_generators.js)"
     ],
     "deny": [],
     "ask": []
