@@ -55,6 +55,8 @@ import problemsolvingY3Generator from '../generators/C04_Y3_CALC_problems.js';
 import problemsolvingY4Generator from '../generators/C04_Y4_CALC_problems.js';
 import problemsolvingY5Generator from '../generators/C04_Y5_CALC_problems.js';
 import problemsolvingY6Generator from '../generators/C04_Y6_CALC_problems.js';
+import propertiesY5Generator from '../generators/C05_Y5_CALC_properties.js';
+import propertiesY6Generator from '../generators/C05_Y6_CALC_properties.js';
 
 /**
  * Question Engine Class
@@ -118,6 +120,8 @@ class QuestionEngine {
         this.register(problemsolvingY4Generator);
         this.register(problemsolvingY5Generator);
         this.register(problemsolvingY6Generator);
+        this.register(propertiesY5Generator);
+        this.register(propertiesY6Generator);
     }
 
     /**

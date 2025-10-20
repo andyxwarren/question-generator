@@ -15,6 +15,7 @@
  * - C02_written.js - Written addition and subtraction methods (Years 1-5)
  * - C03_estimation.js - Estimation, inverses and checking (Years 2-6)
  * - C04_problems.js - Add/subtract to solve problems (Years 1-6)
+ * - C05_properties.js - Properties of number: multiples, factors, primes, squares, cubes (Years 5-6)
  */
 
 import { N01_MODULES } from './parameters/N01_counting.js';
@@ -27,6 +28,7 @@ import { C01_MODULES } from './parameters/C01_mental.js';
 import { C02_MODULES } from './parameters/C02_written.js';
 import { C03_MODULES } from './parameters/C03_estimation.js';
 import { C04_MODULES } from './parameters/C04_problems.js';
+import { C05_MODULES } from './parameters/C05_properties.js';
 
 /**
  * Merged modules object
@@ -43,6 +45,7 @@ export const MODULES = {
     ...C02_MODULES,
     ...C03_MODULES,
     ...C04_MODULES,
+    ...C05_MODULES,
 };
 
 /**

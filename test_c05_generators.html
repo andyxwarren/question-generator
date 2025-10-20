@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C05 Generator Testing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .module {
+            margin-bottom: 40px;
+            border: 2px solid #333;
+            padding: 20px;
+        }
+        .level {
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+            padding-left: 15px;
+        }
+        .question {
+            background: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .operation-group {
+            margin: 10px 0;
+            padding: 10px;
+            background: #e9ecef;
+        }
+        h1 { color: #333; }
+        h2 { color: #007bff; }
+        h3 { color: #28a745; }
+        h4 { color: #6c757d; }
+        .error { color: red; background: #ffe6e6; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>C05 Generator Testing - Sample Questions</h1>
+    <div id="output"></div>
+
+    <script type="module">
+        import Y5Generator from './src/generators/C05_Y5_CALC_properties.js';
+        import Y6Generator from './src/generators/C05_Y6_CALC_properties.js';
+        import { C05_MODULES } from './src/curriculum/parameters/C05_properties.js';
+
+        const output = document.getElementById('output');
+
+        function generateSamples(generator, moduleId, samplesPerLevel = 3) {
+            const module = C05_MODULES[moduleId];
+            const results = {
+                moduleId,
+                module: module.name,
+                year: module.yearGroup,
+                levels: {}
+            };
+
+            for (let level = 1; level <= 4; level++) {
+                const params = module.parameters[level];
+                results.levels[level] = {
+                    levelName: ['Beginning', 'Developing', 'Meeting', 'Exceeding'][level - 1],
+                    operations: {},
+                    errors: []
+                };
+
+                // Generate samples for each operation
+                params.operations.forEach(operation => {
+                    results.levels[level].operations[operation] = [];
+
+                    for (let i = 0; i < samplesPerLevel; i++) {
+                        try {
+                            const question = generator.generate(params, level);
+                            results.levels[level].operations[operation].push(question);
+                        } catch (error) {
+                            results.levels[level].errors.push({
+                                operation,
+                                error: error.message
+                            });
+                        }
+                    }
+                });
+            }
+
+            return results;
+        }
+
+        function renderResults(results) {
+            const moduleDiv = document.createElement('div');
+            moduleDiv.className = 'module';
+
+            moduleDiv.innerHTML = `
+                <h2>${results.moduleId}: ${results.module} (${results.year})</h2>
+            `;
+
+            Object.keys(results.levels).forEach(level => {
+                const levelData = results.levels[level];
+                const levelDiv = document.createElement('div');
+                levelDiv.className = 'level';
+
+                levelDiv.innerHTML = `<h3>Level ${level}: ${levelData.levelName}</h3>`;
+
+                // Show errors if any
+                if (levelData.errors.length > 0) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error';
+                    errorDiv.innerHTML = `<strong>Errors:</strong><br>` +
+                        levelData.errors.map(e => `${e.operation}: ${e.error}`).join('<br>');
+                    levelDiv.appendChild(errorDiv);
+                }
+
+                // Show questions by operation
+                Object.keys(levelData.operations).forEach(operation => {
+                    const questions = levelData.operations[operation];
+                    if (questions.length > 0) {
+                        const opDiv = document.createElement('div');
+                        opDiv.className = 'operation-group';
+                        opDiv.innerHTML = `<h4>Operation: ${operation}</h4>`;
+
+                        questions.forEach((q, idx) => {
+                            const qDiv = document.createElement('div');
+                            qDiv.className = 'question';
+                            qDiv.innerHTML = `
+                                <strong>Q${idx + 1}:</strong> ${q.text}<br>
+                                <strong>Type:</strong> ${q.type}<br>
+                                ${q.options ? `<strong>Options:</strong> ${q.options.join(', ')}<br>` : ''}
+                                <strong>Answer:</strong> ${q.answer}<br>
+                                <strong>Hint:</strong> ${q.hint || 'None'}
+                            `;
+                            opDiv.appendChild(qDiv);
+                        });
+
+                        levelDiv.appendChild(opDiv);
+                    }
+                });
+
+                moduleDiv.appendChild(levelDiv);
+            });
+
+            output.appendChild(moduleDiv);
+        }
+
+        // Generate samples
+        try {
+            console.log('Testing Year 5...');
+            const y5Results = generateSamples(Y5Generator, 'C05_Y5_CALC', 3);
+            renderResults(y5Results);
+
+            console.log('Testing Year 6...');
+            const y6Results = generateSamples(Y6Generator, 'C05_Y6_CALC', 3);
+            renderResults(y6Results);
+
+            console.log('Testing complete!');
+        } catch (error) {
+            output.innerHTML = `<div class="error"><strong>Fatal Error:</strong> ${error.message}<br>${error.stack}</div>`;
+        }
+    </script>
+</body>
+</html>
