@@ -215,7 +215,7 @@ function generateRemainderAsFraction(params, level) {
 
     const fractionPart = remainderAsFraction(remainder, divisor);
 
-    const text = `Calculate ${dividend} ÷ ${divisor}. Give your answer as a mixed number (whole number and fraction).`;
+    const text = `Calculate ${dividend.toLocaleString()} ÷ ${divisor}. Give your answer as a mixed number (whole number and fraction).`;
 
     const correctAnswer = `${quotient} ${fractionPart}`;
 
@@ -258,7 +258,7 @@ function generateRemainderByRounding(params, level) {
     const decimalAnswer = divisionAsDecimal(dividend, divisor, 1);
     const roundedAnswer = Math.round(decimalAnswer);
 
-    const text = `Calculate ${dividend} ÷ ${divisor} and round to the nearest whole number.`;
+    const text = `Calculate ${dividend.toLocaleString()} ÷ ${divisor} and round to the nearest whole number.`;
 
     const distractors = [
         quotient,  // Rounded down
@@ -276,7 +276,7 @@ function generateRemainderByRounding(params, level) {
         type: 'multiple_choice',
         options: options,
         answer: roundedAnswer.toString(),
-        hint: `${dividend} ÷ ${divisor} = ${decimalAnswer}, which rounds to ${roundedAnswer}`,
+        hint: `${dividend.toLocaleString()} ÷ ${divisor} = ${decimalAnswer}, which rounds to ${roundedAnswer}`,
         module: 'C07_Y6_CALC',
         level: level
     };
@@ -402,10 +402,10 @@ function generateShortVsLongDivision(params, level) {
     let text, correctAnswer;
 
     if (useShort) {
-        text = `Which method would you use to calculate ${dividend} ÷ ${shortDivisor}?`;
+        text = `Which method would you use to calculate ${dividend.toLocaleString()} ÷ ${shortDivisor}?`;
         correctAnswer = 'Short division';
     } else {
-        text = `Which method would you use to calculate ${dividend} ÷ ${longDivisor}?`;
+        text = `Which method would you use to calculate ${dividend.toLocaleString()} ÷ ${longDivisor}?`;
         correctAnswer = 'Long division';
     }
 
@@ -437,15 +437,15 @@ function generateMultiStepWithDivision(params, level) {
 
     if (operation2 === 'add') {
         const addAmount = randomInt(10, 100);
-        text = `Calculate ${dividend} ÷ ${divisor}, then add ${addAmount}. What is the result?`;
+        text = `Calculate ${dividend.toLocaleString()} ÷ ${divisor}, then add ${addAmount}. What is the result?`;
         answer = quotient1 + addAmount;
     } else if (operation2 === 'subtract') {
         const subtractAmount = randomInt(5, quotient1 - 1);
-        text = `Calculate ${dividend} ÷ ${divisor}, then subtract ${subtractAmount}. What is the result?`;
+        text = `Calculate ${dividend.toLocaleString()} ÷ ${divisor}, then subtract ${subtractAmount}. What is the result?`;
         answer = quotient1 - subtractAmount;
     } else {
         const multiplyBy = randomInt(2, 5);
-        text = `Calculate ${dividend} ÷ ${divisor}, then multiply the result by ${multiplyBy}. What is the final answer?`;
+        text = `Calculate ${dividend.toLocaleString()} ÷ ${divisor}, then multiply the result by ${multiplyBy}. What is the final answer?`;
         answer = quotient1 * multiplyBy;
     }
 
@@ -457,7 +457,7 @@ function generateMultiStepWithDivision(params, level) {
         type: 'multiple_choice',
         options: options,
         answer: answer.toString(),
-        hint: `First: ${dividend} ÷ ${divisor} = ${quotient1}`,
+        hint: `First: ${dividend.toLocaleString()} ÷ ${divisor} = ${quotient1}`,
         module: 'C07_Y6_CALC',
         level: level
     };
@@ -484,7 +484,7 @@ function generateEstimateDivision(params, level) {
 
     const estimate = Math.floor(roundedDividend / roundedDivisor);
 
-    const text = `Estimate ${dividend} ÷ ${divisor} by rounding both numbers.<br><br>What is a good estimate?`;
+    const text = `Estimate ${dividend.toLocaleString()} ÷ ${divisor} by rounding both numbers.<br><br>What is a good estimate?`;
 
     const distractors = generateDistractors(estimate, 3, 10, 200, 20);
     const options = shuffle([estimate, ...distractors]);
@@ -494,7 +494,7 @@ function generateEstimateDivision(params, level) {
         type: 'multiple_choice',
         options: options,
         answer: estimate.toString(),
-        hint: `Round to ${roundedDividend} ÷ ${roundedDivisor}`,
+        hint: `Round to ${roundedDividend.toLocaleString()} ÷ ${roundedDivisor}`,
         module: 'C07_Y6_CALC',
         level: level
     };

@@ -585,7 +585,14 @@ class App {
                               text.includes('class="ten-frame"') ||
                               text.includes('class="base10-container"') ||
                               text.includes('class="tally-marks-container"') ||
-                              text.includes('class="columnar-calc"');
+                              text.includes('class="columnar-calc"') ||
+                              text.includes('class="visual-array"') ||
+                              text.includes('class="visual-groups"') ||
+                              text.includes('class="visual-sharing"') ||
+                              text.includes('class="visual-repeated"') ||
+                              text.includes('class="grid-method"') ||
+                              text.includes('class="short-division"') ||
+                              text.includes('<br>');
 
         if (hasSafeVisuals) {
             // Text contains our visual HTML - render as-is

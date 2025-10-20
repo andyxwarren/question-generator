@@ -18,6 +18,7 @@
  * - C05_properties.js - Properties of number: multiples, factors, primes, squares, cubes (Years 5-6)
  * - C06_mental_multiply_divide.js - Mental multiplication and division (Years 2-6)
  * - C07_written_multiply_divide.js - Written multiplication and division methods (Years 2-6)
+ * - C08_properties.js - Problem-solving with mathematical properties and all four operations (Years 1-6)
  */
 
 import { N01_MODULES } from './parameters/N01_counting.js';
@@ -33,6 +34,7 @@ import { C04_MODULES } from './parameters/C04_problems.js';
 import { C05_MODULES } from './parameters/C05_properties.js';
 import { C06_MODULES } from './parameters/C06_mental_multiply_divide.js';
 import { C07_MODULES } from './parameters/C07_written_multiply_divide.js';
+import { C08_MODULES } from './parameters/C08_properties.js';
 
 /**
  * Merged modules object
@@ -52,6 +54,7 @@ export const MODULES = {
     ...C05_MODULES,
     ...C06_MODULES,
     ...C07_MODULES,
+    ...C08_MODULES,
 };
 
 /**

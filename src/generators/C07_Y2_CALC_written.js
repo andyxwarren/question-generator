@@ -394,7 +394,7 @@ function generateMultiStepEquation(params, level) {
     const mult2 = randomInt(2, 3);
 
     const step1 = table * mult1;
-    const answer = step1 ÷ table * mult2;
+    const answer = step1 / table * mult2;
 
     // Ensure answer is a whole number
     const finalAnswer = Math.floor(answer);

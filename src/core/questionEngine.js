@@ -67,6 +67,12 @@ import writtenMultiplyY3Generator from '../generators/C07_Y3_CALC_written.js';
 import writtenMultiplyY4Generator from '../generators/C07_Y4_CALC_written.js';
 import writtenMultiplyY5Generator from '../generators/C07_Y5_CALC_written.js';
 import writtenMultiplyY6Generator from '../generators/C07_Y6_CALC_written.js';
+import propertiesProblemsY1Generator from '../generators/C08_Y1_CALC_properties.js';
+import propertiesProblemsY2Generator from '../generators/C08_Y2_CALC_properties.js';
+import propertiesProblemsY3Generator from '../generators/C08_Y3_CALC_properties.js';
+import propertiesProblemsY4Generator from '../generators/C08_Y4_CALC_properties.js';
+import propertiesProblemsY5Generator from '../generators/C08_Y5_CALC_properties.js';
+import propertiesProblemsY6Generator from '../generators/C08_Y6_CALC_properties.js';
 
 /**
  * Question Engine Class
@@ -142,6 +148,12 @@ class QuestionEngine {
         this.register(writtenMultiplyY4Generator);
         this.register(writtenMultiplyY5Generator);
         this.register(writtenMultiplyY6Generator);
+        this.register(propertiesProblemsY1Generator);
+        this.register(propertiesProblemsY2Generator);
+        this.register(propertiesProblemsY3Generator);
+        this.register(propertiesProblemsY4Generator);
+        this.register(propertiesProblemsY5Generator);
+        this.register(propertiesProblemsY6Generator);
     }
 
     /**

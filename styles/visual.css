@@ -1,0 +1,99 @@
+/**
+ * Visual Representations CSS
+ *
+ * Styles for low-overhead visual mathematical representations
+ * using <pre> tags with emojis and Unicode characters
+ */
+
+/* Base styling for all visual <pre> elements */
+.visual-array,
+.visual-groups,
+.visual-repeated,
+.visual-sharing {
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    line-height: 1.8;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    background-color: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    text-align: center;
+    color: #212529;
+    overflow-x: auto;
+    white-space: pre;
+}
+
+/* Dot arrays - mathematical representations */
+.visual-array {
+    background-color: #e8f4f8;
+    border-color: #4a90e2;
+    letter-spacing: 0.3em;
+}
+
+/* Emoji groups - equal groups visualization */
+.visual-groups {
+    background-color: #fff3e0;
+    border-color: #ff9800;
+    font-size: 1.8rem;
+}
+
+/* Repeated numbers - repeated addition */
+.visual-repeated {
+    background-color: #f3e5f5;
+    border-color: #9c27b0;
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+/* Sharing visualization - division by sharing */
+.visual-sharing {
+    background-color: #e8f5e9;
+    border-color: #4caf50;
+    font-size: 1.6rem;
+    text-align: left;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .visual-array,
+    .visual-groups,
+    .visual-repeated,
+    .visual-sharing {
+        font-size: 1.2rem;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+
+    .visual-groups {
+        font-size: 1.4rem;
+    }
+
+    .visual-repeated,
+    .visual-sharing {
+        font-size: 1.3rem;
+    }
+}
+
+/* Print-friendly styles */
+@media print {
+    .visual-array,
+    .visual-groups,
+    .visual-repeated,
+    .visual-sharing {
+        background-color: white;
+        border: 1px solid black;
+        page-break-inside: avoid;
+    }
+}
+
+/* Accessibility - high contrast mode */
+@media (prefers-contrast: high) {
+    .visual-array,
+    .visual-groups,
+    .visual-repeated,
+    .visual-sharing {
+        border-width: 3px;
+        font-weight: bold;
+    }
+}
