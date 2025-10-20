@@ -57,6 +57,11 @@ import problemsolvingY5Generator from '../generators/C04_Y5_CALC_problems.js';
 import problemsolvingY6Generator from '../generators/C04_Y6_CALC_problems.js';
 import propertiesY5Generator from '../generators/C05_Y5_CALC_properties.js';
 import propertiesY6Generator from '../generators/C05_Y6_CALC_properties.js';
+import mentalMultiplyY2Generator from '../generators/C06_Y2_CALC_mental_multiply.js';
+import mentalMultiplyY3Generator from '../generators/C06_Y3_CALC_mental_multiply.js';
+import mentalMultiplyY4Generator from '../generators/C06_Y4_CALC_mental_multiply.js';
+import mentalMultiplyY5Generator from '../generators/C06_Y5_CALC_mental_multiply.js';
+import mentalMultiplyY6Generator from '../generators/C06_Y6_CALC_mental_multiply.js';
 
 /**
  * Question Engine Class
@@ -122,6 +127,11 @@ class QuestionEngine {
         this.register(problemsolvingY6Generator);
         this.register(propertiesY5Generator);
         this.register(propertiesY6Generator);
+        this.register(mentalMultiplyY2Generator);
+        this.register(mentalMultiplyY3Generator);
+        this.register(mentalMultiplyY4Generator);
+        this.register(mentalMultiplyY5Generator);
+        this.register(mentalMultiplyY6Generator);
     }
 
     /**

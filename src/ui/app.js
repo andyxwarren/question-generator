@@ -166,6 +166,15 @@ class App {
         document.getElementById('newQuizBtn').addEventListener('click', () => {
             this.showSection('setup');
         });
+
+        // Export buttons
+        document.getElementById('exportCsvBtn').addEventListener('click', () => {
+            this.exportToCsv();
+        });
+
+        document.getElementById('exportJsonBtn').addEventListener('click', () => {
+            this.exportToJson();
+        });
     }
 
     /**
@@ -749,6 +758,66 @@ class App {
                 section.classList.add('hidden');
             }
         });
+    }
+
+    /**
+     * Export questions to a CSV file
+     */
+    exportToCsv() {
+        const headers = ['Module ID', 'Module Name', 'Level', 'Question Number', 'Question Text', 'Answer', 'Options'];
+        const rows = [];
+
+        this.questions.forEach(levelGroup => {
+            levelGroup.questions.forEach((q, qIdx) => {
+                const row = [
+                    `"${levelGroup.moduleId}"`,
+                    `"${levelGroup.moduleName}"`,
+                    levelGroup.level,
+                    qIdx + 1,
+                    `"${q.text.replace(/"/g, '""')}"`,
+                    `"${q.answer}"`,
+                    `"${(q.options || []).join(',')}"`
+                ];
+                rows.push(row.join(','));
+            });
+        });
+
+        const csvContent = `${headers.join(',')}\n${rows.join('\n')}`;
+        this.downloadFile(csvContent, 'questions.csv', 'text/csv;charset=utf-8;');
+    }
+
+    /**
+     * Export questions to a JSON file
+     */
+    exportToJson() {
+        const jsonData = this.questions.map(levelGroup => ({
+            moduleId: levelGroup.moduleId,
+            moduleName: levelGroup.moduleName,
+            level: levelGroup.level,
+            levelName: levelGroup.levelName,
+            questions: levelGroup.questions.map(q => ({
+                text: q.text,
+                answer: q.answer,
+                options: q.options || null,
+                type: q.type
+            }))
+        }));
+
+        const jsonContent = JSON.stringify(jsonData, null, 2);
+        this.downloadFile(jsonContent, 'questions.json', 'application/json;charset=utf-8;');
+    }
+
+    /**
+     * Helper to trigger file download
+     */
+    downloadFile(content, fileName, mimeType) {
+        const blob = new Blob([content], { type: mimeType });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 }
 
