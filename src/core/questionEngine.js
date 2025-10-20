@@ -73,6 +73,7 @@ import propertiesProblemsY3Generator from '../generators/C08_Y3_CALC_properties.
 import propertiesProblemsY4Generator from '../generators/C08_Y4_CALC_properties.js';
 import propertiesProblemsY5Generator from '../generators/C08_Y5_CALC_properties.js';
 import propertiesProblemsY6Generator from '../generators/C08_Y6_CALC_properties.js';
+import orderY6Generator from '../generators/C09_Y6_CALC_order.js';
 
 /**
  * Question Engine Class
@@ -154,6 +155,7 @@ class QuestionEngine {
         this.register(propertiesProblemsY4Generator);
         this.register(propertiesProblemsY5Generator);
         this.register(propertiesProblemsY6Generator);
+        this.register(orderY6Generator);
     }
 
     /**
