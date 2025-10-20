@@ -62,6 +62,11 @@ import mentalMultiplyY3Generator from '../generators/C06_Y3_CALC_mental_multiply
 import mentalMultiplyY4Generator from '../generators/C06_Y4_CALC_mental_multiply.js';
 import mentalMultiplyY5Generator from '../generators/C06_Y5_CALC_mental_multiply.js';
 import mentalMultiplyY6Generator from '../generators/C06_Y6_CALC_mental_multiply.js';
+import writtenMultiplyY2Generator from '../generators/C07_Y2_CALC_written.js';
+import writtenMultiplyY3Generator from '../generators/C07_Y3_CALC_written.js';
+import writtenMultiplyY4Generator from '../generators/C07_Y4_CALC_written.js';
+import writtenMultiplyY5Generator from '../generators/C07_Y5_CALC_written.js';
+import writtenMultiplyY6Generator from '../generators/C07_Y6_CALC_written.js';
 
 /**
  * Question Engine Class
@@ -132,6 +137,11 @@ class QuestionEngine {
         this.register(mentalMultiplyY4Generator);
         this.register(mentalMultiplyY5Generator);
         this.register(mentalMultiplyY6Generator);
+        this.register(writtenMultiplyY2Generator);
+        this.register(writtenMultiplyY3Generator);
+        this.register(writtenMultiplyY4Generator);
+        this.register(writtenMultiplyY5Generator);
+        this.register(writtenMultiplyY6Generator);
     }
 
     /**

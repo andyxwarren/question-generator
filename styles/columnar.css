@@ -1,8 +1,9 @@
 /**
  * Columnar Calculation Styles
  *
- * Styles for displaying formal written methods of columnar addition and subtraction
- * Used in C02 modules (Years 3-5)
+ * Styles for displaying formal written methods of columnar calculations
+ * Used in C02 modules (addition/subtraction, Years 3-5)
+ * Used in C07 modules (multiplication/division, Years 2-6)
  */
 
 .columnar-calc {
@@ -107,6 +108,145 @@
     .columnar-calc .borrow-row {
         color: #808;
         font-weight: 900;
+    }
+}
+
+/* Short Division Styles */
+.short-division {
+    /* Typography */
+    font-family: 'Courier New', 'Consolas', 'Monaco', 'Lucida Console', monospace;
+    font-size: 1.3em;
+    line-height: 1.6;
+    font-weight: 400;
+
+    /* Spacing */
+    padding: 12px 0;
+    margin: 12px 0;
+
+    /* Layout */
+    display: inline-block;
+    text-align: left;
+
+    /* Minimal styling */
+    background: transparent;
+    border: none;
+    color: inherit;
+
+    /* Prevent text selection issues */
+    white-space: pre;
+    overflow-x: auto;
+}
+
+/* Long Division Styles */
+.long-division {
+    /* Typography */
+    font-family: 'Courier New', 'Consolas', 'Monaco', 'Lucida Console', monospace;
+    font-size: 1.3em;
+    line-height: 1.6;
+    font-weight: 400;
+
+    /* Spacing */
+    padding: 12px 0;
+    margin: 12px 0;
+
+    /* Layout */
+    display: inline-block;
+    text-align: left;
+
+    /* Minimal styling */
+    background: transparent;
+    border: none;
+    color: inherit;
+
+    /* Prevent text selection issues */
+    white-space: pre;
+    overflow-x: auto;
+}
+
+/* Grid Method Container */
+.grid-method {
+    display: inline-block;
+    margin: 15px 0;
+    padding: 10px;
+}
+
+.grid-method table {
+    border-collapse: collapse;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.1em;
+}
+
+.grid-method td {
+    border: 2px solid #3498db;
+    padding: 10px 15px;
+    text-align: center;
+    min-width: 60px;
+}
+
+.grid-method .grid-header {
+    background-color: #ecf0f1;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.grid-method .grid-cell {
+    background-color: #fff;
+    color: #34495e;
+}
+
+/* Dark mode for grid method */
+@media (prefers-color-scheme: dark) {
+    .grid-method .grid-header {
+        background-color: #34495e;
+        color: #ecf0f1;
+    }
+
+    .grid-method .grid-cell {
+        background-color: #2c3e50;
+        color: #ecf0f1;
+    }
+
+    .grid-method td {
+        border-color: #5dade2;
+    }
+}
+
+/* Print styles for division and grid */
+@media print {
+    .short-division, .long-division {
+        color: #000;
+        font-size: 1.2em;
+        page-break-inside: avoid;
+    }
+
+    .grid-method td {
+        border-color: #000;
+    }
+
+    .grid-method .grid-header {
+        background-color: #ddd;
+        color: #000;
+    }
+
+    .grid-method .grid-cell {
+        background-color: #fff;
+        color: #000;
+    }
+}
+
+/* Mobile responsive for division and grid */
+@media (max-width: 768px) {
+    .short-division, .long-division {
+        font-size: 1.2em;
+    }
+
+    .grid-method table {
+        font-size: 1em;
+    }
+
+    .grid-method td {
+        padding: 8px 10px;
+        min-width: 50px;
     }
 }
 
