@@ -19,7 +19,9 @@
       "Bash(node -c src/core/questionEngine.js)",
       "Bash(node validate_c09_samples.js)",
       "Bash(dir /b \"C:\\Users\\Andyx\\Documents\\projects\\question-generator\\new_feature\")",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(node test_N03_fix.js:*)",
+      "Bash(del:*)"
     ],
     "deny": [],
     "ask": []

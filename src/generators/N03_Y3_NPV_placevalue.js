@@ -143,7 +143,12 @@ function generateIdentifyPlaceValue(params, level) {
 /**
  * "Which digit has greater value: [digit1] or [digit2] in [number]?"
  */
-function generateComparePlaceValues(params, level) {
+function generateComparePlaceValues(params, level, attempts = 0) {
+    // Prevent infinite recursion
+    if (attempts > 10) {
+        return generateIdentifyDigit(params, level);
+    }
+
     const number = randomInt(params.min_value, params.max_value);
 
     // Get two different places
@@ -151,8 +156,14 @@ function generateComparePlaceValues(params, level) {
     const digit1 = getDigitAtPlace(number, places[0]);
     const digit2 = getDigitAtPlace(number, places[1]);
 
+    // CRITICAL FIX: Reject if digits are the same (e.g., 444 would give "4 or 4?")
+    if (digit1 === digit2) {
+        return generateComparePlaceValues(params, level, attempts + 1);
+    }
+
+    // Reject if either digit is zero (makes comparison trivial)
     if (digit1 === 0 || digit2 === 0) {
-        return generateComparePlaceValues(params, level);
+        return generateComparePlaceValues(params, level, attempts + 1);
     }
 
     const value1 = getPlaceValue(number, places[0]);
