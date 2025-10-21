@@ -18,7 +18,8 @@
       "Bash(node -c src/curriculum/parameters.js)",
       "Bash(node -c src/core/questionEngine.js)",
       "Bash(node validate_c09_samples.js)",
-      "Bash(dir /b \"C:\\Users\\Andyx\\Documents\\projects\\question-generator\\new_feature\")"
+      "Bash(dir /b \"C:\\Users\\Andyx\\Documents\\projects\\question-generator\\new_feature\")",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []
