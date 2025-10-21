@@ -108,29 +108,40 @@ After submission, you can:
 
 ## Types of Questions
 
-The application generates three types of questions:
+The application generates four main types of questions:
 
-### 1. Fill in the Blanks
+### 1. Text Input
+Enter the answer directly into a text field.
+
+**Example**: What is 25 + 37?
+- **Answer**: 62
+- Used for calculation questions and single-answer problems
+- Tests computational fluency and accuracy
+
+### 2. Fill in the Blanks
 Complete a sequence by filling in missing numbers.
 
 **Example**: Fill in the missing numbers: 2, 4, ___, 8, ___, 12
 - **Answer**: 6, 10
 - Students may need to fill one or more gaps depending on difficulty level
+- Tests pattern recognition and sequence understanding
 
-### 2. What Comes Next?
+### 3. What Comes Next?
 Continue a pattern by identifying the next number.
 
 **Example**: What number comes next? 5, 10, 15, 20, ___
 - **Answer**: 25
 - Tests understanding of patterns and sequences
+- Often used for counting and number sequence topics
 
-### 3. Multiple Choice
+### 4. Multiple Choice
 Select the correct answer from several options.
 
-**Example**: Continue the pattern: 10, 20, 30, 40, ___
-- Options: A) 45  B) 50  C) 55  D) 60
-- **Answer**: B) 50
+**Example**: What is 15 × 3?
+- Options: A) 35  B) 45  C) 55  D) 65
+- **Answer**: B) 45
 - Helps students recognize correct answers even if they're unsure
+- Useful for practicing recognition and estimation skills
 
 ## How Answer Checking Works
 
@@ -183,31 +194,32 @@ This breakdown helps identify:
 
 ## Supported Topics
 
-Currently, the application includes questions for:
+The application currently covers **65+ modules** across two major strands:
 
-### Number and Place Value
-- **N01 series**: Counting in multiples (Years 1-5)
+### Number and Place Value (N-series)
+
+- **N01**: Counting in multiples (Years 1-5)
   - Year 1: Count to 100 in 2s, 5s, 10s
   - Year 2: Count in steps of 2, 3, 5, and tens from any number
   - Year 3: Count from 0 in multiples of 4, 8, 50, 100
   - Year 4: Count in multiples of 6, 7, 9, 25, 1000
   - Year 5: Count forwards/backwards including negative numbers
 
-- **N02 series**: Read, write, order and compare numbers (Years 2-6)
+- **N02**: Read, write, order and compare numbers (Years 2-6)
   - Year 2: Numbers to 100
   - Year 3: Numbers to 1,000
   - Year 4: Numbers beyond 1,000
   - Year 5: Numbers to 1,000,000
   - Year 6: Numbers to 10,000,000
 
-- **N03 series**: Place value (Years 2-6)
+- **N03**: Place value and Roman numerals (Years 2-6)
   - Year 2: Recognize place value of tens and ones
   - Year 3: Understand place value in 3-digit numbers
   - Year 4: Place value in numbers beyond 1,000
   - Year 5: Place value in numbers to 1,000,000
-  - Year 6: Place value in numbers to 10,000,000
+  - Year 6: Place value to 10,000,000 and Roman numerals
 
-- **N04 series**: Representation, estimation, and rounding (Years 1-6)
+- **N04**: Representation, estimation, and rounding (Years 1-6)
   - Year 1: Number line position, counting objects, comparison language
   - Year 2: Number lines, estimation, basic place value representation
   - Year 3: Number lines to 1,000, estimate position and midpoints
@@ -215,7 +227,124 @@ Currently, the application includes questions for:
   - Year 5: Round to 10,000 and 100,000; numbers to 1,000,000
   - Year 6: Round any number to 10,000,000; error bounds; contextual rounding
 
+- **N05**: Negative numbers (Years 4-6)
+  - Year 4: Count backwards through zero
+  - Year 5: Interpret negative numbers in context
+  - Year 6: Calculate intervals across zero
+
+- **N06**: Number problems (Years 2-6)
+  - Solve practical problems using number knowledge
+  - Apply place value understanding to real contexts
+  - Reason about numbers and their relationships
+
+### Calculations (C-series)
+
+- **C01**: Mental addition and subtraction (Years 1-3, 5)
+  - Mental strategies for addition and subtraction
+  - Number bonds and derived facts
+  - Rapid recall of key facts
+
+- **C02**: Written addition and subtraction methods (Years 1-5)
+  - Formal columnar addition
+  - Formal columnar subtraction
+  - Multi-digit calculations with carrying/borrowing
+
+- **C03**: Estimation, inverses and checking (Years 2-6)
+  - Estimate before calculating
+  - Use inverse operations to check answers
+  - Assess reasonableness of results
+
+- **C04**: Addition and subtraction problem solving (Years 1-6)
+  - Single-step and multi-step word problems
+  - Real-world contexts requiring addition/subtraction
+  - Missing number problems
+
+- **C05**: Properties - multiples, factors, primes (Years 5-6)
+  - Identify multiples and factors
+  - Recognize prime numbers
+  - Understand square and cube numbers
+
+- **C06**: Mental multiplication and division (Years 2-6)
+  - Times tables and division facts
+  - Mental strategies for multiplication/division
+  - Rapid recall of key multiplication facts
+
+- **C07**: Written multiplication and division methods (Years 2-6)
+  - Formal written multiplication (short and long)
+  - Formal written division (short and long)
+  - Multi-digit calculations
+
+- **C08**: Problem-solving with mathematical properties (Years 1-6)
+  - Apply all four operations to solve problems
+  - Use knowledge of number properties
+  - Multi-step reasoning problems
+
+- **C09**: Order of operations (Year 6)
+  - BIDMAS/BODMAS rules
+  - Calculate with brackets and multiple operations
+  - Evaluate complex expressions
+
 *More topics are continuously being added to cover the full curriculum.*
+
+## Exporting Questions and Results
+
+The application allows you to export your questions and results for offline use, record-keeping, or sharing with teachers.
+
+### Export Options
+
+Two export formats are available:
+
+#### CSV Export
+- **Best for**: Opening in Excel or Google Sheets
+- **Contains**: Questions, answers, student responses, and results in tabular format
+- **Use case**: Analysis, grading records, printing worksheets
+- **File format**: `.csv` (Excel-compatible with UTF-8 encoding)
+
+#### JSON Export
+- **Best for**: Technical users, data analysis, importing into other systems
+- **Contains**: Complete question data including parameters, metadata, and full structure
+- **Use case**: Programmatic analysis, archiving, advanced data processing
+- **File format**: `.json` (structured data format)
+
+### How to Export
+
+1. **Generate and complete questions** for your chosen topic
+2. **Submit your answers** to see results (optional - you can export before submission)
+3. **Click the Export button** at the top of the page:
+   - Click **"Export CSV"** for spreadsheet format
+   - Click **"Export JSON"** for structured data format
+4. **Save the file** when prompted by your browser
+5. The filename will include the date and timestamp (e.g., `questions-2025-10-21-1234567890.csv`)
+
+### What's Included in Exports
+
+Both export formats include:
+- **Question text** - The full question as displayed to students
+- **Correct answers** - The expected correct response
+- **Student responses** - What the student entered (if submitted)
+- **Results** - Whether each answer was correct or incorrect (if submitted)
+- **Module information** - Topic code, year group, difficulty level
+- **Generation parameters** - Settings used to create each question
+- **Metadata** - Date, time, question count, module details
+
+### Using Exported Data
+
+**For Teachers:**
+- Track student progress over time
+- Identify patterns in errors
+- Create printed worksheets
+- Maintain assessment records
+- Share results with parents or colleagues
+
+**For Students:**
+- Review practice sessions offline
+- Keep a record of completed work
+- Share progress with teachers or tutors
+
+**For Data Analysis:**
+- Analyze difficulty patterns
+- Study question types and parameters
+- Compare performance across modules
 
 ## Technical Requirements
 

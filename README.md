@@ -8,15 +8,29 @@ A UK National Curriculum-aligned mathematics practice application that generates
 - **Progressive Difficulty**: 4 levels per topic (Beginning, Developing, Meeting, Exceeding)
 - **Infinite Questions**: Parameter-driven generation ensures unique practice sets
 - **Instant Feedback**: Immediate validation with detailed feedback
+- **Export Capability**: Save questions and results in CSV or JSON format
 - **No Installation**: Runs entirely in the browser, no backend required
 
 ## 📚 Currently Implemented Modules
 
-### Number and Place Value
-- **N01 series**: Counting in multiples (Years 1-5)
-- **N02 series**: Read, write, order and compare numbers (Years 2-6)
-- **N03 series**: Place value (Years 2-6)
-- **N04 series**: Representation, estimation, and rounding (Years 1-6)
+### Number and Place Value (N-series)
+- **N01**: Counting in multiples (Years 1-5)
+- **N02**: Read, write, order and compare numbers (Years 2-6)
+- **N03**: Place value and Roman numerals (Years 2-6)
+- **N04**: Representation, estimation, and rounding (Years 1-6)
+- **N05**: Negative numbers (Years 4-6)
+- **N06**: Number problems (Years 2-6)
+
+### Calculations (C-series)
+- **C01**: Mental addition and subtraction (Years 1-3, 5)
+- **C02**: Written addition and subtraction methods (Years 1-5)
+- **C03**: Estimation, inverses and checking (Years 2-6)
+- **C04**: Addition and subtraction problem solving (Years 1-6)
+- **C05**: Properties - multiples, factors, primes, squares, cubes (Years 5-6)
+- **C06**: Mental multiplication and division (Years 2-6)
+- **C07**: Written multiplication and division methods (Years 2-6)
+- **C08**: Problem-solving with mathematical properties (Years 1-6)
+- **C09**: Order of operations (Year 6)
 
 ## 🚀 Getting Started
 
