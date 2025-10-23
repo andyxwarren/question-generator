@@ -21,7 +21,11 @@
       "Bash(dir /b \"C:\\Users\\Andyx\\Documents\\projects\\question-generator\\new_feature\")",
       "Bash(dir:*)",
       "Bash(node test_N03_fix.js:*)",
-      "Bash(del:*)"
+      "Bash(del:*)",
+      "Bash(if not exist \"C:\\Users\\Andyx\\Documents\\projects\\question-generator\\src\\generators\\helpers\" mkdir \"C:\\Users\\Andyx\\Documents\\projects\\question-generator\\src\\generators\\helpers\")",
+      "Bash(node generate_samples_M01_Y2.js:*)",
+      "Bash(node *)",
+      "WebFetch(domain:localhost)"
     ],
     "deny": [],
     "ask": []

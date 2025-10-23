@@ -74,6 +74,10 @@ import propertiesProblemsY4Generator from '../generators/C08_Y4_CALC_properties.
 import propertiesProblemsY5Generator from '../generators/C08_Y5_CALC_properties.js';
 import propertiesProblemsY6Generator from '../generators/C08_Y6_CALC_properties.js';
 import orderY6Generator from '../generators/C09_Y6_CALC_order.js';
+import M01_Y1_MEAS_generator from '../generators/M01_Y1_MEAS_comparison.js';
+import M01_Y2_MEAS_generator from '../generators/M01_Y2_MEAS_comparison.js';
+import M01_Y3_MEAS_generator from '../generators/M01_Y3_MEAS_comparison.js';
+import M01_Y4_MEAS_generator from '../generators/M01_Y4_MEAS_comparison.js';
 
 /**
  * Question Engine Class
@@ -156,6 +160,12 @@ class QuestionEngine {
         this.register(propertiesProblemsY5Generator);
         this.register(propertiesProblemsY6Generator);
         this.register(orderY6Generator);
+
+        // M01 - Measurement
+        this.register(M01_Y1_MEAS_generator);
+        this.register(M01_Y2_MEAS_generator);
+        this.register(M01_Y3_MEAS_generator);
+        this.register(M01_Y4_MEAS_generator);
     }
 
     /**

@@ -37,6 +37,7 @@ import { C06_MODULES } from './parameters/C06_mental_multiply_divide.js';
 import { C07_MODULES } from './parameters/C07_written_multiply_divide.js';
 import { C08_MODULES } from './parameters/C08_properties.js';
 import { C09_MODULES } from './parameters/C09_order.js';
+import { M01_MODULES } from './parameters/M01_measurement.js';
 
 /**
  * Merged modules object
@@ -58,6 +59,7 @@ export const MODULES = {
     ...C07_MODULES,
     ...C08_MODULES,
     ...C09_MODULES,
+    ...M01_MODULES,
 };
 
 /**
