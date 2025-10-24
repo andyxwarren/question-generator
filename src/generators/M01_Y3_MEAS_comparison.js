@@ -1,344 +1,432 @@
 /**
- * M01_Y3_MEAS - Year 3 Measurement: Compare with Mixed Units
- * 
- * Curriculum: "compare lengths (m/cm/mm); compare mass (kg/g); 
- * compare volume/capacity (l/ml)"
+ * M01_Y3_MEAS: Compare and Order Measures with Units (Year 3)
+ *
+ * Generates questions for comparing and ordering measurements with standard metric units:
+ * - Lengths (m, cm, mm)
+ * - Mass (kg, g)
+ * - Volume/Capacity (l, ml)
+ *
+ * Year 3 focus: Comparing numeric measurements with same and mixed units,
+ * building on Year 2's symbolic comparisons.
+ *
+ * Progression:
+ * - Level 1: Same-unit comparisons (e.g., 5 cm vs 12 cm)
+ * - Level 2: Multiple units introduced, still same-unit comparisons
+ * - Level 3: Mixed-unit comparisons (e.g., 2 m vs 150 cm) - KEY YEAR 3 SKILL
+ * - Level 4: Complex mixed units, error identification, multi-step reasoning
  */
 
 import {
+    convertToBase,
+    getComparativeWord,
+    getOppositeComparative,
+    shuffle,
     randomChoice,
-    shuffleArray
+    randomInt,
+    generateUniqueValues
 } from './helpers/M01_measurementHelpers.js';
 
 /**
- * Random integer between min and max (inclusive)
+ * Get random value for a measurement type and unit
  */
-function randomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+function getRandomValue(params, measureType, unit) {
+    const config = params[measureType];
 
-/**
- * Format number with comma separators for readability (e.g., 1000 → 1,000)
- */
-function formatNumber(num) {
-    return num.toLocaleString('en-GB');
-}
-
-/**
- * Conversion factors for units (to base unit)
- * Base units: m (length), g (mass), ml (capacity)
- */
-const CONVERSION_FACTORS = {
-    // Length conversions (to meters)
-    length: {
-        'm': 1,
-        'cm': 0.01,
-        'mm': 0.001
-    },
-    // Mass conversions (to grams)
-    mass: {
-        'kg': 1000,
-        'g': 1
-    },
-    // Capacity conversions (to milliliters)
-    capacity: {
-        'L': 1000,
-        'l': 1000,  // lowercase L
-        'ml': 1
+    if (unit === 'm') {
+        return randomInt(config.min_value_m || 1, config.max_value_m || 10);
+    } else if (unit === 'cm') {
+        return randomInt(config.min_value_cm || 1, config.max_value_cm || 100);
+    } else if (unit === 'mm') {
+        return randomInt(config.min_value_mm || 1, config.max_value_mm || 100);
+    } else if (unit === 'kg') {
+        return randomInt(config.min_value_kg || 1, config.max_value_kg || 10);
+    } else if (unit === 'g') {
+        return randomInt(config.min_value_g || 10, config.max_value_g || 1000);
+    } else if (unit === 'l') {
+        return randomInt(config.min_value_l || 1, config.max_value_l || 10);
+    } else if (unit === 'ml') {
+        return randomInt(config.min_value_ml || 50, config.max_value_ml || 1000);
     }
-};
 
-/**
- * Convert a value to base unit for comparison
- */
-function toBaseUnit(value, unit, measureType) {
-    const factor = CONVERSION_FACTORS[measureType][unit];
-    return value * factor;
+    return randomInt(1, 100); // fallback
 }
 
 /**
- * Get comparison symbol between two values (already in same units)
+ * Select two convertible units for mixed-unit comparison
  */
-function getComparisonSymbol(val1, val2) {
-    if (val1 > val2) return '>';
-    if (val1 < val2) return '<';
-    return '=';
-}
-
-/**
- * Select a random unit pair for a measure type
- */
-function getUnitPair(measureType, params) {
-    return randomChoice(params.unit_pairs[measureType]);
-}
-
-/**
- * Generate two values with different units
- */
-function generateMixedUnitValues(measureType, unitPair, params) {
-    const [unit1, unit2] = unitPair;
-    
-    // Generate values that make sense for each unit
-    let val1, val2;
-    
+function selectConvertibleUnits(measureType) {
     if (measureType === 'length') {
-        if (unit1 === 'm' && unit2 === 'cm') {
-            val1 = randomInt(1, params.max_meters || 5);
-            val2 = randomInt(10, params.max_cm || 300);
-        } else if (unit1 === 'cm' && unit2 === 'mm') {
-            val1 = randomInt(5, params.max_cm || 50);
-            val2 = randomInt(10, params.max_mm || 200);
-        } else if (unit1 === 'm' && unit2 === 'mm') {
-            val1 = randomInt(1, 3);
-            val2 = randomInt(500, 2500);
-        } else {
-            val1 = randomInt(params.min_value, params.max_value);
-            val2 = randomInt(params.min_value, params.max_value);
-        }
+        const pairs = [
+            ['m', 'cm'],
+            ['cm', 'mm'],
+            ['m', 'mm']  // Advanced: requires two-step conversion
+        ];
+        return randomChoice(pairs);
     } else if (measureType === 'mass') {
-        if (unit1 === 'kg' && unit2 === 'g') {
-            val1 = randomInt(1, params.max_kg || 5);
-            val2 = randomInt(100, params.max_g || 3000);
-        } else {
-            val1 = randomInt(params.min_value, params.max_value);
-            val2 = randomInt(params.min_value, params.max_value);
-        }
+        return ['kg', 'g'];
     } else if (measureType === 'capacity') {
-        if ((unit1 === 'L' || unit1 === 'l') && unit2 === 'ml') {
-            val1 = randomInt(1, params.max_L || 5);
-            val2 = randomInt(100, params.max_ml || 3000);
-        } else {
-            val1 = randomInt(params.min_value, params.max_value);
-            val2 = randomInt(params.min_value, params.max_value);
-        }
+        return ['l', 'ml'];
     }
-    
-    return { val1, unit1, val2, unit2 };
+    return ['cm', 'cm']; // fallback
 }
 
 /**
- * Generate direct comparison question with mixed units
+ * OPERATION 1: Direct Comparison
+ * Shows two measurements and asks which is bigger/smaller
+ * Levels 1-4: Same-unit at L1-2, mixed-unit at L3-4
  */
 function generateDirectComparison(params, level) {
     const measureType = randomChoice(params.measure_types);
-    const unitPair = getUnitPair(measureType, params);
-    const { val1, unit1, val2, unit2 } = generateMixedUnitValues(measureType, unitPair, params);
-    
-    // Convert to base units for comparison
-    const base1 = toBaseUnit(val1, unit1, measureType);
-    const base2 = toBaseUnit(val2, unit2, measureType);
-    
-    // Determine which is larger
-    const larger = base1 > base2 ? `${val1}${unit1}` : `${val2}${unit2}`;
-    const smaller = base1 < base2 ? `${val1}${unit1}` : `${val2}${unit2}`;
-    
-    // Randomly ask for larger or smaller
-    const askingForLarger = Math.random() < 0.5;
-    const questionWord = askingForLarger ? 'greater' : 'less';
-    const correctAnswer = askingForLarger ? larger : smaller;
-    
-    const text = `Which is ${questionWord}: ${val1}${unit1} or ${val2}${unit2}?`;
-    
+    const config = params[measureType];
+
+    let value1, value2, unit1, unit2, value1Base, value2Base;
+
+    if (level <= 2 || params.unit_mixing === 'none') {
+        // Same-unit comparison
+        const unit = randomChoice(config.units);
+        value1 = getRandomValue(params, measureType, unit);
+        value2 = getRandomValue(params, measureType, unit);
+
+        // Ensure different values
+        while (value2 === value1) {
+            value2 = getRandomValue(params, measureType, unit);
+        }
+
+        unit1 = unit2 = unit;
+        value1Base = convertToBase(value1, unit1);
+        value2Base = convertToBase(value2, unit2);
+    } else {
+        // Mixed-unit comparison (Level 3-4)
+        const units = selectConvertibleUnits(measureType);
+        unit1 = units[0];
+        unit2 = units[1];
+
+        value1 = getRandomValue(params, measureType, unit1);
+        value2 = getRandomValue(params, measureType, unit2);
+
+        value1Base = convertToBase(value1, unit1);
+        value2Base = convertToBase(value2, unit2);
+
+        // Ensure the comparison is non-trivial (not too obvious)
+        // Avoid exact conversions at lower levels
+        if (level === 3 && value1Base === value2Base && Math.random() > 0.3) {
+            // Regenerate to avoid equals at L3 (make it rare)
+            value2 = getRandomValue(params, measureType, unit2);
+            value2Base = convertToBase(value2, unit2);
+        }
+    }
+
+    const comparative = getComparativeWord(measureType);
+    const questionText = `Which is ${comparative}: ${value1} ${unit1} or ${value2} ${unit2}?`;
+
+    let correctAnswer, wrongAnswer;
+    if (value1Base > value2Base) {
+        correctAnswer = `${value1} ${unit1}`;
+        wrongAnswer = `${value2} ${unit2}`;
+    } else if (value1Base < value2Base) {
+        correctAnswer = `${value2} ${unit2}`;
+        wrongAnswer = `${value1} ${unit1}`;
+    } else {
+        // Equal values
+        correctAnswer = 'They are equal';
+        wrongAnswer = `${value1} ${unit1}`;
+    }
+
+    const options = value1Base === value2Base
+        ? shuffle(['They are equal', `${value1} ${unit1}`, `${value2} ${unit2}`])
+        : shuffle([correctAnswer, wrongAnswer, 'They are equal']);
+
     return {
-        text,
+        text: questionText,
         type: 'multiple_choice',
+        options: options,
         answer: correctAnswer,
-        options: shuffleArray([`${val1}${unit1}`, `${val2}${unit2}`]),
         module: 'M01_Y3_MEAS',
-        operation: 'direct_comparison',
-        level
+        level: level
     };
 }
 
 /**
- * Generate complete statement question with mixed units
+ * OPERATION 2: Symbol Insertion
+ * Student completes comparison by typing >, < or =
+ * Levels 1-4: Same-unit at L1-2, mixed-unit at L3-4
  */
-function generateCompleteStatement(params, level) {
+function generateSymbolInsertion(params, level) {
     const measureType = randomChoice(params.measure_types);
-    const unitPair = getUnitPair(measureType, params);
-    const { val1, unit1, val2, unit2 } = generateMixedUnitValues(measureType, unitPair, params);
-    
-    // Convert to base units for comparison
-    const base1 = toBaseUnit(val1, unit1, measureType);
-    const base2 = toBaseUnit(val2, unit2, measureType);
-    
-    const correctSymbol = getComparisonSymbol(base1, base2);
+    const config = params[measureType];
 
-    const text = `Complete: ${formatNumber(val1)}${unit1} ___ ${formatNumber(val2)}${unit2}`;
+    let value1, value2, unit1, unit2;
 
-    // Vary hints by measure type for more targeted support
-    const hints = {
-        length: 'Remember: 1m = 100cm and 1cm = 10mm',
-        mass: 'Remember: 1kg = 1000g',
-        capacity: 'Remember: 1L = 1000ml'
-    };
-    const hint = `Think about which is larger. ${hints[measureType] || hints.length}`;
+    if (level <= 2 || params.unit_mixing === 'none') {
+        // Same-unit comparison
+        const unit = randomChoice(config.units);
+        value1 = getRandomValue(params, measureType, unit);
+        value2 = getRandomValue(params, measureType, unit);
+        unit1 = unit2 = unit;
+    } else {
+        // Mixed-unit comparison (Level 3-4)
+        const units = selectConvertibleUnits(measureType);
+        unit1 = units[0];
+        unit2 = units[1];
+        value1 = getRandomValue(params, measureType, unit1);
+        value2 = getRandomValue(params, measureType, unit2);
+    }
+
+    const value1Base = convertToBase(value1, unit1);
+    const value2Base = convertToBase(value2, unit2);
+
+    let answer;
+    if (value1Base > value2Base) {
+        answer = '>';
+    } else if (value1Base < value2Base) {
+        answer = '<';
+    } else {
+        answer = '=';
+    }
+
+    const questionText = `Complete the comparison: ${value1} ${unit1} ___ ${value2} ${unit2}`;
 
     return {
-        text,
+        text: questionText,
         type: 'text_input',
-        answer: correctSymbol,
-        hint,
+        answer: answer,
+        hint: 'Use >, < or =',
         module: 'M01_Y3_MEAS',
-        operation: 'complete_statement',
-        level
+        level: level
     };
 }
 
 /**
- * Generate ordering question with mixed units
+ * OPERATION 3: Ordering Measurements
+ * Order 3-4 measurements from smallest to largest
+ * Levels 2-4 only (Level 1 does pairwise only)
  */
-function generateOrdering(params, level, maxAttempts = 10) {
+function generateOrdering(params, level) {
     const measureType = randomChoice(params.measure_types);
-    const unitPair = getUnitPair(measureType, params);
-    const [unit1, unit2] = unitPair;
+    const config = params[measureType];
+    const count = params.ordering_count || 3;
 
-    // Generate 3 values with mixed units
-    const count = 3;
-    const measures = [];
+    let measurements = [];
 
-    for (let i = 0; i < count; i++) {
-        const useUnit1 = Math.random() < 0.5;
-        const unit = useUnit1 ? unit1 : unit2;
+    if (level === 2 || params.unit_mixing === 'none') {
+        // Same-unit ordering
+        const unit = randomChoice(config.units);
+        const values = generateUniqueValues(count,
+            getRandomValue(params, measureType, unit) - 50,
+            getRandomValue(params, measureType, unit) + 50
+        );
 
-        let value;
-        if (measureType === 'length') {
-            if (unit === 'm') value = randomInt(1, 5);
-            else if (unit === 'cm') value = randomInt(50, 400);
-            else if (unit === 'mm') value = randomInt(100, 2000);
-        } else if (measureType === 'mass') {
-            if (unit === 'kg') value = randomInt(1, 5);
-            else if (unit === 'g') value = randomInt(500, 4000);
-        } else if (measureType === 'capacity') {
-            if (unit === 'L' || unit === 'l') value = randomInt(1, 5);
-            else if (unit === 'ml') value = randomInt(500, 4000);
+        measurements = values.map(v => ({
+            value: Math.max(1, v),  // Ensure positive
+            unit: unit,
+            baseValue: convertToBase(Math.max(1, v), unit)
+        }));
+    } else {
+        // Mixed-unit ordering (Level 3-4)
+        const availableUnits = config.units;
+
+        for (let i = 0; i < count; i++) {
+            const unit = randomChoice(availableUnits);
+            const value = getRandomValue(params, measureType, unit);
+            measurements.push({
+                value: value,
+                unit: unit,
+                baseValue: convertToBase(value, unit)
+            });
         }
 
-        measures.push({
-            value,
-            unit,
-            baseValue: toBaseUnit(value, unit, measureType),
-            display: `${value}${unit}`
-        });
-    }
-
-    // Ensure all measures have different base values
-    const baseValues = new Set(measures.map(m => m.baseValue));
-    if (baseValues.size < count) {
-        // Regenerate if we have duplicates, with recursion protection
-        if (maxAttempts > 0) {
-            return generateOrdering(params, level, maxAttempts - 1);
-        } else {
-            // Fallback: force different values by adding small offsets
-            console.warn('Unable to generate unique values after 10 attempts, using fallback');
-            for (let i = 0; i < measures.length; i++) {
-                measures[i].baseValue += i * 0.001; // Tiny offset to ensure uniqueness
-            }
+        // Ensure all baseValues are unique
+        const baseValues = measurements.map(m => m.baseValue);
+        const uniqueBaseValues = new Set(baseValues);
+        if (uniqueBaseValues.size !== baseValues.length) {
+            // Regenerate if we have duplicates
+            return generateOrdering(params, level);
         }
     }
-    
+
+    // Create display strings
+    const displayStrings = measurements.map(m => `${m.value} ${m.unit}`);
+
     // Sort by base value
-    const sorted = [...measures].sort((a, b) => a.baseValue - b.baseValue);
-    
-    // Shuffle for presentation
-    const shuffledText = shuffleArray(measures.map(m => m.display)).join(', ');
-    
-    // Ask for different positions
-    const position = randomChoice(['FIRST', 'LAST']);
-    const correctAnswer = position === 'FIRST' ? sorted[0].display : sorted[sorted.length - 1].display;
-    
-    const text = `Put these in order from smallest to largest: ${shuffledText}. Which comes ${position}?`;
-    
+    const sorted = [...measurements].sort((a, b) => a.baseValue - b.baseValue);
+    const correctAnswer = sorted.map(m => `${m.value} ${m.unit}`).join(', ');
+
+    // Create plausible wrong options
+    const shuffled1 = shuffle([...measurements]).map(m => `${m.value} ${m.unit}`).join(', ');
+    const reversed = sorted.reverse().map(m => `${m.value} ${m.unit}`).join(', ');
+
+    const questionText = `Order these from smallest to largest: ${displayStrings.join(', ')}`;
+
     return {
-        text,
+        text: questionText,
         type: 'multiple_choice',
+        options: shuffle([correctAnswer, shuffled1, reversed]),
         answer: correctAnswer,
-        options: shuffleArray(measures.map(m => m.display)),
         module: 'M01_Y3_MEAS',
-        operation: 'ordering',
-        level
+        level: level
     };
 }
 
 /**
- * Generate unit recognition question
+ * OPERATION 4: Conversion Sense (True/False)
+ * Evaluate if a measurement comparison statement is true or false
+ * Levels 3-4 only (requires mixed-unit understanding)
  */
-function generateUnitRecognition(params, level) {
+function generateConversionSense(params, level) {
     const measureType = randomChoice(params.measure_types);
+    const config = params[measureType];
 
-    // Get applicable units and generate question with actual values shown
-    let value, baseUnit, smallerUnit, baseValue, convertedValue, question;
+    const units = selectConvertibleUnits(measureType);
+    const unit1 = units[0];
+    const unit2 = units[1];
 
-    if (measureType === 'length') {
-        value = randomInt(1, 3);
-        baseUnit = 'm';
-        smallerUnit = randomChoice(['cm', 'mm']);
+    const value1 = getRandomValue(params, measureType, unit1);
+    const value2 = getRandomValue(params, measureType, unit2);
 
-        if (smallerUnit === 'cm') {
-            convertedValue = value * 100;
-            question = `A table is ${value}m = ${formatNumber(convertedValue)}cm long.`;
+    const value1Base = convertToBase(value1, unit1);
+    const value2Base = convertToBase(value2, unit2);
+
+    // Create statement (sometimes correct, sometimes wrong)
+    const isCorrectStatement = Math.random() > 0.5;
+
+    let statement, correctAnswer;
+
+    if (isCorrectStatement) {
+        // True statement
+        if (value1Base > value2Base) {
+            statement = `${value1} ${unit1} is more than ${value2} ${unit2}`;
+        } else if (value1Base < value2Base) {
+            statement = `${value1} ${unit1} is less than ${value2} ${unit2}`;
         } else {
-            convertedValue = value * 1000;
-            question = `A table is ${value}m = ${formatNumber(convertedValue)}mm long.`;
+            statement = `${value1} ${unit1} is the same as ${value2} ${unit2}`;
         }
-        baseValue = `${value}${baseUnit}`;
-        convertedValue = `${formatNumber(convertedValue)}${smallerUnit}`;
-    } else if (measureType === 'mass') {
-        value = randomInt(1, 5);
-        baseUnit = 'kg';
-        smallerUnit = 'g';
-        const grams = value * 1000;
-        question = `A bag weighs ${value}kg = ${formatNumber(grams)}g.`;
-        baseValue = `${value}${baseUnit}`;
-        convertedValue = `${formatNumber(grams)}${smallerUnit}`;
-    } else if (measureType === 'capacity') {
-        value = randomInt(1, 3);
-        baseUnit = 'L';
-        smallerUnit = 'ml';
-        const ml = value * 1000;
-        question = `A bottle holds ${value}L = ${formatNumber(ml)}ml.`;
-        baseValue = `${value}${baseUnit}`;
-        convertedValue = `${formatNumber(ml)}${smallerUnit}`;
+        correctAnswer = 'True';
+    } else {
+        // False statement (deliberately wrong)
+        if (value1Base > value2Base) {
+            statement = `${value1} ${unit1} is less than ${value2} ${unit2}`;  // Wrong!
+        } else if (value1Base < value2Base) {
+            statement = `${value1} ${unit1} is more than ${value2} ${unit2}`;  // Wrong!
+        } else {
+            // For equals, make a wrong comparison
+            statement = `${value1} ${unit1} is more than ${value2} ${unit2}`;
+        }
+        correctAnswer = 'False';
     }
 
-    // Ask which measurement uses the larger number (clearer phrasing)
-    const text = `${question} Which measurement uses the LARGER number?`;
+    const questionText = `Is this statement true or false?\n"${statement}"`;
 
     return {
-        text,
+        text: questionText,
         type: 'multiple_choice',
-        answer: convertedValue,
-        options: [baseValue, convertedValue],
+        options: ['True', 'False'],
+        answer: correctAnswer,
         module: 'M01_Y3_MEAS',
-        operation: 'unit_recognition',
-        level
+        level: level
     };
 }
 
 /**
- * Generate a Year 3 measurement comparison question with mixed units
- * @param {object} params - Parameters from curriculum definition
- * @param {number} level - Difficulty level (1-4)
- * @returns {object} Question object
+ * OPERATION 5: Error Identification
+ * Find the incorrect comparison among 3 statements
+ * Level 4 only (advanced critical thinking)
+ */
+function generateErrorIdentification(params, level) {
+    const measureType = randomChoice(params.measure_types);
+    const config = params[measureType];
+
+    const statements = [];
+
+    // Statement 1: Correct same-unit comparison
+    const unit1 = randomChoice(config.units);
+    const val1a = getRandomValue(params, measureType, unit1);
+    const val1b = getRandomValue(params, measureType, unit1);
+
+    while (val1a === val1b) {
+        val1b = getRandomValue(params, measureType, unit1);
+    }
+
+    const symbol1 = val1a > val1b ? '>' : '<';
+    statements.push(`${val1a} ${unit1} ${symbol1} ${val1b} ${unit1}`);
+
+    // Statement 2: Correct mixed-unit comparison
+    const units = selectConvertibleUnits(measureType);
+    const val2a = getRandomValue(params, measureType, units[0]);
+    const val2b = getRandomValue(params, measureType, units[1]);
+
+    const val2aBase = convertToBase(val2a, units[0]);
+    const val2bBase = convertToBase(val2b, units[1]);
+
+    let symbol2;
+    if (val2aBase > val2bBase) symbol2 = '>';
+    else if (val2aBase < val2bBase) symbol2 = '<';
+    else symbol2 = '=';
+
+    statements.push(`${val2a} ${units[0]} ${symbol2} ${val2b} ${units[1]}`);
+
+    // Statement 3: INCORRECT mixed-unit comparison
+    const val3a = getRandomValue(params, measureType, units[0]);
+    const val3b = getRandomValue(params, measureType, units[1]);
+
+    const val3aBase = convertToBase(val3a, units[0]);
+    const val3bBase = convertToBase(val3b, units[1]);
+
+    // Use WRONG symbol deliberately
+    let wrongSymbol;
+    if (val3aBase > val3bBase) {
+        wrongSymbol = '<';  // Should be >, but we use < (WRONG!)
+    } else if (val3aBase < val3bBase) {
+        wrongSymbol = '>';  // Should be <, but we use > (WRONG!)
+    } else {
+        wrongSymbol = '>';  // Should be =, but we use > (WRONG!)
+    }
+
+    const incorrectStatement = `${val3a} ${units[0]} ${wrongSymbol} ${val3b} ${units[1]}`;
+    statements.push(incorrectStatement);
+
+    const questionText = 'Which comparison is incorrect?';
+
+    return {
+        text: questionText,
+        type: 'multiple_choice',
+        options: shuffle(statements),
+        answer: incorrectStatement,
+        module: 'M01_Y3_MEAS',
+        level: level
+    };
+}
+
+/**
+ * Main question generator
+ * Selects operation based on level and params, generates appropriate question
  */
 export function generateQuestion(params, level) {
-    // Select operation
-    const operation = randomChoice(params.operations);
-    
-    // Generate question based on operation
-    switch (operation) {
+    // Filter operations by level
+    let availableOperations = [];
+
+    if (level === 1) {
+        availableOperations = ['direct_comparison', 'symbol_insertion'];
+    } else if (level === 2) {
+        availableOperations = ['direct_comparison', 'symbol_insertion', 'ordering'];
+    } else if (level === 3) {
+        availableOperations = ['direct_comparison', 'symbol_insertion', 'ordering', 'conversion_sense'];
+    } else if (level === 4) {
+        availableOperations = ['direct_comparison', 'symbol_insertion', 'ordering', 'conversion_sense', 'error_identification'];
+    }
+
+    const selectedOperation = randomChoice(availableOperations);
+
+    switch (selectedOperation) {
         case 'direct_comparison':
             return generateDirectComparison(params, level);
-            
-        case 'complete_statement':
-            return generateCompleteStatement(params, level);
-            
+        case 'symbol_insertion':
+            return generateSymbolInsertion(params, level);
         case 'ordering':
             return generateOrdering(params, level);
-            
-        case 'unit_recognition':
-            return generateUnitRecognition(params, level);
-            
+        case 'conversion_sense':
+            return generateConversionSense(params, level);
+        case 'error_identification':
+            return generateErrorIdentification(params, level);
         default:
             return generateDirectComparison(params, level);
     }
