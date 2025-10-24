@@ -74,10 +74,10 @@ import propertiesProblemsY4Generator from '../generators/C08_Y4_CALC_properties.
 import propertiesProblemsY5Generator from '../generators/C08_Y5_CALC_properties.js';
 import propertiesProblemsY6Generator from '../generators/C08_Y6_CALC_properties.js';
 import orderY6Generator from '../generators/C09_Y6_CALC_order.js';
-import M01_Y1_MEAS_generator from '../generators/M01_Y1_MEAS_comparison.js';
-import M01_Y2_MEAS_generator from '../generators/M01_Y2_MEAS_comparison.js';
-import M01_Y3_MEAS_generator from '../generators/M01_Y3_MEAS_comparison.js';
-import M01_Y4_MEAS_generator from '../generators/M01_Y4_MEAS_comparison.js';
+import measurementY1Generator from '../generators/M01_Y1_MEAS_comparison.js';
+import measurementY2Generator from '../generators/M01_Y2_MEAS_comparison.js';
+import measurementY3Generator from '../generators/M01_Y3_MEAS_comparison.js';
+import measurementY4Generator from '../generators/M01_Y4_MEAS_comparison.js';
 
 /**
  * Question Engine Class
@@ -160,12 +160,11 @@ class QuestionEngine {
         this.register(propertiesProblemsY5Generator);
         this.register(propertiesProblemsY6Generator);
         this.register(orderY6Generator);
+        this.register(measurementY1Generator);
+        this.register(measurementY2Generator);
+        this.register(measurementY3Generator);
+        this.register(measurementY4Generator);
 
-        // M01 - Measurement
-        this.register(M01_Y1_MEAS_generator);
-        this.register(M01_Y2_MEAS_generator);
-        this.register(M01_Y3_MEAS_generator);
-        this.register(M01_Y4_MEAS_generator);
     }
 
     /**
@@ -213,7 +212,7 @@ class QuestionEngine {
     }
 
     /**
-     * Generate multiple questions
+     * Generate multiple questions with deduplication
      * @param {string} moduleId - Module identifier
      * @param {number} level - Difficulty level (1-4)
      * @param {number} count - Number of questions to generate
@@ -221,12 +220,22 @@ class QuestionEngine {
      */
     generate(moduleId, level, count = 10) {
         const questions = [];
+        const seenQuestionTexts = new Set(); // Track unique question texts
+        let attempts = 0;
+        const maxAttempts = count * 3; // Try up to 3x the count to find unique questions
 
-        for (let i = 0; i < count; i++) {
+        while (questions.length < count && attempts < maxAttempts) {
             const question = this.generateOne(moduleId, level);
+
             if (question) {
-                questions.push(question);
+                // Check if we've seen this exact question text before
+                if (!seenQuestionTexts.has(question.text)) {
+                    seenQuestionTexts.add(question.text);
+                    questions.push(question);
+                }
             }
+
+            attempts++;
         }
 
         return questions;

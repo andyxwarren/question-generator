@@ -1,31 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python -m http.server:*)",
-      "Bash(curl:*)",
-      "Bash(findstr:*)",
-      "Bash(node temp_test_c04.js)",
-      "Bash(node --version)",
-      "Bash(node test_Y5_Y6_generators.js)",
-      "Bash(node -e \"\nimport(''./src/generators/C04_Y6_CALC_problems.js'').then(mod => {\n  const gen = mod.default;\n  import(''./src/curriculum/parameters/C04_problems.js'').then(paramMod => {\n    const params = paramMod.C04_MODULES[''C04_Y6_CALC''].parameters[4];\n    console.log(''=== Year 6 Level 4 Sample Questions ===\\n'');\n    for(let i = 0; i < 6; i++) {\n      const q = gen.generate(params, 4);\n      console.log(''Question '' + (i+1) + '':'', q.text);\n      console.log(''Answer:'', q.answer);\n      console.log(''---\\n'');\n    }\n  });\n}).catch(e => console.error(e));\n\")",
-      "Bash(node test_C04_Y5_Y6_contexts.js)",
-      "Bash(node test_C05_fixes.js)",
-      "Bash(node test_C06_fixes.js)",
-      "Bash(python -c \"import csv; rows = [row for row in csv.DictReader(open(''references/national_curriculum_framework_excel.csv'', encoding=''utf-8'')) if ''C7'' in row.get(''ref'', '''')]; print(''\\n''.join([f\"\"{row[''year_group'']}: {row[''curriculum_statement'']}\"\" for row in rows]))\")",
-      "Bash(node --check \"src/generators/C07_Y2_CALC_written.js\")",
-      "Bash(node -c src/generators/C09_Y6_CALC_order.js)",
-      "Bash(node -c src/curriculum/parameters/C09_order.js)",
-      "Bash(node -c src/curriculum/parameters.js)",
-      "Bash(node -c src/core/questionEngine.js)",
-      "Bash(node validate_c09_samples.js)",
-      "Bash(dir /b \"C:\\Users\\Andyx\\Documents\\projects\\question-generator\\new_feature\")",
-      "Bash(dir:*)",
-      "Bash(node test_N03_fix.js:*)",
-      "Bash(del:*)",
-      "Bash(if not exist \"C:\\Users\\Andyx\\Documents\\projects\\question-generator\\src\\generators\\helpers\" mkdir \"C:\\Users\\Andyx\\Documents\\projects\\question-generator\\src\\generators\\helpers\")",
-      "Bash(node generate_samples_M01_Y2.js:*)",
-      "Bash(node *)",
-      "WebFetch(domain:localhost)"
+      "Bash(node -c:*)",
+      "Bash(python -m http.server:*)"
     ],
     "deny": [],
     "ask": []

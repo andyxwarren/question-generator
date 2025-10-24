@@ -20,6 +20,7 @@
  * - C07_written_multiply_divide.js - Written multiplication and division methods (Years 2-6)
  * - C08_properties.js - Problem-solving with mathematical properties and all four operations (Years 1-6)
  * - C09_order.js - Order of operations (Year 6)
+ * - M01_measurement.js - Compare, describe and order measures (Years 1-4)
  */
 
 import { N01_MODULES } from './parameters/N01_counting.js';
@@ -36,7 +37,7 @@ import { C05_MODULES } from './parameters/C05_properties.js';
 import { C06_MODULES } from './parameters/C06_mental_multiply_divide.js';
 import { C07_MODULES } from './parameters/C07_written_multiply_divide.js';
 import { C08_MODULES } from './parameters/C08_properties.js';
-import { C09_MODULES } from './parameters/C09_order.js';
+import { C09_MODULES } from './parameters/C09_order.js'
 import { M01_MODULES } from './parameters/M01_measurement.js';
 
 /**
@@ -59,7 +60,7 @@ export const MODULES = {
     ...C07_MODULES,
     ...C08_MODULES,
     ...C09_MODULES,
-    ...M01_MODULES,
+    ...M01_MODULES
 };
 
 /**

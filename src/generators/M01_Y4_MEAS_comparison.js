@@ -1,382 +1,296 @@
 /**
- * M01_Y4_MEAS - Year 4 Measurement: Compare Money in Pounds and Pence
+ * M01_Y4_MEAS: Measurement - Compare Different Measures
+ * Year 4: Compare different measures, including money in pounds and pence
  *
- * Curriculum: "compare different measures, including money in pounds and pence"
- *
- * SCOPE NOTE: This module focuses exclusively on MONEY comparisons (£/p).
- * The curriculum statement mentions "different measures, including money" which
- * suggests money is one of several measure types. Other measure types (length,
- * mass, capacity) for Year 4 may be addressed in companion modules.
- *
- * This module teaches:
- * - Comparing mixed-unit money amounts (£ vs p)
- * - Understanding £1 = 100p conversion
- * - Working with decimal pounds (e.g., £2.50)
- * - Ordering multiple money amounts
- * - Recognizing equivalent amounts in different units
+ * This generator extends Year 3 skills and adds money comparisons.
  */
 
-import {
-    randomChoice,
-    shuffleArray
-} from './helpers/M01_measurementHelpers.js';
+import { randomChoice, randomInt, formatMeasurement, formatMoney, randomMoney, convertUnit, getComparisonSymbol } from './helpers/M01_measurementHelpers.js';
 
 /**
- * Random integer between min and max (inclusive)
+ * Generate a comparison question for Year 4 measurement
+ * @param {Object} params - Parameters from curriculum definition
+ * @param {number} level - Difficulty level (1-4)
+ * @returns {Object} Question object
  */
-function randomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+export function generateQuestion(params, level) {
+    const operations = params.operations;
+    const operation = randomChoice(operations);
+
+    switch (operation) {
+        case 'compare_measures':
+            return generateCompareMeasuresQuestion(params, level);
+        case 'order_measures':
+            return generateOrderMeasuresQuestion(params, level);
+        case 'compare_money':
+            return generateCompareMoneyQuestion(params, level);
+        case 'order_money':
+            return generateOrderMoneyQuestion(params, level);
+        case 'multi_measure_comparison':
+            return generateMultiMeasureComparisonQuestion(params, level);
+        case 'problem_solving':
+            return generateProblemSolvingQuestion(params, level);
+        default:
+            return generateCompareMeasuresQuestion(params, level);
+    }
 }
 
 /**
- * Format number with comma separators for readability (e.g., 1000 → 1,000)
+ * Generate a question comparing two measurements
  */
-function formatNumber(num) {
-    return num.toLocaleString('en-GB');
-}
+function generateCompareMeasuresQuestion(params, level) {
+    const measureTypes = params.measure_types.filter(t => t !== 'money');
+    const measureType = randomChoice(measureTypes);
+    const units = params.units[measureType];
 
-/**
- * Generate a random money amount in pounds
- * @param {number} min - Minimum pounds
- * @param {number} max - Maximum pounds
- * @param {boolean} allowDecimals - Whether to include decimal amounts
- * @returns {string} Formatted money string (e.g., "£2.50")
- */
-function generatePoundsAmount(min, max, allowDecimals = false) {
-    const pounds = randomInt(min, max);
+    // Randomly choose same or different units
+    const useSameUnits = params.compare_same_unit_only || randomChoice([true, false]);
 
-    // Increased probability from 50% to 70% for more decimal practice at Levels 2-3
-    if (allowDecimals && Math.random() < 0.7) {
-        // Add pence as decimals (0.25, 0.50, 0.75)
-        const penceOptions = [0, 25, 50, 75];
-        const pence = randomChoice(penceOptions);
-        
-        if (pence === 0) {
-            return `£${pounds}`;
-        } else {
-            return `£${pounds}.${pence}`;
+    let unit1, unit2, value1, value2;
+
+    if (useSameUnits) {
+        unit1 = unit2 = randomChoice(units);
+        const range = params.ranges[unit1];
+        value1 = randomInt(range.min, range.max);
+        value2 = randomInt(range.min, range.max);
+        while (value1 === value2) {
+            value2 = randomInt(range.min, range.max);
+        }
+    } else {
+        unit1 = randomChoice(units);
+        unit2 = randomChoice(units.filter(u => u !== unit1));
+        value1 = randomInt(params.ranges[unit1].min, params.ranges[unit1].max);
+        value2 = randomInt(params.ranges[unit2].min, params.ranges[unit2].max);
+    }
+
+    const measurement1 = formatMeasurement(value1, unit1);
+    const measurement2 = formatMeasurement(value2, unit2);
+
+    // Compare values (convert if needed)
+    let comparisonValue1 = value1;
+    let comparisonValue2 = value2;
+
+    if (unit1 !== unit2) {
+        try {
+            comparisonValue1 = convertUnit(value1, unit1, unit2);
+        } catch (e) {
+            // If conversion fails, use original values
         }
     }
-    
-    return `£${pounds}`;
-}
 
-/**
- * Generate a random money amount in pence only
- * @param {number} min - Minimum pence
- * @param {number} max - Maximum pence
- * @returns {string} Formatted money string (e.g., "250p" or "1,500p")
- */
-function generatePenceAmount(min, max) {
-    const pence = randomInt(min, max);
-    return `${formatNumber(pence)}p`;
-}
+    const correctSymbol = getComparisonSymbol(comparisonValue1, comparisonValue2);
 
-/**
- * Convert money amount to pence for comparison
- * @param {string} amount - Money amount (e.g., "£2.50", "250p", or "1,500p")
- * @returns {number} Amount in pence
- */
-function toPence(amount) {
-    if (amount.startsWith('£')) {
-        // Remove £ and convert to pence
-        const value = parseFloat(amount.substring(1).replace(/,/g, ''));
-        return Math.round(value * 100);
-    } else if (amount.endsWith('p')) {
-        // Remove p, commas, and parse
-        const numStr = amount.substring(0, amount.length - 1).replace(/,/g, '');
-        return parseInt(numStr);
-    }
-    return 0;
-}
-
-/**
- * Get comparison symbol between two values
- */
-function getComparisonSymbol(val1, val2) {
-    if (val1 > val2) return '>';
-    if (val1 < val2) return '<';
-    return '=';
-}
-
-/**
- * Generate direct money comparison question
- */
-function generateDirectComparison(params, level) {
-    const allowDecimals = level >= 2;
-    
-    // Generate two money amounts in different formats
-    const usePoundsFirst = Math.random() < 0.5;
-    
-    let amount1, amount2;
-    
-    if (usePoundsFirst) {
-        amount1 = generatePoundsAmount(params.min_pounds, params.max_pounds, allowDecimals);
-        amount2 = generatePenceAmount(params.min_pence, params.max_pence);
-    } else {
-        amount1 = generatePenceAmount(params.min_pence, params.max_pence);
-        amount2 = generatePoundsAmount(params.min_pounds, params.max_pounds, allowDecimals);
-    }
-    
-    // Convert to pence for comparison
-    const pence1 = toPence(amount1);
-    const pence2 = toPence(amount2);
-    
-    // Determine which is more/less
-    const larger = pence1 > pence2 ? amount1 : amount2;
-    const smaller = pence1 < pence2 ? amount1 : amount2;
-    
-    // Randomly ask for more or less
-    const askingForMore = Math.random() < 0.5;
-    const questionWord = askingForMore ? 'more' : 'less';
-    const correctAnswer = askingForMore ? larger : smaller;
-    
-    const text = `Which is ${questionWord}: ${amount1} or ${amount2}?`;
-    
-    return {
-        text,
-        type: 'multiple_choice',
-        answer: correctAnswer,
-        options: shuffleArray([amount1, amount2]),
-        module: 'M01_Y4_MEAS',
-        operation: 'direct_comparison',
-        level
-    };
-}
-
-/**
- * Generate complete statement question
- */
-function generateCompleteStatement(params, level) {
-    const allowDecimals = level >= 2;
-    
-    // Generate two money amounts in different formats
-    const amount1 = generatePoundsAmount(params.min_pounds, params.max_pounds, allowDecimals);
-    const amount2 = generatePenceAmount(params.min_pence, params.max_pence);
-    
-    // Convert to pence for comparison
-    const pence1 = toPence(amount1);
-    const pence2 = toPence(amount2);
-    
-    const correctSymbol = getComparisonSymbol(pence1, pence2);
-
-    const text = `Complete using >, < or =: ${amount1} ___ ${amount2}`;
-    const hint = `Remember: £1 = 100p. Convert both amounts to the same unit to compare.`;
+    const questionText = `Which symbol makes this correct?\n${measurement1} ___ ${measurement2}`;
 
     return {
-        text,
+        text: questionText,
         type: 'multiple_choice',
         answer: correctSymbol,
         options: ['>', '<', '='],
-        hint,
+        hint: unit1 !== unit2 ? 'Convert to the same units first.' : 'Compare the values.',
         module: 'M01_Y4_MEAS',
-        operation: 'complete_statement',
-        level
+        level: level
     };
 }
 
 /**
- * Generate ordering question
+ * Generate a question ordering measurements
  */
-function generateOrdering(params, level) {
-    const allowDecimals = level >= 2;
-    const count = level >= 3 ? 4 : 3;
-    
-    const amounts = [];
-    
-    // Generate mixed money amounts
-    for (let i = 0; i < count; i++) {
-        const usePounds = Math.random() < 0.5;
-        
-        let amount;
-        if (usePounds) {
-            amount = generatePoundsAmount(params.min_pounds, params.max_pounds, allowDecimals);
-        } else {
-            amount = generatePenceAmount(params.min_pence, params.max_pence);
+function generateOrderMeasuresQuestion(params, level) {
+    const measureTypes = params.measure_types.filter(t => t !== 'money');
+    const measureType = randomChoice(measureTypes);
+    const units = params.units[measureType];
+    const unit = randomChoice(units);
+    const range = params.ranges[unit];
+
+    // Generate three different values
+    const values = [];
+    while (values.length < 3) {
+        const value = randomInt(range.min, range.max);
+        if (!values.includes(value)) {
+            values.push(value);
         }
-        
-        amounts.push({
-            display: amount,
-            pence: toPence(amount)
-        });
     }
-    
-    // Ensure all amounts are different
-    const penceValues = new Set(amounts.map(a => a.pence));
-    if (penceValues.size < count) {
-        // Regenerate if we have duplicates
-        return generateOrdering(params, level);
-    }
-    
-    // Sort by pence value
-    const sorted = [...amounts].sort((a, b) => a.pence - b.pence);
-    
-    // Shuffle for presentation
-    const shuffledText = shuffleArray(amounts.map(a => a.display)).join(', ');
-    
-    // Ask for different positions
-    const positions = ['FIRST', 'SECOND', 'LAST'];
-    const position = randomChoice(positions.slice(0, Math.min(count, 3)));
-    
-    let correctAnswer;
-    if (position === 'FIRST') {
-        correctAnswer = sorted[0].display;
-    } else if (position === 'SECOND') {
-        correctAnswer = sorted[1].display;
-    } else { // LAST
-        correctAnswer = sorted[sorted.length - 1].display;
-    }
-    
-    const text = `Put these in order from smallest to largest: ${shuffledText}. Which comes ${position}?`;
-    
+
+    const measurements = values.map(v => formatMeasurement(v, unit));
+    const orderDirection = randomChoice(['smallest to largest', 'largest to smallest']);
+
+    const sortedIndices = values
+        .map((val, idx) => ({ val, idx }))
+        .sort((a, b) => orderDirection === 'smallest to largest' ? a.val - b.val : b.val - a.val)
+        .map(item => item.idx);
+
+    const correctAnswer = sortedIndices.map(idx => measurements[idx]).join(', ');
+
+    const questionText = `Put these in order from ${orderDirection}:\n${measurements.join(', ')}`;
+
+    const shuffledIndices1 = [sortedIndices[1], sortedIndices[0], sortedIndices[2]];
+    const shuffledIndices2 = [sortedIndices[2], sortedIndices[1], sortedIndices[0]];
+
     return {
-        text,
+        text: questionText,
         type: 'multiple_choice',
         answer: correctAnswer,
-        options: shuffleArray(amounts.map(a => a.display)),
-        module: 'M01_Y4_MEAS',
-        operation: 'ordering',
-        level
-    };
-}
-
-/**
- * Generate context problem with money
- */
-function generateContextProblem(params, level) {
-    const allowDecimals = level >= 2;
-    
-    // Generate two money amounts
-    const amount1 = generatePoundsAmount(params.min_pounds, params.max_pounds, allowDecimals);
-    const amount2 = generatePenceAmount(params.min_pence, params.max_pence);
-    
-    // Convert to pence
-    const pence1 = toPence(amount1);
-    const pence2 = toPence(amount2);
-    
-    // Create scenarios
-    const names = ['Tom', 'Sarah', 'Alex', 'Maya'];
-    const name1 = randomChoice(names);
-    const name2 = randomChoice(names.filter(n => n !== name1));
-    
-    // Determine who has more
-    const personWithMore = pence1 > pence2 ? name1 : name2;
-    const personWithLess = pence1 < pence2 ? name1 : name2;
-    
-    // Create different question types
-    const scenarios = [
-        {
-            setup: `${name1} has ${amount1}. ${name2} has ${amount2}.`,
-            question: `Who has more money?`,
-            answer: personWithMore
-        },
-        {
-            setup: `${name1} has ${amount1}. ${name2} has ${amount2}.`,
-            question: `Who has less money?`,
-            answer: personWithLess
-        },
-        {
-            setup: `${name1} saved ${amount1}. ${name2} saved ${amount2}.`,
-            question: `Who saved more?`,
-            answer: personWithMore
-        }
-    ];
-    
-    const scenario = randomChoice(scenarios);
-    const text = `${scenario.setup} ${scenario.question}`;
-    
-    return {
-        text,
-        type: 'multiple_choice',
-        answer: scenario.answer,
-        options: shuffleArray([name1, name2]),
-        module: 'M01_Y4_MEAS',
-        operation: 'context_problem',
-        level
-    };
-}
-
-/**
- * Generate equivalence recognition question
- * Tests understanding that amounts in different units can be equal (e.g., £5 = 500p)
- */
-function generateEquivalence(params, level) {
-    const allowDecimals = level >= 2;
-
-    // Generate a base amount in pounds
-    const pounds = randomInt(params.min_pounds, params.max_pounds);
-
-    // Sometimes add decimals at higher levels
-    let penceDecimal = 0;
-    if (allowDecimals && Math.random() < 0.5) {
-        const penceOptions = [25, 50, 75];
-        penceDecimal = randomChoice(penceOptions);
-    }
-
-    // Create the equivalent amounts
-    const totalPence = pounds * 100 + penceDecimal;
-    const poundsAmount = penceDecimal > 0 ? `£${pounds}.${penceDecimal}` : `£${pounds}`;
-    const penceAmount = `${totalPence}p`;
-
-    // Create a distractor (different amount)
-    const distractorPence = totalPence + randomInt(10, 100) * (Math.random() < 0.5 ? 1 : -1);
-    const distractorAmount = `${Math.abs(distractorPence)}p`;
-
-    // Create question
-    const allAmounts = [poundsAmount, penceAmount, distractorAmount];
-    const shuffled = shuffleArray(allAmounts);
-
-    const text = `Which TWO amounts are equal? ${shuffled.join(', ')}`;
-
-    // The correct answer should be the pair that are equal
-    const correctPair = [poundsAmount, penceAmount].sort().join(' and ');
-
-    return {
-        text,
-        type: 'multiple_choice',
-        answer: correctPair,
         options: [
-            `${poundsAmount} and ${penceAmount}`,
-            `${poundsAmount} and ${distractorAmount}`,
-            `${penceAmount} and ${distractorAmount}`,
-            'None are equal'
+            correctAnswer,
+            shuffledIndices1.map(idx => measurements[idx]).join(', '),
+            shuffledIndices2.map(idx => measurements[idx]).join(', ')
         ],
         module: 'M01_Y4_MEAS',
-        operation: 'equivalence',
-        level
+        level: level
     };
 }
 
 /**
- * Generate a Year 4 measurement comparison question focusing on money
- * @param {object} params - Parameters from curriculum definition
- * @param {number} level - Difficulty level (1-4)
- * @returns {object} Question object
+ * Generate a money comparison question
  */
-export function generateQuestion(params, level) {
-    // Select operation
-    const operation = randomChoice(params.operations);
-    
-    // Generate question based on operation
-    switch (operation) {
-        case 'direct_comparison':
-            return generateDirectComparison(params, level);
-            
-        case 'complete_statement':
-            return generateCompleteStatement(params, level);
-            
-        case 'ordering':
-            return generateOrdering(params, level);
-            
-        case 'context_problem':
-            return generateContextProblem(params, level);
+function generateCompareMoneyQuestion(params, level) {
+    const moneyFormat = params.money_format;
 
-        case 'equivalence':
-            return generateEquivalence(params, level);
+    let value1, value2, money1, money2;
 
-        default:
-            return generateDirectComparison(params, level);
+    if (moneyFormat === 'simple') {
+        // Just pence or just pounds
+        const usePence = randomChoice([true, false]);
+        if (usePence) {
+            value1 = randomInt(params.ranges.p.min, params.ranges.p.max);
+            value2 = randomInt(params.ranges.p.min, params.ranges.p.max);
+            while (value1 === value2) {
+                value2 = randomInt(params.ranges.p.min, params.ranges.p.max);
+            }
+            money1 = formatMoney(value1);
+            money2 = formatMoney(value2);
+        } else {
+            value1 = randomInt(params.ranges.pounds.min, params.ranges.pounds.max) * 100;
+            value2 = randomInt(params.ranges.pounds.min, params.ranges.pounds.max) * 100;
+            while (value1 === value2) {
+                value2 = randomInt(params.ranges.pounds.min, params.ranges.pounds.max) * 100;
+            }
+            money1 = formatMoney(value1);
+            money2 = formatMoney(value2);
+        }
+    } else {
+        // Mixed format
+        value1 = randomMoney(1, params.ranges.pounds.max * 100 + params.ranges.p.max);
+        value2 = randomMoney(1, params.ranges.pounds.max * 100 + params.ranges.p.max);
+        while (value1 === value2) {
+            value2 = randomMoney(1, params.ranges.pounds.max * 100 + params.ranges.p.max);
+        }
+        money1 = formatMoney(value1);
+        money2 = formatMoney(value2);
     }
+
+    const correctSymbol = getComparisonSymbol(value1, value2);
+
+    const questionText = `Which symbol makes this correct?\n${money1} ___ ${money2}`;
+
+    return {
+        text: questionText,
+        type: 'multiple_choice',
+        answer: correctSymbol,
+        options: ['>', '<', '='],
+        hint: 'Compare the amounts of money.',
+        module: 'M01_Y4_MEAS',
+        level: level
+    };
+}
+
+/**
+ * Generate a question ordering money amounts
+ */
+function generateOrderMoneyQuestion(params, level) {
+    const moneyFormat = params.money_format;
+
+    // Generate three money values
+    const values = [];
+    while (values.length < 3) {
+        const value = randomMoney(1, params.ranges.pounds.max * 100 + params.ranges.p.max);
+        if (!values.includes(value)) {
+            values.push(value);
+        }
+    }
+
+    const moneyAmounts = values.map(v => formatMoney(v));
+    const orderDirection = randomChoice(['smallest to largest', 'largest to smallest']);
+
+    const sortedIndices = values
+        .map((val, idx) => ({ val, idx }))
+        .sort((a, b) => orderDirection === 'smallest to largest' ? a.val - b.val : b.val - a.val)
+        .map(item => item.idx);
+
+    const correctAnswer = sortedIndices.map(idx => moneyAmounts[idx]).join(', ');
+
+    const questionText = `Put these amounts in order from ${orderDirection}:\n${moneyAmounts.join(', ')}`;
+
+    const shuffledIndices1 = [sortedIndices[1], sortedIndices[0], sortedIndices[2]];
+    const shuffledIndices2 = [sortedIndices[2], sortedIndices[1], sortedIndices[0]];
+
+    return {
+        text: questionText,
+        type: 'multiple_choice',
+        answer: correctAnswer,
+        options: [
+            correctAnswer,
+            shuffledIndices1.map(idx => moneyAmounts[idx]).join(', '),
+            shuffledIndices2.map(idx => moneyAmounts[idx]).join(', ')
+        ],
+        module: 'M01_Y4_MEAS',
+        level: level
+    };
+}
+
+/**
+ * Generate a multi-measure comparison question (word problem)
+ */
+function generateMultiMeasureComparisonQuestion(params, level) {
+    // Simple word problem involving comparison
+    const measureType = randomChoice(['length', 'mass']);
+
+    if (measureType === 'length') {
+        const unit = randomChoice(['cm', 'm']);
+        const range = params.ranges[unit];
+        const value1 = randomInt(range.min, range.max);
+        const value2 = randomInt(range.min, range.max);
+
+        const longer = value1 > value2 ? formatMeasurement(value1, unit) : formatMeasurement(value2, unit);
+
+        const questionText = `A red ribbon is ${formatMeasurement(value1, unit)} long and a blue ribbon is ${formatMeasurement(value2, unit)} long. Which ribbon is longer?`;
+
+        return {
+            text: questionText,
+            type: 'multiple_choice',
+            answer: longer,
+            options: [formatMeasurement(value1, unit), formatMeasurement(value2, unit)],
+            module: 'M01_Y4_MEAS',
+            level: level
+        };
+    } else {
+        const unit = randomChoice(['g', 'kg']);
+        const range = params.ranges[unit];
+        const value1 = randomInt(range.min, range.max);
+        const value2 = randomInt(range.min, range.max);
+
+        const heavier = value1 > value2 ? formatMeasurement(value1, unit) : formatMeasurement(value2, unit);
+
+        const questionText = `A bag weighs ${formatMeasurement(value1, unit)} and a box weighs ${formatMeasurement(value2, unit)}. Which is heavier?`;
+
+        return {
+            text: questionText,
+            type: 'multiple_choice',
+            answer: heavier,
+            options: [formatMeasurement(value1, unit), formatMeasurement(value2, unit)],
+            module: 'M01_Y4_MEAS',
+            level: level
+        };
+    }
+}
+
+/**
+ * Generate a problem-solving question
+ */
+function generateProblemSolvingQuestion(params, level) {
+    // Similar to multi-measure but more complex
+    return generateMultiMeasureComparisonQuestion(params, level);
 }
 
 export default {

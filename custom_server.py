@@ -9,6 +9,9 @@
 #
 # 2. Terminate the process using its PID (replace <PID> with the actual ID):
 #    taskkill /PID <PID> /F
+#
+# 3. Optional: Kill all processes on a port automatically
+#    netstat -ano | findstr :8000 | ForEach-Object { taskkill /F /PID ($_.Split()[-1]) }
 
 import http.server
 import socketserver
