@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(node -c:*)",
-      "Bash(python -m http.server:*)"
+      "Bash(python -m http.server:*)",
+      "Bash(node --version)",
+      "Bash(node test-money-modules.js:*)",
+      "Bash(node --check:*)"
     ],
     "deny": [],
     "ask": []
