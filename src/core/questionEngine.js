@@ -91,6 +91,9 @@ import timeY3Generator from '../generators/M04_Y3_MEAS_time.js';
 import timeY4Generator from '../generators/M04_Y4_MEAS_time.js';
 import timeY5Generator from '../generators/M04_Y5_MEAS_time.js';
 import conversionY5Generator from '../generators/M05_Y5_MEAS_conversions.js';
+import conversionY4Generator from '../generators/M06_Y4_MEAS_conversions.js';
+import conversionY5MixedGenerator from '../generators/M06_Y5_MEAS_conversions.js';
+import conversionY6Generator from '../generators/M06_Y6_MEAS_conversions.js';
 
 /**
  * Question Engine Class
@@ -190,6 +193,9 @@ class QuestionEngine {
         this.register(timeY4Generator);
         this.register(timeY5Generator);
         this.register(conversionY5Generator);
+        this.register(conversionY4Generator);
+        this.register(conversionY5MixedGenerator);
+        this.register(conversionY6Generator);
 
     }
 

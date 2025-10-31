@@ -25,6 +25,7 @@
  * - M03_money.js - Money (Years 1-3)
  * - M04_time.js - Telling time, ordering time, duration and units of time (Years 1-5)
  * - M05_conversions.js - Convert between metric units (Year 5)
+ * - M06_conversions_mixed.js - Convert between different units including imperial/metric (Years 4-6)
  */
 
 import { N01_MODULES } from './parameters/N01_counting.js';
@@ -47,6 +48,7 @@ import { M02_MODULES } from './parameters/M02_measurement_scales.js';
 import { M03_MODULES } from './parameters/M03_money.js';
 import { M04_MODULES } from './parameters/M04_time.js';
 import { M05_MODULES } from './parameters/M05_conversions.js';
+import { M06_MODULES } from './parameters/M06_conversions_mixed.js';
 
 /**
  * Merged modules object
@@ -72,7 +74,8 @@ export const MODULES = {
     ...M02_MODULES,
     ...M03_MODULES,
     ...M04_MODULES,
-    ...M05_MODULES
+    ...M05_MODULES,
+    ...M06_MODULES
 };
 
 /**
