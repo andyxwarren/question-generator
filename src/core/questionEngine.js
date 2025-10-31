@@ -78,6 +78,19 @@ import measurementY1Generator from '../generators/M01_Y1_MEAS_comparison.js';
 import measurementY2Generator from '../generators/M01_Y2_MEAS_comparison.js';
 import measurementY3Generator from '../generators/M01_Y3_MEAS_comparison.js';
 import measurementY4Generator from '../generators/M01_Y4_MEAS_comparison.js';
+import scalesY1Generator from '../generators/M02_Y1_MEAS_measure.js';
+import scalesY2Generator from '../generators/M02_Y2_MEAS_measure.js';
+import scalesY3Generator from '../generators/M02_Y3_MEAS_measure.js';
+import scalesY4Generator from '../generators/M02_Y4_MEAS_measure.js';
+import moneyY1Generator from '../generators/M03_Y1_MEAS_money.js';
+import moneyY2Generator from '../generators/M03_Y2_MEAS_money.js';
+import moneyY3Generator from '../generators/M03_Y3_MEAS_money.js';
+import timeY1Generator from '../generators/M04_Y1_MEAS_time.js';
+import timeY2Generator from '../generators/M04_Y2_MEAS_time.js';
+import timeY3Generator from '../generators/M04_Y3_MEAS_time.js';
+import timeY4Generator from '../generators/M04_Y4_MEAS_time.js';
+import timeY5Generator from '../generators/M04_Y5_MEAS_time.js';
+import conversionY5Generator from '../generators/M05_Y5_MEAS_conversions.js';
 
 /**
  * Question Engine Class
@@ -164,6 +177,19 @@ class QuestionEngine {
         this.register(measurementY2Generator);
         this.register(measurementY3Generator);
         this.register(measurementY4Generator);
+        this.register(scalesY1Generator);
+        this.register(scalesY2Generator);
+        this.register(scalesY3Generator);
+        this.register(scalesY4Generator);
+        this.register(moneyY1Generator);
+        this.register(moneyY2Generator);
+        this.register(moneyY3Generator);
+        this.register(timeY1Generator);
+        this.register(timeY2Generator);
+        this.register(timeY3Generator);
+        this.register(timeY4Generator);
+        this.register(timeY5Generator);
+        this.register(conversionY5Generator);
 
     }
 

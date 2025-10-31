@@ -1,0 +1,56 @@
+/**
+ * Clock Face Styling
+ * Provides styling for SVG-based analogue clock displays in M04 time modules
+ */
+
+.clock-face {
+    display: block;
+    margin: 20px auto;
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    background-color: #ffffff;
+    border: 2px solid #333;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.clock-face circle {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.clock-face text {
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    font-weight: bold;
+    fill: #333;
+}
+
+.clock-face line {
+    stroke-linecap: round;
+}
+
+/* Ensure clock faces display properly in question containers */
+.question-content .clock-face {
+    margin: 15px auto;
+}
+
+/* For multiple clocks in a row (like multiple choice) */
+.clock-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.clock-container .clock-face {
+    max-width: 200px;
+}
+
+/* Print-friendly styling */
+@media print {
+    .clock-face {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+}

@@ -1,0 +1,171 @@
+/**
+ * Scale Diagram Styles
+ * Simple HTML/CSS approach for measurement scales
+ * Following low-overhead visual display philosophy
+ */
+
+/* Horizontal Scale Container */
+.scale-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 2px solid #333;
+    border-radius: 8px;
+    max-width: 600px;
+}
+
+.scale-body {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+    padding-top: 40px;
+}
+
+.scale-mark {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+
+.mark-line {
+    width: 2px;
+    height: 20px;
+    background-color: #333;
+}
+
+.mark-line.with-pointer::before {
+    content: '▼';
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    color: #d00;
+}
+
+.mark-label {
+    margin-top: 5px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    min-height: 18px;
+}
+
+.scale-unit {
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #555;
+}
+
+/* Vertical Scale Container */
+.scale-container-vertical {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 2px solid #333;
+    border-radius: 8px;
+    min-height: 400px;
+}
+
+.scale-body-vertical {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 350px;
+    position: relative;
+    padding-left: 40px;
+}
+
+.scale-mark-vertical {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin: 2px 0;
+}
+
+.mark-label-vertical {
+    margin-right: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    min-width: 40px;
+    text-align: right;
+}
+
+.mark-line-vertical {
+    width: 20px;
+    height: 2px;
+    background-color: #333;
+}
+
+.mark-line-vertical.with-pointer::after {
+    content: '◀';
+    position: absolute;
+    left: 25px;
+    font-size: 20px;
+    color: #d00;
+}
+
+.scale-unit-vertical {
+    margin-left: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #555;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+/* Thermometer specific styling */
+.scale-container-vertical.thermometer {
+    background: linear-gradient(to bottom, #ffe0e0 0%, #ffcccc 50%, #ff9999 100%);
+}
+
+.scale-container-vertical.thermometer .scale-body-vertical {
+    background: linear-gradient(to right, transparent 0%, rgba(255, 0, 0, 0.1) 100%);
+}
+
+/* Measuring jug specific styling */
+.scale-container-vertical.jug {
+    background: linear-gradient(to bottom, #e0f0ff 0%, #cce5ff 100%);
+    border-radius: 8px 8px 20px 20px;
+}
+
+.scale-container-vertical.jug .scale-body-vertical {
+    background: linear-gradient(to right, transparent 0%, rgba(0, 100, 255, 0.05) 100%);
+}
+
+/* Responsive scaling */
+@media (max-width: 768px) {
+    .scale-container {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .mark-label {
+        font-size: 12px;
+    }
+
+    .scale-body-vertical {
+        min-height: 300px;
+    }
+}
+
+/* Print styles */
+@media print {
+    .scale-container,
+    .scale-container-vertical {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}

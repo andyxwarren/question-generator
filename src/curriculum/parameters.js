@@ -21,6 +21,10 @@
  * - C08_properties.js - Problem-solving with mathematical properties and all four operations (Years 1-6)
  * - C09_order.js - Order of operations (Year 6)
  * - M01_measurement.js - Compare, describe and order measures (Years 1-4)
+ * - M02_measurement_scales.js - Estimate, measure and read scales (Years 1-4)
+ * - M03_money.js - Money (Years 1-3)
+ * - M04_time.js - Telling time, ordering time, duration and units of time (Years 1-5)
+ * - M05_conversions.js - Convert between metric units (Year 5)
  */
 
 import { N01_MODULES } from './parameters/N01_counting.js';
@@ -39,6 +43,10 @@ import { C07_MODULES } from './parameters/C07_written_multiply_divide.js';
 import { C08_MODULES } from './parameters/C08_properties.js';
 import { C09_MODULES } from './parameters/C09_order.js'
 import { M01_MODULES } from './parameters/M01_measurement.js';
+import { M02_MODULES } from './parameters/M02_measurement_scales.js';
+import { M03_MODULES } from './parameters/M03_money.js';
+import { M04_MODULES } from './parameters/M04_time.js';
+import { M05_MODULES } from './parameters/M05_conversions.js';
 
 /**
  * Merged modules object
@@ -60,7 +68,11 @@ export const MODULES = {
     ...C07_MODULES,
     ...C08_MODULES,
     ...C09_MODULES,
-    ...M01_MODULES
+    ...M01_MODULES,
+    ...M02_MODULES,
+    ...M03_MODULES,
+    ...M04_MODULES,
+    ...M05_MODULES
 };
 
 /**
