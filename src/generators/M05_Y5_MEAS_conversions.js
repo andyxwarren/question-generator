@@ -11,6 +11,8 @@
  *   - DO NOT accept units in answers (validated separately by question text)
  */
 
+import { getRealisticValue, getObjectsForUnit, getAvailableObjects } from './helpers/contextualRanges.js';
+
 // Conversion factors
 const CONVERSION_FACTORS = {
     // Length
@@ -279,28 +281,94 @@ function generateWordProblem(params) {
     const fromUnitName = getUnitName(fromUnit, value);
     const toUnitName = getUnitName(toUnit, answer);
 
-    // Create context-appropriate word problems
+    // Create context-appropriate word problems using realistic object ranges
     let context;
     if (measureType === 'length') {
+        // Get objects appropriate for the unit
+        const objectsForUnit = getObjectsForUnit('length', fromUnit);
+        if (objectsForUnit.length > 0) {
+            const object = objectsForUnit[Math.floor(Math.random() * objectsForUnit.length)];
+            const realisticData = getRealisticValue(object, 'length');
+            if (realisticData && realisticData.unit === fromUnit) {
+                // Use realistic value instead of param-based value
+                const realisticValue = realisticData.value;
+                const realisticAnswer = convertValue(realisticValue, conversionType);
+                context = `A ${object} measures ${formatNumber(realisticValue)} ${fromUnitName}.`;
+
+                return {
+                    text: `${context} How many ${toUnitName} is this?`,
+                    type: 'text_input',
+                    answer: formatNumber(realisticAnswer),
+                    hint: `Convert ${fromUnitName} to ${toUnitName}.`,
+                    module: 'M05_Y5_MEAS',
+                    level: params.level || 3
+                };
+            }
+        }
+        // Fallback to generic contexts
         const contexts = [
             `A rope measures ${formatNumber(value)} ${fromUnitName}.`,
             `The distance to the shop is ${formatNumber(value)} ${fromUnitName}.`,
-            `A garden path is ${formatNumber(value)} ${fromUnitName} long.`,
-            `The height of a building is ${formatNumber(value)} ${fromUnitName}.`
+            `A garden path is ${formatNumber(value)} ${fromUnitName} long.`
         ];
         context = contexts[Math.floor(Math.random() * contexts.length)];
     } else if (measureType === 'mass') {
+        // Get objects appropriate for the unit
+        const objectsForUnit = getObjectsForUnit('mass', fromUnit);
+        if (objectsForUnit.length > 0) {
+            const object = objectsForUnit[Math.floor(Math.random() * objectsForUnit.length)];
+            const realisticData = getRealisticValue(object, 'mass');
+            if (realisticData && realisticData.unit === fromUnit) {
+                // Use realistic value instead of param-based value
+                const realisticValue = realisticData.value;
+                const realisticAnswer = convertValue(realisticValue, conversionType);
+                const article = ['a', 'e', 'i', 'o', 'u'].includes(object.charAt(0).toLowerCase()) ? 'an' : 'a';
+                const objectText = object.startsWith('bag of') || object.startsWith('box of') ? object : `${article} ${object}`;
+                context = `${objectText.charAt(0).toUpperCase() + objectText.slice(1)} weighs ${formatNumber(realisticValue)} ${fromUnitName}.`;
+
+                return {
+                    text: `${context} How many ${toUnitName} is this?`,
+                    type: 'text_input',
+                    answer: formatNumber(realisticAnswer),
+                    hint: `Convert ${fromUnitName} to ${toUnitName}.`,
+                    module: 'M05_Y5_MEAS',
+                    level: params.level || 3
+                };
+            }
+        }
+        // Fallback to generic contexts
         const contexts = [
             `A bag of flour weighs ${formatNumber(value)} ${fromUnitName}.`,
             `A parcel has a mass of ${formatNumber(value)} ${fromUnitName}.`,
-            `A watermelon weighs ${formatNumber(value)} ${fromUnitName}.`,
-            `A box of books has a mass of ${formatNumber(value)} ${fromUnitName}.`
+            `A watermelon weighs ${formatNumber(value)} ${fromUnitName}.`
         ];
         context = contexts[Math.floor(Math.random() * contexts.length)];
     } else { // capacity
+        // Get objects appropriate for the unit
+        const objectsForUnit = getObjectsForUnit('capacity', fromUnit);
+        if (objectsForUnit.length > 0) {
+            const object = objectsForUnit[Math.floor(Math.random() * objectsForUnit.length)];
+            const realisticData = getRealisticValue(object, 'capacity');
+            if (realisticData && realisticData.unit === fromUnit) {
+                // Use realistic value instead of param-based value
+                const realisticValue = realisticData.value;
+                const realisticAnswer = convertValue(realisticValue, conversionType);
+                const article = ['a', 'e', 'i', 'o', 'u'].includes(object.charAt(0).toLowerCase()) ? 'an' : 'a';
+                context = `A ${object} holds ${formatNumber(realisticValue)} ${fromUnitName}.`;
+
+                return {
+                    text: `${context} How many ${toUnitName} is this?`,
+                    type: 'text_input',
+                    answer: formatNumber(realisticAnswer),
+                    hint: `Convert ${fromUnitName} to ${toUnitName}.`,
+                    module: 'M05_Y5_MEAS',
+                    level: params.level || 3
+                };
+            }
+        }
+        // Fallback to generic contexts
         const contexts = [
             `A bottle holds ${formatNumber(value)} ${fromUnitName}.`,
-            `A fish tank can hold ${formatNumber(value)} ${fromUnitName}.`,
             `A jug contains ${formatNumber(value)} ${fromUnitName} of water.`,
             `A bucket has a capacity of ${formatNumber(value)} ${fromUnitName}.`
         ];

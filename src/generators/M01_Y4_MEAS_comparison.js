@@ -6,6 +6,7 @@
  */
 
 import { randomChoice, randomInt, formatMeasurement, formatMoney, randomMoney, convertUnit, getComparisonSymbol } from './helpers/M01_measurementHelpers.js';
+import { generateComparisonPair, formatObjectWithArticle } from './helpers/contextualRanges.js';
 
 /**
  * Generate a comparison question for Year 4 measurement
@@ -243,42 +244,94 @@ function generateOrderMoneyQuestion(params, level) {
  * Generate a multi-measure comparison question (word problem)
  */
 function generateMultiMeasureComparisonQuestion(params, level) {
-    // Simple word problem involving comparison
+    // Simple word problem involving comparison with realistic object-appropriate values
     const measureType = randomChoice(['length', 'mass']);
 
     if (measureType === 'length') {
-        const unit = randomChoice(['cm', 'm']);
-        const range = params.ranges[unit];
-        const value1 = randomInt(range.min, range.max);
-        const value2 = randomInt(range.min, range.max);
+        // Use contextual ranges to get realistic values for objects
+        const pair = generateComparisonPair('length');
 
-        const longer = value1 > value2 ? formatMeasurement(value1, unit) : formatMeasurement(value2, unit);
+        if (!pair) {
+            // Fallback to simple comparison
+            return generateCompareMeasuresQuestion(params, level);
+        }
 
-        const questionText = `A red ribbon is ${formatMeasurement(value1, unit)} long and a blue ribbon is ${formatMeasurement(value2, unit)} long. Which ribbon is longer?`;
+        const { object1, value1, unit1, object2, value2, unit2 } = pair;
+
+        // Add descriptors to make objects distinguishable
+        const descriptor1 = randomChoice(['red', 'blue', 'green', 'yellow']);
+        const descriptor2 = randomChoice(['red', 'blue', 'green', 'yellow', 'purple', 'orange'].filter(d => d !== descriptor1));
+
+        const measurement1 = formatMeasurement(value1, unit1);
+        const measurement2 = formatMeasurement(value2, unit2);
+
+        // Convert to same unit for comparison if needed
+        let compareValue1 = value1;
+        let compareValue2 = value2;
+
+        if (unit1 !== unit2) {
+            try {
+                compareValue1 = convertUnit(value1, unit1, unit2);
+            } catch (e) {
+                // If conversion fails, use original values
+            }
+        }
+
+        const longer = compareValue1 > compareValue2 ? measurement1 : measurement2;
+        const longerDescriptor = compareValue1 > compareValue2 ? descriptor1 : descriptor2;
+
+        const questionText = `A ${descriptor1} ${object1} is ${measurement1} long and a ${descriptor2} ${object2} is ${measurement2} long. Which is longer?`;
 
         return {
             text: questionText,
             type: 'multiple_choice',
-            answer: longer,
-            options: [formatMeasurement(value1, unit), formatMeasurement(value2, unit)],
+            answer: `The ${longerDescriptor} ${compareValue1 > compareValue2 ? object1 : object2}`,
+            options: [
+                `The ${descriptor1} ${object1}`,
+                `The ${descriptor2} ${object2}`
+            ],
             module: 'M01_Y4_MEAS',
             level: level
         };
     } else {
-        const unit = randomChoice(['g', 'kg']);
-        const range = params.ranges[unit];
-        const value1 = randomInt(range.min, range.max);
-        const value2 = randomInt(range.min, range.max);
+        // Use contextual ranges for mass comparisons
+        const pair = generateComparisonPair('mass');
 
-        const heavier = value1 > value2 ? formatMeasurement(value1, unit) : formatMeasurement(value2, unit);
+        if (!pair) {
+            // Fallback to simple comparison
+            return generateCompareMeasuresQuestion(params, level);
+        }
 
-        const questionText = `A bag weighs ${formatMeasurement(value1, unit)} and a box weighs ${formatMeasurement(value2, unit)}. Which is heavier?`;
+        const { object1, value1, unit1, object2, value2, unit2 } = pair;
+
+        const measurement1 = formatMeasurement(value1, unit1);
+        const measurement2 = formatMeasurement(value2, unit2);
+
+        // Convert to same unit for comparison if needed
+        let compareValue1 = value1;
+        let compareValue2 = value2;
+
+        if (unit1 !== unit2) {
+            try {
+                compareValue1 = convertUnit(value1, unit1, unit2);
+            } catch (e) {
+                // If conversion fails, use original values
+            }
+        }
+
+        const heavier = compareValue1 > compareValue2 ? measurement1 : measurement2;
+        const heavierObject = compareValue1 > compareValue2 ? object1 : object2;
+
+        const questionText = `${formatObjectWithArticle(object1)} weighs ${measurement1} and ${formatObjectWithArticle(object2)} weighs ${measurement2}. Which is heavier?`;
 
         return {
             text: questionText,
             type: 'multiple_choice',
-            answer: heavier,
-            options: [formatMeasurement(value1, unit), formatMeasurement(value2, unit)],
+            answer: `The ${heavierObject}`,
+            options: [
+                `The ${object1}`,
+                `The ${object2}`
+            ],
             module: 'M01_Y4_MEAS',
             level: level
         };

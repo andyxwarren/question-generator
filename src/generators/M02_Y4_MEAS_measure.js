@@ -100,48 +100,75 @@ function generateChooseReasonableEstimate(params, level) {
 }
 
 function generateEstimateMoney(params, level) {
+    // Items with relatively standardized prices that Year 4 students would recognize
+    // Prices are typical UK values as of 2024
     const items = {
+        // Small items - pence (more standardized than generic "sweet" or "snack")
+        'packet of crisps': { value: 70, unit: 'p', options: [7, 70, 700, 7000] },
         'chocolate bar': { value: 80, unit: 'p', options: [8, 80, 800, 8000] },
-        'magazine': { value: 3, unit: '£', options: [30, 1, 3, 30] },
-        'book': { value: 8, unit: '£', options: [80, 3, 8, 80] },
-        'snack': { value: 50, unit: 'p', options: [5, 50, 500, 5000] },
-        'toy': { value: 10, unit: '£', options: [1, 10, 100, 1000] },
-        'game': { value: 30, unit: '£', options: [3, 15, 30, 300] },
-        'bicycle': { value: 150, unit: '£', options: [15, 50, 150, 1500] },
-        'sweet': { value: 10, unit: 'p', options: [1, 10, 100, 1000] },
-        'laptop': { value: 500, unit: '£', options: [50, 200, 500, 5000] },
-        'penny sweet': { value: 1, unit: 'p', options: [1, 10, 100, 1000] },
-        'car': { value: 15000, unit: '£', options: [1500, 5000, 15000, 150000] }
+        'can of drink': { value: 90, unit: 'p', options: [9, 90, 900, 9000] },
+        'apple': { value: 50, unit: 'p', options: [5, 50, 500, 5000] },
+        'banana': { value: 30, unit: 'p', options: [3, 30, 300, 3000] },
+
+        // Common items - low pounds (more specific than "book" or "toy")
+        'loaf of bread': { value: 1.20, unit: '£', options: [0.12, 1.20, 12, 120] },
+        'litre of milk': { value: 1.50, unit: '£', options: [0.15, 1.50, 15, 150] },
+        'bus ticket': { value: 2.50, unit: '£', options: [0.25, 2.50, 25, 250] },
+        'cinema ticket': { value: 8, unit: '£', options: [0.80, 8, 80, 800] },
+        'children\'s book': { value: 7, unit: '£', options: [0.70, 7, 70, 700] },
+        'comic book': { value: 4, unit: '£', options: [0.40, 4, 40, 400] },
+
+        // Mid-range items
+        'football': { value: 15, unit: '£', options: [1.50, 15, 150, 1500] },
+        'school shoes': { value: 30, unit: '£', options: [3, 30, 300, 3000] },
+        'video game': { value: 40, unit: '£', options: [4, 40, 400, 4000] },
+
+        // Higher value items (only for higher levels)
+        'bicycle': { value: 150, unit: '£', options: [15, 150, 1500, 15000] },
+        'tablet computer': { value: 300, unit: '£', options: [30, 300, 3000, 30000] }
     };
 
-    const objects = params.estimation_ranges.money.objects;
-    const object = objects[Math.floor(Math.random() * objects.length)];
-
-    const item = items[object];
-    if (!item) {
-        // Fallback
-        const fallbackItem = items['book'];
-        const correctAnswer = `${fallbackItem.value} ${fallbackItem.unit}`;
-        const options = fallbackItem.options.map(v => `${v} ${fallbackItem.unit}`);
-
-        return {
-            text: `Estimate: How much does a book cost?`,
-            type: 'multiple_choice',
-            answer: correctAnswer,
-            options: options,
-            module: 'M02_Y4_MEAS',
-            level: level
-        };
+    // Select appropriate items based on level
+    let availableItems;
+    if (level === 1) {
+        // Level 1: Only small pence items
+        availableItems = ['packet of crisps', 'chocolate bar', 'can of drink', 'apple', 'banana'];
+    } else if (level === 2) {
+        // Level 2: Pence and low pound items
+        availableItems = ['chocolate bar', 'can of drink', 'apple', 'loaf of bread', 'litre of milk', 'bus ticket', 'children\'s book', 'comic book'];
+    } else if (level === 3) {
+        // Level 3: Wide range
+        availableItems = ['can of drink', 'loaf of bread', 'bus ticket', 'cinema ticket', 'children\'s book', 'football', 'school shoes', 'video game'];
+    } else {
+        // Level 4: All items including high value
+        availableItems = Object.keys(items);
     }
 
-    const correctAnswer = `${item.value} ${item.unit}`;
-    const options = item.options.map(v => `${v} ${item.unit}`);
+    const object = availableItems[Math.floor(Math.random() * availableItems.length)];
+    const item = items[object];
 
+    // Format currency correctly: £ before number for pounds, p after for pence
+    const formatCurrency = (value, unit) => {
+        if (unit === 'p') {
+            return `${value}p`;
+        } else {
+            // For pounds, handle decimals properly
+            const formatted = typeof value === 'number' && value % 1 !== 0
+                ? value.toFixed(2)
+                : value.toString();
+            return `£${formatted}`;
+        }
+    };
+
+    const correctAnswer = formatCurrency(item.value, item.unit);
+    const options = item.options.map(v => formatCurrency(v, item.unit));
+
+    // Handle article prefix correctly
     const articlePrefix = ['apple'].includes(object) ? 'an' : 'a';
-    const objectText = ['car', 'laptop', 'penny sweet'].includes(object) ? object : `${articlePrefix} ${object}`;
+    const objectText = object;
 
     return {
-        text: `Estimate: How much does ${objectText} cost?`,
+        text: `Estimate: How much does ${articlePrefix} ${objectText} cost?`,
         type: 'multiple_choice',
         answer: correctAnswer,
         options: options,
@@ -173,9 +200,14 @@ function generateCompareEstimates(params, level) {
             options: ['20 seconds', '2 minutes']
         },
         {
-            question: 'Which is a better estimate for the cost of a toy car: £1 or £10?',
-            answer: '£10',
-            options: ['£1', '£10']
+            question: 'Which is a better estimate for the cost of a packet of crisps: 70p or £7?',
+            answer: '70p',
+            options: ['70p', '£7']
+        },
+        {
+            question: 'Which is a better estimate for the cost of a loaf of bread: £1.20 or £12?',
+            answer: '£1.20',
+            options: ['£1.20', '£12']
         },
         {
             question: 'Which is a better estimate for the height of a door: 2 metres or 20 metres?',
@@ -186,6 +218,16 @@ function generateCompareEstimates(params, level) {
             question: 'Which is a better estimate for the mass of a bag of apples: 200 grams or 2 kilograms?',
             answer: '2 kilograms',
             options: ['200 grams', '2 kilograms']
+        },
+        {
+            question: 'Which is a better estimate for the cost of a bus ticket: £2.50 or £25?',
+            answer: '£2.50',
+            options: ['£2.50', '£25']
+        },
+        {
+            question: 'Which is a better estimate for the width of a football pitch: 50 metres or 500 metres?',
+            answer: '50 metres',
+            options: ['50 metres', '500 metres']
         }
     ];
 
@@ -229,6 +271,11 @@ function generateEstimateFromContext(params, level) {
             options: ['£2', '£4', '£8', '£10']
         },
         {
+            question: 'A can of drink costs 90p. Estimate the cost of 4 cans.',
+            answer: '£3.60',
+            options: ['£1.80', '£3.60', '£7.20', '£9']
+        },
+        {
             question: 'A table is 75 cm tall. Estimate the height of a door.',
             answer: '2 m',
             options: ['1 m', '2 m', '5 m', '10 m']
@@ -237,6 +284,16 @@ function generateEstimateFromContext(params, level) {
             question: 'A mug holds 300 ml of tea. Estimate how much a teapot holds.',
             answer: '1 litre',
             options: ['500 ml', '1 litre', '5 litres', '10 litres']
+        },
+        {
+            question: 'A loaf of bread costs £1.20. Estimate the cost of 3 loaves.',
+            answer: '£3.60',
+            options: ['£1.20', '£2.40', '£3.60', '£7.20']
+        },
+        {
+            question: 'A step is about 20 cm high. Estimate the height of a staircase with 10 steps.',
+            answer: '2 m',
+            options: ['50 cm', '1 m', '2 m', '5 m']
         }
     ];
 
