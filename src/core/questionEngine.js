@@ -94,6 +94,10 @@ import conversionY5Generator from '../generators/M05_Y5_MEAS_conversions.js';
 import conversionY4Generator from '../generators/M06_Y4_MEAS_conversions.js';
 import conversionY5MixedGenerator from '../generators/M06_Y5_MEAS_conversions.js';
 import conversionY6Generator from '../generators/M06_Y6_MEAS_conversions.js';
+import perimeterY3Generator from '../generators/M07_Y3_MEAS_perimeter.js';
+import perimeterAreaY4Generator from '../generators/M07_Y4_MEAS_perimeter_area.js';
+import compositeAreaY5Generator from '../generators/M07_Y5_MEAS_composite_area.js';
+import areaFormulasY6Generator from '../generators/M07_Y6_MEAS_area_formulas.js';
 
 /**
  * Question Engine Class
@@ -196,6 +200,10 @@ class QuestionEngine {
         this.register(conversionY4Generator);
         this.register(conversionY5MixedGenerator);
         this.register(conversionY6Generator);
+        this.register(perimeterY3Generator);
+        this.register(perimeterAreaY4Generator);
+        this.register(compositeAreaY5Generator);
+        this.register(areaFormulasY6Generator);
 
     }
 
