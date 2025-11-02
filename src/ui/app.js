@@ -592,6 +592,7 @@ class App {
                               text.includes('class="visual-repeated"') ||
                               text.includes('class="grid-method"') ||
                               text.includes('class="short-division"') ||
+                              text.includes('class="clock-face"') ||
                               text.includes('<br>');
 
         if (hasSafeVisuals) {
@@ -927,6 +928,7 @@ class App {
         if (text.includes('long-division')) return 'long_division';
         if (text.includes('number-line')) return 'number_line';
         if (text.includes('grid-method')) return 'grid_method';
+        if (text.includes('clock-face')) return 'clock_face';
         if (/<pre>/.test(text)) return 'formatted_text';
         if (/<table>/.test(text)) return 'table';
 
