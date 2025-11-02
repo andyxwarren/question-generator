@@ -195,15 +195,47 @@ export function generatePartitionText(num) {
 
 /**
  * Generate comparison language question
+ * Supports both 2-number comparisons and 3-4 number comparisons
+ * @param {number|number[]} num1 - First number OR array of numbers (for most/least)
+ * @param {number} num2 - Second number (only used for 2-number comparisons)
+ * @param {string} word - Comparison word
+ * @returns {string} Question text
  */
 export function generateComparisonLanguageText(num1, num2, word) {
+    // Handle array of numbers (for "most" and "least")
+    if (Array.isArray(num1)) {
+        const numbers = num1;
+        const formattedNumbers = numbers.map(n => formatNumber(n));
+
+        if (word === 'most') {
+            if (numbers.length === 2) {
+                return `Which is the most: ${formattedNumbers.join(' or ')}?`;
+            } else if (numbers.length === 3) {
+                return `Which number is the most: ${formattedNumbers[0]}, ${formattedNumbers[1]}, or ${formattedNumbers[2]}?`;
+            } else {
+                // 4 numbers
+                return `Which number is the most: ${formattedNumbers[0]}, ${formattedNumbers[1]}, ${formattedNumbers[2]}, or ${formattedNumbers[3]}?`;
+            }
+        } else if (word === 'least') {
+            if (numbers.length === 2) {
+                return `Which is the least: ${formattedNumbers.join(' or ')}?`;
+            } else if (numbers.length === 3) {
+                return `Which number is the least: ${formattedNumbers[0]}, ${formattedNumbers[1]}, or ${formattedNumbers[2]}?`;
+            } else {
+                // 4 numbers
+                return `Which number is the least: ${formattedNumbers[0]}, ${formattedNumbers[1]}, ${formattedNumbers[2]}, or ${formattedNumbers[3]}?`;
+            }
+        }
+    }
+
+    // Standard 2-number comparisons
     const phrases = {
         'equal to': `Is ${formatNumber(num1)} equal to ${formatNumber(num2)}?`,
         'more than': `Is ${formatNumber(num1)} more than ${formatNumber(num2)}?`,
         'less than': `Is ${formatNumber(num1)} less than ${formatNumber(num2)}?`,
         'fewer': `Does ${formatNumber(num1)} represent fewer than ${formatNumber(num2)}?`,
-        'most': `Which is most: ${formatNumber(num1)} or ${formatNumber(num2)}?`,
-        'least': `Which is least: ${formatNumber(num1)} or ${formatNumber(num2)}?`
+        'most': `Which is the most: ${formatNumber(num1)} or ${formatNumber(num2)}?`,
+        'least': `Which is the least: ${formatNumber(num1)} or ${formatNumber(num2)}?`
     };
 
     return phrases[word] || phrases['more than'];
@@ -211,8 +243,24 @@ export function generateComparisonLanguageText(num1, num2, word) {
 
 /**
  * Evaluate comparison
+ * Supports both 2-number comparisons and array comparisons
+ * @param {number|number[]} num1 - First number OR array of numbers
+ * @param {number} num2 - Second number (only used for 2-number comparisons)
+ * @param {string} word - Comparison word
+ * @returns {boolean|number} Result of comparison (boolean for yes/no, number for most/least)
  */
 export function evaluateComparison(num1, num2, word) {
+    // Handle array of numbers (for "most" and "least")
+    if (Array.isArray(num1)) {
+        const numbers = num1;
+        if (word === 'most') {
+            return Math.max(...numbers);
+        } else if (word === 'least') {
+            return Math.min(...numbers);
+        }
+    }
+
+    // Standard 2-number comparisons
     switch(word) {
         case 'equal to': return num1 === num2;
         case 'more than': return num1 > num2;

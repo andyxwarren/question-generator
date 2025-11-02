@@ -19,6 +19,7 @@ import {
     generateUniqueNumbers
 } from './helpers/N04_representationHelpers.js';
 import { createSimpleNumberLineHTML, createSimpleDotsHTML, createTenFrameHTML, createBase10BlocksHTML, createTallyMarksHTML } from './helpers/N04_simpleVisuals.js';
+import { buildScenarioQuestion } from './helpers/N04_scenarioTemplates.js';
 
 /**
  * Main question generator
@@ -110,12 +111,53 @@ function generateCountObjects(params, level) {
 }
 
 /**
- * Compare language question (equal to, more than, less than, fewer)
+ * Compare language question (equal to, more than, less than, fewer, most, least)
  */
 function generateCompareLanguage(params, level, attempt = 0) {
     const MAX_ATTEMPTS = 10;
     const { min_value, max_value, comparison_words } = params;
 
+    const word = randomChoice(comparison_words);
+
+    // Handle "most" and "least" with 3-4 numbers
+    if (word === 'most' || word === 'least') {
+        const numberCount = randomChoice([3, 4]); // Randomly use 3 or 4 numbers
+        const numbers = generateUniqueNumbers(numberCount, min_value, max_value);
+
+        // Randomly choose between abstract and scenario-based questions (60% scenario, 40% abstract)
+        const useScenario = Math.random() < 0.6;
+
+        if (useScenario) {
+            // Use scenario-based question
+            const scenarioQuestion = buildScenarioQuestion(numbers, word);
+
+            return {
+                text: scenarioQuestion.text,
+                type: 'multiple_choice',
+                options: scenarioQuestion.options,
+                answer: scenarioQuestion.answer,
+                hint: word === 'most' ? 'Find the biggest number' : 'Find the smallest number',
+                module: 'N04_Y1_NPV',
+                level: level
+            };
+        } else {
+            // Use abstract question (just numbers)
+            const questionText = generateComparisonLanguageText(numbers, null, word);
+            const answer = evaluateComparison(numbers, null, word);
+
+            return {
+                text: questionText,
+                type: 'multiple_choice',
+                options: numbers,
+                answer: answer.toString(),
+                hint: word === 'most' ? 'Find the biggest number' : 'Find the smallest number',
+                module: 'N04_Y1_NPV',
+                level: level
+            };
+        }
+    }
+
+    // Handle standard 2-number comparisons (equal to, more than, less than, fewer)
     let num1 = randomInt(min_value, max_value);
     let num2 = randomInt(min_value, max_value);
 
@@ -129,28 +171,14 @@ function generateCompareLanguage(params, level, attempt = 0) {
         }
     }
 
-    const word = randomChoice(comparison_words);
     const questionText = generateComparisonLanguageText(num1, num2, word);
-
-    let answer;
-    let type = 'multiple_choice';
-    let options;
-
-    if (word === 'most' || word === 'least') {
-        // These ask "which is..."
-        answer = evaluateComparison(num1, num2, word);
-        options = [num1, num2];
-    } else {
-        // These ask "is X ... Y?" (true/false)
-        answer = evaluateComparison(num1, num2, word) ? 'Yes' : 'No';
-        options = ['Yes', 'No'];
-    }
+    const answer = evaluateComparison(num1, num2, word) ? 'Yes' : 'No';
 
     return {
         text: questionText,
-        type: type,
-        options: options,
-        answer: answer.toString(),
+        type: 'multiple_choice',
+        options: ['Yes', 'No'],
+        answer: answer,
         hint: `Think about which number is bigger or smaller`,
         module: 'N04_Y1_NPV',
         level: level
