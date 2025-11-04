@@ -148,7 +148,30 @@ function generateMakeAmountOneCoinType(params) {
  */
 function generateMakeAmountMixedCoins(params) {
     const target = randomInt(params.target_amounts.min, params.target_amounts.max);
-    const largerCoin = randomChoice(params.denominations.filter(d => d < target && d >= 10));
+    const availableCoins = params.denominations.filter(d => d < target && d >= 10);
+
+    // Fallback if no suitable coin found
+    if (availableCoins.length === 0) {
+        // Use any coin smaller than target
+        const fallbackCoins = params.denominations.filter(d => d < target);
+        if (fallbackCoins.length === 0) {
+            // If still none, use combine same coins instead
+            return generateCombineSameCoins(params);
+        }
+        const largerCoin = randomChoice(fallbackCoins);
+        const remainder = target - largerCoin;
+
+        return {
+            text: `You need to make ${target}p. You use one ${getCoinName(largerCoin)} coin. How many more pence do you need?`,
+            type: 'text_input',
+            answer: remainder.toString(),
+            hint: 'Subtract the coin value from the target amount',
+            module: 'M03_Y2_MEAS',
+            operation: 'make_amount_mixed_coins'
+        };
+    }
+
+    const largerCoin = randomChoice(availableCoins);
     const remainder = target - largerCoin;
 
     return {

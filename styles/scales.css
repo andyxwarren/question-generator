@@ -57,6 +57,36 @@
     min-height: 18px;
 }
 
+/* Enhanced Scale Readability */
+.scale-mark {
+    min-width: 35px; /* Ensure spacing between numbers */
+}
+
+.mark-label {
+    font-size: 16px; /* Larger numbers */
+    font-weight: 600; /* Bolder */
+    margin-top: 8px;
+}
+
+/* Make pointer more visible */
+.mark-line.with-pointer::before {
+    font-size: 28px; /* Larger arrow */
+    color: #dc2626; /* Bright red */
+    animation: pointer-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pointer-pulse {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-3px); }
+}
+
+/* Highlight the marked number */
+.scale-mark.pointer-here .mark-label {
+    color: #dc2626;
+    font-weight: 700;
+    font-size: 18px;
+}
+
 .scale-unit {
     margin-top: 10px;
     font-weight: bold;

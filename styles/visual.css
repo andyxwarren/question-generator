@@ -54,6 +54,21 @@
     text-align: left;
 }
 
+/* Area grid - for M07 perimeter and area questions */
+.area-grid {
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: 3px; /* KEY FIX - adds space between grid characters */
+    background: #f9fafb;
+    padding: 20px;
+    border: 2px solid #374151;
+    border-radius: 8px;
+    display: inline-block;
+    text-align: left;
+    color: #1f2937;
+}
+
 /* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
     .visual-array,

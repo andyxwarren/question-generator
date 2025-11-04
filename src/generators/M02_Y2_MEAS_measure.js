@@ -26,7 +26,16 @@ function generateReadScaleWithUnits(params, level) {
     const measureType = params.measure_types[Math.floor(Math.random() * params.measure_types.length)];
     const availableUnits = params.units[measureType];
     const unit = availableUnits[Math.floor(Math.random() * availableUnits.length)];
-    const range = params.ranges[unit];
+
+    // Map display unit to range key (e.g., °C -> celsius)
+    const rangeKey = unit === '°C' ? 'celsius' : unit;
+    const range = params.ranges[rangeKey];
+
+    if (!range) {
+        console.error(`Missing range for unit: ${unit} (rangeKey: ${rangeKey})`);
+        // Fallback to another operation
+        return generateChooseAppropriateUnit(params, level);
+    }
 
     const value = Math.floor(Math.random() * (range.max / range.interval + 1)) * range.interval;
 
@@ -125,7 +134,16 @@ function generateReadToNearest(params, level) {
     const measureType = params.measure_types[Math.floor(Math.random() * params.measure_types.length)];
     const availableUnits = params.units[measureType];
     const unit = availableUnits[Math.floor(Math.random() * availableUnits.length)];
-    const range = params.ranges[unit];
+
+    // Map display unit to range key (e.g., °C -> celsius)
+    const rangeKey = unit === '°C' ? 'celsius' : unit;
+    const range = params.ranges[rangeKey];
+
+    if (!range) {
+        console.error(`Missing range for unit: ${unit} (rangeKey: ${rangeKey})`);
+        // Fallback to another operation
+        return generateChooseAppropriateUnit(params, level);
+    }
 
     // Value slightly off a mark
     const nearestMark = Math.floor(Math.random() * (range.max / range.interval)) * range.interval;

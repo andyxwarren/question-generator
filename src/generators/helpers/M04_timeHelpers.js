@@ -100,7 +100,7 @@ export function generateClockSVG(hour, minute, useRomanNumerals = false) {
         const markerRadius = radius * 0.85;
         const x = centerX + markerRadius * Math.cos(angle);
         const y = centerY + markerRadius * Math.sin(angle) + 5; // Slight offset for text centering
-        markersSVG += `<text x="${x}" y="${y}" text-anchor="middle" font-size="14" font-family="Arial">${hourMarkers[i]}</text>`;
+        markersSVG += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="16" font-weight="bold" font-family="Arial, sans-serif" fill="#1f2937">${hourMarkers[i]}</text>`;
     }
 
     return `<svg width="200" height="200" viewBox="0 0 200 200" class="clock-face">
