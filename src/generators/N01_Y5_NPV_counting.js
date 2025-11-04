@@ -1,8 +1,8 @@
 /**
- * Year 5 Count Forwards and Backwards Question Generator
+ * Year 5 Counting in Powers of 10 Question Generator
  *
  * Generates counting sequence questions based on UK National Curriculum
- * Module: N01_Y5_NPV - "Count forwards and backwards with positive and negative whole numbers, including through zero"
+ * Module: N01_Y5_NPV - "count forwards or backwards in steps of powers of 10 for any given number up to 1,000,000"
  */
 
 import {
@@ -26,8 +26,11 @@ export function generateQuestion(params, level) {
     const questionTypes = ['fill_blanks', 'next_number', 'multiple_choice'];
     const questionType = randomChoice(questionTypes);
 
-    // Get starting value (uses start_range for Y5)
-    let start = getStartValue(params, step);
+    // Get starting value from any number within the valid range (0 to max_value)
+    // Calculate a reasonable range within bounds
+    const range = max_value - min_value;
+    const rawStart = min_value + randomInt(0, Math.floor(range / 2));
+    let start = Math.floor(rawStart / step) * step;
 
     // Vary starting value by question type to prevent sequence overlap
     if (questionType === 'fill_blanks') {
@@ -39,32 +42,54 @@ export function generateQuestion(params, level) {
     }
     // multiple_choice keeps original start (any value)
 
-    // Ensure sequence stays within bounds
+    // Ensure sequence stays within bounds (0 to max_value)
+    // CRITICAL: Year 5 curriculum requires counting from ANY number UP TO 1,000,000
+    // This means ALL values in the sequence must be in range [min_value, max_value]
     if (direction === 'forwards') {
         // For forwards: ensure start >= min_value AND end <= max_value
         const maxStart = max_value - (step * (sequence_length - 1));
         start = Math.min(start, maxStart);
-        start = Math.max(start, min_value);  // NEW: Also enforce minimum
+        start = Math.max(start, min_value);
     } else {
         // For backwards: ensure start <= max_value AND end >= min_value
         const minStart = min_value + (step * (sequence_length - 1));
         start = Math.max(start, minStart);
-        start = Math.min(start, max_value);  // NEW: Also enforce maximum
+        start = Math.min(start, max_value);
     }
 
     // Generate full sequence
     const fullSequence = generateSequence(start, step, sequence_length, direction);
 
-    return generateQuestionByType(questionType, fullSequence, params, step, direction, level);
-}
+    // VALIDATION: Ensure ALL values in sequence are within [min_value, max_value]
+    // This prevents negative numbers and values exceeding 1,000,000
+    const allValuesValid = fullSequence.every(val => val >= min_value && val <= max_value);
 
-/**
- * Check if sequence crosses zero (has both positive and negative numbers)
- */
-function sequenceCrossesZero(sequence) {
-    const hasPositive = sequence.some(n => n > 0);
-    const hasNegative = sequence.some(n => n < 0);
-    return hasPositive && hasNegative;
+    if (!allValuesValid) {
+        // If any value is out of bounds, adjust start more conservatively
+        if (direction === 'forwards') {
+            // For forwards, ensure we don't exceed max_value
+            const safeMaxStart = max_value - (step * sequence_length);
+            start = Math.max(min_value, Math.min(start, safeMaxStart));
+        } else {
+            // For backwards, ensure we don't go below min_value
+            const safeMinStart = min_value + (step * sequence_length);
+            start = Math.min(max_value, Math.max(start, safeMinStart));
+        }
+        // Regenerate with safer bounds
+        const validSequence = generateSequence(start, step, sequence_length, direction);
+
+        // Final validation - if still invalid, clamp to valid range
+        return generateQuestionByType(
+            questionType,
+            validSequence.map(val => Math.max(min_value, Math.min(val, max_value))),
+            params,
+            step,
+            direction,
+            level
+        );
+    }
+
+    return generateQuestionByType(questionType, fullSequence, params, step, direction, level);
 }
 
 /**
@@ -72,7 +97,6 @@ function sequenceCrossesZero(sequence) {
  */
 function generateQuestionByType(type, fullSequence, params, step, direction, level) {
     const { gaps_count, gap_position, sequence_length } = params;
-    const crossesZero = sequenceCrossesZero(fullSequence);
 
     if (type === 'fill_blanks') {
         // Force internal gaps - never at the end to avoid duplication with 'next_number' type
@@ -91,15 +115,13 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
 
         // Create display sequence with blanks
         const displaySequence = fullSequence.map((num, idx) =>
-            gapPositions.includes(idx) ? '___' : num.toString()
+            gapPositions.includes(idx) ? '___' : num.toLocaleString()
         );
 
         // Collect answers
         const answers = gapPositions.map(pos => fullSequence[pos]);
 
-        const hint = crossesZero
-            ? `The pattern counts ${direction} in ${step}s through zero`
-            : `The pattern counts ${direction} in ${step}s`;
+        const hint = `The pattern counts ${direction} in ${step.toLocaleString()}s`;
 
         return {
             text: `Fill in the missing number${gaps_count > 1 ? 's' : ''}: ${displaySequence.join(', ')}`,
@@ -114,12 +136,10 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
 
     if (type === 'next_number') {
         // Show first N-1 numbers, ask for last
-        const shown = fullSequence.slice(0, -1);
+        const shown = fullSequence.slice(0, -1).map(n => n.toLocaleString());
         const answer = fullSequence[fullSequence.length - 1];
 
-        const hint = crossesZero
-            ? `Count ${direction} in ${step}s (the sequence crosses zero)`
-            : `Count ${direction} in ${step}s`;
+        const hint = `Count ${direction} in ${step.toLocaleString()}s`;
 
         return {
             text: `What number comes next? ${shown.join(', ')}, ___`,
@@ -133,29 +153,51 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
 
     if (type === 'multiple_choice') {
         // Show all but last, create options
-        const shown = fullSequence.slice(0, -1);
+        const shown = fullSequence.slice(0, -1).map(n => n.toLocaleString());
         const correctAnswer = fullSequence[fullSequence.length - 1];
 
-        // Generate plausible distractors
-        const distractors = [
-            correctAnswer + step,      // One step too far
-            correctAnswer - step,      // One step back
-            correctAnswer + 1,         // Off by one
-            correctAnswer - 1          // Off by one other direction
+        // Get bounds from params object (passed through from generateQuestion)
+        const { min_value, max_value } = params;
+
+        // Generate plausible distractors that stay within curriculum bounds [0, 1,000,000]
+        const potentialDistractors = [
+            correctAnswer + step,        // One step too far
+            correctAnswer - step,        // One step back
+            correctAnswer + (step / 10), // Wrong power of 10
+            correctAnswer - (step / 10)  // Wrong power of 10
         ];
 
+        // Filter distractors to ensure ALL are within valid curriculum range
+        const validDistractors = potentialDistractors.filter(d =>
+            d >= min_value &&           // Not negative
+            d <= max_value &&           // Not exceeding max (e.g., 1,000,000 for Y5)
+            d !== correctAnswer         // Not same as correct answer
+        );
+
+        // If we don't have enough valid distractors, create alternative ones within bounds
+        while (validDistractors.length < 3) {
+            const offset = Math.floor(Math.random() * 3 + 1); // Random offset 1-3
+            const candidate = direction === 'forwards'
+                ? correctAnswer - (step * offset)
+                : correctAnswer + (step * offset);
+
+            if (candidate >= min_value &&
+                candidate <= max_value &&
+                !validDistractors.includes(candidate) &&
+                candidate !== correctAnswer) {
+                validDistractors.push(candidate);
+            }
+        }
+
         // Select 3 unique distractors
-        const uniqueDistractors = [...new Set(distractors)]
-            .filter(d => d !== correctAnswer)
+        const uniqueDistractors = [...new Set(validDistractors)]
             .slice(0, 3);
 
         // Create options and shuffle
         const options = [correctAnswer, ...uniqueDistractors]
             .sort(() => Math.random() - 0.5);
 
-        const hint = crossesZero
-            ? `Count ${direction} in ${step}s (remember the sequence crosses zero)`
-            : `Count ${direction} in ${step}s`;
+        const hint = `Count ${direction} in ${step.toLocaleString()}s`;
 
         return {
             text: `Continue the pattern: ${shown.join(', ')}, ___`,

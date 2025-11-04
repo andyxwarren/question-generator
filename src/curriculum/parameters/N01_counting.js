@@ -174,7 +174,7 @@ export const N01_MODULES = {
     'N01_Y4_NPV': {
         id: 'N01_Y4_NPV',
         name: 'N01_Y4_NPV: Count in Multiples',
-        description: 'Count in multiples of 6, 7, 9, 25 and 1000',
+        description: 'Count in multiples of 6, 7, 9, 25 and 1,000',
         icon: '🔢',
         yearGroup: 'Year 4',
         strand: 'Number and Place Value',
@@ -226,8 +226,8 @@ export const N01_MODULES = {
 
     'N01_Y5_NPV': {
         id: 'N01_Y5_NPV',
-        name: 'N01_Y5_NPV: Count Forwards and Backwards',
-        description: 'Count forwards and backwards with positive and negative whole numbers, including through zero',
+        name: 'N01_Y5_NPV: Counting in Powers of 10',
+        description: 'count forwards or backwards in steps of powers of 10 for any given number up to 1,000,000',
         icon: '🔢',
         yearGroup: 'Year 5',
         strand: 'Number and Place Value',
@@ -236,47 +236,43 @@ export const N01_MODULES = {
         parameters: {
             1: {
                 powers_of_10: [10, 100],
-                min_value: -100,
-                max_value: 100,
-                directions: ['forwards'],
-                start_from: 'zero_only',
+                min_value: 0,
+                max_value: 10000,
+                directions: ['forwards', 'backwards'],
+                start_from: 'any',
                 sequence_length: 6,
                 gaps_count: 1,
-                gap_position: 'end',
-                start_range: [-50, 50]
+                gap_position: 'end'
             },
             2: {
                 powers_of_10: [10, 100, 1000],
-                min_value: -500,
-                max_value: 500,
+                min_value: 0,
+                max_value: 100000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
                 sequence_length: 8,
                 gaps_count: 1,
-                gap_position: 'middle',
-                start_range: [-200, 200]
+                gap_position: 'middle'
             },
             3: {
                 powers_of_10: [10, 100, 1000, 10000],
-                min_value: -10000,
-                max_value: 10000,
+                min_value: 0,
+                max_value: 500000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
                 sequence_length: 10,
                 gaps_count: 2,
-                gap_position: 'random',
-                start_range: [-5000, 5000]
+                gap_position: 'random'
             },
             4: {
                 powers_of_10: [10, 100, 1000, 10000, 100000],
-                min_value: -100000,
-                max_value: 100000,
+                min_value: 0,
+                max_value: 1000000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
                 sequence_length: 12,
                 gaps_count: 3,
-                gap_position: 'random',
-                start_range: [-50000, 50000]
+                gap_position: 'random'
             }
         }
     }

@@ -168,7 +168,7 @@ export const N03_MODULES = {
     'N03_Y4_NPV': {
         id: 'N03_Y4_NPV',
         name: 'N03_Y4_NPV: Four-Digit Place Value & Roman Numerals to 100',
-        description: 'Recognise the place value of each digit in a four-digit number; read Roman numerals to 100 (I to C)',
+        description: 'recognise the place value of each digit in a four-digit number (thousands, hundreds, tens and ones); read Roman numerals to 100 (I to C) and know that over time, the numeral system changed to include the concept of zero and place value',
         icon: '🔢',
         yearGroup: 'Year 4',
         strand: 'Number and Place Value',
@@ -265,7 +265,7 @@ export const N03_MODULES = {
     'N03_Y5_NPV': {
         id: 'N03_Y5_NPV',
         name: 'N03_Y5_NPV: Place Value to 1,000,000 & Roman Numerals to 1000',
-        description: 'Determine the value of each digit in numbers up to 1,000,000; read Roman numerals to 1,000 (M)',
+        description: 'determine the value of each digit in numbers up to 1,000,000; read Roman numerals to 1,000 (M) and recognise years written in Roman numerals',
         icon: '🔢',
         yearGroup: 'Year 5',
         strand: 'Number and Place Value',

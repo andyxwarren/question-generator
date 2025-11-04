@@ -7,7 +7,7 @@ export const N02_MODULES = {
     'N02_Y2_NPV': {
         id: 'N02_Y2_NPV',
         name: 'N02_Y2_NPV: Read and Write Numbers',
-        description: 'Read and write numbers to at least 100 in numerals and in words',
+        description: 'read and write numbers to at least 100 in numerals and in words; compare and order numbers from 0 up to 100; use <, > and = signs',
         icon: '🔤',
         yearGroup: 'Year 2',
         strand: 'Number and Place Value',
@@ -52,7 +52,7 @@ export const N02_MODULES = {
     'N02_Y3_NPV': {
         id: 'N02_Y3_NPV',
         name: 'N02_Y3_NPV: Numbers to 1000',
-        description: 'Read and write numbers up to 1000 in numerals and in words',
+        description: 'compare and order numbers up to 1,000; read and write numbers to 1,000 in numerals and in words; find 10 or 100 more or less than a given number',
         icon: '🔤',
         yearGroup: 'Year 3',
         strand: 'Number and Place Value',
@@ -97,7 +97,7 @@ export const N02_MODULES = {
     'N02_Y4_NPV': {
         id: 'N02_Y4_NPV',
         name: 'N02_Y4_NPV: Order and Compare Beyond 1000',
-        description: 'Order and compare numbers beyond 1000',
+        description: 'order and compare numbers beyond 1,000; find 1,000 more or less than a given number',
         icon: '🔤',
         yearGroup: 'Year 4',
         strand: 'Number and Place Value',
@@ -142,7 +142,7 @@ export const N02_MODULES = {
     'N02_Y5_NPV': {
         id: 'N02_Y5_NPV',
         name: 'N02_Y5_NPV: Numbers to 1 Million',
-        description: 'Read, write, order and compare numbers to at least 1,000,000 and determine the value of each digit',
+        description: 'read, write, order and compare numbers to at least 1,000,000',
         icon: '🔤',
         yearGroup: 'Year 5',
         strand: 'Number and Place Value',
@@ -170,7 +170,7 @@ export const N02_MODULES = {
                 max_value: 1000000,
                 word_min: 0,
                 word_max: 100,
-                operations: ['ten_thousand_more', 'ten_thousand_less', 'hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'place_value_digit'],  // Removed rounding
+                operations: ['ten_thousand_more', 'ten_thousand_less', 'hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison'],  // Removed rounding and place_value_digit (belongs in N03)
                 order_count_max: 6                       // Reduced from 10
             },
             4: {
@@ -178,7 +178,7 @@ export const N02_MODULES = {
                 max_value: 5000000,                      // Reduced from 10,000,000
                 word_min: 0,
                 word_max: 100,
-                operations: ['hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'place_value_digit', 'complex_more_less'],  // Removed rounding
+                operations: ['hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'complex_more_less'],  // Removed rounding and place_value_digit (belongs in N03)
                 order_count_max: 8                       // Reduced from 15
             }
         }
@@ -187,7 +187,7 @@ export const N02_MODULES = {
     'N02_Y6_NPV': {
         id: 'N02_Y6_NPV',
         name: 'N02_Y6_NPV: Numbers to 10 Million',
-        description: 'Read, write, order and compare numbers up to 10,000,000 and determine the value of each digit',
+        description: 'read, write, order and compare numbers up to 10,000,000',
         icon: '🔤',
         yearGroup: 'Year 6',
         strand: 'Number and Place Value',
@@ -215,7 +215,7 @@ export const N02_MODULES = {
                 max_value: 10000000,
                 word_min: 0,
                 word_max: 100,
-                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'place_value_digit'],  // Removed rounding
+                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison'],  // Removed rounding and place_value_digit (belongs in N03)
                 order_count_max: 6                       // Reduced from 10
             },
             4: {
@@ -223,7 +223,7 @@ export const N02_MODULES = {
                 max_value: 10000000,
                 word_min: 0,
                 word_max: 100,
-                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'place_value_digit', 'complex_more_less'],  // Removed rounding
+                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'complex_more_less'],  // Removed rounding and place_value_digit (belongs in N03)
                 order_count_max: 8                       // Reduced from 20
             }
         }

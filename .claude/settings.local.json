@@ -7,7 +7,11 @@
       "Bash(node test-money-modules.js:*)",
       "Bash(node --check:*)",
       "Bash(claude --agent curriculum-generator-creator --prompt \"Create a new UK National Curriculum question generator for M06_Y4_MEAS - Year 4 Measurement module.\n\nCurriculum Statement: ''convert between different units of measurement [e.g. kilometre to metre; hour to minute]''\n\nContext:\n- Year Group: Year 4\n- Strand: Measurement\n- This module focuses on converting between different measurement systems (metric conversions AND time conversions)\n- Examples: km→m, m→cm, cm→mm, hours→minutes, minutes→seconds\n- This is a consolidation/practice module that overlaps with M05 (metric) and M04 (time)\n\nExact metric conversions for Year 4:\nLength: 1 km = 1000 m, 1 m = 100 cm, 1 cm = 10 mm\nMass: 1 kg = 1000 g\nCapacity: 1 l = 1000 ml\nTime: 1 hour = 60 min, 1 min = 60 sec, 1 day = 24 hours, 1 week = 7 days\n\nQuestion types should include:\n- Direct conversions with specific values (e.g., ''Convert 3 km to metres'')\n- Reverse conversions (smaller to larger units)\n- Word problems with real-world contexts\n- Comparison questions\n\nDifficulty progression:\n- Level 1: Simple whole number conversions, common units (km→m, m→cm, hours→min)\n- Level 2: Include more unit combinations, bidirectional conversions\n- Level 3: Word problems, multiple conversions\n- Level 4: Complex scenarios, less common units (e.g., weeks→days, days→hours)\n\nCreate the complete parameter definitions and generator code following the project''s parameter-based architecture.\")",
-      "Bash(node --input-type=module -e:*)"
+      "Bash(node --input-type=module -e:*)",
+      "Bash(node -e:*)",
+      "Bash(temp_reference_modules.json)",
+      "Bash(node test_alignment.js:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
