@@ -91,7 +91,10 @@ function generateColumnarMultiply1Digit(params, level) {
     maxMultiplicand = Math.min(maxMultiplicand, params.multiply_range[1]);
 
     const multiplicand = randomInt(minMultiplicand, maxMultiplicand);
-    const multiplier = randomInt(params.multiply_by[0], params.multiply_by[1]);
+
+    // Handle different parameter naming: multiply_by (Level 1) vs multiply_by_1digit (Levels 2-4)
+    const multiplyByRange = params.multiply_by || params.multiply_by_1digit;
+    const multiplier = randomInt(multiplyByRange[0], multiplyByRange[1]);
 
     const answer = multiplicand * multiplier;
 
@@ -348,7 +351,10 @@ function generateMissingDigitLongMult(params, level) {
  */
 function generateEstimateCheck(params, level) {
     const multiplicand = randomInt(params.multiply_range[0], Math.min(params.multiply_range[1], 999));
-    const multiplier = randomInt(params.multiply_by[0], params.multiply_by[1]);
+
+    // Handle different parameter naming: multiply_by (Level 1) vs multiply_by_1digit (Levels 2-4)
+    const multiplyByRange = params.multiply_by || params.multiply_by_1digit;
+    const multiplier = randomInt(multiplyByRange[0], multiplyByRange[1]);
 
     const exactAnswer = multiplicand * multiplier;
 

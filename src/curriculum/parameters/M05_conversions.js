@@ -42,7 +42,8 @@ export const M05_MODULES = {
                 value_types: ['whole', 'simple_decimal'], // 0.5 increments only
                 ranges: {
                     km: { min: 1, max: 50 },
-                    m: { min: 100, max: 5000 },
+                    m: { min: 1, max: 5000 },
+                    cm: { min: 10, max: 500 }, // Added for m_to_cm and cm_to_m conversions
                     kg: { min: 1, max: 50 },
                     g: { min: 100, max: 5000 },
                     l: { min: 1, max: 50 },
@@ -62,8 +63,9 @@ export const M05_MODULES = {
                 value_types: ['whole', 'decimal'], // Up to 2 decimal places
                 ranges: {
                     km: { min: 1, max: 100 },
-                    m: { min: 100, max: 10000 },
+                    m: { min: 1, max: 10000 },
                     cm: { min: 10, max: 1000 },
+                    mm: { min: 10, max: 5000 }, // Added for cm_to_mm and mm_to_cm conversions
                     kg: { min: 1, max: 100 },
                     g: { min: 100, max: 10000 },
                     l: { min: 1, max: 100 },

@@ -350,19 +350,28 @@ function generateMultiLevelRoundingProblem(params, level) {
         }
 
         case 'rounding_comparison': {
-            const num1 = randomInt(1000000, params.max_value);
-            const num2 = randomInt(1000000, params.max_value);
+            const roundTo = randomChoice([100000, 1000000]);
+            let num1 = randomInt(1000000, params.max_value);
+            let num2 = randomInt(1000000, params.max_value);
 
+            // Ensure numbers are different
             if (num1 === num2) {
-                return generateMultiLevelRoundingProblem(params, level);
+                num2 = num1 + randomInt(roundTo, roundTo * 3);
+                if (num2 > params.max_value) {
+                    num2 = num1 - randomInt(roundTo, roundTo * 2);
+                }
             }
 
-            const roundTo = randomChoice([100000, 1000000]);
-            const rounded1 = roundToNearest(num1, roundTo);
-            const rounded2 = roundToNearest(num2, roundTo);
+            let rounded1 = roundToNearest(num1, roundTo);
+            let rounded2 = roundToNearest(num2, roundTo);
 
+            // If they round to same value, adjust num2 to ensure different rounded values
             if (rounded1 === rounded2) {
-                return generateMultiLevelRoundingProblem(params, level);
+                num2 = rounded1 + roundTo * randomChoice([2, 3, -2, -3]);
+                if (num2 < 1000000 || num2 > params.max_value) {
+                    num2 = rounded1 + roundTo * 2;
+                }
+                rounded2 = roundToNearest(num2, roundTo);
             }
 
             const contexts = [
@@ -442,16 +451,28 @@ function generateMultiLevelRoundingProblem(params, level) {
         }
 
         case 'multiple_rounding_levels': {
-            const number = randomInt(1234567, Math.min(8765432, params.max_value));
-
             const roundTo1 = randomChoice([100000, 1000000]);
             const roundTo2 = roundTo1 === 100000 ? 1000000 : 100000;
 
-            const rounded1 = roundToNearest(number, roundTo1);
-            const rounded2 = roundToNearest(number, roundTo2);
+            // Generate a number that ensures different rounded values
+            // Start with a base and add an offset to avoid exact multiples
+            const base = randomInt(1, 8) * 1000000;
+            const offset = randomInt(234567, 765432);
+            let number = base + offset;
 
+            // Ensure within bounds
+            if (number > Math.min(8765432, params.max_value)) {
+                number = randomInt(1234567, Math.min(8765432, params.max_value));
+            }
+
+            let rounded1 = roundToNearest(number, roundTo1);
+            let rounded2 = roundToNearest(number, roundTo2);
+
+            // If still equal (very unlikely), adjust number slightly
             if (rounded1 === rounded2) {
-                return generateMultiLevelRoundingProblem(params, level);
+                number = number + 250000; // Add offset to ensure different rounding
+                rounded1 = roundToNearest(number, roundTo1);
+                rounded2 = roundToNearest(number, roundTo2);
             }
 
             const difference = Math.abs(rounded1 - rounded2);
@@ -500,11 +521,15 @@ function generateOrderingComparingProblem(params, level) {
 
     switch(problemType) {
         case 'compare_two_very_large': {
-            const num1 = randomInt(1000000, params.max_value);
-            const num2 = randomInt(1000000, params.max_value);
+            let num1 = randomInt(1000000, params.max_value);
+            let num2 = randomInt(1000000, params.max_value);
 
+            // Ensure numbers are different
             if (num1 === num2) {
-                return generateOrderingComparingProblem(params, level);
+                num2 = num1 + randomChoice([1000, 10000, 100000, 1000000]);
+                if (num2 > params.max_value) {
+                    num2 = num1 - randomChoice([1000, 10000, 100000]);
+                }
             }
 
             const contexts = [
@@ -533,7 +558,37 @@ function generateOrderingComparingProblem(params, level) {
 
         case 'order_multiple_large': {
             const count = level <= 2 ? 3 : 4;
-            const numbers = generateUniqueNumbers(count, 1000000, params.max_value);
+            // Ensure sufficient range for unique numbers (at least 10x the count needed)
+            const minValue = Math.max(params.min_value, Math.floor(params.max_value * 0.1));
+            const numbers = generateUniqueNumbers(count, minValue, params.max_value);
+
+            // Fallback to simpler compare_two problem if not enough unique numbers
+            if (numbers.length < count) {
+                const num1 = randomInt(minValue, params.max_value);
+                const num2 = randomInt(minValue, params.max_value);
+                if (num1 === num2) {
+                    return {
+                        text: `Which is larger: ${formatNumber(num1)} or ${formatNumber(num1 + 1000)}?`,
+                        type: 'multiple_choice',
+                        options: [formatNumber(num1), formatNumber(num1 + 1000)],
+                        answer: formatNumber(num1 + 1000),
+                        hint: 'Compare the two numbers',
+                        module: 'N06_Y6_NPV',
+                        level: level
+                    };
+                }
+                const larger = Math.max(num1, num2);
+                return {
+                    text: `Which is larger: ${formatNumber(num1)} or ${formatNumber(num2)}?`,
+                    type: 'multiple_choice',
+                    options: [formatNumber(num1), formatNumber(num2)],
+                    answer: formatNumber(larger),
+                    hint: 'Compare the two numbers',
+                    module: 'N06_Y6_NPV',
+                    level: level
+                };
+            }
+
             const sorted = sortAscending(numbers);
 
             const items = [
@@ -573,25 +628,44 @@ function generateOrderingComparingProblem(params, level) {
 
         case 'find_largest_smallest': {
             const count = level <= 2 ? 3 : 4;
-            const numbers = generateUniqueNumbers(count, 1000000, params.max_value);
+            // Ensure sufficient range for unique numbers (at least 10x the count needed)
+            const minValue = Math.max(params.min_value, Math.floor(params.max_value * 0.1));
+            const numbers = generateUniqueNumbers(count, minValue, params.max_value);
+
+            // Fallback to simpler compare_two problem if not enough unique numbers
+            if (numbers.length < count) {
+                const num1 = randomInt(minValue, params.max_value);
+                const num2 = randomInt(minValue, params.max_value);
+                const larger = num1 > num2 ? num1 : (num2 > num1 ? num2 : num1 + 1000);
+                return {
+                    text: `Which is larger: ${formatNumber(num1)} or ${formatNumber(num2 === num1 ? num2 + 1000 : num2)}?`,
+                    type: 'multiple_choice',
+                    options: [formatNumber(num1), formatNumber(num2 === num1 ? num2 + 1000 : num2)],
+                    answer: formatNumber(larger),
+                    hint: 'Compare the two numbers',
+                    module: 'N06_Y6_NPV',
+                    level: level
+                };
+            }
+
             const sorted = sortAscending(numbers);
 
             const contexts = [
                 {
                     text: `The populations of ${count} cities are: ${numbers.map(n => formatNumber(n)).join(', ')}. What is the population of the largest city?`,
-                    answer: sorted[sorted.length - 1]
+                    answer: formatNumber(sorted[sorted.length - 1])
                 },
                 {
                     text: `Annual budgets: £${numbers.map(n => formatNumber(n)).join(', £')}. What is the smallest budget?`,
-                    answer: sorted[0]
+                    answer: formatNumber(sorted[0])
                 },
                 {
                     text: `Distances to stars: ${numbers.map(n => formatNumber(n)).join(', ')} km. Which is the greatest distance?`,
-                    answer: sorted[sorted.length - 1]
+                    answer: formatNumber(sorted[sorted.length - 1])
                 },
                 {
                     text: `Website visitor counts: ${numbers.map(n => formatNumber(n)).join(', ')}. What is the lowest visitor count?`,
-                    answer: sorted[0]
+                    answer: formatNumber(sorted[0])
                 }
             ];
 
@@ -614,7 +688,28 @@ function generateOrderingComparingProblem(params, level) {
         }
 
         case 'ordering_word_problem': {
-            const numbers = generateUniqueNumbers(3, 1000000, params.max_value);
+            // Ensure sufficient range for unique numbers (at least 10x the count needed)
+            const minValue = Math.max(params.min_value, Math.floor(params.max_value * 0.1));
+            const numbers = generateUniqueNumbers(3, minValue, params.max_value);
+
+            // Fallback to simple two-number comparison if not enough unique numbers
+            if (numbers.length < 3) {
+                const num1 = randomInt(minValue, params.max_value);
+                const num2 = num1 + randomInt(1000, Math.max(10000, Math.floor(params.max_value * 0.01)));
+                const larger = Math.max(num1, num2);
+                const smaller = Math.min(num1, num2);
+
+                return {
+                    text: `Two countries have populations of ${formatNumber(num1)} and ${formatNumber(num2)}. Which country has more people?`,
+                    type: 'multiple_choice',
+                    options: [formatNumber(num1), formatNumber(num2)],
+                    answer: formatNumber(larger),
+                    hint: `Compare ${formatNumber(num1)} and ${formatNumber(num2)}`,
+                    module: 'N06_Y6_NPV',
+                    level: level
+                };
+            }
+
             const sorted = sortAscending(numbers);
 
             const contexts = [
@@ -624,7 +719,7 @@ function generateOrderingComparingProblem(params, level) {
                 },
                 {
                     text: `Company revenues are £${formatNumber(numbers[0])}, £${formatNumber(numbers[1])}, and £${formatNumber(numbers[2])}. Which is the middle value?`,
-                    answer: sorted[1]
+                    answer: formatNumber(sorted[1])
                 }
             ];
 
@@ -679,11 +774,15 @@ function generateNegativeIntervalProblem(params, level) {
 
     switch(problemType) {
         case 'temperature_interval': {
-            const temp1 = randomInt(minNeg, maxNeg);
-            const temp2 = randomInt(minNeg, maxNeg);
+            let temp1 = randomInt(minNeg, maxNeg);
+            let temp2 = randomInt(minNeg, maxNeg);
 
+            // Ensure temperatures are different
             if (temp1 === temp2) {
-                return generateNegativeIntervalProblem(params, level);
+                temp2 = temp1 + randomChoice([5, 10, 15, 20, -5, -10, -15, -20]);
+                // Clamp to valid range
+                if (temp2 > maxNeg) temp2 = temp1 - 10;
+                if (temp2 < minNeg) temp2 = temp1 + 10;
             }
 
             const interval = Math.abs(temp2 - temp1);
@@ -921,11 +1020,15 @@ function generateMultiConceptProblem(params, level) {
         }
 
         case 'compare_then_calculate_interval': {
-            const num1 = randomInt(1000000, Math.min(5000000, params.max_value));
-            const num2 = randomInt(1000000, Math.min(5000000, params.max_value));
+            let num1 = randomInt(1000000, Math.min(5000000, params.max_value));
+            let num2 = randomInt(1000000, Math.min(5000000, params.max_value));
 
+            // Ensure numbers are different
             if (num1 === num2) {
-                return generateMultiConceptProblem(params, level);
+                num2 = num1 + randomInt(100000, 1000000);
+                if (num2 > Math.min(5000000, params.max_value)) {
+                    num2 = num1 - randomInt(100000, 500000);
+                }
             }
 
             const larger = Math.max(num1, num2);
@@ -966,14 +1069,56 @@ function generateMultiConceptProblem(params, level) {
         }
 
         case 'round_then_order': {
-            const numbers = generateUniqueNumbers(3, 1000000, Math.min(5000000, params.max_value));
+            // Ensure sufficient range for unique numbers (at least 10x the count needed)
+            const maxVal = Math.min(5000000, params.max_value);
+            const minValue = Math.max(params.min_value, Math.floor(maxVal * 0.1));
+            const numbers = generateUniqueNumbers(3, minValue, maxVal);
+
+            // Fallback to simpler two-number rounding comparison if not enough unique numbers
+            if (numbers.length < 3) {
+                const roundTo = 100000;
+                const num1 = randomInt(minValue, maxVal);
+                const num2 = num1 + randomInt(roundTo * 2, Math.max(roundTo * 5, Math.floor(maxVal * 0.1)));
+                const rounded1 = roundToNearest(num1, roundTo);
+                const rounded2 = roundToNearest(num2, roundTo);
+                const smaller = Math.min(rounded1, rounded2);
+
+                return {
+                    text: `Two populations are ${formatNumber(num1)} and ${formatNumber(num2)}. Round each to the nearest ${formatNumber(roundTo)}, then identify which is smaller.`,
+                    type: 'multiple_choice',
+                    options: [formatNumber(rounded1), formatNumber(rounded2)],
+                    answer: formatNumber(smaller),
+                    hint: `Round: ${formatNumber(rounded1)}, ${formatNumber(rounded2)}`,
+                    module: 'N06_Y6_NPV',
+                    level: level
+                };
+            }
+
             const roundTo = 100000;
-            const rounded = numbers.map(n => roundToNearest(n, roundTo));
+            let rounded = numbers.map(n => roundToNearest(n, roundTo));
             const sorted = sortAscending(rounded);
 
-            // Check all rounded values are different
+            // If not all rounded values are different, adjust to ensure uniqueness
             if (new Set(rounded).size !== 3) {
-                return generateMultiConceptProblem(params, level);
+                // Create three numbers guaranteed to round differently
+                const base = randomInt(minValue, maxVal - roundTo * 3);
+                const adjustedNumbers = [
+                    base,
+                    base + roundTo * 2,
+                    base + roundTo * 4
+                ];
+                rounded = adjustedNumbers.map(n => roundToNearest(n, roundTo));
+                const answer = Math.min(...rounded);
+
+                return {
+                    text: `Three populations are ${formatNumber(adjustedNumbers[0])}, ${formatNumber(adjustedNumbers[1])}, and ${formatNumber(adjustedNumbers[2])}. Round each to the nearest ${formatNumber(roundTo)}, then identify the smallest.`,
+                    type: 'multiple_choice',
+                    options: shuffle([...rounded]),
+                    answer: answer.toString(),
+                    hint: `Round: ${rounded.map(r => formatNumber(r)).join(', ')}, then find smallest`,
+                    module: 'N06_Y6_NPV',
+                    level: level
+                };
             }
 
             const text = `Three populations are ${formatNumber(numbers[0])}, ${formatNumber(numbers[1])}, and ${formatNumber(numbers[2])}. Round each to the nearest ${formatNumber(roundTo)}, then identify the smallest.`;

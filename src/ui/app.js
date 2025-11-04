@@ -147,6 +147,15 @@ class App {
             this.generateQuestionsForAllModules();
         });
 
+        // Bulk export buttons
+        document.getElementById('bulkExportJsonBtn').addEventListener('click', () => {
+            this.bulkExportToJson();
+        });
+
+        document.getElementById('bulkExportCsvBtn').addEventListener('click', () => {
+            this.bulkExportToCsv();
+        });
+
         // Back button
         document.getElementById('backBtn').addEventListener('click', () => {
             this.showSection('setup');
@@ -913,6 +922,116 @@ class App {
         this.downloadFile(csvContent, filename, 'text/csv;charset=utf-8;');
 
         console.log(`✅ Exported to ${filename} (Excel-compatible)`);
+    }
+
+    /**
+     * Bulk export to JSON - generates questions for all modules without rendering
+     */
+    bulkExportToJson() {
+        const btn = document.getElementById('bulkExportJsonBtn');
+        const originalText = btn.textContent;
+
+        try {
+            // Show loading state
+            btn.disabled = true;
+            btn.textContent = '⏳ Generating...';
+
+            const allModuleIds = Object.keys(MODULES);
+            const questionCount = this.questionCount;
+
+            console.log(`🔄 Generating ${questionCount} questions per level for ${allModuleIds.length} modules...`);
+
+            // Generate questions for all modules without rendering
+            const allQuestions = [];
+            allModuleIds.forEach((moduleId, idx) => {
+                // Progress indication in console
+                if ((idx + 1) % 10 === 0) {
+                    console.log(`📊 Progress: ${idx + 1}/${allModuleIds.length} modules...`);
+                }
+
+                const moduleQuestions = this.generateQuestionsForModule(moduleId, questionCount);
+                allQuestions.push(...moduleQuestions);
+            });
+
+            console.log(`✅ Generated ${allQuestions.length} level groups`);
+
+            // Store temporarily and export
+            const tempQuestions = this.questions;
+            this.questions = allQuestions;
+            this.exportToEnhancedJson();
+            this.questions = tempQuestions;
+
+            // Show success
+            btn.textContent = '✅ Exported!';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+
+        } catch (error) {
+            console.error('❌ Bulk export failed:', error);
+            btn.textContent = '❌ Export failed';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+            alert('Export failed. Check console for details.');
+        }
+    }
+
+    /**
+     * Bulk export to CSV - generates questions for all modules without rendering
+     */
+    bulkExportToCsv() {
+        const btn = document.getElementById('bulkExportCsvBtn');
+        const originalText = btn.textContent;
+
+        try {
+            // Show loading state
+            btn.disabled = true;
+            btn.textContent = '⏳ Generating...';
+
+            const allModuleIds = Object.keys(MODULES);
+            const questionCount = this.questionCount;
+
+            console.log(`🔄 Generating ${questionCount} questions per level for ${allModuleIds.length} modules...`);
+
+            // Generate questions for all modules without rendering
+            const allQuestions = [];
+            allModuleIds.forEach((moduleId, idx) => {
+                // Progress indication in console
+                if ((idx + 1) % 10 === 0) {
+                    console.log(`📊 Progress: ${idx + 1}/${allModuleIds.length} modules...`);
+                }
+
+                const moduleQuestions = this.generateQuestionsForModule(moduleId, questionCount);
+                allQuestions.push(...moduleQuestions);
+            });
+
+            console.log(`✅ Generated ${allQuestions.length} level groups`);
+
+            // Store temporarily and export
+            const tempQuestions = this.questions;
+            this.questions = allQuestions;
+            this.exportToEnhancedCsv();
+            this.questions = tempQuestions;
+
+            // Show success
+            btn.textContent = '✅ Exported!';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+
+        } catch (error) {
+            console.error('❌ Bulk export failed:', error);
+            btn.textContent = '❌ Export failed';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+            alert('Export failed. Check console for details.');
+        }
     }
 
     // ============================================================================

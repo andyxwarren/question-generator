@@ -126,18 +126,22 @@ header p {
 
 .bulk-controls {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 1rem;
     align-items: center;
+    justify-content: center;
 }
 
 .bulk-hint {
     font-size: 0.95rem;
     color: #4b5563;
     text-align: center;
-    max-width: 600px;
+    max-width: 800px;
     line-height: 1.5;
     margin-top: 0.5rem;
+    width: 100%;
+    flex-basis: 100%;
 }
 
 .btn-bulk {
@@ -162,6 +166,23 @@ header p {
 .btn-bulk:active {
     transform: translateY(0);
     box-shadow: 0 2px 4px -1px rgba(16, 185, 129, 0.4);
+}
+
+/* Export button variant */
+.btn-bulk.btn-export {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+}
+
+.btn-bulk.btn-export:hover {
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+    box-shadow: 0 6px 12px -2px rgba(99, 102, 241, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn-bulk.btn-export:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px -1px rgba(99, 102, 241, 0.4);
 }
 
 /* Module Cards - New Grid Layout */
