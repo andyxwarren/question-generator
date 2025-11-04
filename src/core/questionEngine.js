@@ -98,6 +98,13 @@ import perimeterY3Generator from '../generators/M07_Y3_MEAS_perimeter.js';
 import perimeterAreaY4Generator from '../generators/M07_Y4_MEAS_perimeter_area.js';
 import compositeAreaY5Generator from '../generators/M07_Y5_MEAS_composite_area.js';
 import areaFormulasY6Generator from '../generators/M07_Y6_MEAS_area_formulas.js';
+import volumeY5Generator from '../generators/M08_Y5_MEAS_volume.js';
+import volumeY6Generator from '../generators/M08_Y6_MEAS_volume.js';
+import problemsY2MEASGenerator from '../generators/M09_Y2_MEAS_money_problems.js';
+import problemsY3MEASGenerator from '../generators/M09_Y3_MEAS_measurement_problems.js';
+import problemsY4MEASGenerator from '../generators/M09_Y4_MEAS_calculate_measures.js';
+import problemsY5MEASGenerator from '../generators/M09_Y5_MEAS_decimal_measures.js';
+import problemsY6MEASGenerator from '../generators/M09_Y6_MEAS_conversion_problems.js';
 
 /**
  * Question Engine Class
@@ -204,7 +211,13 @@ class QuestionEngine {
         this.register(perimeterAreaY4Generator);
         this.register(compositeAreaY5Generator);
         this.register(areaFormulasY6Generator);
-
+        this.register(volumeY5Generator);
+        this.register(volumeY6Generator);
+        this.register(problemsY2MEASGenerator);
+        this.register(problemsY3MEASGenerator);
+        this.register(problemsY4MEASGenerator);
+        this.register(problemsY5MEASGenerator);
+        this.register(problemsY6MEASGenerator);
     }
 
     /**

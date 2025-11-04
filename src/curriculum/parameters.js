@@ -27,6 +27,8 @@
  * - M05_conversions.js - Convert between metric units (Year 5)
  * - M06_conversions_mixed.js - Convert between different units including imperial/metric (Years 4-6)
  * - M07_perimeter_area.js - Perimeter and area (Years 3-6)
+ * - M08_volume.js - Volume (Years 5-6)
+ * - M09_problems.js - Measurement problem solving (Years 2-6)
  */
 
 import { N01_MODULES } from './parameters/N01_counting.js';
@@ -51,6 +53,8 @@ import { M04_MODULES } from './parameters/M04_time.js';
 import { M05_MODULES } from './parameters/M05_conversions.js';
 import { M06_MODULES } from './parameters/M06_conversions_mixed.js';
 import { M07_MODULES } from './parameters/M07_perimeter_area.js';
+import { M08_MODULES } from './parameters/M08_volume.js';
+import { M09_MODULES } from './parameters/M09_problems.js';
 
 /**
  * Merged modules object
@@ -78,7 +82,9 @@ export const MODULES = {
     ...M04_MODULES,
     ...M05_MODULES,
     ...M06_MODULES,
-    ...M07_MODULES
+    ...M07_MODULES,
+    ...M08_MODULES,
+    ...M09_MODULES
 };
 
 /**

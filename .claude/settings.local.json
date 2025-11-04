@@ -11,7 +11,10 @@
       "Bash(node -e:*)",
       "Bash(temp_reference_modules.json)",
       "Bash(node test_alignment.js:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(cat:*)",
+      "Bash(nul)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []
