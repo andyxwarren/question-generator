@@ -79,19 +79,21 @@ function generateQuestionByType(type, fullSequence, params, step, direction, lev
             pos === sequence_length - 1 ? Math.floor(sequence_length / 2) : pos
         );
 
-        // Create display sequence with blanks
-        const displaySequence = fullSequence.map((num, idx) =>
-            gapPositions.includes(idx) ? '___' : num.toString()
-        );
+        // Get final gap position (last in array)
+        const finalGapPosition = gapPositions[gapPositions.length - 1];
+        const finalAnswer = fullSequence[finalGapPosition];
 
-        // Collect answers
-        const answers = gapPositions.map(pos => fullSequence[pos]);
+        // Create display sequence with visual distinction for final gap
+        const displaySequence = fullSequence.map((num, idx) => {
+            if (idx === finalGapPosition) return '<span class="gap-final">[?]</span>';
+            if (gapPositions.includes(idx)) return '<span class="gap-other">__</span>';
+            return num.toString();
+        });
 
         return {
-            text: `Fill in the missing number${gaps_count > 1 ? 's' : ''}: ${displaySequence.join(', ')}`,
+            text: `Fill in the <strong>final</strong> missing number: ${displaySequence.join(', ')}`,
             type: 'text_input',
-            answer: answers.join(','),  // Store as comma-separated
-            answers: answers,  // Also store as array for validation
+            answer: finalAnswer.toString(),  // Single answer only
             hint: `The pattern counts ${direction} in ${step}s`,
             module: 'N01_Y4_NPV',
             level: level

@@ -20,7 +20,7 @@ export const N01_MODULES = {
                 max_value: 20,
                 directions: ['forwards', 'backwards'],
                 start_from: 'zero_or_twenty',
-                sequence_length: 5,
+                sequence_length: 4,
                 gaps_count: 1,
                 gap_position: 'end'
             },
@@ -30,7 +30,7 @@ export const N01_MODULES = {
                 max_value: 50,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 6,
+                sequence_length: 5,
                 gaps_count: 1,
                 gap_position: 'middle'
             },
@@ -40,7 +40,7 @@ export const N01_MODULES = {
                 max_value: 100,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 8,
+                sequence_length: 6,
                 gaps_count: 2,
                 gap_position: 'random'
             },
@@ -50,8 +50,8 @@ export const N01_MODULES = {
                 max_value: 120,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 10,
-                gaps_count: 3,
+                sequence_length: 6,
+                gaps_count: 2,
                 gap_position: 'random'
             }
         }
@@ -73,7 +73,7 @@ export const N01_MODULES = {
                 max_value: 50,
                 directions: ['forwards'],
                 start_from: 'zero_only',
-                sequence_length: 6,
+                sequence_length: 4,
                 gaps_count: 1,
                 gap_position: 'end',
                 tens_from_any: false,
@@ -85,7 +85,7 @@ export const N01_MODULES = {
                 max_value: 100,
                 directions: ['forwards', 'backwards'],
                 start_from: 'zero_or_multiple',
-                sequence_length: 8,
+                sequence_length: 5,
                 gaps_count: 1,
                 gap_position: 'middle',
                 tens_from_any: true,
@@ -97,7 +97,7 @@ export const N01_MODULES = {
                 max_value: 100,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 10,
+                sequence_length: 6,
                 gaps_count: 2,
                 gap_position: 'random',
                 tens_from_any: true,
@@ -109,8 +109,8 @@ export const N01_MODULES = {
                 max_value: 200,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 12,
-                gaps_count: 3,
+                sequence_length: 6,
+                gaps_count: 2,
                 gap_position: 'random',
                 tens_from_any: true,
                 tens_range: [0, 200]
@@ -134,7 +134,7 @@ export const N01_MODULES = {
                 max_value: 100,
                 directions: ['forwards'],
                 start_from: 'zero_only',
-                sequence_length: 6,
+                sequence_length: 4,
                 gaps_count: 1,
                 gap_position: 'end'
             },
@@ -144,7 +144,7 @@ export const N01_MODULES = {
                 max_value: 400,
                 directions: ['forwards', 'backwards'],
                 start_from: 'zero_or_multiple',
-                sequence_length: 8,
+                sequence_length: 5,
                 gaps_count: 1,
                 gap_position: 'middle'
             },
@@ -154,7 +154,7 @@ export const N01_MODULES = {
                 max_value: 800,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 10,
+                sequence_length: 6,
                 gaps_count: 2,
                 gap_position: 'random'
             },
@@ -164,8 +164,8 @@ export const N01_MODULES = {
                 max_value: 1000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 12,
-                gaps_count: 3,
+                sequence_length: 6,
+                gaps_count: 2,
                 gap_position: 'random'
             }
         }
@@ -187,7 +187,7 @@ export const N01_MODULES = {
                 max_value: 200,
                 directions: ['forwards'],
                 start_from: 'zero_only',
-                sequence_length: 6,
+                sequence_length: 4,
                 gaps_count: 1,
                 gap_position: 'end'
             },
@@ -197,7 +197,7 @@ export const N01_MODULES = {
                 max_value: 500,
                 directions: ['forwards', 'backwards'],
                 start_from: 'zero_or_multiple',
-                sequence_length: 8,
+                sequence_length: 5,
                 gaps_count: 1,
                 gap_position: 'middle'
             },
@@ -207,7 +207,7 @@ export const N01_MODULES = {
                 max_value: 10000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 10,
+                sequence_length: 6,
                 gaps_count: 2,
                 gap_position: 'random'
             },
@@ -217,8 +217,8 @@ export const N01_MODULES = {
                 max_value: 20000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 12,
-                gaps_count: 3,
+                sequence_length: 6,
+                gaps_count: 2,
                 gap_position: 'random'
             }
         }
@@ -240,7 +240,7 @@ export const N01_MODULES = {
                 max_value: 10000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 6,
+                sequence_length: 4,
                 gaps_count: 1,
                 gap_position: 'end'
             },
@@ -250,7 +250,7 @@ export const N01_MODULES = {
                 max_value: 100000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 8,
+                sequence_length: 5,
                 gaps_count: 1,
                 gap_position: 'middle'
             },
@@ -260,7 +260,7 @@ export const N01_MODULES = {
                 max_value: 500000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 10,
+                sequence_length: 6,
                 gaps_count: 2,
                 gap_position: 'random'
             },
@@ -270,8 +270,8 @@ export const N01_MODULES = {
                 max_value: 1000000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 12,
-                gaps_count: 3,
+                sequence_length: 6,
+                gaps_count: 2,
                 gap_position: 'random'
             }
         }
