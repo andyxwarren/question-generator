@@ -22,25 +22,11 @@ export function generateQuestion(params, level) {
     const direction = randomChoice(params.directions);
     const { sequence_length, gaps_count, gap_position, min_value, max_value } = params;
 
-    // Choose question type FIRST (before generating sequence)
-    const questionTypes = ['fill_blanks', 'next_number', 'multiple_choice'];
-    const questionType = randomChoice(questionTypes);
-
     // Get starting value from any number within the valid range (0 to max_value)
     // Calculate a reasonable range within bounds
     const range = max_value - min_value;
     const rawStart = min_value + randomInt(0, Math.floor(range / 2));
     let start = Math.floor(rawStart / step) * step;
-
-    // Vary starting value by question type to prevent sequence overlap
-    if (questionType === 'fill_blanks') {
-        // Force even multiples of step
-        start = Math.floor(start / (step * 2)) * (step * 2);
-    } else if (questionType === 'next_number') {
-        // Force odd multiples of step
-        start = Math.floor(start / (step * 2)) * (step * 2) + step;
-    }
-    // multiple_choice keeps original start (any value)
 
     // Ensure sequence stays within bounds (0 to max_value)
     // CRITICAL: Year 5 curriculum requires counting from ANY number UP TO 1,000,000
@@ -80,7 +66,6 @@ export function generateQuestion(params, level) {
 
         // Final validation - if still invalid, clamp to valid range
         return generateQuestionByType(
-            questionType,
             validSequence.map(val => Math.max(min_value, Math.min(val, max_value))),
             params,
             step,
@@ -89,128 +74,44 @@ export function generateQuestion(params, level) {
         );
     }
 
-    return generateQuestionByType(questionType, fullSequence, params, step, direction, level);
+    return generateQuestionByType(fullSequence, params, step, direction, level);
 }
 
 /**
- * Generate specific question type
+ * Generate fill-in-the-blanks question
  */
-function generateQuestionByType(type, fullSequence, params, step, direction, level) {
+function generateQuestionByType(fullSequence, params, step, direction, level) {
     const { gaps_count, gap_position, sequence_length } = params;
 
-    if (type === 'fill_blanks') {
-        // Force internal gaps - never at the end to avoid duplication with 'next_number' type
-        let effectiveGapPosition = gap_position;
-        if (gap_position === 'end') {
-            effectiveGapPosition = 'middle';
-        }
+    // Get positions for blanks (gaps can now be anywhere, including at the end)
+    const gapPositions = getGapPositions(sequence_length, gaps_count, gap_position);
 
-        // Get positions for blanks
-        let gapPositions = getGapPositions(sequence_length, gaps_count, effectiveGapPosition);
+    // Get final gap position (chronologically last = highest index)
+    const finalGapPosition = Math.max(...gapPositions);
+    const finalAnswer = fullSequence[finalGapPosition];
 
-        // Additional safeguard: if any gap ended up at the last position, move it to middle
-        gapPositions = gapPositions.map(pos =>
-            pos === sequence_length - 1 ? Math.floor(sequence_length / 2) : pos
-        );
+    // Create display sequence with visual distinction for final gap
+    const displaySequence = fullSequence.map((num, idx) => {
+        if (idx === finalGapPosition) return '<span class="gap-final">[?]</span>';
+        if (gapPositions.includes(idx)) return '<span class="gap-other">__</span>';
+        return num.toLocaleString();
+    });
 
-        // Get final gap position (last in array)
-        const finalGapPosition = gapPositions[gapPositions.length - 1];
-        const finalAnswer = fullSequence[finalGapPosition];
+    const hint = `The pattern counts ${direction} in ${step.toLocaleString()}s`;
 
-        // Create display sequence with visual distinction for final gap
-        const displaySequence = fullSequence.map((num, idx) => {
-            if (idx === finalGapPosition) return '<span class="gap-final">[?]</span>';
-            if (gapPositions.includes(idx)) return '<span class="gap-other">__</span>';
-            return num.toLocaleString();
-        });
+    // Use different wording based on number of gaps
+    const questionText = gaps_count === 1
+        ? `Fill in the missing number: ${displaySequence.join(', ')}`
+        : `Fill in the <strong class="final-emphasis">final</strong> missing number: ${displaySequence.join(', ')}`;
 
-        const hint = `The pattern counts ${direction} in ${step.toLocaleString()}s`;
-
-        return {
-            text: `Fill in the <strong>final</strong> missing number: ${displaySequence.join(', ')}`,
-            type: 'text_input',
-            answer: finalAnswer.toString(),  // Single answer only
-            hint: hint,
-            module: 'N01_Y5_NPV',
-            level: level
-        };
-    }
-
-    if (type === 'next_number') {
-        // Show first N-1 numbers, ask for last
-        const shown = fullSequence.slice(0, -1).map(n => n.toLocaleString());
-        const answer = fullSequence[fullSequence.length - 1];
-
-        const hint = `Count ${direction} in ${step.toLocaleString()}s`;
-
-        return {
-            text: `What number comes next? ${shown.join(', ')}, ___`,
-            type: 'text_input',
-            answer: answer.toString(),
-            hint: hint,
-            module: 'N01_Y5_NPV',
-            level: level
-        };
-    }
-
-    if (type === 'multiple_choice') {
-        // Show all but last, create options
-        const shown = fullSequence.slice(0, -1).map(n => n.toLocaleString());
-        const correctAnswer = fullSequence[fullSequence.length - 1];
-
-        // Get bounds from params object (passed through from generateQuestion)
-        const { min_value, max_value } = params;
-
-        // Generate plausible distractors that stay within curriculum bounds [0, 1,000,000]
-        const potentialDistractors = [
-            correctAnswer + step,        // One step too far
-            correctAnswer - step,        // One step back
-            correctAnswer + (step / 10), // Wrong power of 10
-            correctAnswer - (step / 10)  // Wrong power of 10
-        ];
-
-        // Filter distractors to ensure ALL are within valid curriculum range
-        const validDistractors = potentialDistractors.filter(d =>
-            d >= min_value &&           // Not negative
-            d <= max_value &&           // Not exceeding max (e.g., 1,000,000 for Y5)
-            d !== correctAnswer         // Not same as correct answer
-        );
-
-        // If we don't have enough valid distractors, create alternative ones within bounds
-        while (validDistractors.length < 3) {
-            const offset = Math.floor(Math.random() * 3 + 1); // Random offset 1-3
-            const candidate = direction === 'forwards'
-                ? correctAnswer - (step * offset)
-                : correctAnswer + (step * offset);
-
-            if (candidate >= min_value &&
-                candidate <= max_value &&
-                !validDistractors.includes(candidate) &&
-                candidate !== correctAnswer) {
-                validDistractors.push(candidate);
-            }
-        }
-
-        // Select 3 unique distractors
-        const uniqueDistractors = [...new Set(validDistractors)]
-            .slice(0, 3);
-
-        // Create options and shuffle
-        const options = [correctAnswer, ...uniqueDistractors]
-            .sort(() => Math.random() - 0.5);
-
-        const hint = `Count ${direction} in ${step.toLocaleString()}s`;
-
-        return {
-            text: `Continue the pattern: ${shown.join(', ')}, ___`,
-            type: 'multiple_choice',
-            options: options,
-            answer: correctAnswer.toString(),
-            hint: hint,
-            module: 'N01_Y5_NPV',
-            level: level
-        };
-    }
+    return {
+        text: questionText,
+        type: 'text_input',
+        answer: finalAnswer.toString(),  // Single answer only
+        hint: hint,
+        module: 'N01_Y5_NPV',
+        level: level
+    };
 }
 
 /**

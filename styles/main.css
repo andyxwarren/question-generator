@@ -514,6 +514,16 @@ header p {
     letter-spacing: 0.05em;
 }
 
+/* Emphasis for "final" in question text */
+.final-emphasis {
+    color: #dc2626;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: #fca5a5;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+}
+
 /* Options for Multiple Choice */
 .options {
     display: flex;

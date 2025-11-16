@@ -602,6 +602,9 @@ class App {
                               text.includes('class="grid-method"') ||
                               text.includes('class="short-division"') ||
                               text.includes('class="clock-face"') ||
+                              text.includes('class="gap-final"') ||
+                              text.includes('class="gap-other"') ||
+                              text.includes('<strong>') ||
                               text.includes('<br>');
 
         if (hasSafeVisuals) {
