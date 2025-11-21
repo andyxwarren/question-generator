@@ -208,6 +208,74 @@ export function buildScenarioQuestion(numbers, questionType) {
     };
 }
 
+/**
+ * Build a two-way comparison question for "more than", "fewer", "less than", "equal to"
+ * @param {number} num1 - First number
+ * @param {number} num2 - Second number
+ * @param {string} comparisonWord - 'more than', 'fewer', 'less than', or 'equal to'
+ * @returns {object} Question object with text, options, and answer
+ */
+export function buildTwoWayComparisonQuestion(num1, num2, comparisonWord) {
+    // Use possessions scenarios only (simpler for two-way comparisons)
+    const possessionScenarios = scenarioTemplates.filter(
+        s => s.category === 'possessions' || s.category === 'games'
+    );
+    const scenario = possessionScenarios[Math.floor(Math.random() * possessionScenarios.length)];
+    const item = getRandomItem(scenario);
+    const names = getRandomNames(2);
+
+    // Build the scenario descriptions
+    const description1 = scenario.questionFormat
+        .replace('{name}', names[0])
+        .replace('{n}', num1)
+        .replace('{item}', item);
+
+    const description2 = scenario.questionFormat
+        .replace('{name}', names[1])
+        .replace('{n}', num2)
+        .replace('{item}', item);
+
+    // Build the question based on comparison word
+    let questionText, answer;
+
+    switch(comparisonWord) {
+        case 'more than':
+        case 'more':
+            questionText = `${description1}. ${description2}. Who has more ${item}?`;
+            answer = num1 > num2 ? names[0] : names[1];
+            break;
+
+        case 'fewer':
+        case 'less than':
+        case 'less':
+            // Use "fewer" with countable nouns
+            const word = comparisonWord === 'less than' || comparisonWord === 'less' ? 'fewer' : 'fewer';
+            questionText = `${description1}. ${description2}. Who has fewer ${item}?`;
+            answer = num1 < num2 ? names[0] : names[1];
+            break;
+
+        case 'equal to':
+        case 'same':
+            questionText = `${description1}. ${description2}. Do they have the same number of ${item}?`;
+            answer = num1 === num2 ? 'Yes' : 'No';
+            break;
+
+        default:
+            questionText = `${description1}. ${description2}. Who has more ${item}?`;
+            answer = num1 > num2 ? names[0] : names[1];
+    }
+
+    return {
+        text: questionText,
+        options: comparisonWord === 'equal to' || comparisonWord === 'same' ? ['Yes', 'No'] : [names[0], names[1]],
+        answer: answer,
+        num1: num1,
+        num2: num2,
+        scenario: scenario.category,
+        comparisonWord: comparisonWord
+    };
+}
+
 export default {
     childrenNames,
     scenarioTemplates,
@@ -215,5 +283,6 @@ export default {
     getRandomNames,
     getRandomScenario,
     getRandomItem,
-    buildScenarioQuestion
+    buildScenarioQuestion,
+    buildTwoWayComparisonQuestion
 };

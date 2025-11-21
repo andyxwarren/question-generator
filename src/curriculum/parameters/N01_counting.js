@@ -18,10 +18,9 @@ export const N01_MODULES = {
                 step_sizes: [1, 2],
                 min_value: 0,
                 max_value: 20,
-                directions: ['forwards', 'backwards'],
-                start_from: 'zero_or_twenty',
+                directions: ['forwards'],
+                start_from: 'zero_or_multiple',
                 sequence_length: 4,
-                gaps_count: 1,
                 gap_position: 'end'
             },
             2: {
@@ -29,9 +28,8 @@ export const N01_MODULES = {
                 min_value: 0,
                 max_value: 50,
                 directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 5,
-                gaps_count: 1,
+                start_from: 'zero_or_multiple',
+                sequence_length: 4,
                 gap_position: 'middle'
             },
             3: {
@@ -40,18 +38,16 @@ export const N01_MODULES = {
                 max_value: 100,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 6,
-                gaps_count: 2,
-                gap_position: 'random'
+                sequence_length: 3,
+                gap_position: 'middle'
             },
             4: {
                 step_sizes: [2, 5, 10],
                 min_value: 0,
-                max_value: 120,
+                max_value: 100,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 6,
-                gaps_count: 2,
+                sequence_length: 3,
                 gap_position: 'random'
             }
         }
@@ -70,26 +66,22 @@ export const N01_MODULES = {
             1: {
                 step_sizes: [2, 3, 5],
                 min_value: 0,
-                max_value: 50,
+                max_value: 30,
                 directions: ['forwards'],
                 start_from: 'zero_only',
                 sequence_length: 4,
-                gaps_count: 1,
-                gap_position: 'end',
-                tens_from_any: false,
-                tens_range: [0, 50]
+                gap_position: 'end'
             },
             2: {
                 step_sizes: [2, 3, 5, 10],
                 min_value: 0,
-                max_value: 100,
+                max_value: 50,
                 directions: ['forwards', 'backwards'],
                 start_from: 'zero_or_multiple',
-                sequence_length: 5,
-                gaps_count: 1,
+                sequence_length: 4,
                 gap_position: 'middle',
                 tens_from_any: true,
-                tens_range: [0, 100]
+                tens_range: [0, 50]
             },
             3: {
                 step_sizes: [2, 3, 5, 10],
@@ -97,23 +89,21 @@ export const N01_MODULES = {
                 max_value: 100,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 6,
-                gaps_count: 2,
-                gap_position: 'random',
+                sequence_length: 3,
+                gap_position: 'middle',
                 tens_from_any: true,
                 tens_range: [0, 100]
             },
             4: {
                 step_sizes: [2, 3, 5, 10],
                 min_value: 0,
-                max_value: 200,
+                max_value: 100,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 6,
-                gaps_count: 2,
+                sequence_length: 3,
                 gap_position: 'random',
                 tens_from_any: true,
-                tens_range: [0, 200]
+                tens_range: [0, 100]
             }
         }
     },
@@ -135,37 +125,33 @@ export const N01_MODULES = {
                 directions: ['forwards'],
                 start_from: 'zero_only',
                 sequence_length: 4,
-                gaps_count: 1,
                 gap_position: 'end'
             },
             2: {
                 step_sizes: [4, 8, 50, 100],
                 min_value: 0,
                 max_value: 400,
-                directions: ['forwards', 'backwards'],
-                start_from: 'zero_or_multiple',
-                sequence_length: 5,
-                gaps_count: 1,
+                directions: ['forwards'],
+                start_from: 'zero_only',
+                sequence_length: 4,
                 gap_position: 'middle'
             },
             3: {
                 step_sizes: [4, 8, 50, 100],
                 min_value: 0,
-                max_value: 800,
+                max_value: 600,
                 directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 6,
-                gaps_count: 2,
-                gap_position: 'random'
+                start_from: 'zero_or_multiple',
+                sequence_length: 3,
+                gap_position: 'middle'
             },
             4: {
                 step_sizes: [4, 8, 50, 100],
                 min_value: 0,
-                max_value: 1000,
+                max_value: 800,
                 directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 6,
-                gaps_count: 2,
+                start_from: 'zero_or_multiple',
+                sequence_length: 3,
                 gap_position: 'random'
             }
         }
@@ -182,43 +168,39 @@ export const N01_MODULES = {
         ref: 'N1',
         parameters: {
             1: {
-                step_sizes: [6, 7, 9, 25],
+                step_sizes: [6, 7, 9],
                 min_value: 0,
-                max_value: 200,
+                max_value: 100,
                 directions: ['forwards'],
                 start_from: 'zero_only',
                 sequence_length: 4,
-                gaps_count: 1,
                 gap_position: 'end'
             },
             2: {
-                step_sizes: [6, 7, 9, 25, 1000],
+                step_sizes: [6, 7, 9, 25],
                 min_value: 0,
-                max_value: 500,
+                max_value: 300,
                 directions: ['forwards', 'backwards'],
                 start_from: 'zero_or_multiple',
-                sequence_length: 5,
-                gaps_count: 1,
+                sequence_length: 4,
                 gap_position: 'middle'
             },
             3: {
                 step_sizes: [6, 7, 9, 25, 1000],
                 min_value: 0,
-                max_value: 10000,
+                max_value: 5000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 6,
-                gaps_count: 2,
-                gap_position: 'random'
+                sequence_length: 3,
+                gap_position: 'middle'
             },
             4: {
                 step_sizes: [6, 7, 9, 25, 1000],
                 min_value: 0,
-                max_value: 20000,
+                max_value: 10000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 6,
-                gaps_count: 2,
+                sequence_length: 3,
                 gap_position: 'random'
             }
         }
@@ -241,17 +223,15 @@ export const N01_MODULES = {
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
                 sequence_length: 4,
-                gaps_count: 1,
                 gap_position: 'end'
             },
             2: {
                 powers_of_10: [10, 100, 1000],
                 min_value: 0,
-                max_value: 100000,
+                max_value: 50000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 5,
-                gaps_count: 1,
+                sequence_length: 4,
                 gap_position: 'middle'
             },
             3: {
@@ -260,9 +240,8 @@ export const N01_MODULES = {
                 max_value: 500000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 6,
-                gaps_count: 2,
-                gap_position: 'random'
+                sequence_length: 3,
+                gap_position: 'middle'
             },
             4: {
                 powers_of_10: [10, 100, 1000, 10000, 100000],
@@ -270,8 +249,7 @@ export const N01_MODULES = {
                 max_value: 1000000,
                 directions: ['forwards', 'backwards'],
                 start_from: 'any',
-                sequence_length: 6,
-                gaps_count: 2,
+                sequence_length: 3,
                 gap_position: 'random'
             }
         }

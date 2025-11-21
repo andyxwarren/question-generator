@@ -65,7 +65,25 @@ export function generateSequence(start, step, length, direction) {
 }
 
 /**
- * Get gap positions for fill-in-the-blank questions
+ * Get single gap position for fill-in-the-blank questions
+ * Used by simplified N01 modules
+ */
+export function getGapPosition(sequenceLength, gapPosition) {
+    if (gapPosition === 'end') {
+        return sequenceLength - 1;
+    } else if (gapPosition === 'start') {
+        return 0;
+    } else if (gapPosition === 'middle') {
+        return Math.floor(sequenceLength / 2);
+    } else if (gapPosition === 'random') {
+        return randomInt(0, sequenceLength - 1);
+    }
+    return 0; // Default to start if unknown position
+}
+
+/**
+ * Get multiple gap positions for fill-in-the-blank questions
+ * Used by N05 modules and other generators that support multiple gaps
  */
 export function getGapPositions(sequenceLength, gapsCount, gapPosition) {
     const positions = [];
@@ -94,5 +112,6 @@ export default {
     randomInt,
     getStartValue,
     generateSequence,
+    getGapPosition,
     getGapPositions
 };

@@ -19,7 +19,7 @@ import {
     generateUniqueNumbers
 } from './helpers/N04_representationHelpers.js';
 import { createSimpleNumberLineHTML, createSimpleDotsHTML, createTenFrameHTML, createBase10BlocksHTML, createTallyMarksHTML } from './helpers/N04_simpleVisuals.js';
-import { buildScenarioQuestion } from './helpers/N04_scenarioTemplates.js';
+import { buildScenarioQuestion, buildTwoWayComparisonQuestion } from './helpers/N04_scenarioTemplates.js';
 
 /**
  * Main question generator
@@ -36,8 +36,6 @@ export function generateQuestion(params, level) {
             return generateCompareLanguage(params, level);
         case 'identify_most_least':
             return generateIdentifyMostLeast(params, level);
-        case 'estimate_group':
-            return generateEstimateGroup(params, level);
         case 'number_line_between':
             return generateNumberLineBetween(params, level);
         default:
@@ -47,6 +45,7 @@ export function generateQuestion(params, level) {
 
 /**
  * Number line position question (simplified for Year 1)
+ * Converted to multiple choice to reduce digital friction for ages 5-6
  */
 function generateNumberLinePosition(params, level) {
     const { number_line_max } = params;
@@ -59,11 +58,38 @@ function generateNumberLinePosition(params, level) {
         level <= 2  // Show all labels for easier levels
     );
 
+    // Generate 3 strategic options: target + 2 nearby numbers
+    const options = [targetNumber];
+
+    // Add a number below (if possible)
+    const below = targetNumber - randomInt(1, 3);
+    if (below >= 0 && !options.includes(below)) {
+        options.push(below);
+    }
+
+    // Add a number above (if possible)
+    const above = targetNumber + randomInt(1, 3);
+    if (above <= number_line_max && !options.includes(above)) {
+        options.push(above);
+    }
+
+    // If we don't have 3 options yet, add more strategic numbers
+    while (options.length < 3) {
+        const randomOption = randomInt(0, number_line_max);
+        if (!options.includes(randomOption)) {
+            options.push(randomOption);
+        }
+    }
+
+    // Shuffle options to randomize position of correct answer
+    const shuffledOptions = shuffle(options);
+
     return {
-        text: `What number is marked on the number line?\n\n${numberLineHTML}`,
-        type: 'text_input',
+        text: `Look at the number line. Which number is shown by the arrow?\n\n${numberLineHTML}`,
+        type: 'multiple_choice',
+        options: shuffledOptions,
         answer: String(targetNumber),
-        hint: 'Look at where the arrow points between the labeled numbers',
+        hint: 'Find where the arrow points',
         module: 'N04_Y1_NPV',
         level: level
     };
@@ -71,6 +97,7 @@ function generateNumberLinePosition(params, level) {
 
 /**
  * Count objects question
+ * Uses multiple choice for counts > 20 to reduce typing burden
  */
 function generateCountObjects(params, level) {
     const { min_value, max_value } = params;
@@ -100,6 +127,47 @@ function generateCountObjects(params, level) {
         questionText = 'How many dots do you see?';
     }
 
+    // Use multiple choice for counts > 20 to reduce typing burden for Year 1
+    if (count > 20) {
+        const options = [count];
+
+        // Add strategic distractors (nearby numbers)
+        const distractor1 = count - randomInt(1, 5);
+        const distractor2 = count + randomInt(1, 5);
+        const distractor3 = count + randomInt(6, 10);
+
+        if (distractor1 >= min_value && !options.includes(distractor1)) {
+            options.push(distractor1);
+        }
+        if (distractor2 <= max_value && !options.includes(distractor2)) {
+            options.push(distractor2);
+        }
+        if (distractor3 <= max_value && !options.includes(distractor3)) {
+            options.push(distractor3);
+        }
+
+        // Fill to 4 options if needed
+        while (options.length < 4) {
+            const randomOption = randomInt(min_value, max_value);
+            if (!options.includes(randomOption) && Math.abs(randomOption - count) > 0) {
+                options.push(randomOption);
+            }
+        }
+
+        const shuffledOptions = shuffle(options);
+
+        return {
+            text: `${questionText}\n\n${visualHTML}`,
+            type: 'multiple_choice',
+            options: shuffledOptions,
+            answer: String(count),
+            hint: 'Count carefully and look for groups to help you',
+            module: 'N04_Y1_NPV',
+            level: level
+        };
+    }
+
+    // For counts ≤ 20, use text input (simple typing for Year 1)
     return {
         text: `${questionText}\n\n${visualHTML}`,
         type: 'text_input',
@@ -112,6 +180,7 @@ function generateCountObjects(params, level) {
 
 /**
  * Compare language question (equal to, more than, less than, fewer, most, least)
+ * Rewritten to use scenario-based questions for ALL comparison words
  */
 function generateCompareLanguage(params, level, attempt = 0) {
     const MAX_ATTEMPTS = 10;
@@ -124,69 +193,84 @@ function generateCompareLanguage(params, level, attempt = 0) {
         const numberCount = randomChoice([3, 4]); // Randomly use 3 or 4 numbers
         const numbers = generateUniqueNumbers(numberCount, min_value, max_value);
 
-        // Randomly choose between abstract and scenario-based questions (60% scenario, 40% abstract)
-        const useScenario = Math.random() < 0.6;
+        // Use scenario-based question (100% scenarios for best pedagogical approach)
+        const scenarioQuestion = buildScenarioQuestion(numbers, word);
 
-        if (useScenario) {
-            // Use scenario-based question
-            const scenarioQuestion = buildScenarioQuestion(numbers, word);
-
-            return {
-                text: scenarioQuestion.text,
-                type: 'multiple_choice',
-                options: scenarioQuestion.options,
-                answer: scenarioQuestion.answer,
-                hint: word === 'most' ? 'Find the biggest number' : 'Find the smallest number',
-                module: 'N04_Y1_NPV',
-                level: level
-            };
-        } else {
-            // Use abstract question (just numbers)
-            const questionText = generateComparisonLanguageText(numbers, null, word);
-            const answer = evaluateComparison(numbers, null, word);
-
-            return {
-                text: questionText,
-                type: 'multiple_choice',
-                options: numbers,
-                answer: answer.toString(),
-                hint: word === 'most' ? 'Find the biggest number' : 'Find the smallest number',
-                module: 'N04_Y1_NPV',
-                level: level
-            };
-        }
+        return {
+            text: scenarioQuestion.text,
+            type: 'multiple_choice',
+            options: scenarioQuestion.options,
+            answer: scenarioQuestion.answer,
+            hint: word === 'most' ? 'Find who has the biggest number' : 'Find who has the smallest number',
+            module: 'N04_Y1_NPV',
+            level: level
+        };
     }
 
-    // Handle standard 2-number comparisons (equal to, more than, less than, fewer)
+    // Handle two-way comparisons (equal to, more than, less than, fewer)
+    // Use scenario-based questions for better pedagogical alignment
     let num1 = randomInt(min_value, max_value);
     let num2 = randomInt(min_value, max_value);
 
-    // Ensure they're different for "more than" and "less than" questions
-    if (num1 === num2) {
-        if (attempt >= MAX_ATTEMPTS) {
-            // Fallback: force them to be different
-            num2 = num1 + 1 <= max_value ? num1 + 1 : num1 - 1;
+    // For "equal to", ensure 50% are equal, 50% are not
+    if (word === 'equal to') {
+        if (Math.random() < 0.5) {
+            num2 = num1; // Make them equal
         } else {
-            return generateCompareLanguage(params, level, attempt + 1);
+            // Ensure they're different
+            while (num2 === num1) {
+                num2 = randomInt(min_value, max_value);
+            }
+        }
+    } else {
+        // For other comparison words, ensure numbers are different
+        if (num1 === num2) {
+            if (attempt >= MAX_ATTEMPTS) {
+                // Fallback: force them to be different
+                num2 = num1 + 1 <= max_value ? num1 + 1 : num1 - 1;
+            } else {
+                return generateCompareLanguage(params, level, attempt + 1);
+            }
         }
     }
 
-    const questionText = generateComparisonLanguageText(num1, num2, word);
-    const answer = evaluateComparison(num1, num2, word) ? 'Yes' : 'No';
+    // Build scenario-based question
+    const scenarioQuestion = buildTwoWayComparisonQuestion(num1, num2, word);
+
+    // Set appropriate hints based on comparison word
+    let hint;
+    switch(word) {
+        case 'more than':
+        case 'more':
+            hint = 'Find who has the bigger number';
+            break;
+        case 'fewer':
+        case 'less than':
+        case 'less':
+            hint = 'Find who has the smaller number';
+            break;
+        case 'equal to':
+        case 'same':
+            hint = 'Check if the numbers are the same';
+            break;
+        default:
+            hint = 'Think carefully about the numbers';
+    }
 
     return {
-        text: questionText,
+        text: scenarioQuestion.text,
         type: 'multiple_choice',
-        options: ['Yes', 'No'],
-        answer: answer,
-        hint: `Think about which number is bigger or smaller`,
+        options: scenarioQuestion.options,
+        answer: scenarioQuestion.answer,
+        hint: hint,
         module: 'N04_Y1_NPV',
         level: level
     };
 }
 
 /**
- * Identify most/least from a group
+ * Identify most/least from a group (abstract number comparison)
+ * Note: This differs from compare_language which uses contextual scenarios
  */
 function generateIdentifyMostLeast(params, level) {
     const { min_value, max_value } = params;
@@ -196,8 +280,11 @@ function generateIdentifyMostLeast(params, level) {
 
     const answer = question_type === 'most' ? Math.max(...numbers) : Math.min(...numbers);
 
+    // Format numbers with visual separation for easier parsing by Year 1 students
+    const numbersVisual = numbers.map(n => formatNumber(n)).join('   '); // Extra spaces for visual clarity
+
     return {
-        text: `Which number is ${question_type}: ${numbers.map(n => formatNumber(n)).join(', ')}?`,
+        text: `Which of these numbers is the ${question_type}?\n\n${numbersVisual}`,
         type: 'multiple_choice',
         options: numbers,
         answer: answer.toString(),
@@ -208,40 +295,8 @@ function generateIdentifyMostLeast(params, level) {
 }
 
 /**
- * Estimate group size (introduced in higher levels)
- */
-function generateEstimateGroup(params, level) {
-    const { min_value, max_value, object_types } = params;
-
-    const actualCount = randomInt(min_value, max_value);
-    // Default object types if not provided
-    const availableTypes = object_types || ['objects', 'items', 'things'];
-    const objectType = randomChoice(availableTypes);
-
-    // Generate estimation options around the actual count
-    const options = [
-        actualCount,
-        Math.max(min_value, actualCount - 2),
-        Math.min(max_value, actualCount + 2),
-        Math.round(actualCount / 2),
-        Math.min(max_value, actualCount * 2)
-    ];
-
-    const shuffledOptions = shuffle(options.slice(0, 4));
-
-    return {
-        text: `About how many ${objectType} are there if you see a group that's close to ${actualCount}?`,
-        type: 'multiple_choice',
-        options: shuffledOptions,
-        answer: actualCount.toString(),
-        hint: `Look for the number closest to what you'd estimate`,
-        module: 'N04_Y1_NPV',
-        level: level
-    };
-}
-
-/**
  * Number line between two numbers
+ * Enhanced with visual number line for better spatial understanding
  */
 function generateNumberLineBetween(params, level, attempt = 0) {
     const MAX_ATTEMPTS = 10;
@@ -261,6 +316,10 @@ function generateNumberLineBetween(params, level, attempt = 0) {
 
     const between = randomInt(num1 + 1, num2 - 1);
 
+    // Create a simple visual representation using a mini number line
+    // Show numbers from num1 to num2 with boundary markers
+    const numberLineVisual = `${num1} ─────── ? ─────── ${num2}`;
+
     // Generate distractors
     const distractors = [
         num1,
@@ -272,11 +331,11 @@ function generateNumberLineBetween(params, level, attempt = 0) {
     const options = shuffle([between, ...distractors.slice(0, 3)]);
 
     return {
-        text: `Which number comes between ${num1} and ${num2} on a number line?`,
+        text: `Which number comes between ${num1} and ${num2}?\n\n${numberLineVisual}`,
         type: 'multiple_choice',
         options: options,
         answer: between.toString(),
-        hint: `Find a number that's bigger than ${num1} but smaller than ${num2}`,
+        hint: `Find the number in the middle`,
         module: 'N04_Y1_NPV',
         level: level
     };

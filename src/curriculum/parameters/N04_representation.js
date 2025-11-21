@@ -25,7 +25,7 @@ export const N04_MODULES = {
             2: {
                 min_value: 0,
                 max_value: 20,
-                operations: ['number_line_position', 'count_objects', 'compare_language', 'identify_most_least', 'estimate_group'],
+                operations: ['number_line_position', 'count_objects', 'compare_language', 'identify_most_least'],
                 number_line_max: 20,
                 object_types: ['dots', 'stars', 'circles', 'blocks'],
                 comparison_words: ['equal to', 'more than', 'less than', 'fewer', 'most', 'least']
@@ -33,7 +33,7 @@ export const N04_MODULES = {
             3: {
                 min_value: 0,
                 max_value: 50,
-                operations: ['number_line_position', 'number_line_between', 'compare_language', 'identify_most_least', 'estimate_group'],
+                operations: ['number_line_position', 'number_line_between', 'compare_language', 'identify_most_least'],
                 number_line_max: 50,
                 object_types: ['dots', 'stars', 'circles', 'blocks', 'tallies'],
                 comparison_words: ['equal to', 'more than', 'less than', 'fewer', 'most', 'least']
@@ -41,9 +41,8 @@ export const N04_MODULES = {
             4: {
                 min_value: 0,
                 max_value: 100,
-                operations: ['number_line_position', 'number_line_between', 'number_line_jump', 'compare_language', 'estimate_position', 'estimate_group'],
+                operations: ['number_line_position', 'number_line_between', 'compare_language', 'identify_most_least'],
                 number_line_max: 100,
-                estimation_ranges: [[0, 20], [20, 50], [50, 100]],
                 object_types: ['dots', 'stars', 'circles', 'blocks', 'tallies'],
                 comparison_words: ['equal to', 'more than', 'less than', 'fewer', 'most', 'least']
             }

@@ -4,19 +4,17 @@
  * Generates counting sequence questions based on UK National Curriculum
  * Module: N01_Y1_NPV - "Count to and across 100, forwards and backwards"
  *
- * UPDATED: Now supports progressive sub-learning objectives:
- * Level 1: Count in 1s and 2s from 0-20
- * Level 2: Count in 1s, 2s, and 5s from 0-50 (any start)
- * Level 3: Count in 1s, 2s, 5s, and 10s from 0-100 (any start)
- * Level 4: Count in 1s, 2s, 3s, 5s, and 10s from 0-200 (any start)
+ * Level 1: Count in 1s and 2s, 4 numbers, gap at end
+ * Level 2: Count in 1s, 2s, and 5s, 4 numbers, gap in middle
+ * Level 3: Count in 1s, 2s, 5s, and 10s, 3 numbers, gap in middle
+ * Level 4: Count in 2s, 5s, and 10s, 3 numbers, gap random
  */
 
 import {
     randomChoice,
-    randomInt,
     getStartValue,
     generateSequence,
-    getGapPositions
+    getGapPosition
 } from './helpers/N01_countingHelpers.js';
 
 /**
@@ -26,20 +24,10 @@ export function generateQuestion(params, level) {
     // Extract parameters
     const step = randomChoice(params.step_sizes);
     const direction = randomChoice(params.directions);
-    const { sequence_length, gaps_count, gap_position, min_value, max_value } = params;
+    const { sequence_length, gap_position, min_value, max_value } = params;
 
     // Get starting value
     let start = getStartValue(params, step);
-
-    // Special handling for Level 1 (zero_or_twenty)
-    // This provides structure for beginners: always start from 0 or 20
-    if (params.start_from === 'zero_or_twenty') {
-        if (direction === 'forwards') {
-            start = 0;  // Always start from 0 for forwards
-        } else {
-            start = 20; // Always start from 20 for backwards
-        }
-    }
 
     // Ensure sequence stays within bounds
     if (direction === 'forwards') {
@@ -57,38 +45,19 @@ export function generateQuestion(params, level) {
     // Generate full sequence
     const fullSequence = generateSequence(start, step, sequence_length, direction);
 
-    return generateQuestionByType(fullSequence, params, step, direction, level);
-}
+    // Get single gap position
+    const gapIndex = getGapPosition(sequence_length, gap_position);
+    const answer = fullSequence[gapIndex];
 
-/**
- * Generate fill-in-the-blanks question
- */
-function generateQuestionByType(fullSequence, params, step, direction, level) {
-    const { gaps_count, gap_position, sequence_length } = params;
-
-    // Get positions for blanks (gaps can now be anywhere, including at the end)
-    const gapPositions = getGapPositions(sequence_length, gaps_count, gap_position);
-
-    // Get final gap position (chronologically last = highest index)
-    const finalGapPosition = Math.max(...gapPositions);
-    const finalAnswer = fullSequence[finalGapPosition];
-
-    // Create display sequence with visual distinction for final gap
-    const displaySequence = fullSequence.map((num, idx) => {
-        if (idx === finalGapPosition) return '<span class="gap-final">[?]</span>';
-        if (gapPositions.includes(idx)) return '<span class="gap-other">__</span>';
-        return num.toString();
-    });
-
-    // Use different wording based on number of gaps
-    const questionText = gaps_count === 1
-        ? `Fill in the missing number: ${displaySequence.join(', ')}`
-        : `Fill in the <strong class="final-emphasis">final</strong> missing number: ${displaySequence.join(', ')}`;
+    // Create display sequence
+    const displaySequence = fullSequence.map((num, idx) =>
+        idx === gapIndex ? '__' : num.toString()
+    );
 
     return {
-        text: questionText,
+        text: `What is the missing number? ${displaySequence.join(', ')}`,
         type: 'text_input',
-        answer: finalAnswer.toString(),  // Single answer only
+        answer: answer.toString(),
         hint: `The pattern counts ${direction} in ${step}s`,
         module: 'N01_Y1_NPV',
         level: level
