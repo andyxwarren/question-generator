@@ -136,6 +136,15 @@ Examine the generator function for:
 - Edge case handling (e.g., crossing zero for negative numbers)
 - Question variety within each level
 
+**Schema v2.0 Compliance (CRITICAL):**
+- ✅ Every question has `questionTemplate` with `[placeholder]` notation
+- ✅ Every question has `questionRendered` (actual text)
+- ✅ All values in `values` object are RAW (no formatting, symbols, units)
+- ✅ Every value has corresponding metadata in `valueMetadata` with type, prefix, suffix, decimals
+- ✅ Includes `locale: "en-GB"` and `universal: boolean` flags
+- ✅ For gap-fill questions, uses `[unknown]` pattern where `values.unknown` equals `answer`
+- ✅ Answer field contains raw value (not formatted string)
+
 ## 5. SAMPLE QUESTION GENERATION & ANALYSIS
 
 Request or generate 8-12 sample questions:
@@ -192,6 +201,59 @@ Compare with related modules:
 - Check rounding uses appropriate bases
 - Ensure comparison questions use suitable ranges
 
+**For ALL Modules - Schema v2.0 Compliance (MANDATORY):**
+
+Every module MUST follow Schema v2.0. Check the following:
+
+1. **Dual Format Pattern:**
+   - ✅ Has `questionTemplate` with `[placeholder]` notation (e.g., "[num1] + [num2]")
+   - ✅ Has `questionRendered` with actual values (e.g., "45 + 23")
+   - ❌ REJECT if either is missing
+
+2. **Raw Values Requirement:**
+   - ✅ All values in `values` object are raw, unformatted
+   - ✅ Numbers without thousand separators (45000 not "45,000")
+   - ✅ No currency symbols (2.5 not "£2.50")
+   - ✅ No units (150 not "150 cm")
+   - ❌ REJECT if any formatted values found
+
+3. **Metadata Completeness:**
+   - ✅ Every key in `values` has corresponding entry in `valueMetadata`
+   - ✅ Each metadata entry has: type, prefix, suffix, decimals
+   - ✅ Types are valid: "number", "currency", "measurement", "time"
+   - ❌ REJECT if metadata is missing or incomplete
+
+4. **Locale Flags:**
+   - ✅ Has `locale: "en-GB"` (UK curriculum always uses en-GB)
+   - ✅ Has `universal` boolean (true for pure numbers, false for money/measurements)
+   - ❌ REJECT if flags are missing
+
+5. **Unknown Pattern (for gap-fill questions):**
+   - ✅ Uses `[unknown]` in template (not "___" or "_")
+   - ✅ `values.unknown` equals `answer`
+   - ✅ Has metadata for `unknown`
+   - ✅ For multiple unknowns: `[unknown1]`, `[unknown2]`, etc.
+   - ❌ REJECT if pattern is incorrect
+
+6. **Answer Format:**
+   - ✅ `answer` field contains raw value (number, string, array)
+   - ✅ Not a formatted string
+   - ✅ For multi-gap: also has `answers` array
+   - ❌ REJECT if answer is formatted
+
+**Common Schema Violations to Watch For:**
+- Using old `text` field instead of `questionTemplate` + `questionRendered`
+- Formatted values in `values` object (e.g., "£2.50" instead of 2.5)
+- Missing `valueMetadata` entries
+- Using "___" instead of `[unknown]` placeholder
+- Formatted answers (e.g., "£5.00" instead of 5)
+- Missing locale/universal flags
+
+**If Schema Violations Found:**
+- Report as 🚨 CRITICAL issue
+- ❌ REJECT with detailed list of violations
+- Provide specific examples of incorrect vs correct format
+
 # YOUR OUTPUT FORMAT
 
 Provide a comprehensive validation report with these sections:
@@ -224,13 +286,27 @@ Suggested Changes: [specific recommendations if needed]
 
 ## 4. SAMPLE QUESTIONS REVIEW
 
-Show 2-3 examples per level with analysis:
+Show 2-3 examples per level with analysis using the new schema format:
 ```
 **Level [X] Example:**
-Question: [question text]
+Question Template: [template with [placeholders]]
+Question Rendered: [actual rendered text]
+Values: [show raw values object]
+Value Metadata: [show metadata object]
+Answer: [raw answer value]
+Locale: [locale flag]
+Universal: [true/false]
 Type: [question type]
 Assessment: [Is this appropriate? Why/why not?]
+Schema Compliance: [✅ All requirements met OR ❌ Missing: X, Y, Z]
 ```
+
+**Schema Validation Checklist for Each Sample:**
+- ✅ Has both questionTemplate and questionRendered
+- ✅ Values are raw (no formatting)
+- ✅ All values have metadata
+- ✅ Locale and universal flags present
+- ✅ [unknown] pattern used correctly (if applicable)
 
 ## 5. CONCERNS & ISSUES
 

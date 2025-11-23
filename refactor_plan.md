@@ -281,6 +281,131 @@ Each value has 4 simple properties:
 
 ---
 
+## Handling Unknown/Missing Values in Questions
+
+### Pattern for Gap-Fill and Missing Number Questions
+
+When questions have unknown values that students need to find (traditionally shown as "___"), use numbered placeholders:
+
+**Key Principle:**
+- Unknown placeholders contain the answer value
+- The placeholder name signals to the server "don't render this - it's what the student must find"
+- Number all repeated placeholders: `[unknown1]`, `[unknown2]`, `[known1]`, `[known2]`
+
+### Example 1: Single Unknown
+
+**Question:** ___ + 7 = 12
+
+```json
+{
+  "questionTemplate": "[unknown] + [known] = [result]",
+  "questionRendered": "___ + 7 = 12",
+  "values": {
+    "unknown": 5,
+    "known": 7,
+    "result": 12
+  },
+  "valueMetadata": {
+    "unknown": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" },
+    "known": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" },
+    "result": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" }
+  },
+  "answer": 5
+}
+```
+
+### Example 2: Multiple Unknowns
+
+**Question:** ___ + ___ = 10
+
+```json
+{
+  "questionTemplate": "[unknown1] + [unknown2] = [result]",
+  "questionRendered": "___ + ___ = 10",
+  "values": {
+    "unknown1": 3,
+    "unknown2": 7,
+    "result": 10
+  },
+  "valueMetadata": {
+    "unknown1": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" },
+    "unknown2": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" },
+    "result": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" }
+  },
+  "answers": [3, 7]
+}
+```
+
+### Example 3: Multiple Knowns + One Unknown
+
+**Question:** 5 + 8 + ___ = 20
+
+```json
+{
+  "questionTemplate": "[known1] + [known2] + [unknown] = [result]",
+  "questionRendered": "5 + 8 + ___ = 20",
+  "values": {
+    "known1": 5,
+    "known2": 8,
+    "unknown": 7,
+    "result": 20
+  },
+  "valueMetadata": {
+    "known1": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" },
+    "known2": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" },
+    "unknown": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" },
+    "result": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" }
+  }
+}
+```
+
+### Example 4: Sequence with Multiple Gaps
+
+**Question:** Fill in the blanks: ___, 5, ___, 15, ___
+
+```json
+{
+  "questionTemplate": "[unknown1], [known1], [unknown2], [known2], [unknown3]",
+  "questionRendered": "___, 5, ___, 15, ___",
+  "values": {
+    "unknown1": 0,
+    "known1": 5,
+    "unknown2": 10,
+    "known2": 15,
+    "unknown3": 20
+  },
+  "valueMetadata": {
+    "unknown1": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" },
+    "known1": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" },
+    "unknown2": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" },
+    "known2": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" },
+    "unknown3": { "prefix": "", "suffix": "", "decimals": 0, "type": "number" }
+  },
+  "answers": [0, 10, 20]
+}
+```
+
+### Implementation Guidelines
+
+1. **Replace "___" with [unknown] in questionTemplate**
+   - Single unknown: `[unknown]`
+   - Multiple unknowns: `[unknown1]`, `[unknown2]`, etc.
+
+2. **Number repeated placeholders**
+   - Multiple knowns: `[known1]`, `[known2]`
+   - Multiple values: `[value1]`, `[value2]`
+   - Any placeholder appearing 2+ times gets numbered
+
+3. **Add unknown to values object**
+   - Value equals the answer
+   - Type matches answer metadata type
+
+4. **Keep "___" in questionRendered**
+   - For human readability during review
+   - Server will replace based on template
+
+---
+
 ## Generator Patterns by Type
 
 ### Pattern 1: Pure Numbers (type: "number")
@@ -769,21 +894,69 @@ function createTimeMetadata(unit = "minutes") {
 
 ---
 
-### Phase 4: Update Export Function (1 hour)
+### Phase 4: Update Export Functions (1 hour)
 
-**File**: `src/ui/app.js` (lines 807-850)
+#### JSON Export (Schema v2.0)
 
-**Ensure JSON export includes**:
-- `questionTemplate`
-- `questionRendered`
-- `values`
-- `valueMetadata`
-- `answerMetadata`
-- `optionsMetadata` (if multiple choice)
-- `hintTemplate`
-- `hintRendered`
-- `locale`
-- `universal`
+**File**: `src/ui/app.js` (exportToEnhancedJson)
+
+**Schema Version**: 2.0
+
+**Includes:**
+- `questionTemplate` - Template with placeholders
+- `questionRendered` - Rendered example for human review
+- `hintTemplate` - Hint with placeholders
+- `hintRendered` - Rendered hint
+- `values` - Raw numeric values object
+- `valueMetadata` - Formatting metadata for each value
+- `answerMetadata` - Answer formatting metadata
+- `optionsMetadata` - Options formatting metadata (array)
+- `locale` - Locale identifier (e.g., 'en-GB')
+- `universal` - Universality flag (true/false)
+- `questionType` - Question type
+- `generatorParameters` - Generator parameters
+- `tags` - Searchable tags array
+- `generatedAt` - ISO timestamp
+
+**Removed Duplicate Legacy Fields:**
+- ❌ `questionText` (use questionRendered)
+- ❌ `correctAnswer` (use answer)
+- ❌ `multipleChoiceOptions` (use options)
+- ❌ `hint` (use hintRendered)
+- ❌ `multiGapAnswers` (use answers)
+- ❌ `visualType` (computed field, not needed)
+- ❌ `questionData` (computed field, not needed)
+- ❌ `answerType` (computed field, not needed)
+
+**Schema Features:**
+- metadata-driven-formatting
+- locale-support
+- template-placeholders
+- raw-numeric-values
+
+#### CSV Export (32 Columns)
+
+**File**: `src/ui/app.js` (exportToEnhancedCsv)
+
+**Expanded from 20 to 32 columns for full parity with JSON export.**
+
+**12 New Columns Added:**
+1. `Module_Description` - Full module description
+2. `Curriculum_Ref` - Curriculum reference code
+3. `Icon` - Module icon emoji
+4. `Level_Name` - Human-readable level name (Beginning, Developing, etc.)
+5. `Question_Template` - Template with placeholders
+6. `Hint_Template` - Hint template with placeholders
+7. `Values_JSON` - Raw values object (stringified)
+8. `Value_Metadata_JSON` - Value metadata (stringified)
+9. `Answer_Metadata_JSON` - Answer metadata (stringified)
+10. `Options_Metadata_JSON` - Options metadata array (stringified)
+11. `Locale` - Locale identifier
+12. `Universal` - Universality flag
+
+**Complete Column Order (32 total):**
+
+ID, Question_Number, Module_ID, Module_Name, Module_Description, Year_Group, Strand, Substrand, Curriculum_Ref, Icon, Level, Level_Name, Difficulty_Score, Question_Template, Question_Text, Hint_Template, Hint, Values_JSON, Value_Metadata_JSON, Answer_Metadata_JSON, Options_Metadata_JSON, Locale, Universal, Question_Type, Visual_Type, Question_Data_JSON, Correct_Answer, Answer_Type, Options_JSON, Tags, Generated_At, Parameters_JSON
 
 ---
 

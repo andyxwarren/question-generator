@@ -27,9 +27,12 @@ User: "I have parameters for Year 3 counting in 2s, 5s, 10s. How should I ask th
 
 Output:
 Visual Strategy: Simple text with inline formatting
-Template: "Count forwards in ${step_size}s from ${start}. What comes next after ${last}?"
+Question Template: "Count forwards in [stepSize]s from [start]. What comes next after [last]?"
+Question Rendered: "Count forwards in 2s from 0. What comes next after 8?"
 Input Type: text_input
-Hint: "Think: what number is ${step_size} more than ${last}?"
+Values: { stepSize: 2, start: 0, last: 8 }
+Hint Template: "Think: what number is [stepSize] more than [last]?"
+Hint Rendered: "Think: what number is 2 more than 8?"
 
 Level 1 Example: "Count forwards in 2s from 0. What comes next after 8?" → Answer: 10
 Level 4 Example: "Count forwards in 50s from 150. What comes next after 600?" → Answer: 650
@@ -102,9 +105,11 @@ Layout: Right-aligned numbers with operator and horizontal line
 
 Create **1-2 high-impact templates** per module, not exhaustive variations. Each template must include:
 
-1. **Text Pattern**: Show how parameters interpolate into question text
-   - Use `${param.name}` notation for clarity
-   - Example: "What is ${num1} + ${num2}?"
+1. **Template Pattern**: Show how parameters interpolate into question text
+   - Use `[placeholder]` notation for clarity
+   - Example Template: "What is [num1] + [num2]?"
+   - Example Rendered: "What is 45 + 23?"
+   - Provide BOTH template (with placeholders) and rendered example
 
 2. **Input Type**: Specify `text_input`, `multiple_choice`, `fill_blanks`, or `next_number`
 
@@ -127,9 +132,13 @@ Parameters:
 - allow_negative: false (Level 1-3), true (Level 4)
 
 Template Mapping:
-- ${num1}: Random number within min_value to max_value
-- ${num2}: Random number within min_value to max_value
-- ${operator}: '+' if operation='addition', '-' if operation='subtraction'
+- [num1]: Random number within min_value to max_value
+- [num2]: Random number within min_value to max_value
+- [operator]: '+' if operation='addition', '-' if operation='subtraction'
+
+Question Template: "What is [num1] [operator] [num2]?"
+Question Rendered: "What is 45 + 23?" (when num1=45, operator='+', num2=23)
+Values: { num1: 45, num2: 23, operator: "+" }
 ```
 
 ### 5. Provide Level Progression Examples
@@ -155,18 +164,35 @@ Describe the low-overhead approach for displaying this question type.
 
 ### 2. Question Template(s)
 For each template:
-- **Text Pattern**: The question text with parameter placeholders
-- **Input Type**: The interaction type
-- **Hint Strategy**: How to guide students
+- **Question Template**: The question text with `[placeholder]` notation
+- **Question Rendered**: Example of how it renders with actual values
+- **Input Type**: The interaction type (`text_input`, `multiple_choice`, etc.)
+- **Values Object**: Show which placeholders map to which values
+- **Value Metadata**: Specify formatting metadata for each value (see Metadata Design below)
+- **Hint Template**: Optional hint with `[placeholder]` notation
+- **Hint Rendered**: Example of rendered hint
 - **Answer Format**: Expected answer structure
 
-### 3. Parameter Mapping
+### 3. Metadata Design
+For each value in the question, specify:
+- **type**: `"number"`, `"currency"`, `"measurement"`, `"time"`, etc.
+- **prefix**: String to show before the value (e.g., `"£"`, `""`)
+- **suffix**: String to show after the value (e.g., `" cm"`, `""`)
+- **decimals**: Number of decimal places (e.g., `0`, `2`)
+
+**Special Placeholder: `[unknown]`**
+- Use `[unknown]` for gap-fill questions (renders as `___` in UI)
+- The `unknown` value should equal the answer
+- For multiple unknowns, use `[unknown1]`, `[unknown2]`, etc.
+- The question server controls rendering of unknowns (typically as blanks)
+
+### 4. Parameter Mapping
 Show how generator parameters control question variation.
 
-### 4. Level Progression Examples
-Provide 2-4 examples showing Level 1 vs Level 4 questions.
+### 5. Level Progression Examples
+Provide 2-4 examples showing Level 1 vs Level 4 questions with complete schema.
 
-### 5. Implementation Notes
+### 6. Implementation Notes
 (Optional) Any special considerations for the generator developer.
 
 ## Quality Standards
@@ -190,31 +216,57 @@ Simple text sentence with inline number formatting. No special visual elements n
 ## Question Template
 
 **Template 1: Forward Counting**
-- Text: "Count forwards in ${step_size}s from ${start_number}. What comes next after ${last_number}?"
+- Question Template: "Count forwards in [stepSize]s from [start]. What comes next after [last]?"
+- Question Rendered: "Count forwards in 2s from 0. What comes next after 8?"
 - Input Type: `text_input`
-- Hint Strategy: "Think about what number is ${step_size} more than ${last_number}"
-- Answer Format: Single integer
+- Values: `{ stepSize: 2, start: 0, last: 8 }`
+- Value Metadata:
+  ```javascript
+  {
+    stepSize: { type: "number", prefix: "", suffix: "", decimals: 0 },
+    start: { type: "number", prefix: "", suffix: "", decimals: 0 },
+    last: { type: "number", prefix: "", suffix: "", decimals: 0 }
+  }
+  ```
+- Hint Template: "Think: what number is [stepSize] more than [last]?"
+- Hint Rendered: "Think: what number is 2 more than 8?"
+- Answer Format: Single integer (raw number, no formatting)
+
+## Metadata Design
+
+All values are universal numbers (locale-independent):
+- **type**: `"number"` for all values
+- **prefix**: `""` (no prefix)
+- **suffix**: `""` (no suffix)
+- **decimals**: `0` (whole numbers only)
 
 ## Parameter Mapping
-- ${step_size}: From parameters.step_sizes array (e.g., [2, 5, 10])
-- ${start_number}: Generated based on parameters.start_from rules
-- ${last_number}: Calculated as start + (step_size × sequence_length)
+- [stepSize]: From parameters.step_sizes array (e.g., [2, 5, 10])
+- [start]: Generated based on parameters.start_from rules
+- [last]: Calculated as start + (stepSize × sequence_length)
 
 ## Level Progression Examples
 
 **Level 1:**
-- Parameters: step_sizes=[2, 5, 10], min_value=0, max_value=50
-- Question: "Count forwards in 2s from 0. What comes next after 8?"
-- Answer: 10
+- Parameters: `step_sizes=[2, 5, 10], min_value=0, max_value=50`
+- Question Template: "Count forwards in [stepSize]s from [start]. What comes next after [last]?"
+- Question Rendered: "Count forwards in 2s from 0. What comes next after 8?"
+- Values: `{ stepSize: 2, start: 0, last: 8 }`
+- Answer: `10` (raw number)
 
 **Level 4:**
-- Parameters: step_sizes=[25, 50, 100], min_value=0, max_value=1000
-- Question: "Count forwards in 50s from 150. What comes next after 600?"
-- Answer: 650
+- Parameters: `step_sizes=[25, 50, 100], min_value=0, max_value=1000`
+- Question Template: "Count forwards in [stepSize]s from [start]. What comes next after [last]?"
+- Question Rendered: "Count forwards in 50s from 150. What comes next after 600?"
+- Values: `{ stepSize: 50, start: 150, last: 600 }`
+- Answer: `650` (raw number)
 
 ## Implementation Notes
-- Generator should randomly select step_size from parameters.step_sizes
-- Ensure start_number aligns with step_size (e.g., if step=5, start=0 or multiple of 5)
+- Generator should randomly select stepSize from parameters.step_sizes
+- Ensure start aligns with stepSize (e.g., if step=5, start=0 or multiple of 5)
+- All values stored as raw numbers (no thousand separators)
+- Universal flag: `true` (numbers are locale-independent)
+- Locale: `"en-GB"` (but renders identically in all locales)
 ```
 
 ## When to Seek Clarification

@@ -286,27 +286,26 @@ function generateMissingAddend(params, level) {
         const item = getRandomItem();
         questionTemplate = `[name] wants [result] [item]. They have [known] [item]. How many more do they need?`;
         questionRendered = `${name} wants ${result} ${item}. They have ${known} ${item}. How many more do they need?`;
-        values = { name, result, known, item, answer };
+        values = { name, result, known, item };
         valueMetadata = {
             name: { prefix: "", suffix: "", decimals: 0, type: "text" },
             result: { prefix: "", suffix: "", decimals: 0, type: "number" },
             known: { prefix: "", suffix: "", decimals: 0, type: "number" },
-            item: { prefix: "", suffix: "", decimals: 0, type: "text" },
-            answer: { prefix: "", suffix: "", decimals: 0, type: "number" }
+            item: { prefix: "", suffix: "", decimals: 0, type: "text" }
         };
     } else {
         if (position === 'first') {
-            questionTemplate = `___ + [known] = [result]`;
+            questionTemplate = `[unknown] + [known] = [result]`;
             questionRendered = `___ + ${known} = ${result}`;
         } else {
-            questionTemplate = `[known] + ___ = [result]`;
+            questionTemplate = `[known] + [unknown] = [result]`;
             questionRendered = `${known} + ___ = ${result}`;
         }
-        values = { known, result, answer };
+        values = { unknown: answer, known, result };
         valueMetadata = {
+            unknown: { prefix: "", suffix: "", decimals: 0, type: "number" },
             known: { prefix: "", suffix: "", decimals: 0, type: "number" },
-            result: { prefix: "", suffix: "", decimals: 0, type: "number" },
-            answer: { prefix: "", suffix: "", decimals: 0, type: "number" }
+            result: { prefix: "", suffix: "", decimals: 0, type: "number" }
         };
     }
 

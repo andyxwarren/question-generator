@@ -143,22 +143,59 @@ When the user requests a new curriculum module, you will execute the following 5
    - Use the question templates from Stage 2 as the implementation guide
    - Follow ES6 module patterns with `.js` extensions
    - Implement pure functions (no side effects)
-   - Return question objects matching the schema:
+   - Return question objects matching the **new schema** (Schema v2.0):
      ```javascript
      {
-         text: string,
+         // Core question structure (REQUIRED)
+         questionTemplate: string,   // Template with [placeholders] e.g., "[num1] + [num2] = ?"
+         questionRendered: string,   // Rendered text e.g., "45 + 23 = ?"
          type: 'text_input' | 'multiple_choice',
-         answer: string,  // Always string, even for numbers
-         // Optional fields based on type:
-         options: number[],     // For multiple choice
-         hint: string,          // For text input
-         answers: any[],        // For multi-gap questions
+
+         // Values and metadata (REQUIRED)
+         values: object,            // Raw values { num1: 45, num2: 23 }
+         valueMetadata: object,     // Formatting metadata for each value
+
+         // Answer (REQUIRED)
+         answer: any,               // Raw value (number, string, etc.) - NOT formatted
+
+         // Locale information (REQUIRED)
+         locale: 'en-GB',           // Always 'en-GB' for UK curriculum
+         universal: boolean,        // true for numbers, false for money/measurements
+
+         // Optional fields based on type
+         options: any[],            // For multiple choice (raw values)
+         hintTemplate: string,      // Hint with [placeholders]
+         hintRendered: string,      // Rendered hint
+         answers: any[],            // For multi-gap questions (raw values)
+
+         // Module tracking (added by engine)
          module: 'MODULE_ID',
          level: number
      }
      ```
+
+   **Value Metadata Structure**:
+   Each key in `values` must have corresponding metadata:
+   ```javascript
+   valueMetadata: {
+       placeholderName: {
+           type: "number" | "currency" | "measurement" | "time",
+           prefix: string,    // e.g., "£", ""
+           suffix: string,    // e.g., " cm", ""
+           decimals: number   // e.g., 0, 2
+       }
+   }
+   ```
+
+   **Special Placeholder: [unknown]**:
+   For gap-fill questions, use `[unknown]` in the template:
+   - The `unknown` value should equal the answer
+   - For multiple unknowns, use `[unknown1]`, `[unknown2]`, etc.
+   - Example: `{ questionTemplate: "[unknown] + [known] = [result]", values: { unknown: 5, known: 7, result: 12 }, answer: 5 }`
+
    - Use or create helper functions as recommended in the question template design
    - Include clear comments explaining the logic
+   - **CRITICAL**: Store all values as RAW data (no formatting, thousand separators, currency symbols, or units)
 
 3. **Register generator** in `src/core/questionEngine.js`:
    ```javascript
@@ -254,8 +291,43 @@ Ensure all implementations follow the project's established patterns:
 - **Registry Pattern**: Use QuestionEngine.register() for generator management
 - **ES6 Modules**: Use `import`/`export` with `.js` extensions, no bundler required
 - **UK National Curriculum Alignment**: Every module precisely matches curriculum statements
-- **Question Schema Compliance**: All question objects follow the exact schema structure
+- **Question Schema Compliance**: All question objects follow **Schema v2.0** (see below)
 - **Low-Overhead Philosophy**: Prefer simple HTML/CSS solutions, avoid over-engineering
+
+### Schema v2.0 Compliance Requirements
+
+**CRITICAL**: All new generators MUST use Schema v2.0 with these requirements:
+
+1. **Dual Format Pattern**: Every question must have BOTH:
+   - `questionTemplate`: Template with `[placeholder]` notation
+   - `questionRendered`: Actual rendered text for human review
+
+2. **Raw Values Only**: The `values` object contains ONLY raw, unformatted data:
+   - Numbers without thousand separators (e.g., `45000` not `"45,000"`)
+   - No currency symbols (e.g., `2.50` not `"£2.50"`)
+   - No units (e.g., `150` not `"150 cm"`)
+   - No formatted strings
+
+3. **Metadata for Every Value**: Each key in `values` requires corresponding metadata in `valueMetadata`:
+   ```javascript
+   values: { amount: 2.5 }
+   valueMetadata: {
+       amount: { type: "currency", prefix: "£", suffix: "", decimals: 2 }
+   }
+   ```
+
+4. **Locale Flags**: Every question must include:
+   - `locale: "en-GB"` (always, for UK curriculum)
+   - `universal: true` for pure numbers, `false` for money/measurements/time
+
+5. **Unknown Pattern**: For gap-fill questions:
+   - Use `[unknown]` in template (renders as blank/gap)
+   - Set `values.unknown` equal to `answer`
+   - Include metadata for `unknown`
+
+6. **Answer Format**: The `answer` field must be:
+   - A raw value (number, string, array) - NEVER formatted
+   - For multi-gap: also include `answers` array
 
 ## Error Handling
 
