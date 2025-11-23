@@ -123,15 +123,588 @@ All generators must return objects with this structure:
 
 ## Common Parameters Structure
 
-Parameters vary by module but typically include:
+Parameters are organized by mathematical strand. Use the appropriate parameter types based on the curriculum objective.
 
-- `step_sizes` or `powers_of_10`: Array of counting increments
+### Number & Counting Parameters
+Used for: Counting sequences, number generation, place value
 - `min_value`, `max_value`: Bounds for generated numbers
+- `step_sizes`: Array of counting increments (e.g., `[1, 2, 5, 10]`) - **Years 1-4 only**
+- `powers_of_10`: Array for Year 5+ (e.g., `[10, 100, 1000]`) - **Use instead of step_sizes for Y5+**
 - `directions`: Array of `'forwards'` and/or `'backwards'`
-- `start_from`: Where sequences start (`'zero_only'`, `'any'`, `'zero_or_multiple'`, etc.)
+- `start_from`: Where sequences start (`'zero_only'`, `'any'`, `'zero_or_multiple'`, `'non_zero'`)
 - `sequence_length`: How many numbers in a sequence
 - `gaps_count`: Number of blanks in fill-in questions
-- `gap_position`: Where gaps appear (`'end'`, `'middle'`, `'random'`, `'start'`)
+- `gap_position`: Where gaps appear (`'end'`, `'middle'`, `'random'`, `'start'`, `'start_and_end'`)
+- `allow_negatives`: Boolean (critical for Year 5+)
+- `start_range`: Array `[min, max]` for starting values (Year 5+ with negatives)
+
+**Example:**
+```javascript
+// Year 3 counting in multiples of 4, 8, 50, 100
+parameters: {
+    1: {
+        step_sizes: [4, 8],
+        min_value: 0,
+        max_value: 100,
+        directions: ['forwards'],
+        start_from: 'zero_only'
+    }
+}
+```
+
+**Example - Roman Numerals (N03 Years 3-5):**
+```javascript
+// Year 3: Read Roman numerals to 12 (clock faces)
+parameters: {
+    1: {
+        roman_range: [1, 5],  // I, II, III, IV, V
+        roman_representation: ['standard', 'clock_face'],
+        conversion_type: ['roman_to_arabic'],
+        numeral_complexity: ['simple'],  // No subtractive yet
+        include_context: true,
+        common_values_only: true
+    },
+    3: {
+        roman_range: [1, 12],  // Full clock face I-XII
+        roman_representation: ['clock_face', 'standard'],
+        conversion_type: ['roman_to_arabic', 'arabic_to_roman'],
+        numeral_complexity: ['simple', 'subtractive'],  // IV, IX
+        include_context: true
+    }
+}
+
+// Year 5: Recognize years written in Roman numerals (I-M, 1-1000)
+parameters: {
+    1: {
+        roman_range: [1, 100],  // I-C
+        roman_representation: ['standard'],
+        conversion_type: ['roman_to_arabic'],
+        numeral_complexity: ['subtractive'],
+        include_context: false
+    },
+    4: {
+        roman_range: [1, 1000],  // I-M including years
+        roman_representation: ['standard', 'year', 'date'],
+        conversion_type: ['roman_to_arabic', 'arabic_to_roman'],
+        numeral_complexity: ['subtractive'],
+        include_context: true,
+        common_values_only: false  // Any valid numeral
+    }
+}
+```
+
+### Arithmetic Parameters
+Used for: Addition, subtraction, multiplication, division
+- `tables`: Array of multiplication tables (e.g., `[2, 5, 10]`)
+- `digit_counts`: Object like `{ multiplicand: [1, 2], multiplier: [1] }` (for multi-digit operations)
+- `operations`: Array of operations (e.g., `['addition', 'subtraction']`)
+- `carry_required`: Boolean (for columnar calculations)
+- `borrow_required`: Boolean (for subtraction)
+
+**Example:**
+```javascript
+// Year 4 columnar multiplication: 2-digit × 1-digit
+parameters: {
+    1: {
+        digit_counts: { multiplicand: [2], multiplier: [1] },
+        min_multiplicand: 10,
+        max_multiplicand: 50,
+        multiplier_range: [2, 5]
+    }
+}
+```
+
+**Example - Order of Operations (C09 Year 6):**
+```javascript
+// Use knowledge of the order of operations to carry out calculations
+parameters: {
+    1: {
+        operator_complexity: ['single_priority'],
+        bracket_usage: ['none'],
+        structure_template: ['a + b + c', 'a × b × c'],
+        operation_types: ['addition', 'multiplication'],
+        number_range: [1, 10],
+        result_range: [1, 50],
+        include_parentheses: false,
+        multi_step_count: 2
+    },
+    3: {
+        operator_complexity: ['mixed_priority'],
+        bracket_usage: ['none'],
+        structure_template: ['a + b × c', 'a × b + c', 'a - b ÷ c'],
+        operation_types: ['addition', 'subtraction', 'multiplication', 'division'],
+        number_range: [1, 20],
+        result_range: [1, 100],
+        include_parentheses: false,
+        require_working: true,
+        multi_step_count: 2
+    },
+    4: {
+        operator_complexity: ['mixed_priority'],
+        bracket_usage: ['single_pair', 'nested'],
+        structure_template: ['(a + b) × c', 'a × (b - c)', '(a + b) ÷ (c - d)'],
+        operation_types: ['addition', 'subtraction', 'multiplication', 'division'],
+        number_range: [1, 20],
+        result_range: [1, 200],
+        include_parentheses: true,
+        require_working: true,
+        multi_step_count: [3, 4]
+    }
+}
+```
+
+### Fraction Parameters
+Used for: Fraction recognition, comparison, operations
+- `denominators`: Array of allowed denominators
+- `fraction_representation_types`: Array - `['shape', 'number_line', 'set', 'quantity']`
+- `shape_types_for_fractions`: Array - `['circle', 'rectangle', 'bar_model']`
+- `comparison_operators`: Array - `['less_than', 'greater_than', 'equal', 'order']`
+- `fraction_types`: Array - `['unit', 'non_unit', 'proper', 'improper', 'mixed']`
+
+**Example - Fraction Recognition (F01 Year 2):**
+```javascript
+// Recognising fractions of shapes and quantities
+parameters: {
+    1: {
+        denominators: [2, 4],
+        fraction_types: ['unit'],  // Only 1/2, 1/4
+        representation_modes: ['shape'],
+        shape_types_for_fractions: ['circle', 'rectangle'],
+        visual_scaffolding: true,
+        whole_max: 12  // For "1/2 of 6 = ?"
+    },
+    3: {
+        denominators: [2, 3, 4],
+        fraction_types: ['unit', 'non_unit'],  // 1/2, 1/3, 2/3, 3/4
+        representation_modes: ['shape', 'quantity'],
+        shape_types_for_fractions: ['circle', 'rectangle', 'bar_model'],
+        visual_scaffolding: true,
+        whole_max: 24
+    }
+}
+```
+
+**Example - Equivalent Fractions (F02 Year 5):**
+```javascript
+// Mixed numbers ↔ improper fractions
+parameters: {
+    1: {
+        operations: ['recognize', 'mixed_improper'],
+        denominators: [2, 4],
+        improper_range: [1, 10],
+        include_diagrams: true,
+        simplification_method: ['visual']
+    },
+    4: {
+        operations: ['recognize', 'generate', 'simplify', 'mixed_improper'],
+        denominators: [2, 3, 4, 5, 6, 10, 12],
+        denominator_families: [[2,4,8], [3,6,12], [5,10,20]],
+        improper_range: [1, 20],
+        include_diagrams: false,
+        simplification_method: ['factors'],
+        include_multiplicative_reasoning: true
+    }
+}
+```
+
+**Example - Add/Subtract Fractions (F04 Year 6):**
+```javascript
+// Different denominators and mixed numbers
+parameters: {
+    1: {
+        operations: ['add', 'subtract'],
+        denominator_types: ['same'],
+        result_constraint: ['within_one'],
+        max_denominator: 8,
+        include_mixed_numbers: false,
+        number_of_terms: [2]
+    },
+    4: {
+        operations: ['add', 'subtract', 'add_subtract_chain'],
+        denominator_types: ['one_multiple_of_other', 'both_multiples_of_same'],
+        result_constraint: ['can_exceed_one', 'improper_to_mixed'],
+        max_denominator: 12,
+        include_mixed_numbers: true,
+        number_of_terms: [2, 3],
+        require_simplification: true,
+        show_working: true
+    }
+}
+```
+
+### Decimal & Percentage Parameters
+Used for: Decimal operations, percentage calculations
+- `decimal_places`: Number (1, 2, or 3) - tenths, hundredths, thousandths
+- `decimal_operations`: Array - `['compare', 'order', 'round', 'convert_to_fraction']`
+- `percentage_range`: Object - `{ min: 1, max: 100, common: [10, 25, 50, 75] }`
+- `percentage_operations`: Array - `['recognition', 'to_fraction', 'of_amount']`
+
+**Example:**
+```javascript
+// Year 5 comparing decimals with up to 3 decimal places
+parameters: {
+    1: {
+        decimal_places: 1,
+        decimal_operations: ['compare', 'order'],
+        decimal_range: { min: 0.1, max: 0.9 }
+    },
+    3: {
+        decimal_places: 3,
+        decimal_operations: ['compare', 'order'],
+        decimal_range: { min: 0.001, max: 0.999 }
+    }
+}
+```
+
+### Geometry Parameters
+Used for: Shape recognition, properties, angles
+- `shape_types_2d`: Array - `['circle', 'triangle', 'square', 'rectangle', 'pentagon', 'hexagon']`
+- `shape_types_3d`: Array - `['cube', 'cuboid', 'sphere', 'cylinder', 'pyramid']`
+- `property_types`: Array - `['sides', 'vertices', 'edges', 'faces', 'angles']`
+- `angle_types`: Array - `['right', 'acute', 'obtuse', 'reflex']`
+- `angle_range`: Object - `{ min: 1, max: 360 }`
+- `angle_operations`: Array - `['identify_type', 'measure', 'calculate_missing']`
+
+**Example - Shape Properties (G01 Year 2):**
+```javascript
+// Identifying properties of 2D shapes
+parameters: {
+    1: {
+        shape_types_2d: ['triangle', 'square', 'rectangle'],
+        property_types: ['sides', 'vertices'],
+        property_ranges: { sides: { min: 3, max: 4 } },
+        include_diagrams: true
+    }
+}
+```
+
+**Example - Angle Calculations (G04 Year 5/6):**
+```javascript
+// Calculate missing angles in polygons and on straight lines
+parameters: {
+    1: {
+        angle_contexts: ['straight_line', 'right_angle'],
+        angle_types: ['acute', 'obtuse'],
+        angle_range: { min: 10, max: 170 },
+        given_angles: 1,  // One angle given, find the other
+        angle_sum: 180,  // Straight line
+        include_diagram: true,
+        show_labels: true
+    },
+    3: {
+        angle_contexts: ['straight_line', 'point', 'triangle'],
+        angle_types: ['acute', 'obtuse', 'right'],
+        angle_range: { min: 5, max: 175 },
+        given_angles: [1, 2],  // 1 or 2 angles given
+        angle_sum: [180, 360],  // Straight line or around a point
+        include_diagram: true,
+        polygon_types: ['triangle', 'quadrilateral'],
+        require_reasoning: true
+    },
+    4: {
+        angle_contexts: ['straight_line', 'point', 'triangle', 'quadrilateral', 'polygon'],
+        angle_types: ['acute', 'obtuse', 'right', 'reflex'],
+        angle_range: { min: 1, max: 359 },
+        given_angles: [1, 2, 3],  // Multiple angles given
+        angle_sum: [180, 360],  // Multiple contexts
+        include_diagram: false,  // Abstract diagrams
+        polygon_types: ['triangle', 'quadrilateral', 'pentagon', 'hexagon'],
+        require_reasoning: true,
+        multi_step: true  // May require calculating intermediate angles
+    }
+}
+```
+
+**Example - Symmetry Construction (G02 Year 4):**
+```javascript
+// Complete a simple symmetric figure with respect to a specific line of symmetry
+parameters: {
+    1: {
+        completion_task_type: ['complete_shape'],
+        symmetry_line_orientation: ['vertical'],
+        shape_complexity: ['simple_polygon'],
+        grid_reference: true,
+        grid_size: { rows: 10, cols: 10 },
+        partial_shape_given: ['half'],
+        include_vertices_marked: true,
+        freehand_vs_grid: ['grid']
+    },
+    2: {
+        completion_task_type: ['complete_shape', 'reflect_pattern'],
+        symmetry_line_orientation: ['vertical', 'horizontal'],
+        shape_complexity: ['simple_polygon', 'stepped_pattern'],
+        grid_reference: true,
+        grid_size: { rows: 12, cols: 12 },
+        partial_shape_given: ['half'],
+        include_vertices_marked: true,
+        freehand_vs_grid: ['grid']
+    },
+    3: {
+        completion_task_type: ['complete_shape', 'reflect_pattern', 'draw_other_half'],
+        symmetry_line_orientation: ['vertical', 'horizontal', 'diagonal'],
+        shape_complexity: ['stepped_pattern', 'curved'],
+        grid_reference: true,
+        grid_size: { rows: 12, cols: 12 },
+        partial_shape_given: ['half', 'quarter'],
+        include_vertices_marked: false,
+        freehand_vs_grid: ['grid', 'dotted']
+    },
+    4: {
+        completion_task_type: ['complete_shape', 'reflect_pattern'],
+        symmetry_line_orientation: ['vertical', 'horizontal', 'diagonal'],
+        shape_complexity: ['curved', 'complex'],
+        grid_reference: false,  // No grid - freehand
+        partial_shape_given: ['half', 'quarter'],
+        include_vertices_marked: false,
+        freehand_vs_grid: ['dotted', 'freehand']
+    }
+}
+```
+
+### Coordinate & Transformation Parameters
+Used for: Grid coordinates, translations, reflections, rotations
+- `coordinate_range`: Object - `{ x: { min: 0, max: 10 }, y: { min: 0, max: 10 } }`
+- `quadrants`: Array - `['first']` for Y4 or `['all']` for Y6
+- `transformation_types`: Array - `['translation', 'reflection', 'rotation']`
+- `direction_types`: Array - `['left', 'right', 'up', 'down']`
+- `turn_types`: Array - `['quarter', 'half', 'three_quarter']`
+
+**Example:**
+```javascript
+// Year 4 coordinates in first quadrant
+parameters: {
+    1: {
+        coordinate_range: { x: { min: 0, max: 5 }, y: { min: 0, max: 5 } },
+        quadrants: ['first'],
+        coordinate_operations: ['read_point', 'plot_point']
+    }
+}
+```
+
+### Statistics & Data Parameters
+Used for: Graphs, charts, data interpretation
+- `graph_types`: Array - `['pictogram', 'bar_chart', 'pie_chart', 'line_graph']`
+- `scale_types`: Array - `[1, 2, 5, 10, 20, 50]` (for axes/pictograms)
+- `category_count`: Object - `{ min: 2, max: 8 }`
+- `data_range`: Object - `{ min: 0, max: 100 }`
+- `data_question_types`: Array - `['count', 'how_many_more', 'total', 'compare']`
+
+**Example - Interpreting Charts (S01 Year 3):**
+```javascript
+// Interpreting bar charts and pictograms
+parameters: {
+    1: {
+        graph_types: ['bar_chart'],
+        scale_types: [1, 2],
+        category_count: { min: 3, max: 4 },
+        data_range: { min: 0, max: 20 },
+        data_question_types: ['count', 'how_many_more'],
+        include_visual: true
+    },
+    4: {
+        graph_types: ['bar_chart', 'pictogram'],
+        scale_types: [2, 5, 10],  // More complex scales
+        category_count: { min: 4, max: 6 },
+        data_range: { min: 0, max: 100 },
+        data_question_types: ['count', 'how_many_more', 'total', 'compare', 'difference'],
+        include_visual: true,
+        require_calculation: true
+    }
+}
+```
+
+**Example - Mean Average (S03 Year 6):**
+```javascript
+// Calculate and interpret the mean as an average
+parameters: {
+    1: {
+        data_set_size: [3, 4],  // Number of values
+        value_range: { min: 1, max: 10 },
+        calculation_type: ['calculate_mean'],
+        data_presentation: ['list'],
+        result_type: ['whole_number'],  // Mean is always whole
+        include_context: true,
+        contexts: ['test_scores', 'temperatures']
+    },
+    3: {
+        data_set_size: [4, 5, 6],
+        value_range: { min: 1, max: 50 },
+        calculation_type: ['calculate_mean', 'find_missing_value'],
+        data_presentation: ['list', 'table'],
+        result_type: ['whole_number', 'decimal_1dp'],
+        include_context: true,
+        contexts: ['test_scores', 'temperatures', 'distances', 'money'],
+        show_working: true
+    },
+    4: {
+        data_set_size: [5, 6, 7, 8],
+        value_range: { min: 1, max: 100 },
+        calculation_type: ['calculate_mean', 'find_missing_value', 'compare_means'],
+        data_presentation: ['list', 'table', 'graph'],
+        result_type: ['whole_number', 'decimal_1dp', 'decimal_2dp'],
+        include_context: true,
+        contexts: ['test_scores', 'temperatures', 'distances', 'money', 'abstract'],
+        show_working: true,
+        multi_step: true,  // May require calculating multiple means or totals first
+        reasoning_required: true
+    }
+}
+```
+
+### Measurement Parameters
+Used for: Length, mass, capacity, time, unit conversions
+- `units`: Array of measurement units (e.g., `['m', 'cm', 'mm']`)
+- `conversion_types`: Array - `['metric_only', 'imperial_to_metric']`
+- `time_types`: Array - `['analog', 'digital_12hr', 'digital_24hr']`
+- `time_precision`: Array - `['hour', 'half_hour', '5_minutes', 'minute']`
+- `coin_types`: Array - `['1p', '2p', '5p', '10p', '20p', '50p', '£1', '£2']`
+- `money_operations`: Array - `['recognise_coin', 'combine_amounts', 'give_change']`
+
+**Example:**
+```javascript
+// Year 2 recognising coins and making amounts
+parameters: {
+    1: {
+        coin_types: ['1p', '2p', '5p', '10p'],
+        money_operations: ['recognise_coin', 'state_value'],
+        amount_range: { min: 1, max: 20 }
+    }
+}
+```
+
+**Example - Rectilinear Area & Perimeter (M07 Years 4-6):**
+```javascript
+// Year 4: Find area by counting squares
+parameters: {
+    1: {
+        grid_scaffolding: ['full_grid'],
+        rectilinear_complexity: ['simple_rectangle'],
+        area_formula_required: false,
+        shape_types_for_area: ['square', 'rectangle'],
+        dimension_range: { min: 2, max: 6 },
+        unit_types: ['cm'],
+        calculation_approach: ['count_squares'],
+        include_diagram: true
+    }
+}
+
+// Year 5: Calculate area of composite rectilinear shapes
+parameters: {
+    1: {
+        grid_scaffolding: ['dimensions_only'],
+        rectilinear_complexity: ['L_shape'],
+        area_formula_required: false,
+        shape_types_for_area: ['rectilinear'],
+        dimension_range: { min: 3, max: 10 },
+        unit_types: ['cm', 'm'],
+        compound_shape_parts: 2,
+        calculation_approach: ['use_formula', 'split_and_add'],
+        include_diagram: true,
+        perimeter_complexity: ['regular']
+    },
+    3: {
+        grid_scaffolding: ['dimensions_only', 'edge_ticks'],
+        rectilinear_complexity: ['L_shape', 'T_shape', 'composite_complex'],
+        area_formula_required: false,
+        shape_types_for_area: ['rectilinear'],
+        dimension_range: { min: 5, max: 15 },
+        unit_types: ['cm', 'm'],
+        compound_shape_parts: [2, 3],
+        calculation_approach: ['split_and_add', 'whole_minus_part'],
+        include_diagram: true,
+        perimeter_complexity: ['irregular', 'missing_sides']
+    }
+}
+
+// Year 6: Area of triangles and parallelograms using formulae
+parameters: {
+    1: {
+        grid_scaffolding: ['none'],
+        area_formula_required: true,  // height ≠ side length
+        shape_types_for_area: ['triangle', 'parallelogram'],
+        dimension_range: { min: 4, max: 12 },
+        unit_types: ['cm', 'm'],
+        calculation_approach: ['use_formula'],
+        include_diagram: true
+    },
+    4: {
+        grid_scaffolding: ['none'],
+        rectilinear_complexity: ['composite_complex', 'multiple_cutouts'],
+        area_formula_required: true,
+        shape_types_for_area: ['triangle', 'parallelogram', 'rectilinear'],
+        dimension_range: { min: 5, max: 20 },
+        unit_types: ['cm', 'm', 'mixed'],
+        compound_shape_parts: [2, 3, 4],
+        calculation_approach: ['use_formula', 'whole_minus_part'],
+        include_diagram: false  // Abstract, no diagram
+    }
+}
+```
+
+### Ratio, Proportion & Algebra Parameters
+Used for: Ratios, scaling, algebraic expressions (Year 6)
+- `ratio_format`: Array - `['part_to_part', 'written']`
+- `ratio_operations`: Array - `['find_missing_value', 'scale_up', 'share_amount']`
+- `variable_letters`: Array - `['a', 'b', 'x', 'y', 'n']`
+- `expression_types`: Array - `['missing_number', 'simple_formula']`
+
+**Example - Ratio (Year 6):**
+```javascript
+// R04: Unequal sharing - divide 24 sweets in ratio 1:2
+parameters: {
+    1: {
+        sharing_ratios: [[1,2], [1,3]],
+        total_amounts: [12, 15, 18, 24],
+        contexts: ['sweets', 'money'],
+        problem_type: ['find_shares']
+    },
+    4: {
+        sharing_ratios: [[2,3], [1,4], [2,3,4]],  // Include 3-way sharing
+        total_amounts: [24, 30, 36, 60],
+        contexts: ['money', 'time', 'abstract'],
+        problem_type: ['find_shares', 'find_total', 'find_ratio']
+    }
+}
+```
+
+**Example - Algebra (Year 6):**
+```javascript
+// A01: Express missing number problems algebraically
+parameters: {
+    1: {
+        equation_forms: ['x + a = b', 'x - a = b'],
+        number_range: [1, 50],
+        use_letters: ['x', 'n'],
+        difficulty: ['one_step'],
+        contexts: ['abstract']
+    },
+    4: {
+        equation_forms: ['x + a = b', 'a - x = b', 'ax + b = c'],
+        number_range: [1, 100],
+        use_letters: ['x', 'y', 'n'],
+        difficulty: ['one_step', 'two_step'],
+        contexts: ['abstract', 'word_problem']
+    }
+}
+```
+
+### Parameter Selection Guidelines
+
+**By Year Group:**
+- **Years 1-2**: Focus on concrete ranges (0-20, 0-100), single operations, simple shapes
+- **Years 3-4**: Expanded ranges (to 1000), formal methods, multi-step operations
+- **Years 5-6**: Large numbers (millions), negatives, decimals, fractions, complex geometry
+
+**By Strand:**
+- **Number (N)**: Use counting parameters, allow_negatives for Y5+
+- **Calculation (C)**: Use arithmetic parameters, digit_counts for formal methods
+- **Fractions (F)**: Use fraction parameters, decimal parameters for Y4+
+- **Geometry (G)**: Use geometry parameters, angle parameters for Y3+
+- **Measurement (M)**: Use measurement parameters, conversion_types
+- **Statistics (S)**: Use statistics parameters, graph_types
+- **Position (P)**: Use coordinate parameters, transformation parameters
+- **Ratio (R)**: Use ratio parameters (Y6 only)
+- **Algebra (A)**: Use algebra parameters (Y6 only)
 
 ## File Structure
 

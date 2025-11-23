@@ -4,6 +4,51 @@
  */
 
 export const N02_MODULES = {
+    'N02_Y1_NPV': {
+        id: 'N02_Y1_NPV',
+        name: 'N02_Y1_NPV: Read and Write Numbers to 100',
+        description: 'Count, read and write numbers to 100 in numerals; given a number, identify one more and one less; read and write numbers from 1 to 20 in numerals and words',
+        icon: '🔤',
+        yearGroup: 'Year 1',
+        strand: 'Number and Place Value',
+        substrand: 'Read, write, order and compare numbers',
+        ref: 'N2',
+        parameters: {
+            1: {
+                min_value: 0,
+                max_value: 10,
+                word_min: 0,
+                word_max: 10,
+                operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral'],
+                order_count_max: 2
+            },
+            2: {
+                min_value: 0,
+                max_value: 20,
+                word_min: 0,
+                word_max: 20,
+                operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two'],
+                order_count_max: 2
+            },
+            3: {
+                min_value: 0,
+                max_value: 50,
+                word_min: 0,
+                word_max: 20,
+                operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'order_two'],
+                order_count_max: 2
+            },
+            4: {
+                min_value: 0,
+                max_value: 100,
+                word_min: 0,
+                word_max: 20,
+                operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'order_two', 'order_three'],
+                order_count_max: 3
+            }
+        }
+    },
+
     'N02_Y2_NPV': {
         id: 'N02_Y2_NPV',
         name: 'N02_Y2_NPV: Read and Write Numbers',
