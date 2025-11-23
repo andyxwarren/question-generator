@@ -54,10 +54,25 @@ function generateCountSquares(params) {
     const grid = createGrid(width, height);
 
     return {
-        text: `Count the number of squares in this rectangle:\n\n<pre class="shape-display">${grid}</pre>\n\nHow many squares are there?`,
+        questionTemplate: `Count the number of squares in this rectangle:\n\n<pre class="shape-display">${grid}</pre>\n\nHow many squares are there?`,
+        questionRendered: `Count the number of squares in this rectangle:\n\n<pre class="shape-display">${grid}</pre>\n\nHow many squares are there?`,
+        values: {
+            width: width,
+            height: height,
+            area: area
+        },
+        valueMetadata: {
+            width: { prefix: "", suffix: " squares", decimals: 0, type: "number" },
+            height: { prefix: "", suffix: " squares", decimals: 0, type: "number" },
+            area: { prefix: "", suffix: " squares", decimals: 0, type: "area" }
+        },
+        answer: area,  // Raw number
+        answerMetadata: { prefix: "", suffix: " squares", decimals: 0, type: "area" },
+        hintTemplate: "Count the squares row by row, or multiply width by height",
+        hintRendered: "Count the squares row by row, or multiply width by height",
+        locale: "en-GB",
+        universal: false,  // Area units may vary
         type: 'text_input',
-        answer: String(area),
-        hint: `Count the squares row by row, or multiply width by height`,
         module: 'M07_Y4_MEAS'
     };
 }
@@ -78,21 +93,68 @@ function generateRectilinearPerimeter(params) {
     const perimeter = (totalWidth + totalHeight + (totalWidth - cutWidth) +
         (totalHeight - cutHeight) + cutWidth + cutHeight);
 
+    const side1 = totalWidth;
+    const side2 = totalHeight;
+    const side3 = totalWidth - cutWidth;
+    const side4 = totalHeight - cutHeight;
+    const side5 = cutWidth;
+    const side6 = cutHeight;
+
     if (params.show_all_sides) {
         return {
-            text: `An L-shaped figure has the following sides: ${totalWidth} ${unit}, ${totalHeight} ${unit}, ${cutWidth} ${unit}, ${cutHeight} ${unit}, ${totalWidth - cutWidth} ${unit}, and ${totalHeight - cutHeight} ${unit}. What is its perimeter in ${unit}?`,
+            questionTemplate: `An L-shaped figure has the following sides: [side1], [side2], [side3], [side4], [side5], and [side6]. What is its perimeter?`,
+            questionRendered: `An L-shaped figure has the following sides: ${totalWidth} ${unit}, ${totalHeight} ${unit}, ${cutWidth} ${unit}, ${cutHeight} ${unit}, ${totalWidth - cutWidth} ${unit}, and ${totalHeight - cutHeight} ${unit}. What is its perimeter in ${unit}?`,
+            values: {
+                side1: side1,
+                side2: side2,
+                side3: side3,
+                side4: side4,
+                side5: side5,
+                side6: side6,
+                perimeter: perimeter
+            },
+            valueMetadata: {
+                side1: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" },
+                side2: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" },
+                side3: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" },
+                side4: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" },
+                side5: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" },
+                side6: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" },
+                perimeter: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" }
+            },
+            answer: perimeter,  // Raw number
+            answerMetadata: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" },
+            hintTemplate: "Add all six sides together",
+            hintRendered: "Add all six sides together",
+            locale: "en-GB",
+            universal: false,  // Length units are locale-specific
             type: 'text_input',
-            answer: String(perimeter),
-            hint: 'Add all six sides together',
             module: 'M07_Y4_MEAS'
         };
     } else {
         // Don't give all sides - student must figure out missing ones
         return {
-            text: `An L-shaped figure has these visible sides: ${totalWidth} ${unit} (bottom), ${totalHeight} ${unit} (right), and ${cutWidth} ${unit} (top cut). The shape is rectilinear (all angles are right angles). What is its perimeter in ${unit}?`,
+            questionTemplate: `An L-shaped figure has these visible sides: [side1] (bottom), [side2] (right), and [side5] (top cut). The shape is rectilinear (all angles are right angles). What is its perimeter?`,
+            questionRendered: `An L-shaped figure has these visible sides: ${totalWidth} ${unit} (bottom), ${totalHeight} ${unit} (right), and ${cutWidth} ${unit} (top cut). The shape is rectilinear (all angles are right angles). What is its perimeter in ${unit}?`,
+            values: {
+                side1: side1,
+                side2: side2,
+                side5: side5,
+                perimeter: perimeter
+            },
+            valueMetadata: {
+                side1: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" },
+                side2: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" },
+                side5: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" },
+                perimeter: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" }
+            },
+            answer: perimeter,  // Raw number
+            answerMetadata: { prefix: "", suffix: ` ${unit}`, decimals: 0, type: "length" },
+            hintTemplate: "In a rectilinear shape, opposite sides add up to the same total. Work out the missing sides first",
+            hintRendered: "In a rectilinear shape, opposite sides add up to the same total. Work out the missing sides first",
+            locale: "en-GB",
+            universal: false,  // Length units are locale-specific
             type: 'text_input',
-            answer: String(perimeter),
-            hint: 'In a rectilinear shape, opposite sides add up to the same total. Work out the missing sides first',
             module: 'M07_Y4_MEAS'
         };
     }

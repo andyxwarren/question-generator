@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Edit(./src/**)",
       "Bash(node -c:*)",
       "Bash(python -m http.server:*)",
       "Bash(node --version)",

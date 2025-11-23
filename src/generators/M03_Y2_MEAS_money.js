@@ -114,10 +114,27 @@ function generateCombineSameCoins(params) {
     const coinName = getCoinName(coin);
 
     return {
-        text: `You have ${count} ${coinName} coins. How much money do you have?`,
+        questionTemplate: "You have [count] [coinName] coins. How much money do you have?",
+        questionRendered: `You have ${count} ${coinName} coins. How much money do you have?`,
+        values: {
+            count: count,
+            coinValue: coin,
+            coinName: coinName,
+            total: total
+        },
+        valueMetadata: {
+            count: { prefix: "", suffix: "", decimals: 0, type: "number" },
+            coinValue: { prefix: "", suffix: "p", decimals: 0, type: "money" },
+            coinName: { prefix: "", suffix: "", decimals: 0, type: "number" },  // coinName is text, not formatted
+            total: { prefix: "", suffix: "p", decimals: 0, type: "money" }
+        },
+        answer: total,  // Raw number (in pence)
+        answerMetadata: { prefix: "", suffix: "p", decimals: 0, type: "money" },
+        hintTemplate: "Enter the total value in pence",
+        hintRendered: "Enter the total value in pence",
+        locale: "en-GB",
+        universal: false,  // Money is locale-specific
         type: 'text_input',
-        answer: total.toString(),
-        hint: 'Enter the total value in pence',
         module: 'M03_Y2_MEAS',
         operation: 'combine_same_coins'
     };

@@ -417,7 +417,7 @@ class App {
             return `
                 <div class="question" data-question-id="${questionId}">
                     ${moduleBadge}
-                    <div class="question-text">${questionIdx + 1}. ${this.renderQuestionText(question.text)}</div>
+                    <div class="question-text">${questionIdx + 1}. ${this.renderQuestionText(question.questionRendered || question.text)}</div>
                     <div class="options">
                         ${question.options.map((option, optIdx) => {
                             // Format number options with commas
@@ -441,7 +441,7 @@ class App {
                 return `
                     <div class="question" data-question-id="${questionId}">
                         ${moduleBadge}
-                        <div class="question-text">${questionIdx + 1}. ${this.renderQuestionText(question.text)}</div>
+                        <div class="question-text">${questionIdx + 1}. ${this.renderQuestionText(question.questionRendered || question.text)}</div>
                         <div class="multi-input-container">
                             ${question.answers.map((_, idx) => `
                                 <input type="text"
@@ -451,7 +451,7 @@ class App {
                                        size="8">
                             `).join('')}
                         </div>
-                        ${question.hint ? `<div class="hint">💡 Hint: ${question.hint}</div>` : ''}
+                        ${(question.hintRendered || question.hint) ? `<div class="hint">💡 Hint: ${question.hintRendered || question.hint}</div>` : ''}
                         <div class="feedback"></div>
                     </div>
                 `;
@@ -460,9 +460,9 @@ class App {
                 return `
                     <div class="question" data-question-id="${questionId}">
                         ${moduleBadge}
-                        <div class="question-text">${questionIdx + 1}. ${this.renderQuestionText(question.text)}</div>
+                        <div class="question-text">${questionIdx + 1}. ${this.renderQuestionText(question.questionRendered || question.text)}</div>
                         <input type="text" class="text-input" id="${questionId}" placeholder="Your answer">
-                        ${question.hint ? `<div class="hint">💡 Hint: ${question.hint}</div>` : ''}
+                        ${(question.hintRendered || question.hint) ? `<div class="hint">💡 Hint: ${question.hintRendered || question.hint}</div>` : ''}
                         <div class="feedback"></div>
                     </div>
                 `;
@@ -514,7 +514,7 @@ class App {
                     level: levelGroup.level,
                     levelName: levelGroup.levelName,
                     questionNumber: qIdx + 1,
-                    questionText: question.text,
+                    questionText: question.questionRendered || question.text,
                     userAnswer: userAnswer || '(No answer)',
                     correctAnswer: question.answer,
                     isCorrect: result.isCorrect,
@@ -791,10 +791,17 @@ class App {
         const exportData = {
             metadata: {
                 exportDate: new Date().toISOString(),
-                version: "1.0",
+                version: "2.0",  // Updated to 2.0 for new schema
+                schemaVersion: "2.0",  // New metadata-driven schema
                 generatorVersion: "1.0",
                 questionCount: this.questions.reduce((sum, level) => sum + level.questions.length, 0),
-                moduleCount: new Set(this.questions.map(level => level.moduleId)).size
+                moduleCount: new Set(this.questions.map(level => level.moduleId)).size,
+                schemaFeatures: [
+                    "metadata-driven-formatting",
+                    "locale-support",
+                    "template-placeholders",
+                    "raw-numeric-values"
+                ]
             },
             questions: []
         };
@@ -824,18 +831,30 @@ class App {
                     levelName: levelGroup.levelName,
                     difficultyScore: this.calculateDifficultyScore(levelGroup.level, params),
 
-                    // Question content - DATA FOCUSED
-                    questionType: q.type,
-                    questionText: this.stripHtml(q.text),  // Plain text for search/display
-                    visualType: this.detectVisualType(q.text, q.type, params),  // How to render
-                    questionData: this.extractQuestionData(q, params, levelGroup.moduleId),  // Structured data
+                    // NEW SCHEMA: Templates with placeholders
+                    questionTemplate: q.questionTemplate || null,
+                    questionRendered: q.questionRendered || this.stripHtml(q.text),
+                    hintTemplate: q.hintTemplate || null,
+                    hintRendered: q.hintRendered || q.hint || null,
 
-                    // Answer data
-                    correctAnswer: q.answer,
-                    answerType: this.detectAnswerType(q.answer, q.type),
-                    multipleChoiceOptions: q.options || null,
-                    hint: q.hint || null,
-                    multiGapAnswers: q.answers || null,
+                    // NEW SCHEMA: Raw values (no formatting)
+                    values: q.values || null,
+                    valueMetadata: q.valueMetadata || null,
+
+                    // NEW SCHEMA: Answer with metadata
+                    answer: q.answer,  // Raw number or string
+                    answerMetadata: q.answerMetadata || null,
+
+                    // NEW SCHEMA: Options with metadata (for multiple choice)
+                    options: q.options || null,
+                    optionsMetadata: q.optionsMetadata || null,
+
+                    // NEW SCHEMA: Locale and universality flags
+                    locale: q.locale || 'en-GB',
+                    universal: q.universal !== undefined ? q.universal : null,
+
+                    // Question type
+                    questionType: q.type,
 
                     // Generator context
                     generatorParameters: JSON.parse(JSON.stringify(params)),
@@ -867,19 +886,31 @@ class App {
             'Question_Number',
             'Module_ID',
             'Module_Name',
+            'Module_Description',
             'Year_Group',
             'Strand',
             'Substrand',
+            'Curriculum_Ref',
+            'Icon',
             'Level',
+            'Level_Name',
             'Difficulty_Score',
-            'Question_Type',
+            'Question_Template',
             'Question_Text',
+            'Hint_Template',
+            'Hint',
+            'Values_JSON',
+            'Value_Metadata_JSON',
+            'Answer_Metadata_JSON',
+            'Options_Metadata_JSON',
+            'Locale',
+            'Universal',
+            'Question_Type',
             'Visual_Type',
             'Question_Data_JSON',
             'Correct_Answer',
             'Answer_Type',
             'Options_JSON',
-            'Hint',
             'Tags',
             'Generated_At',
             'Parameters_JSON'
@@ -892,24 +923,56 @@ class App {
             const params = module ? module.parameters[levelGroup.level] : {};
 
             levelGroup.questions.forEach((q, qIdx) => {
+                // Extract text fields
+                const questionText = q.questionRendered || q.text;
+                const hintText = q.hintRendered || q.hint;
+                const questionTemplate = q.questionTemplate || '';
+                const hintTemplate = q.hintTemplate || '';
+
+                // Extract JSON fields
+                const valuesJson = q.values ? JSON.stringify(q.values) : '';
+                const valueMetadataJson = q.valueMetadata ? JSON.stringify(q.valueMetadata) : '';
+                const answerMetadataJson = q.answerMetadata ? JSON.stringify(q.answerMetadata) : '';
+                const optionsMetadataJson = q.optionsMetadata ? JSON.stringify(q.optionsMetadata) : '';
+
+                // Extract metadata fields
+                const locale = q.locale || 'en-GB';
+                const universal = q.universal !== undefined ? q.universal : '';
+                const moduleDescription = module ? module.description : '';
+                const curriculumRef = module ? module.ref : '';
+                const icon = module ? module.icon : '';
+                const levelName = levelGroup.levelName || '';
+
                 const row = [
                     q.id,
                     qIdx + 1,
                     levelGroup.moduleId,
                     this.escapeCsv(levelGroup.moduleName),
+                    this.escapeCsv(moduleDescription),
                     module ? module.yearGroup : '',
                     module ? this.escapeCsv(module.strand) : '',
                     module ? this.escapeCsv(module.substrand) : '',
+                    this.escapeCsv(curriculumRef),
+                    icon,
                     levelGroup.level,
+                    this.escapeCsv(levelName),
                     this.calculateDifficultyScore(levelGroup.level, params),
+                    this.escapeCsv(questionTemplate),
+                    this.escapeCsv(this.stripHtml(questionText)),
+                    this.escapeCsv(hintTemplate),
+                    hintText ? this.escapeCsv(hintText) : '',
+                    this.escapeCsv(valuesJson),
+                    this.escapeCsv(valueMetadataJson),
+                    this.escapeCsv(answerMetadataJson),
+                    this.escapeCsv(optionsMetadataJson),
+                    locale,
+                    universal,
                     q.type,
-                    this.escapeCsv(this.stripHtml(q.text)),
-                    this.detectVisualType(q.text, q.type, params),
+                    this.detectVisualType(questionText, q.type, params),
                     this.escapeCsv(JSON.stringify(this.extractQuestionData(q, params, levelGroup.moduleId))),
                     this.escapeCsv(q.answer),
                     this.detectAnswerType(q.answer, q.type),
                     q.options ? this.escapeCsv(JSON.stringify(q.options)) : '',
-                    q.hint ? this.escapeCsv(q.hint) : '',
                     this.escapeCsv(this.generateTags(q, module, params).join('; ')),
                     q.timestamp ? new Date(q.timestamp).toISOString() : '',
                     this.escapeCsv(JSON.stringify(params))
@@ -1045,6 +1108,8 @@ class App {
      * Detect visual presentation type
      */
     detectVisualType(text, type, params) {
+        if (!text) return 'plain_text';  // Handle undefined/null text
+
         if (text.includes('columnar-calc')) return 'columnar_calculation';
         if (text.includes('short-division')) return 'short_division';
         if (text.includes('long-division')) return 'long_division';
@@ -1065,31 +1130,32 @@ class App {
      * Extract structured question data for reconstruction
      */
     extractQuestionData(question, params, moduleId) {
+        const questionText = question.questionRendered || question.text;
         const data = {
-            originalText: question.text  // Keep as reference
+            originalText: questionText  // Keep as reference
         };
 
         // Columnar calculations (C02, C07 modules)
-        if (question.text.includes('columnar-calc')) {
-            const numbers = this.extractNumbersFromText(question.text);
+        if (questionText.includes('columnar-calc')) {
+            const numbers = this.extractNumbersFromText(questionText);
             data.type = 'columnar';
             data.numbers = numbers;
-            data.operator = this.extractOperator(question.text);
+            data.operator = this.extractOperator(questionText);
             data.showWork = false;
         }
 
         // Division questions
-        else if (question.text.includes('division')) {
-            const numbers = this.extractNumbersFromText(question.text);
+        else if (questionText.includes('division')) {
+            const numbers = this.extractNumbersFromText(questionText);
             data.type = 'division';
             data.dividend = numbers[0];
             data.divisor = numbers[1];
-            data.showRemainder = question.text.toLowerCase().includes('remainder');
+            data.showRemainder = questionText.toLowerCase().includes('remainder');
         }
 
         // Sequence/counting questions (N01 modules)
         else if (moduleId.includes('N01')) {
-            const numbers = this.extractNumbersFromText(question.text);
+            const numbers = this.extractNumbersFromText(questionText);
             data.type = 'sequence';
             data.sequence = numbers;
             data.direction = params.directions ? params.directions[0] : 'forwards';
@@ -1097,27 +1163,27 @@ class App {
         }
 
         // Comparison questions
-        else if (question.text.toLowerCase().includes('compare') ||
-                 question.text.includes('>') ||
-                 question.text.includes('<')) {
-            const numbers = this.extractNumbersFromText(question.text);
+        else if (questionText.toLowerCase().includes('compare') ||
+                 questionText.includes('>') ||
+                 questionText.includes('<')) {
+            const numbers = this.extractNumbersFromText(questionText);
             data.type = 'comparison';
             data.numbers = numbers;
         }
 
         // Place value questions (N03, N04 modules)
         else if (moduleId.includes('N03') || moduleId.includes('N04')) {
-            const numbers = this.extractNumbersFromText(question.text);
+            const numbers = this.extractNumbersFromText(questionText);
             data.type = 'place_value';
             data.number = numbers[0];
-            data.operation = this.extractPlaceValueOperation(question.text);
+            data.operation = this.extractPlaceValueOperation(questionText);
         }
 
         // Generic: extract numbers and structure
         else {
             data.type = 'generic';
-            data.numbers = this.extractNumbersFromText(question.text);
-            data.hasGaps = question.text.includes('?');
+            data.numbers = this.extractNumbersFromText(questionText);
+            data.hasGaps = questionText.includes('?');
         }
 
         return data;
@@ -1227,7 +1293,7 @@ class App {
         if (question.answers && question.answers.length > 1) tags.push('multi-part');
 
         // Visual type
-        const visualType = this.detectVisualType(question.text, question.type, params);
+        const visualType = this.detectVisualType(question.questionRendered || question.text, question.type, params);
         if (visualType !== 'plain_text') tags.push(visualType);
 
         // Curriculum

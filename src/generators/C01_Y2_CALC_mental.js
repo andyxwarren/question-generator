@@ -65,24 +65,49 @@ function generateRecallTo20(params, level) {
         const { a, b, answer } = generateAddition(2, params.max_value_basic);
 
         const style = randomChoice(params.question_styles);
-        let text;
+        let questionTemplate, questionRendered, hintTemplate, hintRendered;
 
         if (style === 'word_problem') {
             const context = getAdditionContext(a, b, answer);
-            text = context.text;
+            questionTemplate = context.text;  // Word problems already use variable values
+            questionRendered = context.text;
+            hintTemplate = "Recall: [a] + [b]";
+            hintRendered = `Recall: ${a} + ${b}`;
         } else {
-            text = `${a} + ${b} = ?`;
+            questionTemplate = "[a] + [b] = ?";
+            questionRendered = `${a} + ${b} = ?`;
+            hintTemplate = "Recall: [a] + [b]";
+            hintRendered = `Recall: ${a} + ${b}`;
         }
 
         const distractors = generateDistractors(answer, 3, 0, params.max_value_basic);
         const options = shuffle([answer, ...distractors]);
 
+        // Create metadata for all options (all same format)
+        const optionsMetadata = options.map(() => ({
+            prefix: "",
+            suffix: "",
+            decimals: 0,
+            type: "number"
+        }));
+
         return {
-            text: text,
+            questionTemplate: questionTemplate,
+            questionRendered: questionRendered,
+            values: { a, b },
+            valueMetadata: {
+                a: { prefix: "", suffix: "", decimals: 0, type: "number" },
+                b: { prefix: "", suffix: "", decimals: 0, type: "number" }
+            },
+            answer: answer,  // Raw number, not string
+            answerMetadata: { prefix: "", suffix: "", decimals: 0, type: "number" },
+            options: options,  // Raw numbers
+            optionsMetadata: optionsMetadata,
+            hintTemplate: hintTemplate,
+            hintRendered: hintRendered,
+            locale: "en-GB",
+            universal: true,
             type: 'multiple_choice',
-            options: options,
-            answer: answer.toString(),
-            hint: `Recall: ${a} + ${b}`,
             module: 'C01_Y2_CALC',
             level: level
         };
@@ -92,24 +117,49 @@ function generateRecallTo20(params, level) {
         });
 
         const style = randomChoice(params.question_styles);
-        let text;
+        let questionTemplate, questionRendered, hintTemplate, hintRendered;
 
         if (style === 'word_problem') {
             const context = getSubtractionContext(a, b, answer);
-            text = context.text;
+            questionTemplate = context.text;  // Word problems already use variable values
+            questionRendered = context.text;
+            hintTemplate = "Recall: [a] - [b]";
+            hintRendered = `Recall: ${a} - ${b}`;
         } else {
-            text = `${a} - ${b} = ?`;
+            questionTemplate = "[a] - [b] = ?";
+            questionRendered = `${a} - ${b} = ?`;
+            hintTemplate = "Recall: [a] - [b]";
+            hintRendered = `Recall: ${a} - ${b}`;
         }
 
         const distractors = generateDistractors(answer, 3, 0, params.max_value_basic);
         const options = shuffle([answer, ...distractors]);
 
+        // Create metadata for all options (all same format)
+        const optionsMetadata = options.map(() => ({
+            prefix: "",
+            suffix: "",
+            decimals: 0,
+            type: "number"
+        }));
+
         return {
-            text: text,
+            questionTemplate: questionTemplate,
+            questionRendered: questionRendered,
+            values: { a, b },
+            valueMetadata: {
+                a: { prefix: "", suffix: "", decimals: 0, type: "number" },
+                b: { prefix: "", suffix: "", decimals: 0, type: "number" }
+            },
+            answer: answer,  // Raw number, not string
+            answerMetadata: { prefix: "", suffix: "", decimals: 0, type: "number" },
+            options: options,  // Raw numbers
+            optionsMetadata: optionsMetadata,
+            hintTemplate: hintTemplate,
+            hintRendered: hintRendered,
+            locale: "en-GB",
+            universal: true,
             type: 'multiple_choice',
-            options: options,
-            answer: answer.toString(),
-            hint: `Recall: ${a} - ${b}`,
             module: 'C01_Y2_CALC',
             level: level
         };
@@ -227,30 +277,59 @@ function generateMissingAddend(params, level) {
     }
 
     const position = randomChoice(['first', 'second']);
+    const isWordProblem = randomChoice(params.question_styles) === 'word_problem';
 
-    let text;
-    if (position === 'first') {
-        text = `___ + ${known} = ${result}`;
-    } else {
-        text = `${known} + ___ = ${result}`;
-    }
+    let questionTemplate, questionRendered, values, valueMetadata;
 
-    // Word problem variant
-    if (randomChoice(params.question_styles) === 'word_problem') {
+    if (isWordProblem) {
         const name = getRandomName();
         const item = getRandomItem();
-        text = `${name} wants ${result} ${item}. They have ${known} ${item}. How many more do they need?`;
+        questionTemplate = `[name] wants [result] [item]. They have [known] [item]. How many more do they need?`;
+        questionRendered = `${name} wants ${result} ${item}. They have ${known} ${item}. How many more do they need?`;
+        values = { name, result, known, item, answer };
+        valueMetadata = {
+            name: { prefix: "", suffix: "", decimals: 0, type: "text" },
+            result: { prefix: "", suffix: "", decimals: 0, type: "number" },
+            known: { prefix: "", suffix: "", decimals: 0, type: "number" },
+            item: { prefix: "", suffix: "", decimals: 0, type: "text" },
+            answer: { prefix: "", suffix: "", decimals: 0, type: "number" }
+        };
+    } else {
+        if (position === 'first') {
+            questionTemplate = `___ + [known] = [result]`;
+            questionRendered = `___ + ${known} = ${result}`;
+        } else {
+            questionTemplate = `[known] + ___ = [result]`;
+            questionRendered = `${known} + ___ = ${result}`;
+        }
+        values = { known, result, answer };
+        valueMetadata = {
+            known: { prefix: "", suffix: "", decimals: 0, type: "number" },
+            result: { prefix: "", suffix: "", decimals: 0, type: "number" },
+            answer: { prefix: "", suffix: "", decimals: 0, type: "number" }
+        };
     }
 
     const distractors = generateDistractors(answer, 3, 0, Math.max(params.max_value_basic, result));
     const options = shuffle([answer, ...distractors]);
+    const optionsMetadata = options.map(() => ({
+        prefix: "", suffix: "", decimals: 0, type: "number"
+    }));
 
     return {
-        text: text,
-        type: 'multiple_choice',
+        questionTemplate,
+        questionRendered,
+        values,
+        valueMetadata,
+        answer: answer,  // Raw number, not string
+        answerMetadata: { prefix: "", suffix: "", decimals: 0, type: "number" },
         options: options,
-        answer: answer.toString(),
-        hint: `${result} - ${known} = ?`,
+        optionsMetadata: optionsMetadata,
+        hintTemplate: `[result] - [known] = ?`,
+        hintRendered: `${result} - ${known} = ?`,
+        locale: "en-GB",
+        universal: true,
+        type: 'multiple_choice',
         module: 'C01_Y2_CALC',
         level: level
     };
