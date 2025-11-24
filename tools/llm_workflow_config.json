@@ -1,0 +1,4 @@
+{
+  "projectBasePath": "..",
+  "description": "Configuration for LLM workflow tools. projectBasePath is relative to this tools/ directory and points to the question-generator root."
+}
