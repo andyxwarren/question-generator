@@ -81,27 +81,53 @@ function generateTwoDigitPlusOnes(params, level) {
         break;
     } while (attempts++ < 100);
 
+    const values = { a, b, answer, onesA: a % 10 };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        onesA: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const style = randomChoice(params.question_styles);
 
     if (style === 'word_problem') {
         const name = getRandomName();
         const item = getRandomItem();
-        const text = `${name} has ${a} ${item}. They get ${b} more. How many ${item} does ${name} have now?`;
+
+        const valuesWithContext = { ...values, name, item };
+        const metadataWithContext = {
+            ...valueMetadata,
+            name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+            item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+        };
 
         return {
-            text: text,
+            questionTemplate: `[name] has [a] [item]. They get [b] more. How many [item] does [name] have now?`,
+            questionRendered: `${name} has ${a} ${item}. They get ${b} more. How many ${item} does ${name} have now?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `${a} + ${b} = ${answer}`,
+            values: valuesWithContext,
+            valueMetadata: metadataWithContext,
+            answer: answer,
+            hintTemplate: `[a] + [b] = [answer]`,
+            hintRendered: `${a} + ${b} = ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
     } else {
         return {
-            text: `${a} + ${b} = ?`,
+            questionTemplate: `[a] + [b] = ?`,
+            questionRendered: `${a} + ${b} = ?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `Add the ones: ${a % 10} + ${b}`,
+            values,
+            valueMetadata,
+            answer: answer,
+            hintTemplate: `Add the ones: [onesA] + [b]`,
+            hintRendered: `Add the ones: ${a % 10} + ${b}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
@@ -130,27 +156,53 @@ function generateTwoDigitMinusOnes(params, level) {
         break;
     } while (attempts++ < 100);
 
+    const values = { a, b, answer, onesA: a % 10 };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        onesA: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const style = randomChoice(params.question_styles);
 
     if (style === 'word_problem') {
         const name = getRandomName();
         const item = getRandomItem();
-        const text = `${name} has ${a} ${item}. They give away ${b} ${item}. How many ${item} are left?`;
+
+        const valuesWithContext = { ...values, name, item };
+        const metadataWithContext = {
+            ...valueMetadata,
+            name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+            item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+        };
 
         return {
-            text: text,
+            questionTemplate: `[name] has [a] [item]. They give away [b] [item]. How many [item] are left?`,
+            questionRendered: `${name} has ${a} ${item}. They give away ${b} ${item}. How many ${item} are left?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `${a} - ${b} = ${answer}`,
+            values: valuesWithContext,
+            valueMetadata: metadataWithContext,
+            answer: answer,
+            hintTemplate: `[a] - [b] = [answer]`,
+            hintRendered: `${a} - ${b} = ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
     } else {
         return {
-            text: `${a} - ${b} = ?`,
+            questionTemplate: `[a] - [b] = ?`,
+            questionRendered: `${a} - ${b} = ?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `Subtract the ones: ${a % 10} - ${b}`,
+            values,
+            valueMetadata,
+            answer: answer,
+            hintTemplate: `Subtract the ones: [onesA] - [b]`,
+            hintRendered: `Subtract the ones: ${a % 10} - ${b}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
@@ -167,27 +219,58 @@ function generateTwoDigitPlusTens(params, level) {
     const b = tensToAdd * 10;
     const answer = a + b;
 
+    const tensA = Math.floor(a / 10) * 10;
+    const tensPlusB = tensA + b;
+
+    const values = { a, b, answer, tensA, tensToAdd, tensPlusB };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        tensA: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        tensToAdd: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        tensPlusB: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const style = randomChoice(params.question_styles);
 
     if (style === 'word_problem') {
         const name = getRandomName();
         const item = getRandomItem();
-        const text = `${name} has ${a} ${item}. They get ${b} more ${item}. How many ${item} altogether?`;
+
+        const valuesWithContext = { ...values, name, item };
+        const metadataWithContext = {
+            ...valueMetadata,
+            name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+            item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+        };
 
         return {
-            text: text,
+            questionTemplate: `[name] has [a] [item]. They get [b] more [item]. How many [item] altogether?`,
+            questionRendered: `${name} has ${a} ${item}. They get ${b} more ${item}. How many ${item} altogether?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `${a} + ${b} = ${answer}`,
+            values: valuesWithContext,
+            valueMetadata: metadataWithContext,
+            answer: answer,
+            hintTemplate: `[a] + [b] = [answer]`,
+            hintRendered: `${a} + ${b} = ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
     } else {
         return {
-            text: `${a} + ${b} = ?`,
+            questionTemplate: `[a] + [b] = ?`,
+            questionRendered: `${a} + ${b} = ?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `Add the tens: ${Math.floor(a / 10)}0 + ${b} = ${Math.floor(a / 10) * 10 + b}`,
+            values,
+            valueMetadata,
+            answer: answer,
+            hintTemplate: `Add the tens: [tensA] + [b] = [tensPlusB]`,
+            hintRendered: `Add the tens: ${tensA} + ${b} = ${tensPlusB}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
@@ -204,27 +287,56 @@ function generateTwoDigitMinusTens(params, level) {
     const a = randomInt(b + 10, params.max_2digit);  // Ensure a > b
     const answer = a - b;
 
+    const tensA = Math.floor(a / 10) * 10;
+
+    const values = { a, b, answer, tensA, tensToSubtract };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        tensA: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        tensToSubtract: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const style = randomChoice(params.question_styles);
 
     if (style === 'word_problem') {
         const name = getRandomName();
         const item = getRandomItem();
-        const text = `${name} has ${a} ${item}. They use ${b} ${item}. How many ${item} are left?`;
+
+        const valuesWithContext = { ...values, name, item };
+        const metadataWithContext = {
+            ...valueMetadata,
+            name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+            item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+        };
 
         return {
-            text: text,
+            questionTemplate: `[name] has [a] [item]. They use [b] [item]. How many [item] are left?`,
+            questionRendered: `${name} has ${a} ${item}. They use ${b} ${item}. How many ${item} are left?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `${a} - ${b} = ${answer}`,
+            values: valuesWithContext,
+            valueMetadata: metadataWithContext,
+            answer: answer,
+            hintTemplate: `[a] - [b] = [answer]`,
+            hintRendered: `${a} - ${b} = ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
     } else {
         return {
-            text: `${a} - ${b} = ?`,
+            questionTemplate: `[a] - [b] = ?`,
+            questionRendered: `${a} - ${b} = ?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `Subtract the tens: ${Math.floor(a / 10)}0 - ${b}`,
+            values,
+            valueMetadata,
+            answer: answer,
+            hintTemplate: `Subtract the tens: [tensA] - [b]`,
+            hintRendered: `Subtract the tens: ${tensA} - ${b}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
@@ -257,28 +369,55 @@ function generateTwoDigitPlusTwoDigit(params, level) {
         break;
     } while (attempts++ < 100);
 
+    const hasCarry = checkCarry(a, b);
+    const values = { a, b, answer };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const style = randomChoice(params.question_styles);
 
     if (style === 'word_problem') {
         const name1 = getRandomName();
         const name2 = getRandomName();
         const item = getRandomItem();
-        const text = `${name1} has ${a} ${item} and ${name2} has ${b} ${item}. How many ${item} do they have altogether?`;
+
+        const valuesWithContext = { ...values, name1, name2, item };
+        const metadataWithContext = {
+            ...valueMetadata,
+            name1: { type: "string", prefix: "", suffix: "", decimals: 0 },
+            name2: { type: "string", prefix: "", suffix: "", decimals: 0 },
+            item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+        };
 
         return {
-            text: text,
+            questionTemplate: `[name1] has [a] [item] and [name2] has [b] [item]. How many [item] do they have altogether?`,
+            questionRendered: `${name1} has ${a} ${item} and ${name2} has ${b} ${item}. How many ${item} do they have altogether?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `${a} + ${b} = ${answer}`,
+            values: valuesWithContext,
+            valueMetadata: metadataWithContext,
+            answer: answer,
+            hintTemplate: `[a] + [b] = [answer]`,
+            hintRendered: `${a} + ${b} = ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
     } else {
         return {
-            text: `${a} + ${b} = ?`,
+            questionTemplate: `[a] + [b] = ?`,
+            questionRendered: `${a} + ${b} = ?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: checkCarry(a, b) ? 'Remember to carry' : `${a} + ${b} = ${answer}`,
+            values,
+            valueMetadata,
+            answer: answer,
+            hintTemplate: hasCarry ? 'Remember to carry' : `[a] + [b] = [answer]`,
+            hintRendered: hasCarry ? 'Remember to carry' : `${a} + ${b} = ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
@@ -306,27 +445,53 @@ function generateTwoDigitMinusTwoDigit(params, level) {
         break;
     } while (attempts++ < 100);
 
+    const hasBorrow = checkBorrow(a, b);
+    const values = { a, b, answer };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const style = randomChoice(params.question_styles);
 
     if (style === 'word_problem') {
         const name = getRandomName();
         const item = getRandomItem();
-        const text = `${name} has ${a} ${item}. They give away ${b} ${item}. How many ${item} are left?`;
+
+        const valuesWithContext = { ...values, name, item };
+        const metadataWithContext = {
+            ...valueMetadata,
+            name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+            item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+        };
 
         return {
-            text: text,
+            questionTemplate: `[name] has [a] [item]. They give away [b] [item]. How many [item] are left?`,
+            questionRendered: `${name} has ${a} ${item}. They give away ${b} ${item}. How many ${item} are left?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `${a} - ${b} = ${answer}`,
+            values: valuesWithContext,
+            valueMetadata: metadataWithContext,
+            answer: answer,
+            hintTemplate: `[a] - [b] = [answer]`,
+            hintRendered: `${a} - ${b} = ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
     } else {
         return {
-            text: `${a} - ${b} = ?`,
+            questionTemplate: `[a] - [b] = ?`,
+            questionRendered: `${a} - ${b} = ?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: checkBorrow(a, b) ? 'Remember to borrow/regroup' : `${a} - ${b} = ${answer}`,
+            values,
+            valueMetadata,
+            answer: answer,
+            hintTemplate: hasBorrow ? 'Remember to borrow/regroup' : `[a] - [b] = [answer]`,
+            hintRendered: hasBorrow ? 'Remember to borrow/regroup' : `${a} - ${b} = ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
@@ -353,27 +518,53 @@ function generateThreeOneDigit(params, level) {
         break;
     } while (attempts++ < 100);
 
+    const values = { a, b, c, answer };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        c: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const style = randomChoice(params.question_styles);
 
     if (style === 'word_problem') {
         const name = getRandomName();
         const item = getRandomItem();
-        const text = `${name} has three boxes of ${item}. One box has ${a} ${item}, another has ${b} ${item}, and the third has ${c} ${item}. How many ${item} altogether?`;
+
+        const valuesWithContext = { ...values, name, item };
+        const metadataWithContext = {
+            ...valueMetadata,
+            name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+            item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+        };
 
         return {
-            text: text,
+            questionTemplate: `[name] has three boxes of [item]. One box has [a] [item], another has [b] [item], and the third has [c] [item]. How many [item] altogether?`,
+            questionRendered: `${name} has three boxes of ${item}. One box has ${a} ${item}, another has ${b} ${item}, and the third has ${c} ${item}. How many ${item} altogether?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `${a} + ${b} + ${c} = ${answer}`,
+            values: valuesWithContext,
+            valueMetadata: metadataWithContext,
+            answer: answer,
+            hintTemplate: `[a] + [b] + [c] = [answer]`,
+            hintRendered: `${a} + ${b} + ${c} = ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
     } else {
         return {
-            text: `${a} + ${b} + ${c} = ?`,
+            questionTemplate: `[a] + [b] + [c] = ?`,
+            questionRendered: `${a} + ${b} + ${c} = ?`,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `Add two numbers first, then add the third`,
+            values,
+            valueMetadata,
+            answer: answer,
+            hintTemplate: `Add two numbers first, then add the third`,
+            hintRendered: `Add two numbers first, then add the third`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
@@ -412,15 +603,29 @@ function generateComplexMissing(params, level) {
         const a = randomInt(10, answer - 5);
         const b = answer - a;
 
+        const values = { a, b, answer, unknown: b };
+        const valueMetadata = {
+            a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            unknown: { type: "number", prefix: "", suffix: "", decimals: 0 }
+        };
+
         const distractors = generateDistractors(b, 3, 1, 99);
         const options = shuffle([b, ...distractors]);
 
         return {
-            text: `${a} + ? = ${answer}`,
+            questionTemplate: `[a] + [unknown] = [answer]`,
+            questionRendered: `${a} + ? = ${answer}`,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: b.toString(),
-            hint: `${answer} - ${a} = ${b}`,
+            answer: b,
+            hintTemplate: `[answer] - [a] = [b]`,
+            hintRendered: `${answer} - ${a} = ${b}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };
@@ -429,15 +634,29 @@ function generateComplexMissing(params, level) {
         const b = randomInt(5, a - 5);
         const answer = a - b;
 
+        const values = { a, b, answer, unknown: b };
+        const valueMetadata = {
+            a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            unknown: { type: "number", prefix: "", suffix: "", decimals: 0 }
+        };
+
         const distractors = generateDistractors(b, 3, 1, 99);
         const options = shuffle([b, ...distractors]);
 
         return {
-            text: `${a} - ? = ${answer}`,
+            questionTemplate: `[a] - [unknown] = [answer]`,
+            questionRendered: `${a} - ? = ${answer}`,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: b.toString(),
-            hint: `${a} - ${answer} = ${b}`,
+            answer: b,
+            hintTemplate: `[a] - [answer] = [b]`,
+            hintRendered: `${a} - ${answer} = ${b}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y2_CALC',
             level: level
         };

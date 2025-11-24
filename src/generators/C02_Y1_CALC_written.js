@@ -70,15 +70,29 @@ function generateSimpleAddition(params, level) {
         { allowZero: params.allow_zero }
     );
 
+    const values = { a, b, answer };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const style = randomChoice(params.question_styles);
 
     if (style === 'word_problem') {
         const context = getAdditionContext(a, b, answer);
+
         return {
-            text: context.text,
+            questionTemplate: context.template || `Word problem: [a] + [b] = ?`,
+            questionRendered: context.text,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `${a} + ${b} = ${answer}`,
+            values,
+            valueMetadata,
+            answer: answer,
+            hintTemplate: `[a] + [b] = [answer]`,
+            hintRendered: `${a} + ${b} = ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y1_CALC',
             level: level
         };
@@ -88,11 +102,17 @@ function generateSimpleAddition(params, level) {
         const options = shuffle([answer, ...distractors]);
 
         return {
-            text: `${a} + ${b} = ?`,
+            questionTemplate: `[a] + [b] = ?`,
+            questionRendered: `${a} + ${b} = ?`,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: answer.toString(),
-            hint: `Add ${a} and ${b}`,
+            answer: answer,
+            hintTemplate: `Add [a] and [b]`,
+            hintRendered: `Add ${a} and ${b}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y1_CALC',
             level: level
         };
@@ -113,15 +133,29 @@ function generateSimpleSubtraction(params, level) {
         }
     );
 
+    const values = { a, b, answer };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const style = randomChoice(params.question_styles);
 
     if (style === 'word_problem') {
         const context = getSubtractionContext(a, b, answer);
+
         return {
-            text: context.text,
+            questionTemplate: context.template || `Word problem: [a] - [b] = ?`,
+            questionRendered: context.text,
             type: 'text_input',
-            answer: answer.toString(),
-            hint: `${a} - ${b} = ${answer}`,
+            values,
+            valueMetadata,
+            answer: answer,
+            hintTemplate: `[a] - [b] = [answer]`,
+            hintRendered: `${a} - ${b} = ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y1_CALC',
             level: level
         };
@@ -131,11 +165,17 @@ function generateSimpleSubtraction(params, level) {
         const options = shuffle([answer, ...distractors]);
 
         return {
-            text: `${a} - ${b} = ?`,
+            questionTemplate: `[a] - [b] = ?`,
+            questionRendered: `${a} - ${b} = ?`,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: answer.toString(),
-            hint: `Subtract ${b} from ${a}`,
+            answer: answer,
+            hintTemplate: `Subtract [b] from [a]`,
+            hintRendered: `Subtract ${b} from ${a}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y1_CALC',
             level: level
         };
@@ -153,31 +193,45 @@ function generateMissingAddend(params, level) {
         { allowZero: params.allow_zero }
     );
 
+    const values = { a, b, answer, unknown: b };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        unknown: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const questionTypes = [
         {
-            text: `${a} + ? = ${answer}`,
-            answer: b
+            template: `[a] + [unknown] = [answer]`,
+            rendered: `${a} + ? = ${answer}`
         },
         {
-            text: `What number do you add to ${a} to make ${answer}?`,
-            answer: b
+            template: `What number do you add to [a] to make [answer]?`,
+            rendered: `What number do you add to ${a} to make ${answer}?`
         },
         {
-            text: `${a} + ___ = ${answer}`,
-            answer: b
+            template: `[a] + [unknown] = [answer]`,
+            rendered: `${a} + ___ = ${answer}`
         }
     ];
 
     const question = randomChoice(questionTypes);
-    const distractors = generateDistractors(question.answer, 3, 0, params.max_value);
-    const options = shuffle([question.answer, ...distractors]);
+    const distractors = generateDistractors(b, 3, 0, params.max_value);
+    const options = shuffle([b, ...distractors]);
 
     return {
-        text: question.text,
+        questionTemplate: question.template,
+        questionRendered: question.rendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: question.answer.toString(),
-        hint: `${answer} - ${a} = ${b}`,
+        answer: b,
+        hintTemplate: `[answer] - [a] = [b]`,
+        hintRendered: `${answer} - ${a} = ${b}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C02_Y1_CALC',
         level: level
     };
@@ -197,31 +251,45 @@ function generateMissingSubtrahend(params, level) {
         }
     );
 
+    const values = { a, b, answer, unknown: b };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        unknown: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const questionTypes = [
         {
-            text: `${a} - ? = ${answer}`,
-            answer: b
+            template: `[a] - [unknown] = [answer]`,
+            rendered: `${a} - ? = ${answer}`
         },
         {
-            text: `What number do you subtract from ${a} to get ${answer}?`,
-            answer: b
+            template: `What number do you subtract from [a] to get [answer]?`,
+            rendered: `What number do you subtract from ${a} to get ${answer}?`
         },
         {
-            text: `${a} - ___ = ${answer}`,
-            answer: b
+            template: `[a] - [unknown] = [answer]`,
+            rendered: `${a} - ___ = ${answer}`
         }
     ];
 
     const question = randomChoice(questionTypes);
-    const distractors = generateDistractors(question.answer, 3, 0, params.max_value);
-    const options = shuffle([question.answer, ...distractors]);
+    const distractors = generateDistractors(b, 3, 0, params.max_value);
+    const options = shuffle([b, ...distractors]);
 
     return {
-        text: question.text,
+        questionTemplate: question.template,
+        questionRendered: question.rendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: question.answer.toString(),
-        hint: `${a} - ${answer} = ${b}`,
+        answer: b,
+        hintTemplate: `[a] - [answer] = [b]`,
+        hintRendered: `${a} - ${answer} = ${b}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C02_Y1_CALC',
         level: level
     };
@@ -241,31 +309,45 @@ function generateMissingMinuend(params, level) {
         }
     );
 
+    const values = { a, b, answer, unknown: a };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        unknown: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const questionTypes = [
         {
-            text: `? - ${b} = ${answer}`,
-            answer: a
+            template: `[unknown] - [b] = [answer]`,
+            rendered: `? - ${b} = ${answer}`
         },
         {
-            text: `___ - ${b} = ${answer}`,
-            answer: a
+            template: `[unknown] - [b] = [answer]`,
+            rendered: `___ - ${b} = ${answer}`
         },
         {
-            text: `What number minus ${b} equals ${answer}?`,
-            answer: a
+            template: `What number minus [b] equals [answer]?`,
+            rendered: `What number minus ${b} equals ${answer}?`
         }
     ];
 
     const question = randomChoice(questionTypes);
-    const distractors = generateDistractors(question.answer, 3, 0, params.max_value);
-    const options = shuffle([question.answer, ...distractors]);
+    const distractors = generateDistractors(a, 3, 0, params.max_value);
+    const options = shuffle([a, ...distractors]);
 
     return {
-        text: question.text,
+        questionTemplate: question.template,
+        questionRendered: question.rendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: question.answer.toString(),
-        hint: `${answer} + ${b} = ${a}`,
+        answer: a,
+        hintTemplate: `[answer] + [b] = [a]`,
+        hintRendered: `${answer} + ${b} = ${a}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C02_Y1_CALC',
         level: level
     };
@@ -311,27 +393,39 @@ function generateSymbolInterpretation(params, level) {
             return generateSymbolInterpretation(params, level);
         }
 
+        const values = { a, b, answer, symbol: '+' };
+        const valueMetadata = {
+            a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            symbol: { type: "string", prefix: "", suffix: "", decimals: 0 }
+        };
+
         const questionTypes = [
             {
-                text: `Which symbol goes here: ${a} ___ ${b} = ${answer}?`,
-                answer: '+',
-                options: ['+', '-', '×', '÷']
+                template: `Which symbol goes here: [a] ___ [b] = [answer]?`,
+                rendered: `Which symbol goes here: ${a} ___ ${b} = ${answer}?`
             },
             {
-                text: `${a} ___ ${b} = ${answer}. What is the missing symbol?`,
-                answer: '+',
-                options: ['+', '-', '×', '÷']
+                template: `[a] ___ [b] = [answer]. What is the missing symbol?`,
+                rendered: `${a} ___ ${b} = ${answer}. What is the missing symbol?`
             }
         ];
 
         const question = randomChoice(questionTypes);
 
         return {
-            text: question.text,
+            questionTemplate: question.template,
+            questionRendered: question.rendered,
             type: 'multiple_choice',
-            options: question.options,
-            answer: question.answer,
-            hint: `${a} plus ${b} equals ${answer}`,
+            values,
+            valueMetadata,
+            options: ['+', '-', '×', '÷'],
+            answer: '+',
+            hintTemplate: `[a] plus [b] equals [answer]`,
+            hintRendered: `${a} plus ${b} equals ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y1_CALC',
             level: level
         };
@@ -368,12 +462,26 @@ function generateSymbolInterpretation(params, level) {
             return generateSymbolInterpretation(params, level);
         }
 
+        const values = { a, b, answer, symbol: '-' };
+        const valueMetadata = {
+            a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            symbol: { type: "string", prefix: "", suffix: "", decimals: 0 }
+        };
+
         return {
-            text: `Which symbol goes here: ${a} ___ ${b} = ${answer}?`,
+            questionTemplate: `Which symbol goes here: [a] ___ [b] = [answer]?`,
+            questionRendered: `Which symbol goes here: ${a} ___ ${b} = ${answer}?`,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: ['-', '+', '×', '÷'],
             answer: '-',
-            hint: `${a} minus ${b} equals ${answer}`,
+            hintTemplate: `[a] minus [b] equals [answer]`,
+            hintRendered: `${a} minus ${b} equals ${answer}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C02_Y1_CALC',
             level: level
         };
@@ -393,31 +501,47 @@ function generateEquationCompletion(params, level) {
     const c = randomInt(params.allow_zero ? 0 : 1, target);
     const d = target - c;
 
+    const values = { a, b, c, d, target, unknown: d };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        c: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        d: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        target: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        unknown: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const formats = [
         {
-            text: `${a} + ${b} = ${c} + ?`,
-            answer: d
+            template: `[a] + [b] = [c] + [unknown]`,
+            rendered: `${a} + ${b} = ${c} + ?`
         },
         {
-            text: `${a} + ${b} = ? + ${c}`,
-            answer: d
+            template: `[a] + [b] = [unknown] + [c]`,
+            rendered: `${a} + ${b} = ? + ${c}`
         },
         {
-            text: `Complete: ${a} + ${b} = ___ + ${c}`,
-            answer: d
+            template: `Complete: [a] + [b] = [unknown] + [c]`,
+            rendered: `Complete: ${a} + ${b} = ___ + ${c}`
         }
     ];
 
     const question = randomChoice(formats);
-    const distractors = generateDistractors(question.answer, 3, 0, params.max_value);
-    const options = shuffle([question.answer, ...distractors]);
+    const distractors = generateDistractors(d, 3, 0, params.max_value);
+    const options = shuffle([d, ...distractors]);
 
     return {
-        text: question.text,
+        questionTemplate: question.template,
+        questionRendered: question.rendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: question.answer.toString(),
-        hint: `Both sides equal ${target}`,
+        answer: d,
+        hintTemplate: `Both sides equal [target]`,
+        hintRendered: `Both sides equal ${target}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C02_Y1_CALC',
         level: level
     };
@@ -440,12 +564,26 @@ function generateTrueFalse(params, level) {
                 { allowZero: params.allow_zero }
             );
 
+            const values = { a, b, answer, correctAnswer: 'True' };
+            const valueMetadata = {
+                a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                correctAnswer: { type: "string", prefix: "", suffix: "", decimals: 0 }
+            };
+
             return {
-                text: `Is this equation true or false?\n${a} + ${b} = ${answer}`,
+                questionTemplate: `Is this equation true or false?\n[a] + [b] = [answer]`,
+                questionRendered: `Is this equation true or false?\n${a} + ${b} = ${answer}`,
                 type: 'multiple_choice',
+                values,
+                valueMetadata,
                 options: ['True', 'False'],
                 answer: 'True',
-                hint: `${a} + ${b} does equal ${answer}`,
+                hintTemplate: `[a] + [b] does equal [answer]`,
+                hintRendered: `${a} + ${b} does equal ${answer}`,
+                locale: 'en-GB',
+                universal: true,
                 module: 'C02_Y1_CALC',
                 level: level
             };
@@ -459,12 +597,26 @@ function generateTrueFalse(params, level) {
                 }
             );
 
+            const values = { a, b, answer, correctAnswer: 'True' };
+            const valueMetadata = {
+                a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                correctAnswer: { type: "string", prefix: "", suffix: "", decimals: 0 }
+            };
+
             return {
-                text: `Is this equation true or false?\n${a} - ${b} = ${answer}`,
+                questionTemplate: `Is this equation true or false?\n[a] - [b] = [answer]`,
+                questionRendered: `Is this equation true or false?\n${a} - ${b} = ${answer}`,
                 type: 'multiple_choice',
+                values,
+                valueMetadata,
                 options: ['True', 'False'],
                 answer: 'True',
-                hint: `${a} - ${b} does equal ${answer}`,
+                hintTemplate: `[a] - [b] does equal [answer]`,
+                hintRendered: `${a} - ${b} does equal ${answer}`,
+                locale: 'en-GB',
+                universal: true,
                 module: 'C02_Y1_CALC',
                 level: level
             };
@@ -481,12 +633,27 @@ function generateTrueFalse(params, level) {
             );
             const wrongAnswer = answer + randomChoice([-2, -1, 1, 2]);
 
+            const values = { a, b, answer, wrongAnswer, correctAnswer: 'False' };
+            const valueMetadata = {
+                a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                wrongAnswer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                correctAnswer: { type: "string", prefix: "", suffix: "", decimals: 0 }
+            };
+
             return {
-                text: `Is this equation true or false?\n${a} + ${b} = ${wrongAnswer}`,
+                questionTemplate: `Is this equation true or false?\n[a] + [b] = [wrongAnswer]`,
+                questionRendered: `Is this equation true or false?\n${a} + ${b} = ${wrongAnswer}`,
                 type: 'multiple_choice',
+                values,
+                valueMetadata,
                 options: ['True', 'False'],
                 answer: 'False',
-                hint: `${a} + ${b} = ${answer}, not ${wrongAnswer}`,
+                hintTemplate: `[a] + [b] = [answer], not [wrongAnswer]`,
+                hintRendered: `${a} + ${b} = ${answer}, not ${wrongAnswer}`,
+                locale: 'en-GB',
+                universal: true,
                 module: 'C02_Y1_CALC',
                 level: level
             };
@@ -501,12 +668,27 @@ function generateTrueFalse(params, level) {
             );
             const wrongAnswer = Math.max(0, answer + randomChoice([-2, -1, 1, 2]));
 
+            const values = { a, b, answer, wrongAnswer, correctAnswer: 'False' };
+            const valueMetadata = {
+                a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                wrongAnswer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+                correctAnswer: { type: "string", prefix: "", suffix: "", decimals: 0 }
+            };
+
             return {
-                text: `Is this equation true or false?\n${a} - ${b} = ${wrongAnswer}`,
+                questionTemplate: `Is this equation true or false?\n[a] - [b] = [wrongAnswer]`,
+                questionRendered: `Is this equation true or false?\n${a} - ${b} = ${wrongAnswer}`,
                 type: 'multiple_choice',
+                values,
+                valueMetadata,
                 options: ['True', 'False'],
                 answer: 'False',
-                hint: `${a} - ${b} = ${answer}, not ${wrongAnswer}`,
+                hintTemplate: `[a] - [b] = [answer], not [wrongAnswer]`,
+                hintRendered: `${a} - ${b} = ${answer}, not ${wrongAnswer}`,
+                locale: 'en-GB',
+                universal: true,
                 module: 'C02_Y1_CALC',
                 level: level
             };
@@ -525,11 +707,27 @@ function generateTwoStep(params, level) {
     const step1 = randomInt(1, intermediate);
     const missing = intermediate - step1;
 
+    const values = { step1, step2, finalAnswer, intermediate, missing, unknown: missing };
+    const valueMetadata = {
+        step1: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        step2: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        finalAnswer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        intermediate: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        missing: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        unknown: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     return {
-        text: `${step1} + ? - ${step2} = ${finalAnswer}`,
+        questionTemplate: `[step1] + [unknown] - [step2] = [finalAnswer]`,
+        questionRendered: `${step1} + ? - ${step2} = ${finalAnswer}`,
         type: 'text_input',
-        answer: missing.toString(),
-        hint: `First, ${step1} + ${missing} = ${intermediate}, then ${intermediate} - ${step2} = ${finalAnswer}`,
+        values,
+        valueMetadata,
+        answer: missing,
+        hintTemplate: `First, [step1] + [missing] = [intermediate], then [intermediate] - [step2] = [finalAnswer]`,
+        hintRendered: `First, ${step1} + ${missing} = ${intermediate}, then ${intermediate} - ${step2} = ${finalAnswer}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C02_Y1_CALC',
         level: level
     };
@@ -544,25 +742,39 @@ function generateComplexMissing(params, level) {
     const a = randomInt(1, total - 1);
     const b = total - a;
 
+    const values = { total, a, b };
+    const valueMetadata = {
+        total: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     const formats = [
         {
-            text: `Find two numbers that add to ${total}.\n? + ? = ${total}\nGive one possible answer for the first number.`,
-            validAnswers: Array.from({length: total}, (_, i) => i),
-            answer: a.toString()
+            template: `Find two numbers that add to [total].\n? + ? = [total]\nGive one possible answer for the first number.`,
+            rendered: `Find two numbers that add to ${total}.\n? + ? = ${total}\nGive one possible answer for the first number.`,
+            answer: a
         },
         {
-            text: `${total} can be split into two parts. If one part is ${a}, what is the other part?`,
-            answer: b.toString()
+            template: `[total] can be split into two parts. If one part is [a], what is the other part?`,
+            rendered: `${total} can be split into two parts. If one part is ${a}, what is the other part?`,
+            answer: b
         }
     ];
 
     const question = randomChoice(formats);
 
     return {
-        text: question.text,
+        questionTemplate: question.template,
+        questionRendered: question.rendered,
         type: 'text_input',
+        values,
+        valueMetadata,
         answer: question.answer,
-        hint: `${a} + ${b} = ${total}`,
+        hintTemplate: `[a] + [b] = [total]`,
+        hintRendered: `${a} + ${b} = ${total}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C02_Y1_CALC',
         level: level
     };

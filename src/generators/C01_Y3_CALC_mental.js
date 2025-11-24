@@ -6,6 +6,13 @@
  *                        a three-digit number and tens,
  *                        a three-digit number and hundreds"
  *
+ * Schema v2.0 Compliant:
+ * - questionTemplate with [placeholder] notation
+ * - questionRendered with actual values
+ * - Raw values in values object
+ * - Metadata in valueMetadata object
+ * - locale and universal flags
+ *
  * This generator focuses on:
  * - 3-digit + ones (e.g., 345 + 7)
  * - 3-digit - ones (e.g., 345 - 7)
@@ -81,41 +88,78 @@ function generateAddOnes(params, level, attempt = 0) {
     const answer = base + ones;
 
     const style = randomChoice(params.question_styles);
-    let text;
+    let questionTemplate, questionRendered;
+    const name = getRandomName();
+    const item = getRandomItem();
+
+    const values = { base, ones, answer, name, item };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        ones: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+        item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+    };
 
     if (style === 'word_problem') {
-        const name = getRandomName();
-        const item = getRandomItem();
         const contexts = [
-            `${name} has ${base} ${item}. They get ${ones} more. How many ${item} now?`,
-            `A library has ${base} books. They buy ${ones} new books. How many books in total?`,
-            `There are ${base} people in a hall. ${ones} more people arrive. How many people now?`
+            {
+                template: `[name] has [base] [item]. They get [ones] more. How many [item] now?`,
+                rendered: `${name} has ${base} ${item}. They get ${ones} more. How many ${item} now?`
+            },
+            {
+                template: `A library has [base] books. They buy [ones] new books. How many books in total?`,
+                rendered: `A library has ${base} books. They buy ${ones} new books. How many books in total?`
+            },
+            {
+                template: `There are [base] people in a hall. [ones] more people arrive. How many people now?`,
+                rendered: `There are ${base} people in a hall. ${ones} more people arrive. How many people now?`
+            }
         ];
-        text = randomChoice(contexts);
+        const context = randomChoice(contexts);
+        questionTemplate = context.template;
+        questionRendered = context.rendered;
     } else if (style === 'missing_number') {
-        text = `${base} + ___ = ${answer}`;
+        questionTemplate = `[base] + [unknown] = [answer]`;
+        questionRendered = `${base} + ___ = ${answer}`;
+        values.unknown = ones;
+        valueMetadata.unknown = { type: "number", prefix: "", suffix: "", decimals: 0 };
+
         // Return as text input for missing number
         return {
-            text: text,
+            questionTemplate,
+            questionRendered,
             type: 'text_input',
-            answer: ones.toString(),
-            hint: `What do you add to ${base}?`,
+            values,
+            valueMetadata,
+            answer: ones,
+            hintTemplate: `What do you add to [base]?`,
+            hintRendered: `What do you add to ${base}?`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y3_CALC',
             level: level
         };
     } else {
-        text = `${base} + ${ones} = ?`;
+        questionTemplate = `[base] + [ones] = ?`;
+        questionRendered = `${base} + ${ones} = ?`;
     }
 
     const distractors = generateDistractors(answer, 3, params.min_3digit, params.max_3digit + 10);
     const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: answer.toString(),
-        hint: `Add ${ones} to the ones digit`,
+        answer: answer,
+        hintTemplate: `Add [ones] to the ones digit`,
+        hintRendered: `Add ${ones} to the ones digit`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y3_CALC',
         level: level
     };
@@ -147,40 +191,77 @@ function generateSubtractOnes(params, level, attempt = 0) {
     const answer = base - ones;
 
     const style = randomChoice(params.question_styles);
-    let text;
+    let questionTemplate, questionRendered;
+    const name = getRandomName();
+    const item = getRandomItem();
+
+    const values = { base, ones, answer, name, item };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        ones: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+        item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+    };
 
     if (style === 'word_problem') {
-        const name = getRandomName();
-        const item = getRandomItem();
         const contexts = [
-            `${name} has ${base} ${item}. They give away ${ones} ${item}. How many ${item} left?`,
-            `A school has ${base} students. ${ones} students are absent. How many are present?`,
-            `There were ${base} tickets. ${ones} tickets were sold. How many tickets remain?`
+            {
+                template: `[name] has [base] [item]. They give away [ones] [item]. How many [item] left?`,
+                rendered: `${name} has ${base} ${item}. They give away ${ones} ${item}. How many ${item} left?`
+            },
+            {
+                template: `A school has [base] students. [ones] students are absent. How many are present?`,
+                rendered: `A school has ${base} students. ${ones} students are absent. How many are present?`
+            },
+            {
+                template: `There were [base] tickets. [ones] tickets were sold. How many tickets remain?`,
+                rendered: `There were ${base} tickets. ${ones} tickets were sold. How many tickets remain?`
+            }
         ];
-        text = randomChoice(contexts);
+        const context = randomChoice(contexts);
+        questionTemplate = context.template;
+        questionRendered = context.rendered;
     } else if (style === 'missing_number') {
-        text = `${base} - ___ = ${answer}`;
+        questionTemplate = `[base] - [unknown] = [answer]`;
+        questionRendered = `${base} - ___ = ${answer}`;
+        values.unknown = ones;
+        valueMetadata.unknown = { type: "number", prefix: "", suffix: "", decimals: 0 };
+
         return {
-            text: text,
+            questionTemplate,
+            questionRendered,
             type: 'text_input',
-            answer: ones.toString(),
-            hint: `What do you subtract from ${base}?`,
+            values,
+            valueMetadata,
+            answer: ones,
+            hintTemplate: `What do you subtract from [base]?`,
+            hintRendered: `What do you subtract from ${base}?`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y3_CALC',
             level: level
         };
     } else {
-        text = `${base} - ${ones} = ?`;
+        questionTemplate = `[base] - [ones] = ?`;
+        questionRendered = `${base} - ${ones} = ?`;
     }
 
     const distractors = generateDistractors(answer, 3, params.min_3digit - 10, params.max_3digit);
     const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: answer.toString(),
-        hint: `Subtract ${ones} from the ones digit`,
+        answer: answer,
+        hintTemplate: `Subtract [ones] from the ones digit`,
+        hintRendered: `Subtract ${ones} from the ones digit`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y3_CALC',
         level: level
     };
@@ -213,40 +294,77 @@ function generateAddTens(params, level, attempt = 0) {
     const answer = base + tens;
 
     const style = randomChoice(params.question_styles);
-    let text;
+    let questionTemplate, questionRendered;
+    const name = getRandomName();
+    const item = getRandomItem();
+
+    const values = { base, tens, answer, name, item };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        tens: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+        item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+    };
 
     if (style === 'word_problem') {
-        const name = getRandomName();
-        const item = getRandomItem();
         const contexts = [
-            `A shop has ${base} ${item}. They receive ${tens} more ${item}. How many ${item} now?`,
-            `${name} scores ${base} points, then scores ${tens} more points. Total points?`,
-            `There are ${base} cars in a car park. ${tens} more cars arrive. How many cars in total?`
+            {
+                template: `A shop has [base] [item]. They receive [tens] more [item]. How many [item] now?`,
+                rendered: `A shop has ${base} ${item}. They receive ${tens} more ${item}. How many ${item} now?`
+            },
+            {
+                template: `[name] scores [base] points, then scores [tens] more points. Total points?`,
+                rendered: `${name} scores ${base} points, then scores ${tens} more points. Total points?`
+            },
+            {
+                template: `There are [base] cars in a car park. [tens] more cars arrive. How many cars in total?`,
+                rendered: `There are ${base} cars in a car park. ${tens} more cars arrive. How many cars in total?`
+            }
         ];
-        text = randomChoice(contexts);
+        const context = randomChoice(contexts);
+        questionTemplate = context.template;
+        questionRendered = context.rendered;
     } else if (style === 'missing_number') {
-        text = `${base} + ___ = ${answer}`;
+        questionTemplate = `[base] + [unknown] = [answer]`;
+        questionRendered = `${base} + ___ = ${answer}`;
+        values.unknown = tens;
+        valueMetadata.unknown = { type: "number", prefix: "", suffix: "", decimals: 0 };
+
         return {
-            text: text,
+            questionTemplate,
+            questionRendered,
             type: 'text_input',
-            answer: tens.toString(),
-            hint: `Add to the tens place`,
+            values,
+            valueMetadata,
+            answer: tens,
+            hintTemplate: `Add to the tens place`,
+            hintRendered: `Add to the tens place`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y3_CALC',
             level: level
         };
     } else {
-        text = `${base} + ${tens} = ?`;
+        questionTemplate = `[base] + [tens] = ?`;
+        questionRendered = `${base} + ${tens} = ?`;
     }
 
     const distractors = generateDistractors(answer, 3, params.min_3digit, params.max_3digit + 100);
     const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: answer.toString(),
-        hint: `Add ${tens} to the tens`,
+        answer: answer,
+        hintTemplate: `Add [tens] to the tens`,
+        hintRendered: `Add ${tens} to the tens`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y3_CALC',
         level: level
     };
@@ -279,40 +397,77 @@ function generateSubtractTens(params, level, attempt = 0) {
     const answer = base - tens;
 
     const style = randomChoice(params.question_styles);
-    let text;
+    let questionTemplate, questionRendered;
+    const name = getRandomName();
+    const item = getRandomItem();
+
+    const values = { base, tens, answer, name, item };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        tens: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+        item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+    };
 
     if (style === 'word_problem') {
-        const name = getRandomName();
-        const item = getRandomItem();
         const contexts = [
-            `${name} has ${base} ${item}. They sell ${tens} ${item}. How many ${item} left?`,
-            `A theatre has ${base} seats. ${tens} seats are reserved. How many seats available?`,
-            `There were ${base} pencils. ${tens} pencils were used. How many pencils remain?`
+            {
+                template: `[name] has [base] [item]. They sell [tens] [item]. How many [item] left?`,
+                rendered: `${name} has ${base} ${item}. They sell ${tens} ${item}. How many ${item} left?`
+            },
+            {
+                template: `A theatre has [base] seats. [tens] seats are reserved. How many seats available?`,
+                rendered: `A theatre has ${base} seats. ${tens} seats are reserved. How many seats available?`
+            },
+            {
+                template: `There were [base] pencils. [tens] pencils were used. How many pencils remain?`,
+                rendered: `There were ${base} pencils. ${tens} pencils were used. How many pencils remain?`
+            }
         ];
-        text = randomChoice(contexts);
+        const context = randomChoice(contexts);
+        questionTemplate = context.template;
+        questionRendered = context.rendered;
     } else if (style === 'missing_number') {
-        text = `${base} - ___ = ${answer}`;
+        questionTemplate = `[base] - [unknown] = [answer]`;
+        questionRendered = `${base} - ___ = ${answer}`;
+        values.unknown = tens;
+        valueMetadata.unknown = { type: "number", prefix: "", suffix: "", decimals: 0 };
+
         return {
-            text: text,
+            questionTemplate,
+            questionRendered,
             type: 'text_input',
-            answer: tens.toString(),
-            hint: `Subtract from the tens place`,
+            values,
+            valueMetadata,
+            answer: tens,
+            hintTemplate: `Subtract from the tens place`,
+            hintRendered: `Subtract from the tens place`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y3_CALC',
             level: level
         };
     } else {
-        text = `${base} - ${tens} = ?`;
+        questionTemplate = `[base] - [tens] = ?`;
+        questionRendered = `${base} - ${tens} = ?`;
     }
 
     const distractors = generateDistractors(answer, 3, 0, params.max_3digit);
     const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: answer.toString(),
-        hint: `Subtract ${tens} from the tens`,
+        answer: answer,
+        hintTemplate: `Subtract [tens] from the tens`,
+        hintRendered: `Subtract ${tens} from the tens`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y3_CALC',
         level: level
     };
@@ -329,40 +484,77 @@ function generateAddHundreds(params, level) {
     const answer = base + hundreds;
 
     const style = randomChoice(params.question_styles);
-    let text;
+    let questionTemplate, questionRendered;
+    const name = getRandomName();
+    const item = getRandomItem();
+
+    const values = { base, hundreds, answer, name, item };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        hundreds: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+        item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+    };
 
     if (style === 'word_problem') {
-        const name = getRandomName();
-        const item = getRandomItem();
         const contexts = [
-            `A factory produces ${base} ${item}. They produce ${hundreds} more ${item}. Total production?`,
-            `${name} has ${base} points. They earn ${hundreds} bonus points. Total points?`,
-            `There are ${base} books on a shelf and ${hundreds} books in storage. How many books in total?`
+            {
+                template: `A factory produces [base] [item]. They produce [hundreds] more [item]. Total production?`,
+                rendered: `A factory produces ${base} ${item}. They produce ${hundreds} more ${item}. Total production?`
+            },
+            {
+                template: `[name] has [base] points. They earn [hundreds] bonus points. Total points?`,
+                rendered: `${name} has ${base} points. They earn ${hundreds} bonus points. Total points?`
+            },
+            {
+                template: `There are [base] books on a shelf and [hundreds] books in storage. How many books in total?`,
+                rendered: `There are ${base} books on a shelf and ${hundreds} books in storage. How many books in total?`
+            }
         ];
-        text = randomChoice(contexts);
+        const context = randomChoice(contexts);
+        questionTemplate = context.template;
+        questionRendered = context.rendered;
     } else if (style === 'missing_number') {
-        text = `${base} + ___ = ${answer}`;
+        questionTemplate = `[base] + [unknown] = [answer]`;
+        questionRendered = `${base} + ___ = ${answer}`;
+        values.unknown = hundreds;
+        valueMetadata.unknown = { type: "number", prefix: "", suffix: "", decimals: 0 };
+
         return {
-            text: text,
+            questionTemplate,
+            questionRendered,
             type: 'text_input',
-            answer: hundreds.toString(),
-            hint: `Add to the hundreds place`,
+            values,
+            valueMetadata,
+            answer: hundreds,
+            hintTemplate: `Add to the hundreds place`,
+            hintRendered: `Add to the hundreds place`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y3_CALC',
             level: level
         };
     } else {
-        text = `${base} + ${hundreds} = ?`;
+        questionTemplate = `[base] + [hundreds] = ?`;
+        questionRendered = `${base} + ${hundreds} = ?`;
     }
 
     const distractors = generateDistractors(answer, 3, params.min_3digit, answer + 200);
     const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: answer.toString(),
-        hint: `Add ${hundreds} to the hundreds`,
+        answer: answer,
+        hintTemplate: `Add [hundreds] to the hundreds`,
+        hintRendered: `Add ${hundreds} to the hundreds`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y3_CALC',
         level: level
     };
@@ -380,40 +572,77 @@ function generateSubtractHundreds(params, level) {
     const answer = base - hundreds;
 
     const style = randomChoice(params.question_styles);
-    let text;
+    let questionTemplate, questionRendered;
+    const name = getRandomName();
+    const item = getRandomItem();
+
+    const values = { base, hundreds, answer, name, item };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        hundreds: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+        item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+    };
 
     if (style === 'word_problem') {
-        const name = getRandomName();
-        const item = getRandomItem();
         const contexts = [
-            `${name} has ${base} ${item}. They donate ${hundreds} ${item}. How many ${item} left?`,
-            `A warehouse has ${base} boxes. ${hundreds} boxes are shipped. How many boxes remain?`,
-            `There were ${base} visitors. ${hundreds} visitors left. How many visitors now?`
+            {
+                template: `[name] has [base] [item]. They donate [hundreds] [item]. How many [item] left?`,
+                rendered: `${name} has ${base} ${item}. They donate ${hundreds} ${item}. How many ${item} left?`
+            },
+            {
+                template: `A warehouse has [base] boxes. [hundreds] boxes are shipped. How many boxes remain?`,
+                rendered: `A warehouse has ${base} boxes. ${hundreds} boxes are shipped. How many boxes remain?`
+            },
+            {
+                template: `There were [base] visitors. [hundreds] visitors left. How many visitors now?`,
+                rendered: `There were ${base} visitors. ${hundreds} visitors left. How many visitors now?`
+            }
         ];
-        text = randomChoice(contexts);
+        const context = randomChoice(contexts);
+        questionTemplate = context.template;
+        questionRendered = context.rendered;
     } else if (style === 'missing_number') {
-        text = `${base} - ___ = ${answer}`;
+        questionTemplate = `[base] - [unknown] = [answer]`;
+        questionRendered = `${base} - ___ = ${answer}`;
+        values.unknown = hundreds;
+        valueMetadata.unknown = { type: "number", prefix: "", suffix: "", decimals: 0 };
+
         return {
-            text: text,
+            questionTemplate,
+            questionRendered,
             type: 'text_input',
-            answer: hundreds.toString(),
-            hint: `Subtract from the hundreds place`,
+            values,
+            valueMetadata,
+            answer: hundreds,
+            hintTemplate: `Subtract from the hundreds place`,
+            hintRendered: `Subtract from the hundreds place`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y3_CALC',
             level: level
         };
     } else {
-        text = `${base} - ${hundreds} = ?`;
+        questionTemplate = `[base] - [hundreds] = ?`;
+        questionRendered = `${base} - ${hundreds} = ?`;
     }
 
     const distractors = generateDistractors(answer, 3, 0, params.max_3digit);
     const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: answer.toString(),
-        hint: `Subtract ${hundreds} from the hundreds`,
+        answer: answer,
+        hintTemplate: `Subtract [hundreds] from the hundreds`,
+        hintRendered: `Subtract ${hundreds} from the hundreds`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y3_CALC',
         level: level
     };
@@ -445,17 +674,28 @@ function generateTwoStepMental(params, level) {
         const ones = randomInt(1, 9);
         const answer = base + tens + ones;
 
-        const text = `${base} + ${tens} + ${ones} = ?`;
+        const values = { base, tens, ones };
+        const valueMetadata = {
+            base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            tens: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            ones: { type: "number", prefix: "", suffix: "", decimals: 0 }
+        };
 
         const distractors = generateDistractors(answer, 3, params.min_3digit, params.max_3digit + 100);
         const options = shuffle([answer, ...distractors]);
 
         return {
-            text: text,
+            questionTemplate: `[base] + [tens] + [ones] = ?`,
+            questionRendered: `${base} + ${tens} + ${ones} = ?`,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: answer.toString(),
-            hint: `First add ${tens}, then add ${ones}`,
+            answer: answer,
+            hintTemplate: `First add [tens], then add [ones]`,
+            hintRendered: `First add ${tens}, then add ${ones}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y3_CALC',
             level: level
         };
@@ -464,17 +704,28 @@ function generateTwoStepMental(params, level) {
         const ones = randomInt(1, 9);
         const answer = base - tens - ones;
 
-        const text = `${base} - ${tens} - ${ones} = ?`;
+        const values = { base, tens, ones };
+        const valueMetadata = {
+            base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            tens: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            ones: { type: "number", prefix: "", suffix: "", decimals: 0 }
+        };
 
         const distractors = generateDistractors(answer, 3, 0, params.max_3digit);
         const options = shuffle([answer, ...distractors]);
 
         return {
-            text: text,
+            questionTemplate: `[base] - [tens] - [ones] = ?`,
+            questionRendered: `${base} - ${tens} - ${ones} = ?`,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: answer.toString(),
-            hint: `First subtract ${tens}, then subtract ${ones}`,
+            answer: answer,
+            hintTemplate: `First subtract [tens], then subtract [ones]`,
+            hintRendered: `First subtract ${tens}, then subtract ${ones}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y3_CALC',
             level: level
         };
@@ -484,25 +735,40 @@ function generateTwoStepMental(params, level) {
         const ones = randomInt(1, 9);
 
         const addFirst = Math.random() < 0.5;
-        let answer, text;
+        let answer, questionTemplate, questionRendered;
 
         if (addFirst) {
             answer = base + tens - ones;
-            text = `${base} + ${tens} - ${ones} = ?`;
+            questionTemplate = `[base] + [tens] - [ones] = ?`;
+            questionRendered = `${base} + ${tens} - ${ones} = ?`;
         } else {
             answer = base - tens + ones;
-            text = `${base} - ${tens} + ${ones} = ?`;
+            questionTemplate = `[base] - [tens] + [ones] = ?`;
+            questionRendered = `${base} - ${tens} + ${ones} = ?`;
         }
+
+        const values = { base, tens, ones };
+        const valueMetadata = {
+            base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            tens: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            ones: { type: "number", prefix: "", suffix: "", decimals: 0 }
+        };
 
         const distractors = generateDistractors(answer, 3, 0, params.max_3digit + 100);
         const options = shuffle([answer, ...distractors]);
 
         return {
-            text: text,
+            questionTemplate,
+            questionRendered,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: answer.toString(),
-            hint: `Work from left to right`,
+            answer: answer,
+            hintTemplate: `Work from left to right`,
+            hintRendered: `Work from left to right`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y3_CALC',
             level: level
         };

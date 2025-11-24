@@ -20,7 +20,8 @@
       "Bash(measurement_ui_samples.txt)",
       "Bash(tree:*)",
       "Bash(rm:*)",
-      "Bash(del test_sample.patch)"
+      "Bash(del test_sample.patch)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

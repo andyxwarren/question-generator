@@ -35,9 +35,8 @@ import mentalY3Generator from '../generators/C01_Y3_CALC_mental.js';
 import mentalY5Generator from '../generators/C01_Y5_CALC_mental.js';
 import writtenY1Generator from '../generators/C02_Y1_CALC_written.js';
 import writtenY2Generator from '../generators/C02_Y2_CALC_written.js';
-import writtenY3Generator from '../generators/C02_Y3_CALC_written.js';
-import writtenY4Generator from '../generators/C02_Y4_CALC_written.js';
-import writtenY5Generator from '../generators/C02_Y5_CALC_written.js';
+// C02 Y3-5 - Consolidated columnar addition/subtraction generator
+import { C02_Y3_CALC, C02_Y4_CALC, C02_Y5_CALC } from '../generators/C02_Y3_Y4_Y5_CALC_written.js';
 import estimationY2Generator from '../generators/C03_Y2_CALC_estimation.js';
 import estimationY3Generator from '../generators/C03_Y3_CALC_estimation.js';
 import estimationY4Generator from '../generators/C03_Y4_CALC_estimation.js';
@@ -151,9 +150,9 @@ class QuestionEngine {
         this.register(mentalY5Generator);
         this.register(writtenY1Generator);
         this.register(writtenY2Generator);
-        this.register(writtenY3Generator);
-        this.register(writtenY4Generator);
-        this.register(writtenY5Generator);
+        this.register(C02_Y3_CALC);
+        this.register(C02_Y4_CALC);
+        this.register(C02_Y5_CALC);
         this.register(estimationY2Generator);
         this.register(estimationY3Generator);
         this.register(estimationY4Generator);

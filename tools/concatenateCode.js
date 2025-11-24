@@ -55,7 +55,9 @@ const EXCLUDED_FILES = [
     'README.md',
     // Tool outputs
     'llm_request.md',
-    'llm_response.md'
+    'llm_response.md',
+    // Claude files
+    'CLAUDE.md',
 ];
 const EXCLUDED_EXTENSIONS = [ /* ... your existing list ... */
     // Binary and media files

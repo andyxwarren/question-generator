@@ -3,6 +3,13 @@
  *
  * Module: C01_Y1_CALC - "Represent and use number bonds and related subtraction facts within 20"
  *
+ * Schema v2.0 Compliant:
+ * - questionTemplate with [placeholder] notation
+ * - questionRendered with actual values
+ * - Raw values in values object
+ * - Metadata in valueMetadata object
+ * - locale and universal flags
+ *
  * This generator focuses on:
  * - Number bonds (pairs that make 5, 10, 20)
  * - Related addition and subtraction facts
@@ -63,33 +70,47 @@ function generateNumberBonds(params, level) {
 
     const questionTypes = [
         {
-            text: `What number do you add to ${a} to make ${target}?`,
-            answer: b
+            template: `What number do you add to [a] to make [target]?`,
+            rendered: `What number do you add to ${a} to make ${target}?`
         },
         {
-            text: `${a} and ___ make ${target}`,
-            answer: b
+            template: `[a] and [unknown] make [target]`,
+            rendered: `${a} and ___ make ${target}`
         },
         {
-            text: `Find the missing number: ${a} + ___ = ${target}`,
-            answer: b
+            template: `Find the missing number: [a] + [unknown] = [target]`,
+            rendered: `Find the missing number: ${a} + ___ = ${target}`
         },
         {
-            text: `What is the other part when ${target} is split into ${a} and ___?`,
-            answer: b
+            template: `What is the other part when [target] is split into [a] and [unknown]?`,
+            rendered: `What is the other part when ${target} is split into ${a} and ___?`
         }
     ];
 
     const question = randomChoice(questionTypes);
-    const distractors = generateDistractors(question.answer, 3, 0, target);
-    const options = shuffle([question.answer, ...distractors]);
+    const distractors = generateDistractors(b, 3, 0, target);
+    const options = shuffle([b, ...distractors]);
+
+    const values = { a, b, target, unknown: b };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        target: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        unknown: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
 
     return {
-        text: question.text,
+        questionTemplate: question.template,
+        questionRendered: question.rendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: question.answer.toString(),
-        hint: `${a} + ${b} = ${target}`,
+        answer: b,
+        hintTemplate: `[a] + [b] = [target]`,
+        hintRendered: `${a} + ${b} = ${target}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y1_CALC',
         level: level
     };
@@ -106,29 +127,47 @@ function generateMissingPart(params, level) {
 
     const position = randomChoice(['first', 'second']);
 
-    let text;
+    let questionTemplate, questionRendered;
     if (position === 'first') {
-        text = `___ + ${known} = ${target}`;
+        questionTemplate = `[unknown] + [known] = [target]`;
+        questionRendered = `___ + ${known} = ${target}`;
     } else {
-        text = `${known} + ___ = ${target}`;
+        questionTemplate = `[known] + [unknown] = [target]`;
+        questionRendered = `${known} + ___ = ${target}`;
     }
 
     // Word problem variant
     if (randomChoice(params.question_styles) === 'word_problem') {
         const name = getRandomName();
         const item = getRandomItem();
-        text = `${name} has ${known} ${item}. How many more ${item} are needed to make ${target}?`;
+        questionTemplate = `[name] has [known] [item]. How many more [item] are needed to make [target]?`;
+        questionRendered = `${name} has ${known} ${item}. How many more ${item} are needed to make ${target}?`;
     }
 
     const distractors = generateDistractors(answer, 3, 0, params.max_value);
     const options = shuffle([answer, ...distractors]);
 
+    const values = { known, target, unknown: answer, name: getRandomName(), item: getRandomItem() };
+    const valueMetadata = {
+        known: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        target: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        unknown: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+        item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+    };
+
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: answer.toString(),
-        hint: `Think: ${known} + ___ = ${target}`,
+        answer: answer,
+        hintTemplate: `Think: [known] + [unknown] = [target]`,
+        hintRendered: `Think: ${known} + ___ = ${target}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y1_CALC',
         level: level
     };
@@ -145,39 +184,61 @@ function generateRelatedFacts(params, level) {
 
     const factTypes = [
         {
-            given: `${a} + ${b} = ${sum}`,
-            question: `What is ${sum} - ${b}?`,
+            givenTemplate: `[a] + [b] = [sum]`,
+            givenRendered: `${a} + ${b} = ${sum}`,
+            questionTemplate: `What is [sum] - [b]?`,
+            questionRendered: `What is ${sum} - ${b}?`,
             answer: a
         },
         {
-            given: `${a} + ${b} = ${sum}`,
-            question: `What is ${sum} - ${a}?`,
+            givenTemplate: `[a] + [b] = [sum]`,
+            givenRendered: `${a} + ${b} = ${sum}`,
+            questionTemplate: `What is [sum] - [a]?`,
+            questionRendered: `What is ${sum} - ${a}?`,
             answer: b
         },
         {
-            given: `${sum} - ${a} = ${b}`,
-            question: `What is ${a} + ${b}?`,
+            givenTemplate: `[sum] - [a] = [b]`,
+            givenRendered: `${sum} - ${a} = ${b}`,
+            questionTemplate: `What is [a] + [b]?`,
+            questionRendered: `What is ${a} + ${b}?`,
             answer: sum
         },
         {
-            given: `${sum} - ${b} = ${a}`,
-            question: `What is ${b} + ${a}?`,
+            givenTemplate: `[sum] - [b] = [a]`,
+            givenRendered: `${sum} - ${b} = ${a}`,
+            questionTemplate: `What is [b] + [a]?`,
+            questionRendered: `What is ${b} + ${a}?`,
             answer: sum
         }
     ];
 
     const fact = randomChoice(factTypes);
-    const text = `If ${fact.given}, then ${fact.question}`;
+    const questionTemplate = `If ${fact.givenTemplate}, then ${fact.questionTemplate}`;
+    const questionRendered = `If ${fact.givenRendered}, then ${fact.questionRendered}`;
 
     const distractors = generateDistractors(fact.answer, 3, 0, params.max_value);
     const options = shuffle([fact.answer, ...distractors]);
 
+    const values = { a, b, sum };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        sum: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: fact.answer.toString(),
-        hint: 'Addition and subtraction are related',
+        answer: fact.answer,
+        hintTemplate: 'Addition and subtraction are related',
+        hintRendered: 'Addition and subtraction are related',
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y1_CALC',
         level: level
     };
@@ -194,24 +255,38 @@ function generateSimpleAddSub(params, level) {
         const { a, b, answer } = generateAddition(2, params.max_value);
 
         const style = randomChoice(params.question_styles);
-        let text;
+        let questionTemplate, questionRendered;
 
         if (style === 'word_problem') {
             const context = getAdditionContext(a, b, answer);
-            text = context.text;
+            questionTemplate = context.text; // Context already has placeholders in some cases
+            questionRendered = context.text;
         } else {
-            text = `${a} + ${b} = ?`;
+            questionTemplate = `[a] + [b] = ?`;
+            questionRendered = `${a} + ${b} = ?`;
         }
 
         const distractors = generateDistractors(answer, 3, 0, params.max_value);
         const options = shuffle([answer, ...distractors]);
 
+        const values = { a, b };
+        const valueMetadata = {
+            a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            b: { type: "number", prefix: "", suffix: "", decimals: 0 }
+        };
+
         return {
-            text: text,
+            questionTemplate,
+            questionRendered,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: answer.toString(),
-            hint: `Count on from ${a}`,
+            answer: answer,
+            hintTemplate: `Count on from [a]`,
+            hintRendered: `Count on from ${a}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y1_CALC',
             level: level
         };
@@ -219,24 +294,38 @@ function generateSimpleAddSub(params, level) {
         const { a, b, answer } = generateSubtraction(0, params.max_value, { maxMinuend: params.max_value });
 
         const style = randomChoice(params.question_styles);
-        let text;
+        let questionTemplate, questionRendered;
 
         if (style === 'word_problem') {
             const context = getSubtractionContext(a, b, answer);
-            text = context.text;
+            questionTemplate = context.text;
+            questionRendered = context.text;
         } else {
-            text = `${a} - ${b} = ?`;
+            questionTemplate = `[a] - [b] = ?`;
+            questionRendered = `${a} - ${b} = ?`;
         }
 
         const distractors = generateDistractors(answer, 3, 0, params.max_value);
         const options = shuffle([answer, ...distractors]);
 
+        const values = { a, b };
+        const valueMetadata = {
+            a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            b: { type: "number", prefix: "", suffix: "", decimals: 0 }
+        };
+
         return {
-            text: text,
+            questionTemplate,
+            questionRendered,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: answer.toString(),
-            hint: `Count back from ${a}`,
+            answer: answer,
+            hintTemplate: `Count back from [a]`,
+            hintRendered: `Count back from ${a}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y1_CALC',
             level: level
         };
@@ -303,7 +392,8 @@ function generateFactFamilies(params, level) {
         factsText = `${allButLast.join(', ')} and ${last}`;
     }
 
-    const text = `These facts are in the same family: ${factsText}. Which fact completes the family?`;
+    const questionTemplate = `These facts are in the same family: ${factsText}. Which fact completes the family?`;
+    const questionRendered = questionTemplate; // Same for this operation
 
     // Create options with the correct fact and similar-looking wrong ones
     const wrongAnswers = [];
@@ -319,12 +409,25 @@ function generateFactFamilies(params, level) {
 
     const options = shuffle([missingFact, ...wrongAnswers.slice(0, 3)]);
 
+    const values = { smaller, larger, sum };
+    const valueMetadata = {
+        smaller: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        larger: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        sum: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: missingFact,
-        hint: `All facts use the numbers ${smaller}, ${larger}, and ${sum}`,
+        answer: missingFact, // String answer (expression)
+        hintTemplate: `All facts use the numbers [smaller], [larger], and [sum]`,
+        hintRendered: `All facts use the numbers ${smaller}, ${larger}, and ${sum}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y1_CALC',
         level: level
     };
@@ -356,15 +459,18 @@ function generateTwoStepBonds(params, level) {
 
     const questionTypes = [
         {
-            text: `${part1} + ${part2} + ${part3} = ?`,
+            template: `[part1] + [part2] + [part3] = ?`,
+            rendered: `${part1} + ${part2} + ${part3} = ?`,
             answer: target
         },
         {
-            text: `I have ${part1} red counters, ${part2} blue counters, and ${part3} green counters. How many counters altogether?`,
+            template: `I have [part1] red counters, [part2] blue counters, and [part3] green counters. How many counters altogether?`,
+            rendered: `I have ${part1} red counters, ${part2} blue counters, and ${part3} green counters. How many counters altogether?`,
             answer: target
         },
         {
-            text: `${target} is split into three parts: ${part1}, ${part2}, and ___. What is the third part?`,
+            template: `[target] is split into three parts: [part1], [part2], and [unknown]. What is the third part?`,
+            rendered: `${target} is split into three parts: ${part1}, ${part2}, and ___. What is the third part?`,
             answer: part3
         }
     ];
@@ -373,12 +479,30 @@ function generateTwoStepBonds(params, level) {
     const distractors = generateDistractors(question.answer, 3, 0, params.max_value);
     const options = shuffle([question.answer, ...distractors]);
 
+    const values = { part1, part2, part3, target, unknown: part3 };
+    const valueMetadata = {
+        part1: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        part2: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        part3: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        target: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        unknown: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
+    const hintTemplate = question.answer === target ? `Add all three numbers` : `Subtract the two parts from [target]`;
+    const hintRendered = question.answer === target ? `Add all three numbers` : `Subtract the two parts from ${target}`;
+
     return {
-        text: question.text,
+        questionTemplate: question.template,
+        questionRendered: question.rendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: question.answer.toString(),
-        hint: question.answer === target ? `Add all three numbers` : `Subtract the two parts from ${target}`,
+        answer: question.answer,
+        hintTemplate,
+        hintRendered,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y1_CALC',
         level: level
     };

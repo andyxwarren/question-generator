@@ -79,40 +79,78 @@ function generateAddMultiples(params, level, powerOf10) {
     const answer = base + addend;
 
     const style = randomChoice(params.question_styles);
-    let text;
+    let questionTemplate, questionRendered;
+
+    const name = getRandomName();
+    const item = getRandomItem();
+
+    const values = { base, addend, answer, name, item };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        addend: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+        item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+    };
 
     if (style === 'word_problem') {
-        const name = getRandomName();
-        const item = getRandomItem();
         const contexts = [
-            `A company has ${formatNumber(base)} ${item}. They receive ${formatNumber(addend)} more ${item}. How many ${item} now?`,
-            `${name} has ${formatNumber(base)} points. They earn ${formatNumber(addend)} bonus points. Total points?`,
-            `There are ${formatNumber(base)} people in a stadium. ${formatNumber(addend)} more people enter. How many people in total?`
+            {
+                template: `A company has [base] [item]. They receive [addend] more [item]. How many [item] now?`,
+                rendered: `A company has ${formatNumber(base)} ${item}. They receive ${formatNumber(addend)} more ${item}. How many ${item} now?`
+            },
+            {
+                template: `[name] has [base] points. They earn [addend] bonus points. Total points?`,
+                rendered: `${name} has ${formatNumber(base)} points. They earn ${formatNumber(addend)} bonus points. Total points?`
+            },
+            {
+                template: `There are [base] people in a stadium. [addend] more people enter. How many people in total?`,
+                rendered: `There are ${formatNumber(base)} people in a stadium. ${formatNumber(addend)} more people enter. How many people in total?`
+            }
         ];
-        text = randomChoice(contexts);
+        const context = randomChoice(contexts);
+        questionTemplate = context.template;
+        questionRendered = context.rendered;
     } else if (style === 'missing_number') {
-        text = `${formatNumber(base)} + ___ = ${formatNumber(answer)}`;
+        questionTemplate = `[base] + [unknown] = [answer]`;
+        questionRendered = `${formatNumber(base)} + ___ = ${formatNumber(answer)}`;
+        values.unknown = addend;
+        valueMetadata.unknown = { type: "number", prefix: "", suffix: "", decimals: 0 };
+
         return {
-            text: text,
+            questionTemplate,
+            questionRendered,
             type: 'text_input',
-            answer: addend.toString(),
-            hint: `What was added to ${formatNumber(base)}?`,
+            values,
+            valueMetadata,
+            answer: addend,
+            hintTemplate: `What was added to [base]?`,
+            hintRendered: `What was added to ${formatNumber(base)}?`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y5_CALC',
             level: level
         };
     } else {
-        text = `${formatNumber(base)} + ${formatNumber(addend)} = ?`;
+        questionTemplate = `[base] + [addend] = ?`;
+        questionRendered = `${formatNumber(base)} + ${formatNumber(addend)} = ?`;
     }
 
     const distractors = generateDistractors(answer, 3, params.min_value, params.max_value + powerOf10 * 10);
-    const options = shuffle([answer, ...distractors]).map(n => formatNumber(n));
+    const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: formatNumber(answer),
-        hint: `Add ${formatNumber(addend)} mentally`,
+        answer: answer,
+        hintTemplate: `Add [addend] mentally`,
+        hintRendered: `Add ${formatNumber(addend)} mentally`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y5_CALC',
         level: level
     };
@@ -130,40 +168,78 @@ function generateSubtractMultiples(params, level, powerOf10) {
     const answer = base - subtrahend;
 
     const style = randomChoice(params.question_styles);
-    let text;
+    let questionTemplate, questionRendered;
+
+    const name = getRandomName();
+    const item = getRandomItem();
+
+    const values = { base, subtrahend, answer, name, item };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        subtrahend: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        name: { type: "string", prefix: "", suffix: "", decimals: 0 },
+        item: { type: "string", prefix: "", suffix: "", decimals: 0 }
+    };
 
     if (style === 'word_problem') {
-        const name = getRandomName();
-        const item = getRandomItem();
         const contexts = [
-            `A warehouse has ${formatNumber(base)} ${item}. They ship ${formatNumber(subtrahend)} ${item}. How many ${item} remain?`,
-            `${name} has ${formatNumber(base)} coins. They spend ${formatNumber(subtrahend)} coins. How many coins left?`,
-            `There were ${formatNumber(base)} tickets. ${formatNumber(subtrahend)} tickets were sold. How many tickets available?`
+            {
+                template: `A warehouse has [base] [item]. They ship [subtrahend] [item]. How many [item] remain?`,
+                rendered: `A warehouse has ${formatNumber(base)} ${item}. They ship ${formatNumber(subtrahend)} ${item}. How many ${item} remain?`
+            },
+            {
+                template: `[name] has [base] coins. They spend [subtrahend] coins. How many coins left?`,
+                rendered: `${name} has ${formatNumber(base)} coins. They spend ${formatNumber(subtrahend)} coins. How many coins left?`
+            },
+            {
+                template: `There were [base] tickets. [subtrahend] tickets were sold. How many tickets available?`,
+                rendered: `There were ${formatNumber(base)} tickets. ${formatNumber(subtrahend)} tickets were sold. How many tickets available?`
+            }
         ];
-        text = randomChoice(contexts);
+        const context = randomChoice(contexts);
+        questionTemplate = context.template;
+        questionRendered = context.rendered;
     } else if (style === 'missing_number') {
-        text = `${formatNumber(base)} - ___ = ${formatNumber(answer)}`;
+        questionTemplate = `[base] - [unknown] = [answer]`;
+        questionRendered = `${formatNumber(base)} - ___ = ${formatNumber(answer)}`;
+        values.unknown = subtrahend;
+        valueMetadata.unknown = { type: "number", prefix: "", suffix: "", decimals: 0 };
+
         return {
-            text: text,
+            questionTemplate,
+            questionRendered,
             type: 'text_input',
-            answer: subtrahend.toString(),
-            hint: `What was subtracted from ${formatNumber(base)}?`,
+            values,
+            valueMetadata,
+            answer: subtrahend,
+            hintTemplate: `What was subtracted from [base]?`,
+            hintRendered: `What was subtracted from ${formatNumber(base)}?`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y5_CALC',
             level: level
         };
     } else {
-        text = `${formatNumber(base)} - ${formatNumber(subtrahend)} = ?`;
+        questionTemplate = `[base] - [subtrahend] = ?`;
+        questionRendered = `${formatNumber(base)} - ${formatNumber(subtrahend)} = ?`;
     }
 
     const distractors = generateDistractors(answer, 3, 0, params.max_value);
-    const options = shuffle([answer, ...distractors]).map(n => formatNumber(n));
+    const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: formatNumber(answer),
-        hint: `Subtract ${formatNumber(subtrahend)} mentally`,
+        answer: answer,
+        hintTemplate: `Subtract [subtrahend] mentally`,
+        hintRendered: `Subtract ${formatNumber(subtrahend)} mentally`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y5_CALC',
         level: level
     };
@@ -188,17 +264,32 @@ function generateAddOnesTo4Digit(params, level, attempt = 0) {
     }
 
     const answer = base + ones;
-    const text = `${formatNumber(base)} + ${ones} = ?`;
+
+    const values = { base, ones, answer };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        ones: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
+    const questionTemplate = `[base] + [ones] = ?`;
+    const questionRendered = `${formatNumber(base)} + ${ones} = ?`;
 
     const distractors = generateDistractors(answer, 3, 1000, 10000);
-    const options = shuffle([answer, ...distractors]).map(n => formatNumber(n));
+    const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: formatNumber(answer),
-        hint: `Add ${ones} to the ones place`,
+        answer: answer,
+        hintTemplate: `Add [ones] to the ones place`,
+        hintRendered: `Add ${ones} to the ones place`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y5_CALC',
         level: level
     };
@@ -223,17 +314,32 @@ function generateSubtractOnesFrom4Digit(params, level, attempt = 0) {
     }
 
     const answer = base - ones;
-    const text = `${formatNumber(base)} - ${ones} = ?`;
+
+    const values = { base, ones, answer };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        ones: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
+    const questionTemplate = `[base] - [ones] = ?`;
+    const questionRendered = `${formatNumber(base)} - ${ones} = ?`;
 
     const distractors = generateDistractors(answer, 3, 1000, 10000);
-    const options = shuffle([answer, ...distractors]).map(n => formatNumber(n));
+    const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: formatNumber(answer),
-        hint: `Subtract ${ones} from the ones place`,
+        answer: answer,
+        hintTemplate: `Subtract [ones] from the ones place`,
+        hintRendered: `Subtract ${ones} from the ones place`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y5_CALC',
         level: level
     };
@@ -257,17 +363,31 @@ function generateAddAnyTo4Digit(params, level) {
     const addend = randomChoice(addendTypes)();
     const answer = base + addend;
 
-    const text = `${formatNumber(base)} + ${formatNumber(addend)} = ?`;
+    const values = { base, addend, answer };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        addend: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
+    const questionTemplate = `[base] + [addend] = ?`;
+    const questionRendered = `${formatNumber(base)} + ${formatNumber(addend)} = ?`;
 
     const distractors = generateDistractors(answer, 3, 1000, 10000 + addend);
-    const options = shuffle([answer, ...distractors]).map(n => formatNumber(n));
+    const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: formatNumber(answer),
-        hint: `Use place value to add ${formatNumber(addend)}`,
+        answer: answer,
+        hintTemplate: `Use place value to add [addend]`,
+        hintRendered: `Use place value to add ${formatNumber(addend)}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y5_CALC',
         level: level
     };
@@ -289,17 +409,31 @@ function generateSubtractAnyFrom4Digit(params, level) {
     const subtrahend = randomChoice(subtrahendTypes)();
     const answer = base - subtrahend;
 
-    const text = `${formatNumber(base)} - ${formatNumber(subtrahend)} = ?`;
+    const values = { base, subtrahend, answer };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        subtrahend: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
+    const questionTemplate = `[base] - [subtrahend] = ?`;
+    const questionRendered = `${formatNumber(base)} - ${formatNumber(subtrahend)} = ?`;
 
     const distractors = generateDistractors(answer, 3, 0, 10000);
-    const options = shuffle([answer, ...distractors]).map(n => formatNumber(n));
+    const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: formatNumber(answer),
-        hint: `Use place value to subtract ${formatNumber(subtrahend)}`,
+        answer: answer,
+        hintTemplate: `Use place value to subtract [subtrahend]`,
+        hintRendered: `Use place value to subtract ${formatNumber(subtrahend)}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y5_CALC',
         level: level
     };
@@ -324,17 +458,31 @@ function generateAddAnyToLarge(params, level) {
     const addend = randomChoice(addendTypes)();
     const answer = base + addend;
 
-    const text = `${formatNumber(base)} + ${formatNumber(addend)} = ?`;
+    const values = { base, addend, answer };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        addend: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
+    const questionTemplate = `[base] + [addend] = ?`;
+    const questionRendered = `${formatNumber(base)} + ${formatNumber(addend)} = ?`;
 
     const distractors = generateDistractors(answer, 3, params.min_value, params.max_value);
-    const options = shuffle([answer, ...distractors]).map(n => formatNumber(n));
+    const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: formatNumber(answer),
-        hint: `Add ${formatNumber(addend)} using place value`,
+        answer: answer,
+        hintTemplate: `Add [addend] using place value`,
+        hintRendered: `Add ${formatNumber(addend)} using place value`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y5_CALC',
         level: level
     };
@@ -358,17 +506,31 @@ function generateSubtractAnyFromLarge(params, level) {
     const subtrahend = randomChoice(subtrahendTypes)();
     const answer = base - subtrahend;
 
-    const text = `${formatNumber(base)} - ${formatNumber(subtrahend)} = ?`;
+    const values = { base, subtrahend, answer };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        subtrahend: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
+    const questionTemplate = `[base] - [subtrahend] = ?`;
+    const questionRendered = `${formatNumber(base)} - ${formatNumber(subtrahend)} = ?`;
 
     const distractors = generateDistractors(answer, 3, 0, params.max_value);
-    const options = shuffle([answer, ...distractors]).map(n => formatNumber(n));
+    const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: formatNumber(answer),
-        hint: `Subtract ${formatNumber(subtrahend)} using place value`,
+        answer: answer,
+        hintTemplate: `Subtract [subtrahend] using place value`,
+        hintRendered: `Subtract ${formatNumber(subtrahend)} using place value`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y5_CALC',
         level: level
     };
@@ -387,17 +549,33 @@ function generateCompensation(params, level) {
     const addend = randomInt(100, 5000);
     const answer = base + addend;
 
-    const text = `${formatNumber(base)} + ${formatNumber(addend)} = ?\n\nHint: ${formatNumber(base)} is close to ${formatNumber(roundBase)}`;
+    const values = { base, addend, answer, roundBase, offset };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        addend: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        roundBase: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        offset: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
+    const questionTemplate = `[base] + [addend] = ?\n\nHint: [base] is close to [roundBase]`;
+    const questionRendered = `${formatNumber(base)} + ${formatNumber(addend)} = ?\n\nHint: ${formatNumber(base)} is close to ${formatNumber(roundBase)}`;
 
     const distractors = generateDistractors(answer, 3, params.min_value, params.max_value);
-    const options = shuffle([answer, ...distractors]).map(n => formatNumber(n));
+    const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: formatNumber(answer),
-        hint: `Try: ${formatNumber(roundBase)} + ${formatNumber(addend)} then adjust by ${offset}`,
+        answer: answer,
+        hintTemplate: `Try: [roundBase] + [addend] then adjust by [offset]`,
+        hintRendered: `Try: ${formatNumber(roundBase)} + ${formatNumber(addend)} then adjust by ${offset}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y5_CALC',
         level: level
     };
@@ -416,17 +594,34 @@ function generatePartitioning(params, level) {
 
     const answer = base + addend;
 
-    const text = `${formatNumber(base)} + ${formatNumber(addend)} = ?\n\nHint: Split ${formatNumber(addend)} into ${formatNumber(hundreds)} + ${formatNumber(tens)} + ${ones}`;
+    const values = { base, addend, answer, hundreds, tens, ones };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        addend: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        hundreds: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        tens: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        ones: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
+    const questionTemplate = `[base] + [addend] = ?\n\nHint: Split [addend] into [hundreds] + [tens] + [ones]`;
+    const questionRendered = `${formatNumber(base)} + ${formatNumber(addend)} = ?\n\nHint: Split ${formatNumber(addend)} into ${formatNumber(hundreds)} + ${formatNumber(tens)} + ${ones}`;
 
     const distractors = generateDistractors(answer, 3, params.min_value, 15000);
-    const options = shuffle([answer, ...distractors]).map(n => formatNumber(n));
+    const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: formatNumber(answer),
-        hint: `Add ${formatNumber(hundreds)}, then ${formatNumber(tens)}, then ${ones}`,
+        answer: answer,
+        hintTemplate: `Add [hundreds], then [tens], then [ones]`,
+        hintRendered: `Add ${formatNumber(hundreds)}, then ${formatNumber(tens)}, then ${ones}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y5_CALC',
         level: level
     };
@@ -446,17 +641,35 @@ function generateNearMultiplesLarge(params, level) {
 
     const answer = a + b;
 
-    const text = `${formatNumber(a)} + ${formatNumber(b)} = ?\n\nHint: Round both numbers first`;
+    const values = { a, b, answer, roundA, roundB, offsetA, offsetB };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        roundA: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        roundB: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        offsetA: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        offsetB: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
+    const questionTemplate = `[a] + [b] = ?\n\nHint: Round both numbers first`;
+    const questionRendered = `${formatNumber(a)} + ${formatNumber(b)} = ?\n\nHint: Round both numbers first`;
 
     const distractors = generateDistractors(answer, 3, params.min_value, params.max_value);
-    const options = shuffle([answer, ...distractors]).map(n => formatNumber(n));
+    const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: formatNumber(answer),
-        hint: `Try: (${formatNumber(roundA)} + ${formatNumber(roundB)}) then adjust`,
+        answer: answer,
+        hintTemplate: `Try: ([roundA] + [roundB]) then adjust`,
+        hintRendered: `Try: (${formatNumber(roundA)} + ${formatNumber(roundB)}) then adjust`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y5_CALC',
         level: level
     };
@@ -471,17 +684,32 @@ function generateMultiStepMental(params, level) {
     const addend2 = randomInt(1, 9) * 100;
     const answer = base + addend1 + addend2;
 
-    const text = `${formatNumber(base)} + ${formatNumber(addend1)} + ${formatNumber(addend2)} = ?`;
+    const values = { base, addend1, addend2, answer };
+    const valueMetadata = {
+        base: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        addend1: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        addend2: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        answer: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
+    const questionTemplate = `[base] + [addend1] + [addend2] = ?`;
+    const questionRendered = `${formatNumber(base)} + ${formatNumber(addend1)} + ${formatNumber(addend2)} = ?`;
 
     const distractors = generateDistractors(answer, 3, params.min_value, params.max_value);
-    const options = shuffle([answer, ...distractors]).map(n => formatNumber(n));
+    const options = shuffle([answer, ...distractors]);
 
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: formatNumber(answer),
-        hint: `Add ${formatNumber(addend1)} first, then ${formatNumber(addend2)}`,
+        answer: answer,
+        hintTemplate: `Add [addend1] first, then [addend2]`,
+        hintRendered: `Add ${formatNumber(addend1)} first, then ${formatNumber(addend2)}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y5_CALC',
         level: level
     };
