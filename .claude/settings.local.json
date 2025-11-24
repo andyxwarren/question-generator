@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Edit(./**)",
       "Edit(./src/**)",
       "Bash(node -c:*)",
       "Bash(python -m http.server:*)",
@@ -16,7 +17,10 @@
       "Bash(cat:*)",
       "Bash(nul)",
       "Bash(python:*)",
-      "Bash(measurement_ui_samples.txt)"
+      "Bash(measurement_ui_samples.txt)",
+      "Bash(tree:*)",
+      "Bash(rm:*)",
+      "Bash(del test_sample.patch)"
     ],
     "deny": [],
     "ask": []

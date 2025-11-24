@@ -6,17 +6,10 @@
  */
 
 import { getParameters } from '../curriculum/parameters.js';
-import countingY1Generator from '../generators/N01_Y1_NPV_counting.js';
-import countingY2Generator from '../generators/N01_Y2_NPV_counting.js';
-import countingY3Generator from '../generators/N01_Y3_NPV_counting.js';
-import countingY4Generator from '../generators/N01_Y4_NPV_counting.js';
-import countingY5Generator from '../generators/N01_Y5_NPV_counting.js';
-import readwriteY1Generator from '../generators/N02_Y1_NPV_readwrite.js';
-import readwriteY2Generator from '../generators/N02_Y2_NPV_readwrite.js';
-import readwriteY3Generator from '../generators/N02_Y3_NPV_readwrite.js';
-import readwriteY4Generator from '../generators/N02_Y4_NPV_readwrite.js';
-import readwriteY5Generator from '../generators/N02_Y5_NPV_readwrite.js';
-import readwriteY6Generator from '../generators/N02_Y6_NPV_readwrite.js';
+// N01 - Consolidated Counting generator
+import N01Generators from '../generators/N01_NPV_counting.js';
+// N02 - Consolidated Read/Write/Order/Compare generator
+import N02Generators from '../generators/N02_NPV_readwrite.js';
 import placeValueY2Generator from '../generators/N03_Y2_NPV_placevalue.js';
 import placeValueY3Generator from '../generators/N03_Y3_NPV_placevalue.js';
 import placeValueY4Generator from '../generators/N03_Y4_NPV_placevalue.js';
@@ -120,17 +113,19 @@ class QuestionEngine {
      * Register all default generators
      */
     registerDefaultGenerators() {
-        this.register(countingY1Generator);
-        this.register(countingY2Generator);
-        this.register(countingY3Generator);
-        this.register(countingY4Generator);
-        this.register(countingY5Generator);
-        this.register(readwriteY1Generator);
-        this.register(readwriteY2Generator);
-        this.register(readwriteY3Generator);
-        this.register(readwriteY4Generator);
-        this.register(readwriteY5Generator);
-        this.register(readwriteY6Generator);
+        // N01 - Consolidated Counting (all years)
+        this.register(N01Generators.Y1);
+        this.register(N01Generators.Y2);
+        this.register(N01Generators.Y3);
+        this.register(N01Generators.Y4);
+        this.register(N01Generators.Y5);
+        // N02 - Consolidated Read/Write/Order/Compare (all years)
+        this.register(N02Generators.Y1);
+        this.register(N02Generators.Y2);
+        this.register(N02Generators.Y3);
+        this.register(N02Generators.Y4);
+        this.register(N02Generators.Y5);
+        this.register(N02Generators.Y6);
         this.register(placeValueY2Generator);
         this.register(placeValueY3Generator);
         this.register(placeValueY4Generator);

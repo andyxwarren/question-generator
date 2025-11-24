@@ -185,15 +185,18 @@ function generateDeriveTo100(params, level) {
 
         const questionTypes = [
             {
-                text: `If ${smallA} + ${smallB} = ${smallAnswer}, what is ${a} + ${b}?`,
+                template: `If [smallA] + [smallB] = [smallAnswer], what is [largeA] + [largeB]?`,
+                rendered: `If ${smallA} + ${smallB} = ${smallAnswer}, what is ${a} + ${b}?`,
                 showRelation: true
             },
             {
-                text: `${a} + ${b} = ?`,
+                template: `[largeA] + [largeB] = ?`,
+                rendered: `${a} + ${b} = ?`,
                 showRelation: false
             },
             {
-                text: `Use the fact ${smallA} + ${smallB} = ${smallAnswer} to work out ${a} + ${b}`,
+                template: `Use the fact [smallA] + [smallB] = [smallAnswer] to work out [largeA] + [largeB]`,
+                rendered: `Use the fact ${smallA} + ${smallB} = ${smallAnswer} to work out ${a} + ${b}`,
                 showRelation: true
             }
         ];
@@ -203,12 +206,41 @@ function generateDeriveTo100(params, level) {
         const distractors = generateDistractors(answer, 3, 0, params.max_value_derived);
         const options = shuffle([answer, ...distractors]);
 
+        const values = {
+            smallA,
+            smallB,
+            smallAnswer,
+            largeA: a,
+            largeB: b
+        };
+
+        const valueMetadata = {
+            smallA: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            smallB: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            smallAnswer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            largeA: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            largeB: { type: "number", prefix: "", suffix: "", decimals: 0 }
+        };
+
+        const hintTemplate = question.showRelation
+            ? `[largeA] + [largeB] is the same pattern as [smallA] + [smallB]`
+            : `Think of [smallA] + [smallB]`;
+        const hintRendered = question.showRelation
+            ? `${a} + ${b} is the same pattern as ${smallA} + ${smallB}`
+            : `Think of ${a / 10} + ${b / 10}`;
+
         return {
-            text: question.text,
+            questionTemplate: question.template,
+            questionRendered: question.rendered,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: answer.toString(),
-            hint: question.showRelation ? `${a} + ${b} is the same pattern as ${smallA} + ${smallB}` : `Think of ${a / 10} + ${b / 10}`,
+            answer: answer,
+            hintTemplate,
+            hintRendered,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y2_CALC',
             level: level
         };
@@ -225,15 +257,18 @@ function generateDeriveTo100(params, level) {
 
         const questionTypes = [
             {
-                text: `If ${smallA} - ${smallB} = ${smallAnswer}, what is ${a} - ${b}?`,
+                template: `If [smallA] - [smallB] = [smallAnswer], what is [largeA] - [largeB]?`,
+                rendered: `If ${smallA} - ${smallB} = ${smallAnswer}, what is ${a} - ${b}?`,
                 showRelation: true
             },
             {
-                text: `${a} - ${b} = ?`,
+                template: `[largeA] - [largeB] = ?`,
+                rendered: `${a} - ${b} = ?`,
                 showRelation: false
             },
             {
-                text: `Use the fact ${smallA} - ${smallB} = ${smallAnswer} to work out ${a} - ${b}`,
+                template: `Use the fact [smallA] - [smallB] = [smallAnswer] to work out [largeA] - [largeB]`,
+                rendered: `Use the fact ${smallA} - ${smallB} = ${smallAnswer} to work out ${a} - ${b}`,
                 showRelation: true
             }
         ];
@@ -243,12 +278,41 @@ function generateDeriveTo100(params, level) {
         const distractors = generateDistractors(answer, 3, 0, params.max_value_derived);
         const options = shuffle([answer, ...distractors]);
 
+        const values = {
+            smallA,
+            smallB,
+            smallAnswer,
+            largeA: a,
+            largeB: b
+        };
+
+        const valueMetadata = {
+            smallA: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            smallB: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            smallAnswer: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            largeA: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            largeB: { type: "number", prefix: "", suffix: "", decimals: 0 }
+        };
+
+        const hintTemplate = question.showRelation
+            ? `[largeA] - [largeB] is the same pattern as [smallA] - [smallB]`
+            : `Think of [smallA] - [smallB]`;
+        const hintRendered = question.showRelation
+            ? `${a} - ${b} is the same pattern as ${smallA} - ${smallB}`
+            : `Think of ${a / 10} - ${b / 10}`;
+
         return {
-            text: question.text,
+            questionTemplate: question.template,
+            questionRendered: question.rendered,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: answer.toString(),
-            hint: question.showRelation ? `${a} - ${b} is the same pattern as ${smallA} - ${smallB}` : `Think of ${a / 10} - ${b / 10}`,
+            answer: answer,
+            hintTemplate,
+            hintRendered,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y2_CALC',
             level: level
         };
@@ -356,15 +420,18 @@ function generateRelatedSubtract(params, level) {
 
     const questionTypes = [
         {
-            text: `If ${a} + ${b} = ${sum}, what is ${sum} - ${a}?`,
+            template: `If [a] + [b] = [sum], what is [sum] - [a]?`,
+            rendered: `If ${a} + ${b} = ${sum}, what is ${sum} - ${a}?`,
             answer: b
         },
         {
-            text: `If ${a} + ${b} = ${sum}, what is ${sum} - ${b}?`,
+            template: `If [a] + [b] = [sum], what is [sum] - [b]?`,
+            rendered: `If ${a} + ${b} = ${sum}, what is ${sum} - ${b}?`,
             answer: a
         },
         {
-            text: `You know that ${a} + ${b} = ${sum}. Use this to work out ${sum} - ${a}`,
+            template: `You know that [a] + [b] = [sum]. Use this to work out [sum] - [a]`,
+            rendered: `You know that ${a} + ${b} = ${sum}. Use this to work out ${sum} - ${a}`,
             answer: b
         }
     ];
@@ -374,12 +441,25 @@ function generateRelatedSubtract(params, level) {
     const distractors = generateDistractors(question.answer, 3, 0, sum);
     const options = shuffle([question.answer, ...distractors]);
 
+    const values = { a, b, sum };
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        sum: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     return {
-        text: question.text,
+        questionTemplate: question.template,
+        questionRendered: question.rendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: question.answer.toString(),
-        hint: 'Addition and subtraction are inverse operations',
+        answer: question.answer,
+        hintTemplate: 'Addition and subtraction are inverse operations',
+        hintRendered: 'Addition and subtraction are inverse operations',
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y2_CALC',
         level: level
     };
@@ -395,8 +475,6 @@ function generateInverseOperations(params, level) {
     if (operation === 'check_add') {
         const { a, b, answer } = generateAddition(2, params.max_value_basic);
 
-        const text = `To check if ${a} + ${b} = ${answer}, which subtraction could you use?`;
-
         const correctCheck = `${answer} - ${a}`;
         const wrongOptions = [
             `${a} - ${b}`,
@@ -406,12 +484,25 @@ function generateInverseOperations(params, level) {
 
         const options = shuffle([correctCheck, ...wrongOptions.slice(0, 3)]);
 
+        const values = { a, b, result: answer };
+        const valueMetadata = {
+            a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            result: { type: "number", prefix: "", suffix: "", decimals: 0 }
+        };
+
         return {
-            text: text,
+            questionTemplate: `To check if [a] + [b] = [result], which subtraction could you use?`,
+            questionRendered: `To check if ${a} + ${b} = ${answer}, which subtraction could you use?`,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: correctCheck,
-            hint: `Subtraction is the inverse of addition`,
+            answer: correctCheck,  // String expression
+            hintTemplate: `Subtraction is the inverse of addition`,
+            hintRendered: `Subtraction is the inverse of addition`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y2_CALC',
             level: level
         };
@@ -419,8 +510,6 @@ function generateInverseOperations(params, level) {
         const { a, b, answer } = generateSubtraction(1, params.max_value_basic, {
             maxMinuend: params.max_value_basic
         });
-
-        const text = `To check if ${a} - ${b} = ${answer}, which addition could you use?`;
 
         const correctCheck = `${answer} + ${b}`;
         const wrongOptions = [
@@ -431,12 +520,25 @@ function generateInverseOperations(params, level) {
 
         const options = shuffle([correctCheck, ...wrongOptions.slice(0, 3)]);
 
+        const values = { a, b, result: answer };
+        const valueMetadata = {
+            a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            result: { type: "number", prefix: "", suffix: "", decimals: 0 }
+        };
+
         return {
-            text: text,
+            questionTemplate: `To check if [a] - [b] = [result], which addition could you use?`,
+            questionRendered: `To check if ${a} - ${b} = ${answer}, which addition could you use?`,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: correctCheck,
-            hint: `Addition is the inverse of subtraction`,
+            answer: correctCheck,  // String expression
+            hintTemplate: `Addition is the inverse of subtraction`,
+            hintRendered: `Addition is the inverse of subtraction`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y2_CALC',
             level: level
         };
@@ -444,18 +546,34 @@ function generateInverseOperations(params, level) {
         // Solve using inverse
         const { a, b, answer } = generateAddition(2, params.max_value_basic);
 
-        const text = `${a} + ___ = ${answer}. Use subtraction to find the missing number.`;
         const correctAnswer = b;
 
         const distractors = generateDistractors(correctAnswer, 3, 0, params.max_value_basic);
         const options = shuffle([correctAnswer, ...distractors]);
 
+        const values = {
+            a,
+            unknown: b,  // The missing value
+            result: answer
+        };
+        const valueMetadata = {
+            a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            unknown: { type: "number", prefix: "", suffix: "", decimals: 0 },
+            result: { type: "number", prefix: "", suffix: "", decimals: 0 }
+        };
+
         return {
-            text: text,
+            questionTemplate: `[a] + [unknown] = [result]. Use subtraction to find the missing number.`,
+            questionRendered: `${a} + ___ = ${answer}. Use subtraction to find the missing number.`,
             type: 'multiple_choice',
+            values,
+            valueMetadata,
             options: options,
-            answer: correctAnswer.toString(),
-            hint: `Try ${answer} - ${a}`,
+            answer: correctAnswer,
+            hintTemplate: `Try [result] - [a]`,
+            hintRendered: `Try ${answer} - ${a}`,
+            locale: 'en-GB',
+            universal: true,
             module: 'C01_Y2_CALC',
             level: level
         };
@@ -527,12 +645,30 @@ function generateFactFamilies100(params, level) {
 
     const options = shuffle([missingFact, ...wrongAnswers.slice(0, 3)]);
 
+    const values = {
+        smaller,
+        larger,
+        sum
+    };
+
+    const valueMetadata = {
+        smaller: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        larger: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        sum: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
     return {
-        text: text,
+        questionTemplate: `Complete the fact family using [smaller], [larger], and [sum]. Which fact is missing?`,
+        questionRendered: text,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: missingFact,
-        hint: `All facts use ${smaller}, ${larger}, and ${sum}`,
+        answer: missingFact,  // String expression
+        hintTemplate: `All facts use [smaller], [larger], and [sum]`,
+        hintRendered: `All facts use ${smaller}, ${larger}, and ${sum}`,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y2_CALC',
         level: level
     };
@@ -561,17 +697,45 @@ function generateNearMultiples(params, level) {
     const totalAdjust = offsetA + offsetB;
     const adjustmentSign = totalAdjust > 0 ? '+' : '';
 
-    const text = `${a} + ${b} = ?\n\nHint: Think of ${a} as ${roundA} and ${b} as ${roundB}`;
-
     const distractors = generateDistractors(answer, 3, 0, params.max_value_derived);
     const options = shuffle([answer, ...distractors]);
 
+    const values = {
+        a,
+        b,
+        roundA,
+        roundB,
+        roundedSum,
+        totalAdjust: Math.abs(totalAdjust)
+    };
+
+    const valueMetadata = {
+        a: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        b: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        roundA: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        roundB: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        roundedSum: { type: "number", prefix: "", suffix: "", decimals: 0 },
+        totalAdjust: { type: "number", prefix: "", suffix: "", decimals: 0 }
+    };
+
+    const questionTemplate = `[a] + [b] = ?\n\nHint: Think of [a] as [roundA] and [b] as [roundB]`;
+    const questionRendered = `${a} + ${b} = ?\n\nHint: Think of ${a} as ${roundA} and ${b} as ${roundB}`;
+
+    const hintTemplate = `Step 1: [roundA] + [roundB] = [roundedSum]\nStep 2: Then ${adjustmentSign}[totalAdjust] = answer`;
+    const hintRendered = `Step 1: ${roundA} + ${roundB} = ${roundedSum}\nStep 2: Then ${adjustmentSign}${totalAdjust} = ${answer}`;
+
     return {
-        text: text,
+        questionTemplate,
+        questionRendered,
         type: 'multiple_choice',
+        values,
+        valueMetadata,
         options: options,
-        answer: answer.toString(),
-        hint: `Step 1: ${roundA} + ${roundB} = ${roundedSum}\nStep 2: Then ${adjustmentSign}${totalAdjust} = ${answer}`,
+        answer: answer,
+        hintTemplate,
+        hintRendered,
+        locale: 'en-GB',
+        universal: true,
         module: 'C01_Y2_CALC',
         level: level
     };
