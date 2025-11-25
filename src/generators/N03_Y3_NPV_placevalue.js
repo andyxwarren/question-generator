@@ -1,7 +1,6 @@
 /**
  * Year 3 Place Value Question Generator
- *
- * Module: N03_Y3_NPV - "Recognise the place value of each digit in a three-digit number (hundreds, tens, ones)"
+ * Schema: V2
  */
 
 import {
@@ -15,49 +14,37 @@ import {
     getExpandedForm,
     getAlternativeDecomposition,
     generateNumberWithZero,
-    generateDistractors,
-    formatPlaceName
+    generateDistractors
 } from './helpers/N03_placeValueHelpers.js';
 
-/**
- * Main question generator
- */
 export function generateQuestion(params, level) {
-    const operation = randomChoice(params.operations);
+    const { operations, math } = params;
+    const operation = randomChoice(operations);
+
+    const getFlatParams = () => ({
+        min_value: math.range.min,
+        max_value: math.range.max,
+        places: math.placeValue.places,
+        include_zero: math.placeValue.includeZero
+    });
 
     switch(operation) {
-        case 'identify_digit':
-            return generateIdentifyDigit(params, level);
-        case 'identify_place_value':
-            return generateIdentifyPlaceValue(params, level);
-        case 'compare_place_values':
-            return generateComparePlaceValues(params, level);
-        case 'compose_simple':
-            return generateComposeSimple(params, level);
-        case 'decompose_simple':
-            return generateDecomposeSimple(params, level);
-        case 'digit_value':
-            return generateDigitValue(params, level);
-        case 'zero_value':
-            return generateZeroValue(params, level);
-        case 'expanded_form':
-            return generateExpandedForm(params, level);
-        case 'standard_from_expanded':
-            return generateStandardFromExpanded(params, level);
-        case 'place_comparison':
-            return generatePlaceComparison(params, level);
-        case 'alternative_decomposition':
-            return generateAlternativeDecomposition(params, level);
-        case 'multiple_representations':
-            return generateMultipleRepresentations(params, level);
-        default:
-            return generateIdentifyDigit(params, level);
+        case 'identify_digit': return generateIdentifyDigit(getFlatParams(), level);
+        case 'identify_place_value': return generateIdentifyPlaceValue(getFlatParams(), level);
+        case 'compare_place_values': return generateComparePlaceValues(getFlatParams(), level);
+        case 'compose_simple': return generateComposeSimple(getFlatParams(), level);
+        case 'decompose_simple': return generateDecomposeSimple(getFlatParams(), level);
+        case 'digit_value': return generateDigitValue(getFlatParams(), level);
+        case 'zero_value': return generateZeroValue(getFlatParams(), level);
+        case 'expanded_form': return generateExpandedForm(getFlatParams(), level);
+        case 'standard_from_expanded': return generateStandardFromExpanded(getFlatParams(), level);
+        case 'place_comparison': return generatePlaceComparison(getFlatParams(), level);
+        case 'alternative_decomposition': return generateAlternativeDecomposition(getFlatParams(), level);
+        case 'multiple_representations': return generateMultipleRepresentations(getFlatParams(), level);
+        default: return generateIdentifyDigit(getFlatParams(), level);
     }
 }
 
-/**
- * "What digit is in the [place] in [number]?"
- */
 function generateIdentifyDigit(params, level) {
     const number = params.include_zero
         ? generateNumberWithZero(params.min_value, params.max_value, Math.random() < 0.3)
@@ -69,17 +56,10 @@ function generateIdentifyDigit(params, level) {
     const distractors = new Set();
     params.places.forEach(p => {
         const digit = getDigitAtPlace(number, p);
-        if (digit !== correctDigit) {
-            distractors.add(digit);
-        }
+        if (digit !== correctDigit) distractors.add(digit);
     });
 
-    while (distractors.size < 3) {
-        const randomDigit = randomInt(0, 9);
-        if (randomDigit !== correctDigit) {
-            distractors.add(randomDigit);
-        }
-    }
+    while (distractors.size < 3) distractors.add(randomInt(0, 9));
 
     const options = shuffle([correctDigit, ...Array.from(distractors).slice(0, 3)]);
 
@@ -94,9 +74,6 @@ function generateIdentifyDigit(params, level) {
     };
 }
 
-/**
- * "What is the value of the [digit] in [number]?"
- */
 function generateIdentifyPlaceValue(params, level) {
     const number = params.include_zero
         ? generateNumberWithZero(params.min_value, params.max_value, Math.random() < 0.3)
@@ -105,27 +82,18 @@ function generateIdentifyPlaceValue(params, level) {
     const place = randomChoice(params.places);
     const digit = getDigitAtPlace(number, place);
 
-    if (digit === 0) {
-        return generateIdentifyPlaceValue(params, level);
-    }
+    if (digit === 0) return generateIdentifyPlaceValue(params, level);
 
     const correctValue = getPlaceValue(number, place);
-
-    const distractors = new Set();
-    distractors.add(digit);
+    const distractors = new Set([digit]);
 
     params.places.forEach(p => {
         const value = getPlaceValue(number, p);
-        if (value !== correctValue && value > 0) {
-            distractors.add(value);
-        }
+        if (value !== correctValue && value > 0) distractors.add(value);
     });
 
-    distractors.add(digit * 10);  // Wrong place value
-
-    while (distractors.size < 3) {
-        distractors.add(randomInt(1, 900));
-    }
+    distractors.add(digit * 10);
+    while (distractors.size < 3) distractors.add(randomInt(1, 900));
 
     const options = shuffle([correctValue, ...Array.from(distractors).slice(0, 3)]);
 
@@ -140,35 +108,20 @@ function generateIdentifyPlaceValue(params, level) {
     };
 }
 
-/**
- * "Which digit has greater value: [digit1] or [digit2] in [number]?"
- */
 function generateComparePlaceValues(params, level, attempts = 0) {
-    // Prevent infinite recursion
-    if (attempts > 10) {
-        return generateIdentifyDigit(params, level);
-    }
+    if (attempts > 10) return generateIdentifyDigit(params, level);
 
     const number = randomInt(params.min_value, params.max_value);
-
-    // Get two different places
     const places = shuffle([...params.places]).slice(0, 2);
     const digit1 = getDigitAtPlace(number, places[0]);
     const digit2 = getDigitAtPlace(number, places[1]);
 
-    // CRITICAL FIX: Reject if digits are the same (e.g., 444 would give "4 or 4?")
-    if (digit1 === digit2) {
-        return generateComparePlaceValues(params, level, attempts + 1);
-    }
-
-    // Reject if either digit is zero (makes comparison trivial)
-    if (digit1 === 0 || digit2 === 0) {
+    if (digit1 === digit2 || digit1 === 0 || digit2 === 0) {
         return generateComparePlaceValues(params, level, attempts + 1);
     }
 
     const value1 = getPlaceValue(number, places[0]);
     const value2 = getPlaceValue(number, places[1]);
-
     const greaterDigit = value1 > value2 ? digit1 : digit2;
 
     return {
@@ -182,13 +135,9 @@ function generateComparePlaceValues(params, level, attempts = 0) {
     };
 }
 
-/**
- * "What number is [X] hundreds, [Y] tens and [Z] ones?"
- */
 function generateComposeSimple(params, level) {
     const number = randomInt(params.min_value, params.max_value);
     const decomp = decomposeNumber(number, params.places);
-
     const parts = params.places.map(place => {
         const value = decomp[place] || 0;
         const count = place === 'ones' ? value : value / getPlaceDivisor(place);
@@ -209,13 +158,9 @@ function generateComposeSimple(params, level) {
     };
 }
 
-/**
- * "How many hundreds, tens and ones in [number]?"
- */
 function generateDecomposeSimple(params, level) {
     const number = randomInt(params.min_value, params.max_value);
     const decomp = decomposeNumber(number, params.places);
-
     const parts = params.places.map(place => {
         const value = decomp[place] || 0;
         return place === 'ones' ? value : value / getPlaceDivisor(place);
@@ -232,9 +177,6 @@ function generateDecomposeSimple(params, level) {
     };
 }
 
-/**
- * "In [number], what does the digit [X] represent?"
- */
 function generateDigitValue(params, level) {
     const number = params.include_zero
         ? generateNumberWithZero(params.min_value, params.max_value, Math.random() < 0.3)
@@ -243,16 +185,11 @@ function generateDigitValue(params, level) {
     const place = randomChoice(params.places);
     const digit = getDigitAtPlace(number, place);
 
-    if (digit === 0) {
-        return generateDigitValue(params, level);
-    }
+    if (digit === 0) return generateDigitValue(params, level);
 
     const value = getPlaceValue(number, place);
     const distractors = new Set([digit, digit * 10]);
-
-    while (distractors.size < 3) {
-        distractors.add(randomInt(1, 900));
-    }
+    while (distractors.size < 3) distractors.add(randomInt(1, 900));
 
     const options = shuffle([value, ...Array.from(distractors).slice(0, 3)]);
 
@@ -267,19 +204,11 @@ function generateDigitValue(params, level) {
     };
 }
 
-/**
- * "What is the value of 0 in [number]?"
- */
 function generateZeroValue(params, level) {
-    if (!params.include_zero) {
-        return generateIdentifyDigit(params, level);
-    }
-
+    if (!params.include_zero) return generateIdentifyDigit(params, level);
+    
     const number = generateNumberWithZero(params.min_value, params.max_value, true);
-
-    if (!String(number).includes('0')) {
-        return generateZeroValue(params, level);
-    }
+    if (!String(number).includes('0')) return generateZeroValue(params, level);
 
     return {
         text: `What is the value of the 0 in ${formatNumber(number)}?`,
@@ -292,9 +221,6 @@ function generateZeroValue(params, level) {
     };
 }
 
-/**
- * "Write [number] in expanded form"
- */
 function generateExpandedForm(params, level) {
     const number = randomInt(params.min_value, params.max_value);
     const expanded = getExpandedForm(number);
@@ -309,13 +235,9 @@ function generateExpandedForm(params, level) {
     };
 }
 
-/**
- * "What is [expanded form] in standard form?"
- */
 function generateStandardFromExpanded(params, level) {
     const number = randomInt(params.min_value, params.max_value);
     const expanded = getExpandedForm(number);
-
     const distractors = generateDistractors(number, 3, params.min_value, params.max_value);
     const options = shuffle([number, ...distractors]);
 
@@ -330,21 +252,15 @@ function generateStandardFromExpanded(params, level) {
     };
 }
 
-/**
- * "Which number has more [place]: [num1] or [num2]?"
- */
 function generatePlaceComparison(params, level) {
     const num1 = randomInt(params.min_value, params.max_value);
     const num2 = randomInt(params.min_value, params.max_value);
 
-    if (num1 === num2) {
-        return generatePlaceComparison(params, level);
-    }
+    if (num1 === num2) return generatePlaceComparison(params, level);
 
     const place = randomChoice(params.places);
     const value1 = getPlaceValue(num1, place);
     const value2 = getPlaceValue(num2, place);
-
     const answer = value1 > value2 ? num1 : (value2 > value1 ? num2 : num1);
 
     return {
@@ -358,15 +274,11 @@ function generatePlaceComparison(params, level) {
     };
 }
 
-/**
- * Alternative decomposition (e.g., 347 = 33 tens + 17 ones)
- */
 function generateAlternativeDecomposition(params, level) {
     const number = randomInt(params.min_value, params.max_value);
     const altDecomp = getAlternativeDecomposition(number, params.places);
-
-    // Find which place was modified
     const normalDecomp = decomposeNumber(number, params.places);
+    
     let modifiedPlace = null;
     for (const place of params.places) {
         if (altDecomp[place] !== normalDecomp[place]) {
@@ -375,9 +287,7 @@ function generateAlternativeDecomposition(params, level) {
         }
     }
 
-    if (!modifiedPlace || modifiedPlace === 'ones') {
-        return generateAlternativeDecomposition(params, level);
-    }
+    if (!modifiedPlace || modifiedPlace === 'ones') return generateAlternativeDecomposition(params, level);
 
     const count = altDecomp[modifiedPlace] / getPlaceDivisor(modifiedPlace);
     const onesCount = altDecomp['ones'];
@@ -392,14 +302,10 @@ function generateAlternativeDecomposition(params, level) {
     };
 }
 
-/**
- * Multiple representations of the same number
- */
 function generateMultipleRepresentations(params, level) {
     const number = randomInt(params.min_value, params.max_value);
     const decomp = decomposeNumber(number, params.places);
     const expanded = getExpandedForm(number);
-
     const hundreds = decomp['hundreds'] / 100;
     const tens = decomp['tens'] / 10;
     const ones = decomp['ones'];
@@ -426,21 +332,12 @@ function generateMultipleRepresentations(params, level) {
     };
 }
 
-// Helper function
 function getPlaceDivisor(place) {
-    const divisors = {
-        'ones': 1,
-        'tens': 10,
-        'hundreds': 100,
-        'thousands': 1000
-    };
+    const divisors = { 'ones': 1, 'tens': 10, 'hundreds': 100, 'thousands': 1000 };
     return divisors[place] || 1;
 }
 
-/**
- * Export generator
- */
 export default {
     moduleId: 'N03_Y3_NPV',
     generate: generateQuestion
-};
+};

@@ -1,9 +1,6 @@
 /**
  * Year 1 Read/Write/Order/Compare Numbers Generator
- *
- * Module: N02_Y1_NPV - "Count, read and write numbers to 100 in numerals;
- *                       given a number, identify one more and one less;
- *                       read and write numbers from 1 to 20 in numerals and words"
+ * Schema: V2
  */
 
 import {
@@ -18,45 +15,37 @@ import {
     sortAscending
 } from './helpers/N02_numberHelpers.js';
 
-/**
- * Main question generator
- */
 export function generateQuestion(params, level) {
-    const operation = randomChoice(params.operations);
+    const { operations, math } = params;
+    const operation = randomChoice(operations);
 
     switch(operation) {
         case 'identify_numeral':
-            return generateIdentifyNumeral(params, level);
+            return generateIdentifyNumeral(math, level);
         case 'one_more':
-            return generateStepQuestion(params, level, 1, 'more');
+            return generateStepQuestion(math, level, 1, 'more');
         case 'one_less':
-            return generateStepQuestion(params, level, 1, 'less');
+            return generateStepQuestion(math, level, 1, 'less');
         case 'numeral_to_word':
-            return generateNumeralToWord(params, level);
+            return generateNumeralToWord(math, level);
         case 'word_to_numeral':
-            return generateWordToNumeral(params, level);
+            return generateWordToNumeral(math, level);
         case 'compare_two':
-            return generateCompareTwo(params, level);
+            return generateCompareTwo(math, level);
         case 'order_two':
-            return generateOrder(params, level, 2);
+            return generateOrder(math, level, 2);
         case 'order_three':
-            return generateOrder(params, level, 3);
+            return generateOrder(math, level, 3);
         default:
-            return generateIdentifyNumeral(params, level);
+            return generateIdentifyNumeral(math, level);
     }
 }
 
-/**
- * Identify numeral question
- * Shows a numeral and asks student to identify it from word-based options
- */
-function generateIdentifyNumeral(params, level) {
-    // Generate within word range to ensure we can convert to words
-    const number = randomInt(params.word_min, params.word_max);
+function generateIdentifyNumeral(math, level) {
+    const number = randomInt(math.words.min, math.words.max);
     const correctWord = numberToWord(number);
 
-    // Generate distractor words
-    const distractorNumbers = generateDistractors(number, 3, params.word_min, params.word_max);
+    const distractorNumbers = generateDistractors(number, 3, math.words.min, math.words.max);
     const distractorWords = distractorNumbers.map(n => numberToWord(n)).filter(w => w !== null);
     const options = shuffle([correctWord, ...distractorWords.slice(0, 3)]);
 
@@ -71,23 +60,17 @@ function generateIdentifyNumeral(params, level) {
     };
 }
 
-/**
- * Step question (one more/less)
- * Avoids boundary issues by limiting number range
- */
-function generateStepQuestion(params, level, step, direction) {
+function generateStepQuestion(math, level, step, direction) {
     let number;
 
     if (direction === 'more') {
-        // Ensure we don't ask "one more than max_value"
-        number = randomInt(params.min_value, params.max_value - step);
+        number = randomInt(math.range.min, math.range.max - step);
     } else {
-        // Ensure we don't ask "one less than min_value"
-        number = randomInt(params.min_value + step, params.max_value);
+        number = randomInt(math.range.min + step, math.range.max);
     }
 
     const answer = applyStep(number, step, direction);
-    const distractors = generateDistractors(answer, 3, params.min_value, params.max_value);
+    const distractors = generateDistractors(answer, 3, math.range.min, math.range.max);
     const options = shuffle([answer, ...distractors]);
 
     const dirWord = direction === 'more' ? 'more' : 'less';
@@ -103,15 +86,11 @@ function generateStepQuestion(params, level, step, direction) {
     };
 }
 
-/**
- * Numeral to word conversion
- */
-function generateNumeralToWord(params, level) {
-    const number = randomInt(params.word_min, params.word_max);
+function generateNumeralToWord(math, level) {
+    const number = randomInt(math.words.min, math.words.max);
     const correctWord = numberToWord(number);
 
-    // Generate distractor words
-    const distractorNumbers = generateDistractors(number, 3, params.word_min, params.word_max);
+    const distractorNumbers = generateDistractors(number, 3, math.words.min, math.words.max);
     const distractorWords = distractorNumbers.map(n => numberToWord(n)).filter(w => w !== null);
     const options = shuffle([correctWord, ...distractorWords.slice(0, 3)]);
 
@@ -126,14 +105,11 @@ function generateNumeralToWord(params, level) {
     };
 }
 
-/**
- * Word to numeral conversion
- */
-function generateWordToNumeral(params, level) {
-    const number = randomInt(params.word_min, params.word_max);
+function generateWordToNumeral(math, level) {
+    const number = randomInt(math.words.min, math.words.max);
     const word = numberToWord(number);
 
-    const distractors = generateDistractors(number, 3, params.word_min, params.word_max);
+    const distractors = generateDistractors(number, 3, math.words.min, math.words.max);
     const options = shuffle([number, ...distractors]);
 
     return {
@@ -147,11 +123,8 @@ function generateWordToNumeral(params, level) {
     };
 }
 
-/**
- * Compare two numbers
- */
-function generateCompareTwo(params, level) {
-    const numbers = generateUniqueNumbers(2, params.min_value, params.max_value);
+function generateCompareTwo(math, level) {
+    const numbers = generateUniqueNumbers(2, math.range.min, math.range.max);
     const num1 = numbers[0];
     const num2 = numbers[1];
 
@@ -159,14 +132,8 @@ function generateCompareTwo(params, level) {
     const smaller = Math.min(num1, num2);
 
     const questions = [
-        {
-            text: `Which number is larger: ${formatNumber(num1)} or ${formatNumber(num2)}?`,
-            answer: larger
-        },
-        {
-            text: `Which number is smaller: ${formatNumber(num1)} or ${formatNumber(num2)}?`,
-            answer: smaller
-        }
+        { text: `Which number is larger: ${formatNumber(num1)} or ${formatNumber(num2)}?`, answer: larger },
+        { text: `Which number is smaller: ${formatNumber(num1)} or ${formatNumber(num2)}?`, answer: smaller }
     ];
 
     const q = randomChoice(questions);
@@ -182,11 +149,8 @@ function generateCompareTwo(params, level) {
     };
 }
 
-/**
- * Order numbers (smallest to largest)
- */
-function generateOrder(params, level, count) {
-    const numbers = generateUniqueNumbers(count, params.min_value, params.max_value);
+function generateOrder(math, level, count) {
+    const numbers = generateUniqueNumbers(count, math.range.min, math.range.max);
     const shuffled = shuffle([...numbers]);
     const sorted = sortAscending(numbers);
 
@@ -201,10 +165,7 @@ function generateOrder(params, level, count) {
     };
 }
 
-/**
- * Export generator
- */
 export default {
     moduleId: 'N02_Y1_NPV',
     generate: generateQuestion
-};
+};

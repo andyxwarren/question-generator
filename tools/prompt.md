@@ -25,13 +25,12 @@ This is a UK National Curriculum-aligned mathematics practice application using 
 
 ## Your Task
 
-[<<< IMPORTANT: Replace this section with your specific instructions for the LLM >>>]
+Can you review my v2 parameter schema here: src\core\schema.js and then let me know how to modify the my existing generators, helpers and parameters?
 
-For example:
-- "Review the Year 5 counting generator and suggest improvements"
-- "Help me add a new curriculum module for Year 3 fractions"
-- "Analyze the parameter structure for geometry modules"
-- "Fix the bug in the columnar addition generator"
+location of key resources:
+schema: src\core\schema.js
+generators and helpers: src\generators
+parameters: src\curriculum\parameters
 
 ## Output Format (CRITICAL)
 

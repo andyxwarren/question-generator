@@ -1,270 +1,99 @@
 /**
- * C05 - Properties of Number (Multiples, Factors, Primes, Squares and Cubes)
- *
- * Year 5: Identify multiples and factors, including finding all factor pairs of a number and common
- *         factors of two numbers; know and use the vocabulary of prime numbers, prime factors and
- *         composite (non-prime) numbers; establish whether a number up to 100 is prime and recall
- *         prime numbers up to 19; recognise and use square numbers and cube numbers, and the
- *         notation for squared (²) and cubed (³)
- *
- * Year 6: Identify common factors, common multiples and prime numbers
+ * C05 Module Series: Properties of Number
+ * Covers Years 5-6
+ * Schema: V2 (Nested)
  */
 
-export const C05_MODULES = {
-    'C05_Y5_CALC': {
-        id: 'C05_Y5_CALC',
-        name: 'Properties of Number',
-        description: 'Identify multiples, factors, factor pairs, common factors, primes, squares and cubes',
-        icon: '🔢',
-        yearGroup: 'Year 5',
-        strand: 'Addition, subtraction, multiplication and division (calculations)',
-        substrand: 'properties of number (multiples, factors, primes, squares and cubes)',
-        parameters: {
-            1: {  // Beginning
-                operations: ['identify_multiples', 'find_factor_pairs', 'identify_primes', 'squares_cubes'],
-
-                // Multiples
-                multiple_bases: [2, 5, 10],  // Easiest multiples to identify
-                multiple_range: [1, 50],
-
-                // Factors
-                factor_numbers: [4, 6, 8, 10, 12, 15, 16, 18, 20],  // Small numbers with clear factors
-                max_factor_pairs: 4,
-
-                // Primes
-                prime_recall_range: [1, 19],  // Curriculum requires recall up to 19
-                prime_identify_range: [1, 30],
-                include_composite_label: false,  // Don't use "composite" terminology yet
-
-                // Squares and cubes
-                square_bases: [1, 2, 3, 4, 5],
-                cube_bases: [1, 2, 3],
-                power_range: [1, 25],
-                include_notation: true,  // Use ² and ³ symbols
-
-                // Question complexity
-                question_styles: ['direct', 'recognition'],
-                include_word_problems: false
+const MIGRATED_PARAMS = {
+    C05_Y5_CALC: {
+        1: {
+            operations: ["identify_multiples", "find_factor_pairs", "identify_primes", "squares_cubes"],
+            math: {
+                multiples: { bases: [2, 5, 10], range: [1, 50] },
+                factors: { targets: [4, 6, 8, 10, 12, 15, 16, 18, 20], maxPairs: 4 },
+                primes: { recallRange: [1, 19], identifyRange: [1, 30] },
+                powers: { squareBases: [1, 2, 3, 4, 5], cubeBases: [1, 2, 3], range: [1, 25] }
             },
-
-            2: {  // Developing
-                operations: ['identify_multiples', 'find_factor_pairs', 'identify_primes', 'squares_cubes', 'common_factors'],
-
-                // Multiples
-                multiple_bases: [2, 3, 4, 5, 6, 10],
-                multiple_range: [1, 100],
-
-                // Factors
-                factor_numbers: [6, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 24, 25, 28, 30],
-                max_factor_pairs: 6,
-
-                // Primes
-                prime_recall_range: [1, 19],
-                prime_identify_range: [1, 50],
-                include_composite_label: true,  // Introduce "composite" terminology
-
-                // Squares and cubes
-                square_bases: [1, 2, 3, 4, 5, 6, 7, 8],
-                cube_bases: [1, 2, 3, 4],
-                power_range: [1, 64],
-                include_notation: true,
-
-                // Common factors (introduced)
-                common_factor_pairs: [[6, 9], [8, 12], [10, 15], [12, 18], [15, 20]],
-
-                // Question complexity
-                question_styles: ['direct', 'recognition', 'application'],
-                include_word_problems: false
+            presentation: { styles: ["direct", "recognition"] }
+        },
+        2: {
+            operations: ["identify_multiples", "find_factor_pairs", "identify_primes", "squares_cubes", "common_factors"],
+            math: {
+                multiples: { bases: [2, 3, 4, 5, 6, 10], range: [1, 100] },
+                factors: { targets: [6, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 24, 25, 28, 30], maxPairs: 6 },
+                primes: { recallRange: [1, 19], identifyRange: [1, 50] },
+                powers: { squareBases: [1, 2, 3, 4, 5, 6, 7, 8], cubeBases: [1, 2, 3, 4], range: [1, 64] },
+                commonFactors: { pairs: [[6, 9], [8, 12], [10, 15], [12, 18], [15, 20]] }
             },
-
-            3: {  // Meeting
-                operations: ['identify_multiples', 'find_factor_pairs', 'identify_primes', 'squares_cubes', 'common_factors', 'prime_factors'],
-
-                // Multiples
-                multiple_bases: [2, 3, 4, 5, 6, 7, 8, 9, 10, 12],
-                multiple_range: [1, 100],
-
-                // Factors
-                factor_numbers: 'all_up_to_50',  // Any number 1-50
-                max_factor_pairs: 8,
-
-                // Primes
-                prime_recall_range: [1, 19],
-                prime_identify_range: [1, 100],  // Full curriculum range
-                include_composite_label: true,
-                include_prime_factors: true,  // Introduce prime factorization
-
-                // Squares and cubes
-                square_bases: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                cube_bases: [1, 2, 3, 4, 5],
-                power_range: [1, 100],
-                include_notation: true,
-                include_roots: true,  // Include square root questions
-
-                // Common factors
-                common_factor_range: [1, 50],  // Any two numbers in range
-                include_hcf: true,  // Include "highest common factor" terminology
-
-                // Question complexity
-                question_styles: ['direct', 'recognition', 'application', 'reasoning'],
-                include_word_problems: true
+            presentation: { styles: ["direct", "recognition", "application"] }
+        },
+        3: {
+            operations: ["identify_multiples", "find_factor_pairs", "identify_primes", "squares_cubes", "common_factors", "prime_factors"],
+            math: {
+                multiples: { bases: [2, 3, 4, 5, 6, 7, 8, 9, 10, 12], range: [1, 100] },
+                factors: { targetStr: 'all_up_to_50', maxPairs: 8 },
+                primes: { recallRange: [1, 19], identifyRange: [1, 100], includeComposite: true },
+                powers: { squareBases: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], cubeBases: [1, 2, 3, 4, 5], range: [1, 100] },
+                commonFactors: { range: [1, 50] }
             },
-
-            4: {  // Exceeding
-                operations: ['identify_multiples', 'find_factor_pairs', 'identify_primes', 'squares_cubes', 'common_factors', 'prime_factors'],
-
-                // Multiples
-                multiple_bases: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                multiple_range: [1, 150],  // Extend beyond 100
-
-                // Factors
-                factor_numbers: 'all_up_to_100',  // Any number 1-100
-                max_factor_pairs: 12,
-
-                // Primes
-                prime_recall_range: [1, 19],
-                prime_identify_range: [1, 120],  // Extend beyond curriculum minimum
-                include_composite_label: true,
-                include_prime_factors: true,
-                include_prime_factorization: true,  // Full prime factorization
-
-                // Squares and cubes
-                square_bases: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                cube_bases: [1, 2, 3, 4, 5, 6],
-                power_range: [1, 144],
-                include_notation: true,
-                include_roots: true,
-                include_mixed_powers: true,  // Mix squares and cubes in questions
-
-                // Common factors
-                common_factor_range: [1, 100],
-                include_hcf: true,
-                include_three_numbers: true,  // Common factors of three numbers
-
-                // Question complexity
-                question_styles: ['direct', 'recognition', 'application', 'reasoning', 'problem_solving'],
-                include_word_problems: true
-            }
+            presentation: { styles: ["direct", "recognition", "application", "reasoning"] }
+        },
+        4: {
+            operations: ["identify_multiples", "find_factor_pairs", "identify_primes", "squares_cubes", "common_factors", "prime_factors"],
+            math: {
+                multiples: { bases: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], range: [1, 150] },
+                factors: { targetStr: 'all_up_to_100', maxPairs: 12 },
+                primes: { recallRange: [1, 19], identifyRange: [1, 120], includeComposite: true, factorization: true },
+                powers: { squareBases: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], cubeBases: [1, 2, 3, 4, 5, 6], range: [1, 144], mixed: true },
+                commonFactors: { range: [1, 100], threeNumbers: true }
+            },
+            presentation: { styles: ["direct", "recognition", "application", "reasoning", "problem_solving"] }
         }
     },
-
-    'C05_Y6_CALC': {
-        id: 'C05_Y6_CALC',
-        name: 'Common Factors, Multiples and Primes',
-        description: 'Identify common factors, common multiples and prime numbers',
-        icon: '🔢',
-        yearGroup: 'Year 6',
-        strand: 'Addition, subtraction, multiplication and division (calculations)',
-        substrand: 'properties of number (multiples, factors, primes, squares and cubes)',
-        parameters: {
-            1: {  // Beginning
-                operations: ['common_factors', 'common_multiples', 'identify_primes'],
-
-                // Common factors
-                common_factor_pairs: [[6, 9], [8, 12], [10, 15], [12, 16], [12, 18], [15, 20], [18, 24]],
-                include_hcf: true,
-                max_common_factors: 4,
-
-                // Common multiples
-                common_multiple_pairs: [[2, 3], [2, 4], [2, 5], [3, 5], [4, 6]],
-                include_lcm: true,
-                multiples_to_find: 3,  // Find first 3 common multiples
-                multiple_max: 60,
-
-                // Primes
-                prime_range: [1, 50],
-                prime_list_length: 5,  // "List all primes between X and Y"
-
-                // Question complexity
-                question_styles: ['direct', 'recognition'],
-                include_word_problems: false
+    C05_Y6_CALC: {
+        1: {
+            operations: ["common_factors", "common_multiples", "identify_primes"],
+            math: {
+                commonFactors: { pairs: [[6, 9], [8, 12], [10, 15], [12, 16]], maxFactors: 4, hcf: true },
+                commonMultiples: { pairs: [[2, 3], [2, 4], [2, 5], [3, 5]], lcm: true, find: 3, max: 60 },
+                primes: { range: [1, 50], listLength: 5 }
             },
-
-            2: {  // Developing
-                operations: ['common_factors', 'common_multiples', 'identify_primes', 'integrated'],
-
-                // Common factors
-                common_factor_range: [10, 60],  // Any two numbers in range
-                include_hcf: true,
-                max_common_factors: 6,
-                include_three_numbers: false,
-
-                // Common multiples
-                common_multiple_range: [2, 12],  // Any two numbers in range
-                include_lcm: true,
-                multiples_to_find: 4,
-                multiple_max: 100,
-
-                // Primes
-                prime_range: [1, 100],
-                prime_list_length: 6,
-
-                // Integrated (combine concepts)
-                integration_complexity: 'two_concepts',
-
-                // Question complexity
-                question_styles: ['direct', 'recognition', 'application'],
-                include_word_problems: false
+            presentation: { styles: ["direct", "recognition"] }
+        },
+        2: {
+            operations: ["common_factors", "common_multiples", "identify_primes", "integrated"],
+            math: {
+                commonFactors: { range: [10, 60], maxFactors: 6, hcf: true },
+                commonMultiples: { range: [2, 12], lcm: true, find: 4, max: 100 },
+                primes: { range: [1, 100], listLength: 6 },
+                integration: "two_concepts"
             },
-
-            3: {  // Meeting
-                operations: ['common_factors', 'common_multiples', 'identify_primes', 'integrated'],
-
-                // Common factors
-                common_factor_range: [10, 100],
-                include_hcf: true,
-                max_common_factors: 8,
-                include_three_numbers: true,  // Common factors of 3 numbers
-
-                // Common multiples
-                common_multiple_range: [2, 20],
-                include_lcm: true,
-                multiples_to_find: 5,
-                multiple_max: 150,
-
-                // Primes
-                prime_range: [1, 150],
-                prime_list_length: 8,
-                include_prime_tests: true,  // Divisibility tests
-
-                // Integrated
-                integration_complexity: 'two_three_concepts',
-
-                // Question complexity
-                question_styles: ['direct', 'recognition', 'application', 'reasoning'],
-                include_word_problems: true
+            presentation: { styles: ["direct", "recognition", "application"] }
+        },
+        3: {
+            operations: ["common_factors", "common_multiples", "identify_primes", "integrated"],
+            math: {
+                commonFactors: { range: [10, 100], maxFactors: 8, hcf: true, threeNumbers: true },
+                commonMultiples: { range: [2, 20], lcm: true, find: 5, max: 150 },
+                primes: { range: [1, 150], listLength: 8, tests: true },
+                integration: "two_three_concepts"
             },
-
-            4: {  // Exceeding
-                operations: ['common_factors', 'common_multiples', 'identify_primes', 'integrated'],
-
-                // Common factors
-                common_factor_range: [10, 200],
-                include_hcf: true,
-                max_common_factors: 12,
-                include_three_numbers: true,
-                include_four_numbers: true,  // Challenge: 4 numbers
-
-                // Common multiples
-                common_multiple_range: [2, 25],
-                include_lcm: true,
-                multiples_to_find: 6,
-                multiple_max: 300,
-                include_three_numbers: true,
-
-                // Primes
-                prime_range: [1, 200],
-                prime_list_length: 10,
-                include_prime_tests: true,
-                include_prime_gaps: true,  // Twin primes, prime gaps
-
-                // Integrated
-                integration_complexity: 'three_four_concepts',
-
-                // Question complexity
-                question_styles: ['direct', 'recognition', 'application', 'reasoning', 'problem_solving'],
-                include_word_problems: true
-            }
+            presentation: { styles: ["direct", "recognition", "application", "reasoning"] }
+        },
+        4: {
+            operations: ["common_factors", "common_multiples", "identify_primes", "integrated"],
+            math: {
+                commonFactors: { range: [10, 200], maxFactors: 12, hcf: true, threeNumbers: true },
+                commonMultiples: { range: [2, 25], lcm: true, find: 6, max: 300, threeNumbers: true },
+                primes: { range: [1, 200], listLength: 10, tests: true, gaps: true },
+                integration: "three_four_concepts"
+            },
+            presentation: { styles: ["direct", "recognition", "application", "reasoning", "problem_solving"] }
         }
     }
 };
+
+export const C05_MODULES = {
+    'C05_Y5_CALC': { id: 'C05_Y5_CALC', name: 'Properties of Number', description: 'Multiples, factors, primes, squares, cubes', yearGroup: 'Year 5', strand: 'Properties', ref: 'C5', parameters: MIGRATED_PARAMS['C05_Y5_CALC'] },
+    'C05_Y6_CALC': { id: 'C05_Y6_CALC', name: 'Common Factors/Multiples', description: 'Common factors, multiples, primes', yearGroup: 'Year 6', strand: 'Properties', ref: 'C5', parameters: MIGRATED_PARAMS['C05_Y6_CALC'] }
+};

@@ -1,13 +1,6 @@
 /**
  * Year 1 Counting in Multiples Question Generator
- *
- * Generates counting sequence questions based on UK National Curriculum
- * Module: N01_Y1_NPV - "Count to and across 100, forwards and backwards"
- *
- * Level 1: Count in 1s and 2s, 4 numbers, gap at end
- * Level 2: Count in 1s, 2s, and 5s, 4 numbers, gap in middle
- * Level 3: Count in 1s, 2s, 5s, and 10s, 3 numbers, gap in middle
- * Level 4: Count in 2s, 5s, and 10s, 3 numbers, gap random
+ * Schema: V2
  */
 
 import {
@@ -17,39 +10,39 @@ import {
     getGapPosition
 } from './helpers/N01_countingHelpers.js';
 
-/**
- * Generate question
- */
 export function generateQuestion(params, level) {
-    // Extract parameters
-    const step = randomChoice(params.step_sizes);
-    const direction = randomChoice(params.directions);
-    const { sequence_length, gap_position, min_value, max_value } = params;
+    // Destructure V2 Schema
+    const {
+        math: {
+            range: { min, max },
+            sequence: { steps, length, directions, startStrategy }
+        },
+        presentation: {
+            gaps: { position }
+        }
+    } = params;
 
-    // Get starting value
-    let start = getStartValue(params, step);
+    const step = randomChoice(steps);
+    const direction = randomChoice(directions);
+
+    // Pass explict config object to helper
+    let start = getStartValue({ startStrategy, min, max }, step);
 
     // Ensure sequence stays within bounds
     if (direction === 'forwards') {
-        // For forwards: ensure start >= min_value AND end <= max_value
-        const maxStart = max_value - (step * (sequence_length - 1));
+        const maxStart = max - (step * (length - 1));
         start = Math.min(start, maxStart);
-        start = Math.max(start, min_value);
+        start = Math.max(start, min);
     } else {
-        // For backwards: ensure start <= max_value AND end >= min_value
-        const minStart = min_value + (step * (sequence_length - 1));
+        const minStart = min + (step * (length - 1));
         start = Math.max(start, minStart);
-        start = Math.min(start, max_value);
+        start = Math.min(start, max);
     }
 
-    // Generate full sequence
-    const fullSequence = generateSequence(start, step, sequence_length, direction);
-
-    // Get single gap position
-    const gapIndex = getGapPosition(sequence_length, gap_position);
+    const fullSequence = generateSequence(start, step, length, direction);
+    const gapIndex = getGapPosition(length, position);
     const answer = fullSequence[gapIndex];
 
-    // Create display sequence
     const displaySequence = fullSequence.map((num, idx) =>
         idx === gapIndex ? '__' : num.toString()
     );
@@ -64,9 +57,6 @@ export function generateQuestion(params, level) {
     };
 }
 
-/**
- * Register this generator
- */
 export default {
     moduleId: 'N01_Y1_NPV',
     generate: generateQuestion

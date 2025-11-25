@@ -1,7 +1,309 @@
 /**
  * N01 Module Series: Counting in Multiples
  * Covers Years 1-5 progression for counting in multiples
+ * 
+ * Schema: V2 (Nested)
  */
+
+// Generated parameters from migration
+const MIGRATED_PARAMS = {
+    N01_Y1_NPV: {
+        1: {
+            math: {
+                range: { min: 0, max: 20 },
+                sequence: {
+                    steps: [1, 2],
+                    length: 4,
+                    directions: ["forwards"],
+                    startStrategy: "zero_or_multiple"
+                }
+            },
+            presentation: {
+                gaps: { position: "end", count: 1 }
+            }
+        },
+        2: {
+            math: {
+                range: { min: 0, max: 50 },
+                sequence: {
+                    steps: [1, 2, 5],
+                    length: 4,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "zero_or_multiple"
+                }
+            },
+            presentation: {
+                gaps: { position: "middle", count: 1 }
+            }
+        },
+        3: {
+            math: {
+                range: { min: 0, max: 100 },
+                sequence: {
+                    steps: [1, 2, 5, 10],
+                    length: 3,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "any"
+                }
+            },
+            presentation: {
+                gaps: { position: "middle", count: 1 }
+            }
+        },
+        4: {
+            math: {
+                range: { min: 0, max: 100 },
+                sequence: {
+                    steps: [2, 5, 10],
+                    length: 3,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "any"
+                }
+            },
+            presentation: {
+                gaps: { position: "random", count: 1 }
+            }
+        }
+    },
+    N01_Y2_NPV: {
+        1: {
+            math: {
+                range: { min: 0, max: 30 },
+                sequence: {
+                    steps: [2, 3, 5],
+                    length: 4,
+                    directions: ["forwards"],
+                    startStrategy: "zero_only"
+                }
+            },
+            presentation: {
+                gaps: { position: "end", count: 1 }
+            }
+        },
+        2: {
+            math: {
+                range: { min: 0, max: 50 },
+                sequence: {
+                    steps: [2, 3, 5, 10],
+                    length: 4,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "zero_or_multiple",
+                    tensFromAny: true,
+                    tensRange: [0, 50]
+                }
+            },
+            presentation: {
+                gaps: { position: "middle", count: 1 }
+            }
+        },
+        3: {
+            math: {
+                range: { min: 0, max: 100 },
+                sequence: {
+                    steps: [2, 3, 5, 10],
+                    length: 3,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "any",
+                    tensFromAny: true,
+                    tensRange: [0, 100]
+                }
+            },
+            presentation: {
+                gaps: { position: "middle", count: 1 }
+            }
+        },
+        4: {
+            math: {
+                range: { min: 0, max: 100 },
+                sequence: {
+                    steps: [2, 3, 5, 10],
+                    length: 3,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "any",
+                    tensFromAny: true,
+                    tensRange: [0, 100]
+                }
+            },
+            presentation: {
+                gaps: { position: "random", count: 1 }
+            }
+        }
+    },
+    N01_Y3_NPV: {
+        1: {
+            math: {
+                range: { min: 0, max: 100 },
+                sequence: {
+                    steps: [4, 8, 50],
+                    length: 4,
+                    directions: ["forwards"],
+                    startStrategy: "zero_only"
+                }
+            },
+            presentation: {
+                gaps: { position: "end", count: 1 }
+            }
+        },
+        2: {
+            math: {
+                range: { min: 0, max: 400 },
+                sequence: {
+                    steps: [4, 8, 50, 100],
+                    length: 4,
+                    directions: ["forwards"],
+                    startStrategy: "zero_only"
+                }
+            },
+            presentation: {
+                gaps: { position: "middle", count: 1 }
+            }
+        },
+        3: {
+            math: {
+                range: { min: 0, max: 600 },
+                sequence: {
+                    steps: [4, 8, 50, 100],
+                    length: 3,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "zero_or_multiple"
+                }
+            },
+            presentation: {
+                gaps: { position: "middle", count: 1 }
+            }
+        },
+        4: {
+            math: {
+                range: { min: 0, max: 800 },
+                sequence: {
+                    steps: [4, 8, 50, 100],
+                    length: 3,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "zero_or_multiple"
+                }
+            },
+            presentation: {
+                gaps: { position: "random", count: 1 }
+            }
+        }
+    },
+    N01_Y4_NPV: {
+        1: {
+            math: {
+                range: { min: 0, max: 100 },
+                sequence: {
+                    steps: [6, 7, 9],
+                    length: 4,
+                    directions: ["forwards"],
+                    startStrategy: "zero_only"
+                }
+            },
+            presentation: {
+                gaps: { position: "end", count: 1 }
+            }
+        },
+        2: {
+            math: {
+                range: { min: 0, max: 300 },
+                sequence: {
+                    steps: [6, 7, 9, 25],
+                    length: 4,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "zero_or_multiple"
+                }
+            },
+            presentation: {
+                gaps: { position: "middle", count: 1 }
+            }
+        },
+        3: {
+            math: {
+                range: { min: 0, max: 5000 },
+                sequence: {
+                    steps: [6, 7, 9, 25, 1000],
+                    length: 3,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "any"
+                }
+            },
+            presentation: {
+                gaps: { position: "middle", count: 1 }
+            }
+        },
+        4: {
+            math: {
+                range: { min: 0, max: 10000 },
+                sequence: {
+                    steps: [6, 7, 9, 25, 1000],
+                    length: 3,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "any"
+                }
+            },
+            presentation: {
+                gaps: { position: "random", count: 1 }
+            }
+        }
+    },
+    N01_Y5_NPV: {
+        1: {
+            math: {
+                range: { min: 0, max: 10000 },
+                sequence: {
+                    steps: [10, 100],
+                    length: 4,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "any"
+                }
+            },
+            presentation: {
+                gaps: { position: "end", count: 1 }
+            }
+        },
+        2: {
+            math: {
+                range: { min: 0, max: 50000 },
+                sequence: {
+                    steps: [10, 100, 1000],
+                    length: 4,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "any"
+                }
+            },
+            presentation: {
+                gaps: { position: "middle", count: 1 }
+            }
+        },
+        3: {
+            math: {
+                range: { min: 0, max: 500000 },
+                sequence: {
+                    steps: [10, 100, 1000, 10000],
+                    length: 3,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "any"
+                }
+            },
+            presentation: {
+                gaps: { position: "middle", count: 1 }
+            }
+        },
+        4: {
+            math: {
+                range: { min: 0, max: 1000000 },
+                sequence: {
+                    steps: [10, 100, 1000, 10000, 100000],
+                    length: 3,
+                    directions: ["forwards", "backwards"],
+                    startStrategy: "any"
+                }
+            },
+            presentation: {
+                gaps: { position: "random", count: 1 }
+            }
+        }
+    }
+};
 
 export const N01_MODULES = {
     'N01_Y1_NPV': {
@@ -13,44 +315,7 @@ export const N01_MODULES = {
         strand: 'Number and Place Value',
         substrand: 'Counting (in multiples)',
         ref: 'N1',
-        parameters: {
-            1: {
-                step_sizes: [1, 2],
-                min_value: 0,
-                max_value: 20,
-                directions: ['forwards'],
-                start_from: 'zero_or_multiple',
-                sequence_length: 4,
-                gap_position: 'end'
-            },
-            2: {
-                step_sizes: [1, 2, 5],
-                min_value: 0,
-                max_value: 50,
-                directions: ['forwards', 'backwards'],
-                start_from: 'zero_or_multiple',
-                sequence_length: 4,
-                gap_position: 'middle'
-            },
-            3: {
-                step_sizes: [1, 2, 5, 10],
-                min_value: 0,
-                max_value: 100,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 3,
-                gap_position: 'middle'
-            },
-            4: {
-                step_sizes: [2, 5, 10],
-                min_value: 0,
-                max_value: 100,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 3,
-                gap_position: 'random'
-            }
-        }
+        parameters: MIGRATED_PARAMS['N01_Y1_NPV']
     },
 
     'N01_Y2_NPV': {
@@ -62,50 +327,7 @@ export const N01_MODULES = {
         strand: 'Number and Place Value',
         substrand: 'Counting (in multiples)',
         ref: 'N1',
-        parameters: {
-            1: {
-                step_sizes: [2, 3, 5],
-                min_value: 0,
-                max_value: 30,
-                directions: ['forwards'],
-                start_from: 'zero_only',
-                sequence_length: 4,
-                gap_position: 'end'
-            },
-            2: {
-                step_sizes: [2, 3, 5, 10],
-                min_value: 0,
-                max_value: 50,
-                directions: ['forwards', 'backwards'],
-                start_from: 'zero_or_multiple',
-                sequence_length: 4,
-                gap_position: 'middle',
-                tens_from_any: true,
-                tens_range: [0, 50]
-            },
-            3: {
-                step_sizes: [2, 3, 5, 10],
-                min_value: 0,
-                max_value: 100,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 3,
-                gap_position: 'middle',
-                tens_from_any: true,
-                tens_range: [0, 100]
-            },
-            4: {
-                step_sizes: [2, 3, 5, 10],
-                min_value: 0,
-                max_value: 100,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 3,
-                gap_position: 'random',
-                tens_from_any: true,
-                tens_range: [0, 100]
-            }
-        }
+        parameters: MIGRATED_PARAMS['N01_Y2_NPV']
     },
 
     'N01_Y3_NPV': {
@@ -117,44 +339,7 @@ export const N01_MODULES = {
         strand: 'Number and Place Value',
         substrand: 'Counting (in multiples)',
         ref: 'N1',
-        parameters: {
-            1: {
-                step_sizes: [4, 8, 50],
-                min_value: 0,
-                max_value: 100,
-                directions: ['forwards'],
-                start_from: 'zero_only',
-                sequence_length: 4,
-                gap_position: 'end'
-            },
-            2: {
-                step_sizes: [4, 8, 50, 100],
-                min_value: 0,
-                max_value: 400,
-                directions: ['forwards'],
-                start_from: 'zero_only',
-                sequence_length: 4,
-                gap_position: 'middle'
-            },
-            3: {
-                step_sizes: [4, 8, 50, 100],
-                min_value: 0,
-                max_value: 600,
-                directions: ['forwards', 'backwards'],
-                start_from: 'zero_or_multiple',
-                sequence_length: 3,
-                gap_position: 'middle'
-            },
-            4: {
-                step_sizes: [4, 8, 50, 100],
-                min_value: 0,
-                max_value: 800,
-                directions: ['forwards', 'backwards'],
-                start_from: 'zero_or_multiple',
-                sequence_length: 3,
-                gap_position: 'random'
-            }
-        }
+        parameters: MIGRATED_PARAMS['N01_Y3_NPV']
     },
 
     'N01_Y4_NPV': {
@@ -166,44 +351,7 @@ export const N01_MODULES = {
         strand: 'Number and Place Value',
         substrand: 'Counting (in multiples)',
         ref: 'N1',
-        parameters: {
-            1: {
-                step_sizes: [6, 7, 9],
-                min_value: 0,
-                max_value: 100,
-                directions: ['forwards'],
-                start_from: 'zero_only',
-                sequence_length: 4,
-                gap_position: 'end'
-            },
-            2: {
-                step_sizes: [6, 7, 9, 25],
-                min_value: 0,
-                max_value: 300,
-                directions: ['forwards', 'backwards'],
-                start_from: 'zero_or_multiple',
-                sequence_length: 4,
-                gap_position: 'middle'
-            },
-            3: {
-                step_sizes: [6, 7, 9, 25, 1000],
-                min_value: 0,
-                max_value: 5000,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 3,
-                gap_position: 'middle'
-            },
-            4: {
-                step_sizes: [6, 7, 9, 25, 1000],
-                min_value: 0,
-                max_value: 10000,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 3,
-                gap_position: 'random'
-            }
-        }
+        parameters: MIGRATED_PARAMS['N01_Y4_NPV']
     },
 
     'N01_Y5_NPV': {
@@ -215,43 +363,6 @@ export const N01_MODULES = {
         strand: 'Number and Place Value',
         substrand: 'Counting (in multiples)',
         ref: 'N1',
-        parameters: {
-            1: {
-                powers_of_10: [10, 100],
-                min_value: 0,
-                max_value: 10000,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 4,
-                gap_position: 'end'
-            },
-            2: {
-                powers_of_10: [10, 100, 1000],
-                min_value: 0,
-                max_value: 50000,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 4,
-                gap_position: 'middle'
-            },
-            3: {
-                powers_of_10: [10, 100, 1000, 10000],
-                min_value: 0,
-                max_value: 500000,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 3,
-                gap_position: 'middle'
-            },
-            4: {
-                powers_of_10: [10, 100, 1000, 10000, 100000],
-                min_value: 0,
-                max_value: 1000000,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 3,
-                gap_position: 'random'
-            }
-        }
+        parameters: MIGRATED_PARAMS['N01_Y5_NPV']
     }
 };

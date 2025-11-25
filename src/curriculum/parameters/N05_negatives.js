@@ -1,7 +1,134 @@
 /**
  * N05 Module Series: Negative Numbers
- * Covers Years 4-6 progression for working with negative numbers
+ * Covers Years 4-6 progression
+ * Schema: V2 (Nested)
  */
+
+const MIGRATED_PARAMS = {
+    N05_Y4_NPV: {
+        1: {
+            math: {
+                range: { min: -10, max: 10 },
+                sequence: { steps: [1, 2], length: 6, directions: ["backwards"], startStrategy: "positive_only" },
+                mustCrossZero: true
+            },
+            presentation: {
+                gaps: { position: "end", count: 1 }
+            }
+        },
+        2: {
+            math: {
+                range: { min: -20, max: 20 },
+                sequence: { steps: [1, 2, 5], length: 8, directions: ["backwards"], startStrategy: "positive_only" },
+                mustCrossZero: true
+            },
+            presentation: {
+                gaps: { position: "middle", count: 1 }
+            }
+        },
+        3: {
+            math: {
+                range: { min: -50, max: 50 },
+                sequence: { steps: [1, 2, 5, 10], length: 10, directions: ["backwards"], startStrategy: "positive_only" },
+                mustCrossZero: true
+            },
+            presentation: {
+                gaps: { position: "random", count: 2 }
+            }
+        },
+        4: {
+            math: {
+                range: { min: -100, max: 100 },
+                sequence: { steps: [1, 2, 5, 10], length: 12, directions: ["backwards"], startStrategy: "positive_only" },
+                mustCrossZero: true
+            },
+            presentation: {
+                gaps: { position: "random", count: 3 }
+            }
+        }
+    },
+    N05_Y5_NPV: {
+        1: {
+            math: {
+                range: { min: -20, max: 20, temp: [-10, 15] },
+                sequence: { steps: [1, 2, 5], length: 6, directions: ["forwards", "backwards"], startStrategy: "any" }
+            },
+            presentation: {
+                contexts: ["temperature", "sequence"],
+                gaps: { position: "end", count: 1 }
+            }
+        },
+        2: {
+            math: {
+                range: { min: -50, max: 50, temp: [-20, 30], elevation: [-50, 100] },
+                sequence: { steps: [1, 2, 5, 10], length: 8, directions: ["forwards", "backwards"], startStrategy: "any" }
+            },
+            presentation: {
+                contexts: ["temperature", "elevation", "sequence"],
+                gaps: { position: "middle", count: 2 }
+            }
+        },
+        3: {
+            math: {
+                range: { min: -100, max: 100, temp: [-30, 40], elevation: [-100, 200] },
+                sequence: { steps: [1, 2, 5, 10, 25], length: 10, directions: ["forwards", "backwards"], startStrategy: "any" }
+            },
+            presentation: {
+                contexts: ["temperature", "elevation", "sequence"],
+                gaps: { position: "random", count: 2 }
+            }
+        },
+        4: {
+            math: {
+                range: { min: -200, max: 200, temp: [-40, 50], elevation: [-200, 500] },
+                sequence: { steps: [1, 2, 5, 10, 25, 50], length: 12, directions: ["forwards", "backwards"], startStrategy: "any" }
+            },
+            presentation: {
+                contexts: ["temperature", "elevation", "sequence"],
+                gaps: { position: "random", count: 3 }
+            }
+        }
+    },
+    N05_Y6_NPV: {
+        1: {
+            math: {
+                range: { min: -20, max: 20, temp: [-15, 20] },
+                mustCrossZero: true
+            },
+            presentation: {
+                intervalTypes: ["simple"],
+                contexts: ["temperature", "number_line"]
+            }
+        },
+        2: {
+            math: {
+                range: { min: -50, max: 50, temp: [-25, 35], elevation: [-50, 100] }
+            },
+            presentation: {
+                intervalTypes: ["simple", "multi_step"],
+                contexts: ["temperature", "elevation", "number_line"]
+            }
+        },
+        3: {
+            math: {
+                range: { min: -100, max: 100, temp: [-40, 45], elevation: [-150, 300] }
+            },
+            presentation: {
+                intervalTypes: ["simple", "multi_step", "word_problem"],
+                contexts: ["temperature", "elevation", "number_line", "time"]
+            }
+        },
+        4: {
+            math: {
+                range: { min: -500, max: 500, temp: [-50, 55], elevation: [-500, 1000] }
+            },
+            presentation: {
+                intervalTypes: ["simple", "multi_step", "word_problem"],
+                contexts: ["temperature", "elevation", "number_line", "time"]
+            }
+        }
+    }
+};
 
 export const N05_MODULES = {
     'N05_Y4_NPV': {
@@ -13,54 +140,8 @@ export const N05_MODULES = {
         strand: 'Number and Place Value',
         substrand: 'negative numbers',
         ref: 'N5',
-        parameters: {
-            1: {
-                step_sizes: [1, 2],
-                min_value: -10,
-                max_value: 10,
-                directions: ['backwards'],
-                start_from: 'positive_only',
-                sequence_length: 6,
-                gaps_count: 1,
-                gap_position: 'end',
-                must_cross_zero: true
-            },
-            2: {
-                step_sizes: [1, 2, 5],
-                min_value: -20,
-                max_value: 20,
-                directions: ['backwards'],
-                start_from: 'positive_only',
-                sequence_length: 8,
-                gaps_count: 1,
-                gap_position: 'middle',
-                must_cross_zero: true
-            },
-            3: {
-                step_sizes: [1, 2, 5, 10],
-                min_value: -50,
-                max_value: 50,
-                directions: ['backwards'],
-                start_from: 'positive_only',
-                sequence_length: 10,
-                gaps_count: 2,
-                gap_position: 'random',
-                must_cross_zero: true
-            },
-            4: {
-                step_sizes: [1, 2, 5, 10],
-                min_value: -100,
-                max_value: 100,
-                directions: ['backwards'],
-                start_from: 'positive_only',
-                sequence_length: 12,
-                gaps_count: 3,
-                gap_position: 'random',
-                must_cross_zero: true
-            }
-        }
+        parameters: MIGRATED_PARAMS['N05_Y4_NPV']
     },
-
     'N05_Y5_NPV': {
         id: 'N05_Y5_NPV',
         name: 'N05_Y5_NPV: Negative Numbers in Context',
@@ -70,65 +151,8 @@ export const N05_MODULES = {
         strand: 'Number and Place Value',
         substrand: 'negative numbers',
         ref: 'N5',
-        parameters: {
-            1: {
-                step_sizes: [1, 2, 5],
-                min_value: -20,
-                max_value: 20,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 6,
-                gaps_count: 1,
-                gap_position: 'end',
-                must_cross_zero: false,
-                context_types: ['temperature', 'sequence'],
-                temperature_range: [-10, 15]
-            },
-            2: {
-                step_sizes: [1, 2, 5, 10],
-                min_value: -50,
-                max_value: 50,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 8,
-                gaps_count: 2,
-                gap_position: 'middle',
-                must_cross_zero: false,
-                context_types: ['temperature', 'elevation', 'sequence'],
-                temperature_range: [-20, 30],
-                elevation_range: [-50, 100]
-            },
-            3: {
-                step_sizes: [1, 2, 5, 10, 25],
-                min_value: -100,
-                max_value: 100,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 10,
-                gaps_count: 2,
-                gap_position: 'random',
-                must_cross_zero: false,
-                context_types: ['temperature', 'elevation', 'sequence'],
-                temperature_range: [-30, 40],
-                elevation_range: [-100, 200]
-            },
-            4: {
-                step_sizes: [1, 2, 5, 10, 25, 50],
-                min_value: -200,
-                max_value: 200,
-                directions: ['forwards', 'backwards'],
-                start_from: 'any',
-                sequence_length: 12,
-                gaps_count: 3,
-                gap_position: 'random',
-                must_cross_zero: false,
-                context_types: ['temperature', 'elevation', 'sequence'],
-                temperature_range: [-40, 50],
-                elevation_range: [-200, 500]
-            }
-        }
+        parameters: MIGRATED_PARAMS['N05_Y5_NPV']
     },
-
     'N05_Y6_NPV': {
         id: 'N05_Y6_NPV',
         name: 'N05_Y6_NPV: Intervals Across Zero',
@@ -138,42 +162,6 @@ export const N05_MODULES = {
         strand: 'Number and Place Value',
         substrand: 'negative numbers',
         ref: 'N5',
-        parameters: {
-            1: {
-                min_value: -20,
-                max_value: 20,
-                interval_types: ['simple'],
-                context_types: ['temperature', 'number_line'],
-                temperature_range: [-15, 20],
-                must_cross_zero: true
-            },
-            2: {
-                min_value: -50,
-                max_value: 50,
-                interval_types: ['simple', 'multi_step'],
-                context_types: ['temperature', 'elevation', 'number_line'],
-                temperature_range: [-25, 35],
-                elevation_range: [-50, 100],
-                must_cross_zero: false
-            },
-            3: {
-                min_value: -100,
-                max_value: 100,
-                interval_types: ['simple', 'multi_step', 'word_problem'],
-                context_types: ['temperature', 'elevation', 'number_line', 'time'],
-                temperature_range: [-40, 45],
-                elevation_range: [-150, 300],
-                must_cross_zero: false
-            },
-            4: {
-                min_value: -500,
-                max_value: 500,
-                interval_types: ['simple', 'multi_step', 'word_problem'],
-                context_types: ['temperature', 'elevation', 'number_line', 'time'],
-                temperature_range: [-50, 55],
-                elevation_range: [-500, 1000],
-                must_cross_zero: false
-            }
-        }
+        parameters: MIGRATED_PARAMS['N05_Y6_NPV']
     }
-};
+};

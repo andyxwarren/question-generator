@@ -1,7 +1,6 @@
 /**
  * Year 6 Round to Any Degree of Accuracy Generator
- *
- * Module: N04_Y6_NPV - "Round any whole number to a required degree of accuracy"
+ * Schema: V2
  */
 
 import {
@@ -14,351 +13,110 @@ import {
     generateRoundingDistractors,
     calculateRoughEstimate,
     getErrorBounds,
-    chooseAppropriateRoundingBase
+    chooseAppropriateRoundingBase,
+    findRange,
+    formatRange
 } from './helpers/N04_representationHelpers.js';
 import { createSimpleNumberLineHTML } from './helpers/N04_simpleVisuals.js';
 
-/**
- * Main question generator
- */
 export function generateQuestion(params, level) {
-    const operation = randomChoice(params.operations);
+    const { operations, math, presentation } = params;
+    const operation = randomChoice(operations);
+
+    const getFlatParams = () => ({
+        min_value: math.range.min,
+        max_value: math.range.max,
+        number_line_max: presentation.numberLine.max,
+        estimation_ranges: math.estimation.ranges,
+        rounding_bases: math.rounding.bases
+    });
 
     switch(operation) {
-        case 'round_to_thousand':
-            return generateRounding(params, level, 1000);
-        case 'round_to_ten_thousand':
-            return generateRounding(params, level, 10000);
-        case 'round_to_hundred_thousand':
-            return generateRounding(params, level, 100000);
-        case 'round_to_million':
-            return generateRounding(params, level, 1000000);
-        case 'round_to_ten_million':
-            return generateRounding(params, level, 10000000);
-        case 'round_to_any_place':
-            return generateRoundToAnyPlace(params, level);
-        case 'estimate_calculation':
-            return generateEstimateCalculation(params, level);
-        case 'compare_rounded':
-            return generateCompareRounded(params, level);
-        case 'choose_appropriate_rounding':
-            return generateChooseAppropriateRounding(params, level);
-        case 'error_bounds':
-            return generateErrorBounds(params, level);
-        case 'estimate_position':
-            return generateEstimatePosition(params, level);
-        default:
-            return generateRounding(params, level, 1000000);
+        case 'round_to_thousand': return generateRounding(getFlatParams(), level, 1000);
+        case 'round_to_ten_thousand': return generateRounding(getFlatParams(), level, 10000);
+        case 'round_to_hundred_thousand': return generateRounding(getFlatParams(), level, 100000);
+        case 'round_to_million': return generateRounding(getFlatParams(), level, 1000000);
+        case 'round_to_ten_million': return generateRounding(getFlatParams(), level, 10000000);
+        case 'round_to_any_place': return generateRoundToAnyPlace(getFlatParams(), level);
+        case 'estimate_calculation': return generateEstimateCalculation(getFlatParams(), level);
+        case 'compare_rounded': return generateCompareRounded(getFlatParams(), level);
+        case 'choose_appropriate_rounding': return generateChooseAppropriateRounding(getFlatParams(), level);
+        case 'error_bounds': return generateErrorBounds(getFlatParams(), level);
+        case 'estimate_position': return generateEstimatePosition(getFlatParams(), level);
+        default: return generateRounding(getFlatParams(), level, 1000000);
     }
 }
 
-/**
- * Standard rounding question
- */
 function generateRounding(params, level, base) {
-    const { min_value, max_value } = params;
-
-    const number = generateNonMultiple(min_value + base, max_value - base, base);
-    const rounded = roundToNearest(number, base);
-
-    const distractors = generateRoundingDistractors(number, base);
-    const options = shuffle([rounded, ...distractors.slice(0, 3)]);
-
-    const baseName = {
-        1000: 'nearest thousand',
-        10000: 'nearest ten thousand',
-        100000: 'nearest hundred thousand',
-        1000000: 'nearest million',
-        10000000: 'nearest ten million'
-    }[base] || 'nearest place';
-
-    return {
-        text: `Round ${formatNumber(number)} to the ${baseName}`,
-        type: 'multiple_choice',
-        options: options,
-        answer: rounded.toString(),
-        hint: `Look at the digit to the right of the place you're rounding to`,
-        module: 'N04_Y6_NPV',
-        level: level
-    };
+    const num = generateNonMultiple(params.min_value + base, params.max_value - base, base);
+    const rounded = roundToNearest(num, base);
+    const options = shuffle([rounded, ...generateRoundingDistractors(num, base).slice(0, 3)]);
+    return { text: `Round ${formatNumber(num)} to nearest ${formatNumber(base)}`, type: 'multiple_choice', options: options, answer: rounded.toString(), hint: `Check digit to right`, module: 'N04_Y6_NPV', level: level };
 }
 
-/**
- * Round to any specified place value
- */
 function generateRoundToAnyPlace(params, level) {
-    const { min_value, max_value, rounding_bases } = params;
-
-    const base = randomChoice(rounding_bases);
-    const number = generateNonMultiple(min_value + base, max_value - base, base);
-    const rounded = roundToNearest(number, base);
-
-    const distractors = generateRoundingDistractors(number, base);
-    const options = shuffle([rounded, ...distractors.slice(0, 3)]);
-
-    // Express the place value as a power of 10
-    const baseName = formatNumber(base);
-
-    return {
-        text: `Round ${formatNumber(number)} to the nearest ${baseName}`,
-        type: 'multiple_choice',
-        options: options,
-        answer: rounded.toString(),
-        hint: `Identify which place value you're rounding to, then look at the digit to its right`,
-        module: 'N04_Y6_NPV',
-        level: level
-    };
+    const base = randomChoice(params.rounding_bases);
+    const num = generateNonMultiple(params.min_value + base, params.max_value - base, base);
+    const rounded = roundToNearest(num, base);
+    const options = shuffle([rounded, ...generateRoundingDistractors(num, base).slice(0, 3)]);
+    return { text: `Round ${formatNumber(num)} to nearest ${formatNumber(base)}`, type: 'multiple_choice', options: options, answer: rounded.toString(), hint: `Identify place value`, module: 'N04_Y6_NPV', level: level };
 }
 
-/**
- * Estimate calculation with large numbers
- */
 function generateEstimateCalculation(params, level) {
-    const { min_value, max_value } = params;
-
-    const num1 = randomInt(min_value, max_value);
-    const num2 = randomInt(Math.floor(min_value / 2), Math.floor(max_value / 2));
-    const operation = randomChoice(['add', 'subtract', 'multiply']);
-
-    const estimate = calculateRoughEstimate(num1, num2, operation);
-
-    // Generate distractors
-    let exact;
-    switch(operation) {
-        case 'add': exact = num1 + num2; break;
-        case 'subtract': exact = num1 - num2; break;
-        case 'multiply': exact = num1 * num2; break;
-        default: exact = num1 + num2;
-    }
-
-    const distractors = [
-        exact,
-        estimate + 100000,
-        estimate - 100000,
-        Math.round(exact / 1000000) * 1000000
-    ].filter(d => d !== estimate && d > 0);
-
-    const options = shuffle([estimate, ...distractors.slice(0, 3)]);
-
-    const opSymbol = { 'add': '+', 'subtract': '-', 'multiply': '×' }[operation];
-
-    return {
-        text: `Estimate ${formatNumber(num1)} ${opSymbol} ${formatNumber(num2)}`,
-        type: 'multiple_choice',
-        options: options,
-        answer: estimate.toString(),
-        hint: `Round both numbers to make the calculation easier`,
-        module: 'N04_Y6_NPV',
-        level: level
-    };
+    const n1 = randomInt(params.min_value, params.max_value);
+    const n2 = randomInt(Math.floor(params.min_value/2), Math.floor(params.max_value/2));
+    const op = randomChoice(['add', 'subtract', 'multiply']);
+    const est = calculateRoughEstimate(n1, n2, op);
+    let exact = op === 'add' ? n1+n2 : op === 'subtract' ? n1-n2 : n1*n2;
+    const distractors = [exact, est+100000, est-100000].filter(d => d!==est && d>0);
+    const symb = { 'add': '+', 'subtract': '-', 'multiply': '×' }[op];
+    return { text: `Estimate ${formatNumber(n1)} ${symb} ${formatNumber(n2)}`, type: 'multiple_choice', options: shuffle([est, ...distractors.slice(0, 3)]), answer: est.toString(), hint: `Round then calc`, module: 'N04_Y6_NPV', level: level };
 }
 
-/**
- * Compare rounded values
- */
-function generateCompareRounded(params, level, attempt = 0) {
-    const MAX_ATTEMPTS = 10;
-    const { min_value, max_value, rounding_bases } = params;
-
-    const base = randomChoice(rounding_bases.filter(b => b >= 1000));
-    const num1 = generateNonMultiple(min_value, max_value, base);
-    const num2 = generateNonMultiple(min_value, max_value, base);
-
-    const rounded1 = roundToNearest(num1, base);
-    const rounded2 = roundToNearest(num2, base);
-
-    const baseName = formatNumber(base);
-
-    // Ensure they're different when rounded
-    if (rounded1 === rounded2) {
-        if (attempt >= MAX_ATTEMPTS) {
-            return generateRounding(params, level, base);
-        }
-        return generateCompareRounded(params, level, attempt + 1);
+function generateCompareRounded(params, level) {
+    const base = randomChoice(params.rounding_bases.filter(b => b >= 1000));
+    const n1 = generateNonMultiple(params.min_value, params.max_value, base);
+    const n2 = generateNonMultiple(params.min_value, params.max_value, base);
+    const r1 = roundToNearest(n1, base);
+    const r2 = roundToNearest(n2, base);
+    if (r1 === r2) return generateCompareRounded(params, level);
+    const q = randomChoice([
+        { text: `Round ${formatNumber(n1)} and ${formatNumber(n2)} to nearest ${formatNumber(base)}. Larger?`, ans: Math.max(r1, r2) },
+        { text: `Round ${formatNumber(n1)} and ${formatNumber(n2)} to nearest ${formatNumber(base)}. Difference?`, ans: Math.abs(Math.max(r1, r2) - Math.min(r1, r2)) }
+    ]);
+    if (q.text.includes('Difference')) {
+        const opts = shuffle([q.ans, q.ans+base, q.ans-base].filter(d => d>0));
+        return { text: q.text, type: 'multiple_choice', options: opts, answer: q.ans.toString(), hint: `Round then diff`, module: 'N04_Y6_NPV', level: level };
     }
-
-    const larger = Math.max(rounded1, rounded2);
-    const smaller = Math.min(rounded1, rounded2);
-
-    const questions = [
-        {
-            text: `Round ${formatNumber(num1)} and ${formatNumber(num2)} to the nearest ${baseName}. ` +
-                  `Which rounded number is larger?`,
-            answer: larger
-        },
-        {
-            text: `Round ${formatNumber(num1)} and ${formatNumber(num2)} to the nearest ${baseName}. ` +
-                  `What is the difference between the rounded numbers?`,
-            answer: Math.abs(larger - smaller)
-        }
-    ];
-
-    const q = randomChoice(questions);
-
-    if (q.text.includes('difference')) {
-        const distractors = [
-            Math.abs(num1 - num2),
-            q.answer + base,
-            q.answer - base
-        ].filter(d => d !== q.answer && d > 0);
-
-        const options = shuffle([q.answer, ...distractors.slice(0, 3)]);
-
-        return {
-            text: q.text,
-            type: 'multiple_choice',
-            options: options,
-            answer: q.answer.toString(),
-            hint: `Round both numbers first, then find the difference`,
-            module: 'N04_Y6_NPV',
-            level: level
-        };
-    } else {
-        return {
-            text: q.text,
-            type: 'multiple_choice',
-            options: [rounded1, rounded2],
-            answer: q.answer.toString(),
-            hint: `Round both numbers first, then compare`,
-            module: 'N04_Y6_NPV',
-            level: level
-        };
-    }
+    return { text: q.text, type: 'multiple_choice', options: [r1, r2], answer: q.ans.toString(), hint: `Round then compare`, module: 'N04_Y6_NPV', level: level };
 }
 
-/**
- * Choose appropriate rounding for a context
- */
 function generateChooseAppropriateRounding(params, level) {
-    const { min_value, max_value } = params;
-
-    const contexts = ['population', 'money', 'distance', 'time'];
-    const context = randomChoice(contexts);
-
-    const number = randomInt(min_value, max_value);
-    const appropriateBase = chooseAppropriateRoundingBase(context, number);
-
-    // Generate context-specific question
-    const contextQuestions = {
-        'population': `The population of a city is ${formatNumber(number)}. ` +
-                     `To what place value should this be rounded for a news report?`,
-        'money': `A company's revenue is £${formatNumber(number)}. ` +
-                `To what place value should this be rounded for a summary?`,
-        'distance': `A distance is ${formatNumber(number)} metres. ` +
-                   `To what place value should this be rounded for estimation?`,
-        'time': `An event lasted ${formatNumber(number)} seconds. ` +
-               `To what place value should this be rounded for reporting?`
-    };
-
-    const options = [
-        10,
-        100,
-        1000,
-        10000,
-        100000,
-        1000000
-    ].filter(b => b <= max_value);
-
-    return {
-        text: contextQuestions[context],
-        type: 'multiple_choice',
-        options: options.map(b => formatNumber(b)),
-        answer: formatNumber(appropriateBase),
-        hint: `Think about which level of accuracy makes sense for this context`,
-        module: 'N04_Y6_NPV',
-        level: level
-    };
+    const context = randomChoice(['population', 'money', 'distance', 'time']);
+    const num = randomInt(params.min_value, params.max_value);
+    const base = chooseAppropriateRoundingBase(context, num);
+    const options = [10, 100, 1000, 10000, 100000, 1000000].filter(b => b <= params.max_value).map(b => formatNumber(b));
+    const q = { 'population': `City pop ${formatNumber(num)}. Rounding?`, 'money': `Revenue £${formatNumber(num)}. Rounding?`, 'distance': `Dist ${formatNumber(num)}m. Rounding?`, 'time': `Time ${formatNumber(num)}s. Rounding?` };
+    return { text: q[context], type: 'multiple_choice', options: options, answer: formatNumber(base), hint: `Think context`, module: 'N04_Y6_NPV', level: level };
 }
 
-/**
- * Error bounds question
- */
 function generateErrorBounds(params, level) {
-    const { min_value, max_value, rounding_bases } = params;
-
-    const base = randomChoice(rounding_bases.filter(b => b >= 1000));
-    const rounded = randomInt(
-        Math.ceil(min_value / base) * base,
-        Math.floor(max_value / base) * base
-    );
-
-    const [lowerBound, upperBound] = getErrorBounds(rounded, base);
-
-    const baseName = formatNumber(base);
-
-    const questions = [
-        {
-            text: `A number rounded to the nearest ${baseName} is ${formatNumber(rounded)}. ` +
-                  `What is the smallest whole number it could have been?`,
-            answer: Math.ceil(lowerBound)
-        },
-        {
-            text: `A number rounded to the nearest ${baseName} is ${formatNumber(rounded)}. ` +
-                  `What is the largest whole number it could have been?`,
-            answer: Math.floor(upperBound)
-        }
-    ];
-
-    const q = randomChoice(questions);
-
-    const distractors = [
-        rounded,
-        rounded - base,
-        rounded + base,
-        q.answer + base,
-        q.answer - base
-    ].filter(d => d !== q.answer);
-
-    const options = shuffle([q.answer, ...distractors.slice(0, 3)]);
-
-    return {
-        text: q.text,
-        type: 'multiple_choice',
-        options: options,
-        answer: q.answer.toString(),
-        hint: `Think about the range of numbers that round to this value`,
-        module: 'N04_Y6_NPV',
-        level: level
-    };
+    const base = randomChoice(params.rounding_bases.filter(b => b >= 1000));
+    const rounded = randomInt(Math.ceil(params.min_value/base), Math.floor(params.max_value/base)) * base;
+    const [min, max] = getErrorBounds(rounded, base);
+    const q = randomChoice([{ text: `Number rounded to ${formatNumber(base)} is ${formatNumber(rounded)}. Smallest possible?`, ans: Math.ceil(min) }, { text: `Number rounded to ${formatNumber(base)} is ${formatNumber(rounded)}. Largest possible?`, ans: Math.floor(max) }]);
+    const opts = shuffle([q.ans, rounded, rounded-base, rounded+base].filter(d => d!==q.ans));
+    return { text: q.text, type: 'multiple_choice', options: opts, answer: q.ans.toString(), hint: `Range rounding to this`, module: 'N04_Y6_NPV', level: level };
 }
 
-/**
- * Estimate position on number line
- */
 function generateEstimatePosition(params, level) {
-    const { min_value, max_value, estimation_ranges } = params;
-
-    const number = randomInt(min_value, max_value);
-
-    // Find which range it falls into
-    const correctRange = estimation_ranges.find(([min, max]) =>
-        number >= min && number <= max
-    );
-
-    if (!correctRange) {
-        return generateRounding(params, level, 1000000);
-    }
-
-    const formatRange = (range) =>
-        `${formatNumber(range[0])} to ${formatNumber(range[1])}`;
-
-    const options = estimation_ranges.map(r => formatRange(r));
-
-    return {
-        text: `Which range best estimates ${formatNumber(number)}?`,
-        type: 'multiple_choice',
-        options: options,
-        answer: formatRange(correctRange),
-        hint: `Find which range the number falls between`,
-        module: 'N04_Y6_NPV',
-        level: level
-    };
+    const num = randomInt(params.min_value, params.max_value);
+    const range = findRange(num, params.estimation_ranges);
+    if (!range) return generateRounding(params, level, 1000000);
+    return { text: `Which range estimates ${formatNumber(num)}?`, type: 'multiple_choice', options: params.estimation_ranges.map(r => formatRange(r)), answer: formatRange(range), hint: `Find range`, module: 'N04_Y6_NPV', level: level };
 }
 
-/**
- * Export generator
- */
 export default {
     moduleId: 'N04_Y6_NPV',
     generate: generateQuestion
-};
+};

@@ -3,11 +3,7 @@
  *
  * Generates counting sequence questions based on UK National Curriculum
  * Module: N01_Y5_NPV - "count forwards or backwards in steps of powers of 10 for any given number up to 1,000,000"
- *
- * Level 1: Powers of 10, 100, 4 numbers, gap at end
- * Level 2: Powers of 10, 100, 1000, 4 numbers, gap in middle
- * Level 3: Powers up to 10000, 3 numbers, gap in middle
- * Level 4: Powers up to 100000, 3 numbers, gap random
+ * Schema: V2 (Nested Parameters)
  */
 
 import {
@@ -21,62 +17,64 @@ import {
  * Generate question
  */
 export function generateQuestion(params, level) {
-    // Y5 uses powers_of_10 instead of step_sizes
-    const step = randomChoice(params.powers_of_10);
-    const direction = randomChoice(params.directions);
-    const { sequence_length, gap_position, min_value, max_value } = params;
+    // 1. Destructure V2 Schema
+    const {
+        math: {
+            range: { min, max },
+            sequence: { steps, length, directions } // 'steps' now holds powers_of_10 data
+        },
+        presentation: {
+            gaps: { position }
+        }
+    } = params;
 
-    // Get starting value from any number within the valid range (0 to max_value)
-    // Calculate a reasonable range within bounds
-    const range = max_value - min_value;
-    const rawStart = min_value + randomInt(0, Math.floor(range / 2));
+    // Y5 uses powers_of_10 which are mapped to 'steps' in the schema migration
+    const step = randomChoice(steps);
+    const direction = randomChoice(directions);
+
+    // 2. Get starting value (Custom logic for Y5 to allow "any number")
+    const range = max - min;
+    const rawStart = min + randomInt(0, Math.floor(range / 2));
+    
+    // Snap start to grid to ensure integers are clean
     let start = Math.floor(rawStart / step) * step;
 
-    // Ensure sequence stays within bounds (0 to max_value)
-    // CRITICAL: Year 5 curriculum requires counting from ANY number UP TO 1,000,000
-    // This means ALL values in the sequence must be in range [min_value, max_value]
+    // 3. Ensure sequence stays within bounds
     if (direction === 'forwards') {
-        // For forwards: ensure start >= min_value AND end <= max_value
-        const maxStart = max_value - (step * (sequence_length - 1));
+        const maxStart = max - (step * (length - 1));
         start = Math.min(start, maxStart);
-        start = Math.max(start, min_value);
+        start = Math.max(start, min);
     } else {
-        // For backwards: ensure start <= max_value AND end >= min_value
-        const minStart = min_value + (step * (sequence_length - 1));
+        const minStart = min + (step * (length - 1));
         start = Math.max(start, minStart);
-        start = Math.min(start, max_value);
+        start = Math.min(start, max);
     }
 
-    // Generate full sequence
-    let fullSequence = generateSequence(start, step, sequence_length, direction);
+    // 4. Generate and Validate Sequence
+    let fullSequence = generateSequence(start, step, length, direction);
 
-    // VALIDATION: Ensure ALL values in sequence are within [min_value, max_value]
-    // This prevents negative numbers and values exceeding 1,000,000
-    const allValuesValid = fullSequence.every(val => val >= min_value && val <= max_value);
+    // VALIDATION: Ensure ALL values in sequence are within [min, max]
+    const allValuesValid = fullSequence.every(val => val >= min && val <= max);
 
     if (!allValuesValid) {
-        // If any value is out of bounds, adjust start more conservatively
+        // If invalid, clamp start point conservatively
         if (direction === 'forwards') {
-            // For forwards, ensure we don't exceed max_value
-            const safeMaxStart = max_value - (step * sequence_length);
-            start = Math.max(min_value, Math.min(start, safeMaxStart));
+            const safeMaxStart = max - (step * length);
+            start = Math.max(min, Math.min(start, safeMaxStart));
         } else {
-            // For backwards, ensure we don't go below min_value
-            const safeMinStart = min_value + (step * sequence_length);
-            start = Math.min(max_value, Math.max(start, safeMinStart));
+            const safeMinStart = min + (step * length);
+            start = Math.min(max, Math.max(start, safeMinStart));
         }
-        // Regenerate with safer bounds
-        fullSequence = generateSequence(start, step, sequence_length, direction);
-
-        // Final validation - if still invalid, clamp to valid range
-        fullSequence = fullSequence.map(val => Math.max(min_value, Math.min(val, max_value)));
+        // Regenerate
+        fullSequence = generateSequence(start, step, length, direction);
+        
+        // Force clamp if still failing
+        fullSequence = fullSequence.map(val => Math.max(min, Math.min(val, max)));
     }
 
-    // Get single gap position
-    const gapIndex = getGapPosition(sequence_length, gap_position);
+    const gapIndex = getGapPosition(length, position);
     const answer = fullSequence[gapIndex];
 
-    // Create display sequence
     const displaySequence = fullSequence.map((num, idx) =>
         idx === gapIndex ? '__' : num.toString()
     );
@@ -91,10 +89,7 @@ export function generateQuestion(params, level) {
     };
 }
 
-/**
- * Register this generator
- */
 export default {
     moduleId: 'N01_Y5_NPV',
     generate: generateQuestion
-};
+};

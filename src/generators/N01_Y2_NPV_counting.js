@@ -3,11 +3,7 @@
  *
  * Generates counting sequence questions based on UK National Curriculum
  * Module: N01_Y2_NPV - "Count in steps of 2, 3, and 5 from 0, and in tens from any number"
- *
- * Level 1: Steps of 2, 3, 5 from 0, 4 numbers, gap at end
- * Level 2: Steps of 2, 3, 5, 10 (tens from any number), 4 numbers, gap in middle
- * Level 3: All steps, 3 numbers, gap in middle
- * Level 4: All steps, 3 numbers, gap random
+ * Schema: V2 (Nested Parameters)
  */
 
 import {
@@ -22,44 +18,54 @@ import {
  * Generate question
  */
 export function generateQuestion(params, level) {
-    // Extract parameters
-    const step = randomChoice(params.step_sizes);
-    const direction = randomChoice(params.directions);
-    const { sequence_length, gap_position, min_value, max_value, tens_from_any, tens_range } = params;
+    // 1. Destructure V2 Schema
+    const {
+        math: {
+            range: { min, max },
+            sequence: { 
+                steps, 
+                length, 
+                directions, 
+                startStrategy,
+                // Specific Y2 optional parameters
+                tensFromAny, 
+                tensRange 
+            }
+        },
+        presentation: {
+            gaps: { position }
+        }
+    } = params;
 
-    // Get starting value with Y2-specific logic
-    // Curriculum: "Count in steps of 2, 3, and 5 from 0, and in tens from any number"
+    const step = randomChoice(steps);
+    const direction = randomChoice(directions);
+
+    // 2. Y2 Specific Logic: "tens from any number"
     let start;
-
-    if (step === 10 && tens_from_any) {
-        // Tens from any number - allow any starting position within range
-        start = randomInt(tens_range[0], tens_range[1]);
+    if (step === 10 && tensFromAny && tensRange) {
+        // Tens from any number - allow any starting position within specific range
+        start = randomInt(tensRange[0], tensRange[1]);
     } else {
-        // Steps of 2, 3, 5 should start from 0 or multiples
-        start = getStartValue(params, step);
+        // Steps of 2, 3, 5 should start from 0 or multiples (handled by helper)
+        start = getStartValue({ startStrategy, min, max }, step);
     }
 
-    // Ensure sequence stays within bounds
+    // 3. Ensure sequence stays within bounds
     if (direction === 'forwards') {
-        // For forwards: ensure start >= min_value AND end <= max_value
-        const maxStart = max_value - (step * (sequence_length - 1));
+        const maxStart = max - (step * (length - 1));
         start = Math.min(start, maxStart);
-        start = Math.max(start, min_value);
+        start = Math.max(start, min);
     } else {
-        // For backwards: ensure start <= max_value AND end >= min_value
-        const minStart = min_value + (step * (sequence_length - 1));
+        const minStart = min + (step * (length - 1));
         start = Math.max(start, minStart);
-        start = Math.min(start, max_value);
+        start = Math.min(start, max);
     }
 
-    // Generate full sequence
-    const fullSequence = generateSequence(start, step, sequence_length, direction);
-
-    // Get single gap position
-    const gapIndex = getGapPosition(sequence_length, gap_position);
+    // 4. Generate sequence
+    const fullSequence = generateSequence(start, step, length, direction);
+    const gapIndex = getGapPosition(length, position);
     const answer = fullSequence[gapIndex];
 
-    // Create display sequence
     const displaySequence = fullSequence.map((num, idx) =>
         idx === gapIndex ? '__' : num.toString()
     );
@@ -74,10 +80,7 @@ export function generateQuestion(params, level) {
     };
 }
 
-/**
- * Register this generator
- */
 export default {
     moduleId: 'N01_Y2_NPV',
     generate: generateQuestion
-};
+};

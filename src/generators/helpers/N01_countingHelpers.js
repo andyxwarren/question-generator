@@ -20,30 +20,25 @@ export function randomInt(min, max) {
 }
 
 /**
- * Get starting value based on start_from parameter
- * Handles all start_from modes: zero_only, zero_or_twenty, zero_or_multiple, any
- * Also handles Y5's start_range parameter
+ * Get starting value based on start strategy
+ * Updated for V2 Schema: Accepts explicit range object { min, max, strategy }
+ * instead of a flat params object.
  */
-export function getStartValue(params, step) {
-    const { start_from, min_value, max_value, start_range } = params;
+export function getStartValue(config, step) {
+    const { startStrategy, min, max } = config;
 
-    if (start_from === 'zero_only') {
+    if (startStrategy === 'zero_only') {
         return 0;
-    } else if (start_from === 'zero_or_twenty') {
-        // For Y1 Level 1 - will be adjusted by caller based on direction
+    } else if (startStrategy === 'zero_or_twenty') {
+        // For Y1 Level 1
         return 0;
-    } else if (start_from === 'zero_or_multiple') {
+    } else if (startStrategy === 'zero_or_multiple') {
         const multiples = [0, step, step * 2, step * 3, step * 4];
-        return randomChoice(multiples.filter(m => m <= max_value / 2));
-    } else if (start_from === 'any') {
-        // For Y5, use start_range if provided
-        if (start_range) {
-            // Round to step multiple to ensure valid sequences
-            return Math.floor(randomInt(start_range[0], start_range[1]) / step) * step;
-        }
-        // Otherwise calculate from min/max
-        const range = max_value - min_value;
-        const rawStart = min_value + randomInt(0, Math.floor(range / 2));
+        return randomChoice(multiples.filter(m => m <= max / 2));
+    } else if (startStrategy === 'any') {
+        // Calculate from min/max
+        const range = max - min;
+        const rawStart = min + randomInt(0, Math.floor(range / 2));
         return Math.floor(rawStart / step) * step;
     }
 

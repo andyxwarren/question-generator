@@ -1,7 +1,6 @@
 /**
  * Year 6 Read/Write/Order/Compare Numbers Generator
- *
- * Module: N02_Y6_NPV - "Read, write, order and compare numbers up to 10,000,000 and determine the value of each digit"
+ * Schema: V2
  */
 
 import {
@@ -19,65 +18,40 @@ import {
     generateNonMultiple
 } from './helpers/N02_numberHelpers.js';
 
-/**
- * Main question generator
- */
 export function generateQuestion(params, level) {
-    const operation = randomChoice(params.operations);
+    const { operations, math } = params;
+    const operation = randomChoice(operations);
 
     switch(operation) {
-        case 'identify_numeral':
-            return generateIdentifyNumeral(params, level);
-        case 'hundred_thousand_more':
-            return generateStepQuestion(params, level, 100000, 'more');
-        case 'hundred_thousand_less':
-            return generateStepQuestion(params, level, 100000, 'less');
-        case 'million_more':
-            return generateStepQuestion(params, level, 1000000, 'more');
-        case 'million_less':
-            return generateStepQuestion(params, level, 1000000, 'less');
-        case 'ten_million_more':
-            return generateStepQuestion(params, level, 10000000, 'more');
-        case 'ten_million_less':
-            return generateStepQuestion(params, level, 10000000, 'less');
-        case 'compare_two':
-            return generateCompareTwo(params, level);
-        case 'use_symbols':
-            return generateUseSymbols(params, level);
-        case 'order_two':
-            return generateOrder(params, level, 2);
-        case 'order_three':
-            return generateOrder(params, level, 3);
-        case 'order_four':
-            return generateOrder(params, level, 4);
-        case 'order_five':
-            return generateOrder(params, level, 5);
-        case 'order_six':
-            return generateOrder(params, level, 6);
-        case 'complete_statement':
-            return generateCompleteStatement(params, level);
-        case 'true_false':
-            return generateTrueFalse(params, level);
-        case 'between':
-            return generateBetween(params, level);
-        case 'place_value_comparison':
-            return generatePlaceValueComparison(params, level);
-        case 'place_value_digit':
-            return generatePlaceValueDigit(params, level);
-        case 'round_to_hundred_thousand':
-            return generateRounding(params, level, 100000);
-        case 'round_to_million':
-            return generateRounding(params, level, 1000000);
-        case 'complex_more_less':
-            return generateComplexMoreLess(params, level);
-        default:
-            return generateIdentifyNumeral(params, level);
+        case 'identify_numeral': return generateIdentifyNumeral(math, level);
+        case 'hundred_thousand_more': return generateStepQuestion(math, level, 100000, 'more');
+        case 'hundred_thousand_less': return generateStepQuestion(math, level, 100000, 'less');
+        case 'million_more': return generateStepQuestion(math, level, 1000000, 'more');
+        case 'million_less': return generateStepQuestion(math, level, 1000000, 'less');
+        case 'ten_million_more': return generateStepQuestion(math, level, 10000000, 'more');
+        case 'ten_million_less': return generateStepQuestion(math, level, 10000000, 'less');
+        case 'compare_two': return generateCompareTwo(math, level);
+        case 'use_symbols': return generateUseSymbols(math, level);
+        case 'order_two': return generateOrder(math, level, 2);
+        case 'order_three': return generateOrder(math, level, 3);
+        case 'order_four': return generateOrder(math, level, 4);
+        case 'order_five': return generateOrder(math, level, 5);
+        case 'order_six': return generateOrder(math, level, 6);
+        case 'complete_statement': return generateCompleteStatement(math, level);
+        case 'true_false': return generateTrueFalse(math, level);
+        case 'between': return generateBetween(math, level);
+        case 'place_value_comparison': return generatePlaceValueComparison(math, level);
+        case 'place_value_digit': return generatePlaceValueDigit(math, level);
+        case 'round_to_hundred_thousand': return generateRounding(math, level, 100000);
+        case 'round_to_million': return generateRounding(math, level, 1000000);
+        case 'complex_more_less': return generateComplexMoreLess(math, level);
+        default: return generateIdentifyNumeral(math, level);
     }
 }
 
-function generateIdentifyNumeral(params, level) {
-    const number = randomInt(params.min_value, params.max_value);
-    const distractors = generateDistractors(number, 3, params.min_value, params.max_value);
+function generateIdentifyNumeral(math, level) {
+    const number = randomInt(math.range.min, math.range.max);
+    const distractors = generateDistractors(number, 3, math.range.min, math.range.max);
     const options = shuffle([number, ...distractors]);
 
     return {
@@ -91,19 +65,17 @@ function generateIdentifyNumeral(params, level) {
     };
 }
 
-function generateStepQuestion(params, level, step, direction) {
+function generateStepQuestion(math, level, step, direction) {
     let number;
-
     if (direction === 'more') {
-        number = randomInt(params.min_value, params.max_value - step);
+        number = randomInt(math.range.min, math.range.max - step);
     } else {
-        number = randomInt(params.min_value + step, params.max_value);
+        number = randomInt(math.range.min + step, math.range.max);
     }
 
     const answer = applyStep(number, step, direction);
-    const distractors = generateDistractors(answer, 3, params.min_value, params.max_value);
+    const distractors = generateDistractors(answer, 3, math.range.min, math.range.max);
     const options = shuffle([answer, ...distractors]);
-
     const dirWord = direction === 'more' ? 'more' : 'less';
 
     return {
@@ -117,29 +89,19 @@ function generateStepQuestion(params, level, step, direction) {
     };
 }
 
-function generateCompareTwo(params, level) {
-    const num1 = randomInt(params.min_value, params.max_value);
-    const num2 = randomInt(params.min_value, params.max_value);
+function generateCompareTwo(math, level) {
+    const num1 = randomInt(math.range.min, math.range.max);
+    const num2 = randomInt(math.range.min, math.range.max);
 
-    if (num1 === num2) {
-        return generateCompareTwo(params, level);
-    }
+    if (num1 === num2) return generateCompareTwo(math, level);
 
     const larger = Math.max(num1, num2);
     const smaller = Math.min(num1, num2);
 
-    const questions = [
-        {
-            text: `Which number is larger: ${formatNumber(num1)} or ${formatNumber(num2)}?`,
-            answer: larger
-        },
-        {
-            text: `Which number is smaller: ${formatNumber(num1)} or ${formatNumber(num2)}?`,
-            answer: smaller
-        }
-    ];
-
-    const q = randomChoice(questions);
+    const q = randomChoice([
+        { text: `Which number is larger: ${formatNumber(num1)} or ${formatNumber(num2)}?`, answer: larger },
+        { text: `Which number is smaller: ${formatNumber(num1)} or ${formatNumber(num2)}?`, answer: smaller }
+    ]);
 
     return {
         text: q.text,
@@ -152,13 +114,11 @@ function generateCompareTwo(params, level) {
     };
 }
 
-function generateUseSymbols(params, level) {
-    const num1 = randomInt(params.min_value, params.max_value);
-    let num2 = randomInt(params.min_value, params.max_value);
+function generateUseSymbols(math, level) {
+    const num1 = randomInt(math.range.min, math.range.max);
+    let num2 = randomInt(math.range.min, math.range.max);
 
-    if (Math.random() < 0.1) {
-        num2 = num1;
-    }
+    if (Math.random() < 0.1) num2 = num1;
 
     const symbol = getComparisonSymbol(num1, num2);
 
@@ -173,11 +133,10 @@ function generateUseSymbols(params, level) {
     };
 }
 
-function generateOrder(params, level, count) {
-    const numbers = generateUniqueNumbers(count, params.min_value, params.max_value);
+function generateOrder(math, level, count) {
+    const numbers = generateUniqueNumbers(count, math.range.min, math.range.max);
     const shuffled = shuffle([...numbers]);
     const sorted = sortAscending(numbers);
-
     const direction = randomChoice(['ascending', 'descending']);
     const answer = direction === 'ascending' ? sorted : sorted.reverse();
 
@@ -192,10 +151,9 @@ function generateOrder(params, level, count) {
     };
 }
 
-function generateCompleteStatement(params, level) {
-    const num1 = randomInt(params.min_value, params.max_value - 500000);
-    // Ensure even difference for whole number midpoint
-    const difference = Math.floor(randomInt(25000, 250000)) * 2; // 50000, 50002, ..., 499998, 500000
+function generateCompleteStatement(math, level) {
+    const num1 = randomInt(math.range.min, math.range.max - 500000);
+    const difference = Math.floor(randomInt(25000, 250000)) * 2;
     const num2 = num1 + difference;
     const midpoint = (num1 + num2) / 2;
 
@@ -209,10 +167,9 @@ function generateCompleteStatement(params, level) {
     };
 }
 
-function generateTrueFalse(params, level) {
-    const num1 = randomInt(params.min_value, params.max_value);
-    const num2 = randomInt(params.min_value, params.max_value);
-
+function generateTrueFalse(math, level) {
+    const num1 = randomInt(math.range.min, math.range.max);
+    const num2 = randomInt(math.range.min, math.range.max);
     const symbol = randomChoice(['<', '>', '=']);
     const correctSymbol = getComparisonSymbol(num1, num2);
     const isTrue = symbol === correctSymbol;
@@ -228,8 +185,8 @@ function generateTrueFalse(params, level) {
     };
 }
 
-function generateBetween(params, level) {
-    const num1 = randomInt(params.min_value, params.max_value - 100000);
+function generateBetween(math, level) {
+    const num1 = randomInt(math.range.min, math.range.max - 100000);
     const num2 = num1 + randomInt(50000, 500000);
     const between = randomInt(num1 + 1, num2 - 1);
 
@@ -237,20 +194,18 @@ function generateBetween(params, level) {
         text: `Give a number that is between ${formatNumber(num1)} and ${formatNumber(num2)}`,
         type: 'text_input',
         answer: between.toString(),
-        validRange: { min: num1, max: num2 },  // Accept any value in range
+        validRange: { min: num1, max: num2 },
         hint: `Any number greater than ${formatNumber(num1)} and less than ${formatNumber(num2)}`,
         module: 'N02_Y6_NPV',
         level: level
     };
 }
 
-function generatePlaceValueComparison(params, level) {
-    const num1 = randomInt(params.min_value, params.max_value);
-    const num2 = randomInt(params.min_value, params.max_value);
+function generatePlaceValueComparison(math, level) {
+    const num1 = randomInt(math.range.min, math.range.max);
+    const num2 = randomInt(math.range.min, math.range.max);
 
-    if (num1 === num2) {
-        return generatePlaceValueComparison(params, level);
-    }
+    if (num1 === num2) return generatePlaceValueComparison(math, level);
 
     const place = randomChoice(['millions', 'hundred thousands', 'ten thousands', 'thousands', 'hundreds', 'tens', 'ones']);
     const val1 = getPlaceValue(num1, place);
@@ -266,8 +221,8 @@ function generatePlaceValueComparison(params, level) {
     };
 }
 
-function generatePlaceValueDigit(params, level) {
-    const number = randomInt(params.min_value, params.max_value);
+function generatePlaceValueDigit(math, level) {
+    const number = randomInt(math.range.min, math.range.max);
     const place = randomChoice(['ten millions', 'millions', 'hundred thousands', 'ten thousands', 'thousands', 'hundreds', 'tens', 'ones']);
     const value = getPlaceValue(number, place);
 
@@ -281,8 +236,8 @@ function generatePlaceValueDigit(params, level) {
     };
 }
 
-function generateRounding(params, level, base) {
-    const number = generateNonMultiple(params.min_value + base, params.max_value - base, base);
+function generateRounding(math, level, base) {
+    const number = generateNonMultiple(math.range.min + base, math.range.max - base, base);
     const rounded = roundToNearest(number, base);
 
     const distractors = [
@@ -290,7 +245,6 @@ function generateRounding(params, level, base) {
         roundToNearest(number - base, base),
         number
     ].filter(d => d !== rounded);
-
     const options = shuffle([rounded, ...distractors.slice(0, 3)]);
 
     const baseName = base === 100000 ? 'nearest hundred thousand' : 'nearest million';
@@ -306,8 +260,8 @@ function generateRounding(params, level, base) {
     };
 }
 
-function generateComplexMoreLess(params, level) {
-    const number = randomInt(params.min_value + 1500000, params.max_value - 1500000);
+function generateComplexMoreLess(math, level) {
+    const number = randomInt(math.range.min + 1500000, math.range.max - 1500000);
     const step1 = randomChoice([100000, 1000000]);
     const step2 = randomChoice([100000, 1000000]);
     const dir1 = randomChoice(['more', 'less']);
@@ -329,4 +283,4 @@ function generateComplexMoreLess(params, level) {
 export default {
     moduleId: 'N02_Y6_NPV',
     generate: generateQuestion
-};
+};
