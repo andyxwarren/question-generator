@@ -27,9 +27,9 @@ const MIGRATED_PARAMS = {
 };
 
 export const M04_MODULES = {
-    'M04_Y1_MEAS': { id: 'M04_Y1_MEAS', name: 'M04_Y1: O\'clock/Half Past', ref: 'M4', parameters: MIGRATED_PARAMS['M04_Y1_MEAS'] },
-    'M04_Y2_MEAS': { id: 'M04_Y2_MEAS', name: 'M04_Y2: 5 Minutes', ref: 'M4', parameters: MIGRATED_PARAMS['M04_Y2_MEAS'] },
-    'M04_Y3_MEAS': { id: 'M04_Y3_MEAS', name: 'M04_Y3: Analogue/Vocab', ref: 'M4', parameters: MIGRATED_PARAMS['M04_Y3_MEAS'] },
-    'M04_Y4_MEAS': { id: 'M04_Y4_MEAS', name: 'M04_Y4: Conversions', ref: 'M4', parameters: MIGRATED_PARAMS['M04_Y4_MEAS'] },
-    'M04_Y5_MEAS': { id: 'M04_Y5_MEAS', name: 'M04_Y5: Problems', ref: 'M4', parameters: MIGRATED_PARAMS['M04_Y5_MEAS'] }
+    'M04_Y1_MEAS': { id: 'M04_Y1_MEAS', name: 'M04_Y1: O\'clock/Half Past', ref: 'M4', yearGroup: 'Year 1', parameters: MIGRATED_PARAMS['M04_Y1_MEAS'] },
+    'M04_Y2_MEAS': { id: 'M04_Y2_MEAS', name: 'M04_Y2: 5 Minutes', ref: 'M4', yearGroup: 'Year 2', parameters: MIGRATED_PARAMS['M04_Y2_MEAS'] },
+    'M04_Y3_MEAS': { id: 'M04_Y3_MEAS', name: 'M04_Y3: Analogue/Vocab', ref: 'M4', yearGroup: 'Year 3', parameters: MIGRATED_PARAMS['M04_Y3_MEAS'] },
+    'M04_Y4_MEAS': { id: 'M04_Y4_MEAS', name: 'M04_Y4: Conversions', ref: 'M4', yearGroup: 'Year 4', parameters: MIGRATED_PARAMS['M04_Y4_MEAS'] },
+    'M04_Y5_MEAS': { id: 'M04_Y5_MEAS', name: 'M04_Y5: Problems', ref: 'M4', yearGroup: 'Year 5', parameters: MIGRATED_PARAMS['M04_Y5_MEAS'] }
 };

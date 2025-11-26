@@ -20,5 +20,5 @@ const MIGRATED_PARAMS = {
 };
 
 export const C09_MODULES = {
-    'C09_Y6_CALC': { id: 'C09_Y6_CALC', name: 'C09_Y6: Order of Ops', ref: 'C9', parameters: MIGRATED_PARAMS['C09_Y6_CALC'] }
+    'C09_Y6_CALC': { id: 'C09_Y6_CALC', name: 'C09_Y6: Order of Ops', ref: 'C9', yearGroup: 'Year 6', parameters: MIGRATED_PARAMS['C09_Y6_CALC'] }
 };

@@ -45,7 +45,7 @@ const MIGRATED_PARAMS = {
 };
 
 export const C03_MODULES = {
-    'C03_Y2_CALC': { id: 'C03_Y2_CALC', name: 'C03_Y2_CALC: Inverse', ref: 'C3', parameters: MIGRATED_PARAMS['C03_Y2_CALC'] },
-    'C03_Y3_CALC': { id: 'C03_Y3_CALC', name: 'C03_Y3_CALC: Estimation', ref: 'C3', parameters: MIGRATED_PARAMS['C03_Y3_CALC'] },
-    'C03_Y4_CALC': { id: 'C03_Y4_CALC', name: 'C03_Y4_CALC: Estimation 4-Digit', ref: 'C3', parameters: MIGRATED_PARAMS['C03_Y4_CALC'] }
+    'C03_Y2_CALC': { id: 'C03_Y2_CALC', name: 'C03_Y2_CALC: Inverse', ref: 'C3', yearGroup: 'Year 2', parameters: MIGRATED_PARAMS['C03_Y2_CALC'] },
+    'C03_Y3_CALC': { id: 'C03_Y3_CALC', name: 'C03_Y3_CALC: Estimation', ref: 'C3', yearGroup: 'Year 3', parameters: MIGRATED_PARAMS['C03_Y3_CALC'] },
+    'C03_Y4_CALC': { id: 'C03_Y4_CALC', name: 'C03_Y4_CALC: Estimation 4-Digit', ref: 'C3', yearGroup: 'Year 4', parameters: MIGRATED_PARAMS['C03_Y4_CALC'] }
 };

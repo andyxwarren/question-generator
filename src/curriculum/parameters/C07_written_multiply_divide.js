@@ -42,9 +42,9 @@ const MIGRATED_PARAMS = {
 };
 
 export const C07_MODULES = {
-    'C07_Y2_CALC': { id: 'C07_Y2_CALC', name: 'C07_Y2: Written Statements', ref: 'C7', parameters: MIGRATED_PARAMS['C07_Y2_CALC'] },
-    'C07_Y3_CALC': { id: 'C07_Y3_CALC', name: 'C07_Y3: 2-Digit Written', ref: 'C7', parameters: MIGRATED_PARAMS['C07_Y3_CALC'] },
-    'C07_Y4_CALC': { id: 'C07_Y4_CALC', name: 'C07_Y4: 3-Digit Written', ref: 'C7', parameters: MIGRATED_PARAMS['C07_Y4_CALC'] },
-    'C07_Y5_CALC': { id: 'C07_Y5_CALC', name: 'C07_Y5: Long Mult/Short Div', ref: 'C7', parameters: MIGRATED_PARAMS['C07_Y5_CALC'] },
-    'C07_Y6_CALC': { id: 'C07_Y6_CALC', name: 'C07_Y6: Long Division', ref: 'C7', parameters: MIGRATED_PARAMS['C07_Y6_CALC'] }
+    'C07_Y2_CALC': { id: 'C07_Y2_CALC', name: 'C07_Y2: Written Statements', ref: 'C7', yearGroup: 'Year 2', parameters: MIGRATED_PARAMS['C07_Y2_CALC'] },
+    'C07_Y3_CALC': { id: 'C07_Y3_CALC', name: 'C07_Y3: 2-Digit Written', ref: 'C7', yearGroup: 'Year 3', parameters: MIGRATED_PARAMS['C07_Y3_CALC'] },
+    'C07_Y4_CALC': { id: 'C07_Y4_CALC', name: 'C07_Y4: 3-Digit Written', ref: 'C7', yearGroup: 'Year 4', parameters: MIGRATED_PARAMS['C07_Y4_CALC'] },
+    'C07_Y5_CALC': { id: 'C07_Y5_CALC', name: 'C07_Y5: Long Mult/Short Div', ref: 'C7', yearGroup: 'Year 5', parameters: MIGRATED_PARAMS['C07_Y5_CALC'] },
+    'C07_Y6_CALC': { id: 'C07_Y6_CALC', name: 'C07_Y6: Long Division', ref: 'C7', yearGroup: 'Year 6', parameters: MIGRATED_PARAMS['C07_Y6_CALC'] }
 };

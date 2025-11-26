@@ -13,7 +13,7 @@ export function generateQuestion(params, level) {
         min_3digit: math.range.min3,
         max_3digit: math.range.max3,
         ones_range: math.components.ones,
-        tens_range: math.components.tens,``
+        tens_range: math.components.tens,
         hundreds_range: math.components.hundreds,
         avoid_bridging: math.config.avoidBridging,
         question_styles: presentation.styles

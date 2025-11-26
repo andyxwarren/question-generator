@@ -26,10 +26,10 @@ const MIGRATED_PARAMS = {
 };
 
 export const C08_MODULES = {
-    'C08_Y1_CALC': { id: 'C08_Y1_CALC', name: 'C08_Y1: Visual Problems', ref: 'C8', parameters: MIGRATED_PARAMS['C08_Y1_CALC'] },
-    'C08_Y2_CALC': { id: 'C08_Y2_CALC', name: 'C08_Y2: Problems', ref: 'C8', parameters: MIGRATED_PARAMS['C08_Y2_CALC'] },
-    'C08_Y3_CALC': { id: 'C08_Y3_CALC', name: 'C08_Y3: Scaling', ref: 'C8', parameters: MIGRATED_PARAMS['C08_Y3_CALC'] },
-    'C08_Y4_CALC': { id: 'C08_Y4_CALC', name: 'C08_Y4: Distributive', ref: 'C8', parameters: MIGRATED_PARAMS['C08_Y4_CALC'] },
-    'C08_Y5_CALC': { id: 'C08_Y5_CALC', name: 'C08_Y5: Factors/Multiples', ref: 'C8', parameters: MIGRATED_PARAMS['C08_Y5_CALC'] },
-    'C08_Y6_CALC': { id: 'C08_Y6_CALC', name: 'C08_Y6: Mixed Problems', ref: 'C8', parameters: MIGRATED_PARAMS['C08_Y6_CALC'] }
+    'C08_Y1_CALC': { id: 'C08_Y1_CALC', name: 'C08_Y1: Visual Problems', ref: 'C8', yearGroup: 'Year 1', parameters: MIGRATED_PARAMS['C08_Y1_CALC'] },
+    'C08_Y2_CALC': { id: 'C08_Y2_CALC', name: 'C08_Y2: Problems', ref: 'C8', yearGroup: 'Year 2', parameters: MIGRATED_PARAMS['C08_Y2_CALC'] },
+    'C08_Y3_CALC': { id: 'C08_Y3_CALC', name: 'C08_Y3: Scaling', ref: 'C8', yearGroup: 'Year 3', parameters: MIGRATED_PARAMS['C08_Y3_CALC'] },
+    'C08_Y4_CALC': { id: 'C08_Y4_CALC', name: 'C08_Y4: Distributive', ref: 'C8', yearGroup: 'Year 4', parameters: MIGRATED_PARAMS['C08_Y4_CALC'] },
+    'C08_Y5_CALC': { id: 'C08_Y5_CALC', name: 'C08_Y5: Factors/Multiples', ref: 'C8', yearGroup: 'Year 5', parameters: MIGRATED_PARAMS['C08_Y5_CALC'] },
+    'C08_Y6_CALC': { id: 'C08_Y6_CALC', name: 'C08_Y6: Mixed Problems', ref: 'C8', yearGroup: 'Year 6', parameters: MIGRATED_PARAMS['C08_Y6_CALC'] }
 };

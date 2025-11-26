@@ -22,9 +22,9 @@ const MIGRATED_PARAMS = {
 };
 
 export const M09_MODULES = {
-    'M09_Y2_MEAS': { id: 'M09_Y2_MEAS', name: 'M09_Y2: Money Problems', ref: 'M9', parameters: MIGRATED_PARAMS['M09_Y2_MEAS'] },
-    'M09_Y3_MEAS': { id: 'M09_Y3_MEAS', name: 'M09_Y3: Multi-Measure', ref: 'M9', parameters: MIGRATED_PARAMS['M09_Y3_MEAS'] },
-    'M09_Y4_MEAS': { id: 'M09_Y4_MEAS', name: 'M09_Y4: Four Ops', ref: 'M9', parameters: MIGRATED_PARAMS['M09_Y4_MEAS'] },
-    'M09_Y5_MEAS': { id: 'M09_Y5_MEAS', name: 'M09_Y5: Decimal', ref: 'M9', parameters: MIGRATED_PARAMS['M09_Y5_MEAS'] },
-    'M09_Y6_MEAS': { id: 'M09_Y6_MEAS', name: 'M09_Y6: Conversions', ref: 'M9', parameters: MIGRATED_PARAMS['M09_Y6_MEAS'] }
+    'M09_Y2_MEAS': { id: 'M09_Y2_MEAS', name: 'M09_Y2: Money Problems', ref: 'M9', yearGroup: 'Year 2', parameters: MIGRATED_PARAMS['M09_Y2_MEAS'] },
+    'M09_Y3_MEAS': { id: 'M09_Y3_MEAS', name: 'M09_Y3: Multi-Measure', ref: 'M9', yearGroup: 'Year 3', parameters: MIGRATED_PARAMS['M09_Y3_MEAS'] },
+    'M09_Y4_MEAS': { id: 'M09_Y4_MEAS', name: 'M09_Y4: Four Ops', ref: 'M9', yearGroup: 'Year 4', parameters: MIGRATED_PARAMS['M09_Y4_MEAS'] },
+    'M09_Y5_MEAS': { id: 'M09_Y5_MEAS', name: 'M09_Y5: Decimal', ref: 'M9', yearGroup: 'Year 5', parameters: MIGRATED_PARAMS['M09_Y5_MEAS'] },
+    'M09_Y6_MEAS': { id: 'M09_Y6_MEAS', name: 'M09_Y6: Conversions', ref: 'M9', yearGroup: 'Year 6', parameters: MIGRATED_PARAMS['M09_Y6_MEAS'] }
 };

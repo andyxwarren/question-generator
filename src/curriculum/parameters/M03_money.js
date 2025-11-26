@@ -19,7 +19,7 @@ const MIGRATED_PARAMS = {
 };
 
 export const M03_MODULES = {
-    'M03_Y1_MEAS': { id: 'M03_Y1_MEAS', name: 'M03_Y1: Coins', ref: 'M3', parameters: MIGRATED_PARAMS['M03_Y1_MEAS'] },
-    'M03_Y2_MEAS': { id: 'M03_Y2_MEAS', name: 'M03_Y2: Pounds & Pence', ref: 'M3', parameters: MIGRATED_PARAMS['M03_Y2_MEAS'] },
-    'M03_Y3_MEAS': { id: 'M03_Y3_MEAS', name: 'M03_Y3: Consolidation', ref: 'M3', parameters: MIGRATED_PARAMS['M03_Y3_MEAS'] }
+    'M03_Y1_MEAS': { id: 'M03_Y1_MEAS', name: 'M03_Y1: Coins', ref: 'M3', yearGroup: 'Year 1', parameters: MIGRATED_PARAMS['M03_Y1_MEAS'] },
+    'M03_Y2_MEAS': { id: 'M03_Y2_MEAS', name: 'M03_Y2: Pounds & Pence', ref: 'M3', yearGroup: 'Year 2', parameters: MIGRATED_PARAMS['M03_Y2_MEAS'] },
+    'M03_Y3_MEAS': { id: 'M03_Y3_MEAS', name: 'M03_Y3: Consolidation', ref: 'M3', yearGroup: 'Year 3', parameters: MIGRATED_PARAMS['M03_Y3_MEAS'] }
 };

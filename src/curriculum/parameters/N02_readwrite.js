@@ -1,7 +1,292 @@
 /**
  * N02 Module Series: Read, Write, Order and Compare Numbers
- * Covers Years 2-6 progression
+ * Covers Years 1-6 progression
+ * Schema: V2 (Nested)
  */
+
+const MIGRATED_PARAMS = {
+    N02_Y1_NPV: {
+        1: {
+            operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral'],
+            math: {
+                range: { min: 0, max: 10 },
+                words: { min: 0, max: 10 },
+                order: { countMax: 2 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        2: {
+            operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two'],
+            math: {
+                range: { min: 0, max: 20 },
+                words: { min: 0, max: 20 },
+                order: { countMax: 2 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        3: {
+            operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'order_two'],
+            math: {
+                range: { min: 0, max: 50 },
+                words: { min: 0, max: 20 },
+                order: { countMax: 2 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        4: {
+            operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'order_two', 'order_three'],
+            math: {
+                range: { min: 0, max: 100 },
+                words: { min: 0, max: 20 },
+                order: { countMax: 3 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        }
+    },
+
+    N02_Y2_NPV: {
+        1: {
+            operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'use_symbols', 'order_two', 'order_three'],
+            math: {
+                range: { min: 0, max: 50 },
+                words: { min: 0, max: 20 },
+                order: { countMax: 3 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        2: {
+            operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'use_symbols', 'order_two', 'order_three', 'order_four', 'complete_statement', 'true_false'],
+            math: {
+                range: { min: 0, max: 100 },
+                words: { min: 0, max: 50 },
+                order: { countMax: 4 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        3: {
+            operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false', 'between'],
+            math: {
+                range: { min: 0, max: 100 },
+                words: { min: 0, max: 100 },
+                order: { countMax: 4 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        4: {
+            operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false', 'between'],
+            math: {
+                range: { min: 0, max: 120 },
+                words: { min: 0, max: 100 },
+                order: { countMax: 5 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        }
+    },
+
+    N02_Y3_NPV: {
+        1: {
+            operations: ['identify_numeral', 'one_more', 'one_less', 'ten_more', 'ten_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'use_symbols', 'order_two', 'order_three'],
+            math: {
+                range: { min: 0, max: 200 },
+                words: { min: 0, max: 20 },
+                order: { countMax: 3 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        2: {
+            operations: ['identify_numeral', 'one_more', 'one_less', 'ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false'],
+            math: {
+                range: { min: 0, max: 500 },
+                words: { min: 0, max: 50 },
+                order: { countMax: 4 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        3: {
+            operations: ['identify_numeral', 'ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison'],
+            math: {
+                range: { min: 0, max: 1000 },
+                words: { min: 0, max: 100 },
+                order: { countMax: 5 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        4: {
+            operations: ['ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'complex_more_less'],
+            math: {
+                range: { min: 0, max: 1000 },
+                words: { min: 0, max: 100 },
+                order: { countMax: 6 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        }
+    },
+
+    N02_Y4_NPV: {
+        1: {
+            operations: ['identify_numeral', 'ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_two', 'order_three'],
+            math: {
+                range: { min: 100, max: 2000 },
+                words: { min: 0, max: 20 },
+                order: { countMax: 3 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        2: {
+            operations: ['ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false'],
+            math: {
+                range: { min: 100, max: 10000 },
+                words: { min: 0, max: 50 },
+                order: { countMax: 5 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        3: {
+            operations: ['hundred_more', 'hundred_less', 'thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison'],
+            math: {
+                range: { min: 100, max: 50000 },
+                words: { min: 0, max: 100 },
+                order: { countMax: 6 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        4: {
+            operations: ['thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'complex_more_less'],
+            math: {
+                range: { min: 1000, max: 200000 },
+                words: { min: 0, max: 100 },
+                order: { countMax: 8 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        }
+    },
+
+    N02_Y5_NPV: {
+        1: {
+            operations: ['identify_numeral', 'thousand_more', 'thousand_less', 'ten_thousand_more', 'ten_thousand_less', 'compare_two', 'use_symbols', 'order_two', 'order_three'],
+            math: {
+                range: { min: 1000, max: 100000 },
+                words: { min: 0, max: 20 },
+                order: { countMax: 3 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        2: {
+            operations: ['ten_thousand_more', 'ten_thousand_less', 'hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false'],
+            math: {
+                range: { min: 10000, max: 500000 },
+                words: { min: 0, max: 50 },
+                order: { countMax: 5 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        3: {
+            operations: ['ten_thousand_more', 'ten_thousand_less', 'hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison'],
+            math: {
+                range: { min: 10000, max: 1000000 },
+                words: { min: 0, max: 100 },
+                order: { countMax: 6 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        4: {
+            operations: ['hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'complex_more_less'],
+            math: {
+                range: { min: 100000, max: 5000000 },
+                words: { min: 0, max: 100 },
+                order: { countMax: 8 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        }
+    },
+
+    N02_Y6_NPV: {
+        1: {
+            operations: ['identify_numeral', 'hundred_thousand_more', 'hundred_thousand_less', 'million_more', 'million_less', 'compare_two', 'use_symbols', 'order_two', 'order_three'],
+            math: {
+                range: { min: 10000, max: 1000000 },
+                words: { min: 0, max: 20 },
+                order: { countMax: 3 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        2: {
+            operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false'],
+            math: {
+                range: { min: 100000, max: 5000000 },
+                words: { min: 0, max: 50 },
+                order: { countMax: 5 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        3: {
+            operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison'],
+            math: {
+                range: { min: 1000000, max: 10000000 },
+                words: { min: 0, max: 100 },
+                order: { countMax: 6 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        },
+        4: {
+            operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'complex_more_less'],
+            math: {
+                range: { min: 1000000, max: 10000000 },
+                words: { min: 0, max: 100 },
+                order: { countMax: 8 }
+            },
+            presentation: {
+                styles: ['multiple_choice', 'text_input']
+            }
+        }
+    }
+};
 
 export const N02_MODULES = {
     'N02_Y1_NPV': {
@@ -13,264 +298,61 @@ export const N02_MODULES = {
         strand: 'Number and Place Value',
         substrand: 'Read, write, order and compare numbers',
         ref: 'N2',
-        parameters: {
-            1: {
-                min_value: 0,
-                max_value: 10,
-                word_min: 0,
-                word_max: 10,
-                operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral'],
-                order_count_max: 2
-            },
-            2: {
-                min_value: 0,
-                max_value: 20,
-                word_min: 0,
-                word_max: 20,
-                operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two'],
-                order_count_max: 2
-            },
-            3: {
-                min_value: 0,
-                max_value: 50,
-                word_min: 0,
-                word_max: 20,
-                operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'order_two'],
-                order_count_max: 2
-            },
-            4: {
-                min_value: 0,
-                max_value: 100,
-                word_min: 0,
-                word_max: 20,
-                operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'order_two', 'order_three'],
-                order_count_max: 3
-            }
-        }
+        parameters: MIGRATED_PARAMS['N02_Y1_NPV']
     },
-
     'N02_Y2_NPV': {
         id: 'N02_Y2_NPV',
         name: 'N02_Y2_NPV: Read and Write Numbers',
-        description: 'read and write numbers to at least 100 in numerals and in words; compare and order numbers from 0 up to 100; use <, > and = signs',
+        description: 'Read and write numbers to at least 100 in numerals and in words; compare and order numbers from 0 up to 100; use <, > and = signs',
         icon: '🔤',
         yearGroup: 'Year 2',
         strand: 'Number and Place Value',
         substrand: 'Read, write, order and compare numbers',
         ref: 'N2',
-        parameters: {
-            1: {
-                min_value: 0,
-                max_value: 50,
-                word_min: 0,
-                word_max: 20,
-                operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'use_symbols', 'order_two', 'order_three'],
-                order_count_max: 3
-            },
-            2: {
-                min_value: 0,
-                max_value: 100,
-                word_min: 0,
-                word_max: 50,
-                operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'use_symbols', 'order_two', 'order_three', 'order_four', 'complete_statement', 'true_false'],
-                order_count_max: 4
-            },
-            3: {
-                min_value: 0,
-                max_value: 100,
-                word_min: 0,
-                word_max: 100,
-                operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false', 'between'],
-                order_count_max: 4
-            },
-            4: {
-                min_value: 0,
-                max_value: 120,
-                word_min: 0,
-                word_max: 100,
-                operations: ['identify_numeral', 'one_more', 'one_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false', 'between'],
-                order_count_max: 5
-            }
-        }
+        parameters: MIGRATED_PARAMS['N02_Y2_NPV']
     },
-
     'N02_Y3_NPV': {
         id: 'N02_Y3_NPV',
         name: 'N02_Y3_NPV: Numbers to 1000',
-        description: 'compare and order numbers up to 1,000; read and write numbers to 1,000 in numerals and in words; find 10 or 100 more or less than a given number',
+        description: 'Compare and order numbers up to 1,000; read and write numbers to 1,000 in numerals and in words; find 10 or 100 more or less than a given number',
         icon: '🔤',
         yearGroup: 'Year 3',
         strand: 'Number and Place Value',
         substrand: 'Read, write, order and compare numbers',
         ref: 'N2',
-        parameters: {
-            1: {
-                min_value: 0,
-                max_value: 200,
-                word_min: 0,
-                word_max: 20,
-                operations: ['identify_numeral', 'one_more', 'one_less', 'ten_more', 'ten_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'use_symbols', 'order_two', 'order_three'],
-                order_count_max: 3
-            },
-            2: {
-                min_value: 0,
-                max_value: 500,
-                word_min: 0,
-                word_max: 50,
-                operations: ['identify_numeral', 'one_more', 'one_less', 'ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'numeral_to_word', 'word_to_numeral', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false'],
-                order_count_max: 4
-            },
-            3: {
-                min_value: 0,
-                max_value: 1000,
-                word_min: 0,
-                word_max: 100,
-                operations: ['identify_numeral', 'ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison'],
-                order_count_max: 5
-            },
-            4: {
-                min_value: 0,
-                max_value: 1000,
-                word_min: 0,
-                word_max: 100,
-                operations: ['ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'complex_more_less'],
-                order_count_max: 6
-            }
-        }
+        parameters: MIGRATED_PARAMS['N02_Y3_NPV']
     },
-
     'N02_Y4_NPV': {
         id: 'N02_Y4_NPV',
         name: 'N02_Y4_NPV: Order and Compare Beyond 1000',
-        description: 'order and compare numbers beyond 1,000; find 1,000 more or less than a given number',
+        description: 'Order and compare numbers beyond 1,000; find 1,000 more or less than a given number',
         icon: '🔤',
         yearGroup: 'Year 4',
         strand: 'Number and Place Value',
         substrand: 'Read, write, order and compare numbers',
         ref: 'N2',
-        parameters: {
-            1: {
-                min_value: 100,
-                max_value: 2000,
-                word_min: 0,
-                word_max: 20,
-                operations: ['identify_numeral', 'ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_two', 'order_three'],  // Removed rounding
-                order_count_max: 3
-            },
-            2: {
-                min_value: 100,
-                max_value: 10000,
-                word_min: 0,
-                word_max: 50,
-                operations: ['ten_more', 'ten_less', 'hundred_more', 'hundred_less', 'thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false'],  // Removed rounding
-                order_count_max: 5
-            },
-            3: {
-                min_value: 100,
-                max_value: 50000,                        // Reduced from 100,000
-                word_min: 0,
-                word_max: 100,
-                operations: ['hundred_more', 'hundred_less', 'thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison'],  // Removed rounding
-                order_count_max: 6                       // Reduced from 10
-            },
-            4: {
-                min_value: 1000,
-                max_value: 200000,                       // Reduced from 1,000,000
-                word_min: 0,
-                word_max: 100,
-                operations: ['thousand_more', 'thousand_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'complex_more_less'],  // Removed rounding
-                order_count_max: 8                       // Reduced from 15
-            }
-        }
+        parameters: MIGRATED_PARAMS['N02_Y4_NPV']
     },
-
     'N02_Y5_NPV': {
         id: 'N02_Y5_NPV',
         name: 'N02_Y5_NPV: Numbers to 1 Million',
-        description: 'read, write, order and compare numbers to at least 1,000,000',
+        description: 'Read, write, order and compare numbers to at least 1,000,000',
         icon: '🔤',
         yearGroup: 'Year 5',
         strand: 'Number and Place Value',
         substrand: 'Read, write, order and compare numbers',
         ref: 'N2',
-        parameters: {
-            1: {
-                min_value: 1000,
-                max_value: 100000,
-                word_min: 0,
-                word_max: 20,
-                operations: ['identify_numeral', 'thousand_more', 'thousand_less', 'ten_thousand_more', 'ten_thousand_less', 'compare_two', 'use_symbols', 'order_two', 'order_three'],  // Removed rounding
-                order_count_max: 3
-            },
-            2: {
-                min_value: 10000,
-                max_value: 500000,
-                word_min: 0,
-                word_max: 50,
-                operations: ['ten_thousand_more', 'ten_thousand_less', 'hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false'],  // Removed rounding
-                order_count_max: 5
-            },
-            3: {
-                min_value: 10000,
-                max_value: 1000000,
-                word_min: 0,
-                word_max: 100,
-                operations: ['ten_thousand_more', 'ten_thousand_less', 'hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison'],  // Removed rounding and place_value_digit (belongs in N03)
-                order_count_max: 6                       // Reduced from 10
-            },
-            4: {
-                min_value: 100000,
-                max_value: 5000000,                      // Reduced from 10,000,000
-                word_min: 0,
-                word_max: 100,
-                operations: ['hundred_thousand_more', 'hundred_thousand_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'complex_more_less'],  // Removed rounding and place_value_digit (belongs in N03)
-                order_count_max: 8                       // Reduced from 15
-            }
-        }
+        parameters: MIGRATED_PARAMS['N02_Y5_NPV']
     },
-
     'N02_Y6_NPV': {
         id: 'N02_Y6_NPV',
         name: 'N02_Y6_NPV: Numbers to 10 Million',
-        description: 'read, write, order and compare numbers up to 10,000,000',
+        description: 'Read, write, order and compare numbers up to 10,000,000',
         icon: '🔤',
         yearGroup: 'Year 6',
         strand: 'Number and Place Value',
         substrand: 'Read, write, order and compare numbers',
         ref: 'N2',
-        parameters: {
-            1: {
-                min_value: 10000,
-                max_value: 1000000,
-                word_min: 0,
-                word_max: 20,
-                operations: ['identify_numeral', 'hundred_thousand_more', 'hundred_thousand_less', 'million_more', 'million_less', 'compare_two', 'use_symbols', 'order_two', 'order_three'],  // Removed rounding
-                order_count_max: 3
-            },
-            2: {
-                min_value: 100000,
-                max_value: 5000000,
-                word_min: 0,
-                word_max: 50,
-                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_three', 'order_four', 'complete_statement', 'true_false'],  // Removed rounding
-                order_count_max: 5
-            },
-            3: {
-                min_value: 1000000,
-                max_value: 10000000,
-                word_min: 0,
-                word_max: 100,
-                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_four', 'order_five', 'complete_statement', 'true_false', 'between', 'place_value_comparison'],  // Removed rounding and place_value_digit (belongs in N03)
-                order_count_max: 6                       // Reduced from 10
-            },
-            4: {
-                min_value: 1000000,
-                max_value: 10000000,
-                word_min: 0,
-                word_max: 100,
-                operations: ['million_more', 'million_less', 'ten_million_more', 'ten_million_less', 'compare_two', 'use_symbols', 'order_five', 'order_six', 'complete_statement', 'true_false', 'between', 'place_value_comparison', 'complex_more_less'],  // Removed rounding and place_value_digit (belongs in N03)
-                order_count_max: 8                       // Reduced from 20
-            }
-        }
+        parameters: MIGRATED_PARAMS['N02_Y6_NPV']
     }
 };

@@ -8,11 +8,16 @@ export function generateQuestion(params, level) {
     const { operations, math } = params;
     const operation = randomChoice(operations);
 
+    // Calculate reasonable max_product if not defined
+    const maxTable = Math.max(...math.tables);
+    const maxMultiplier = math.multiplier?.max || 12;
+    const defaultMaxProduct = maxTable * maxMultiplier;
+
     const flatParams = {
         tables: math.tables,
-        min_multiplier: math.multiplier.min,
-        max_multiplier: math.multiplier.max,
-        max_product: math.product.max
+        min_multiplier: math.multiplier?.min || 1,
+        max_multiplier: maxMultiplier,
+        max_product: math.product?.max || defaultMaxProduct
     };
 
     if(operation === 'multiply_three') return generateMultiplyThree(flatParams, level);

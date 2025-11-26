@@ -248,7 +248,7 @@ class QuestionEngine {
 
         const params = getParameters(moduleId, level);
         if (!params) {
-            console.error(`No parameters found for ${moduleId} level ${level}`);
+            // Silently return null - missing parameter levels are expected during development
             return null;
         }
 

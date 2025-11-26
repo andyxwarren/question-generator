@@ -29,8 +29,8 @@ const MIGRATED_PARAMS = {
 };
 
 export const M01_MODULES = {
-    'M01_Y1_MEAS': { id: 'M01_Y1_MEAS', name: 'M01_Y1: Comparing', ref: 'M1', parameters: MIGRATED_PARAMS['M01_Y1_MEAS'] },
-    'M01_Y2_MEAS': { id: 'M01_Y2_MEAS', name: 'M01_Y2: Order Measures', ref: 'M1', parameters: MIGRATED_PARAMS['M01_Y2_MEAS'] },
-    'M01_Y3_MEAS': { id: 'M01_Y3_MEAS', name: 'M01_Y3: Compare Units', ref: 'M1', parameters: MIGRATED_PARAMS['M01_Y3_MEAS'] },
-    'M01_Y4_MEAS': { id: 'M01_Y4_MEAS', name: 'M01_Y4: Different Measures', ref: 'M1', parameters: MIGRATED_PARAMS['M01_Y4_MEAS'] }
+    'M01_Y1_MEAS': { id: 'M01_Y1_MEAS', name: 'M01_Y1: Comparing', ref: 'M1', yearGroup: 'Year 1', parameters: MIGRATED_PARAMS['M01_Y1_MEAS'] },
+    'M01_Y2_MEAS': { id: 'M01_Y2_MEAS', name: 'M01_Y2: Order Measures', ref: 'M1', yearGroup: 'Year 2', parameters: MIGRATED_PARAMS['M01_Y2_MEAS'] },
+    'M01_Y3_MEAS': { id: 'M01_Y3_MEAS', name: 'M01_Y3: Compare Units', ref: 'M1', yearGroup: 'Year 3', parameters: MIGRATED_PARAMS['M01_Y3_MEAS'] },
+    'M01_Y4_MEAS': { id: 'M01_Y4_MEAS', name: 'M01_Y4: Different Measures', ref: 'M1', yearGroup: 'Year 4', parameters: MIGRATED_PARAMS['M01_Y4_MEAS'] }
 };

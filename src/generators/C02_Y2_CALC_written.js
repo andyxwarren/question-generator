@@ -4,8 +4,7 @@
  */
 
 import { randomChoice } from './helpers/N02_numberHelpers.js';
-import { generateTwoDigitPlusOnes, generateTwoDigitMinusOnes, generateTwoDigitPlusTens, generateTwoDigitMinusTens, generateTwoDigitPlusTwoDigit, generateTwoDigitMinusTwoDigit, generateThreeOneDigit, generateComplexMissing } from './helpers/C02_writtenHelpers.js'; 
-// Note: Assuming logic extracted to helper or using inline logic from V1
+// Note: Functions are implemented inline below (not imported from helpers)
 
 import {
     randomInt,

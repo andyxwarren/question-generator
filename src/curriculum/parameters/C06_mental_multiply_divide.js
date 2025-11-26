@@ -68,9 +68,9 @@ const MIGRATED_PARAMS = {
 };
 
 export const C06_MODULES = {
-    'C06_Y2_CALC': { id: 'C06_Y2_CALC', name: 'C06_Y2_CALC: 2, 5, 10 Tables', ref: 'C6', parameters: MIGRATED_PARAMS['C06_Y2_CALC'] },
-    'C06_Y3_CALC': { id: 'C06_Y3_CALC', name: 'C06_Y3_CALC: 3, 4, 8 Tables', ref: 'C6', parameters: MIGRATED_PARAMS['C06_Y3_CALC'] },
-    'C06_Y4_CALC': { id: 'C06_Y4_CALC', name: 'C06_Y4_CALC: 12x12 Tables', ref: 'C6', parameters: MIGRATED_PARAMS['C06_Y4_CALC'] },
-    'C06_Y5_CALC': { id: 'C06_Y5_CALC', name: 'C06_Y5_CALC: Powers of 10', ref: 'C6', parameters: MIGRATED_PARAMS['C06_Y5_CALC'] },
-    'C06_Y6_CALC': { id: 'C06_Y6_CALC', name: 'C06_Y6_CALC: Mixed Ops', ref: 'C6', parameters: MIGRATED_PARAMS['C06_Y6_CALC'] }
+    'C06_Y2_CALC': { id: 'C06_Y2_CALC', name: 'C06_Y2_CALC: 2, 5, 10 Tables', ref: 'C6', yearGroup: 'Year 2', parameters: MIGRATED_PARAMS['C06_Y2_CALC'] },
+    'C06_Y3_CALC': { id: 'C06_Y3_CALC', name: 'C06_Y3_CALC: 3, 4, 8 Tables', ref: 'C6', yearGroup: 'Year 3', parameters: MIGRATED_PARAMS['C06_Y3_CALC'] },
+    'C06_Y4_CALC': { id: 'C06_Y4_CALC', name: 'C06_Y4_CALC: 12x12 Tables', ref: 'C6', yearGroup: 'Year 4', parameters: MIGRATED_PARAMS['C06_Y4_CALC'] },
+    'C06_Y5_CALC': { id: 'C06_Y5_CALC', name: 'C06_Y5_CALC: Powers of 10', ref: 'C6', yearGroup: 'Year 5', parameters: MIGRATED_PARAMS['C06_Y5_CALC'] },
+    'C06_Y6_CALC': { id: 'C06_Y6_CALC', name: 'C06_Y6_CALC: Mixed Ops', ref: 'C6', yearGroup: 'Year 6', parameters: MIGRATED_PARAMS['C06_Y6_CALC'] }
 };

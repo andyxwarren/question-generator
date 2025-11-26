@@ -51,6 +51,12 @@ class App {
             const strand = module.strand;
             const substrand = module.substrand;
 
+            // Skip modules without required metadata
+            if (!strand || !substrand || !module.yearGroup) {
+                console.warn(`Module ${module.id} missing required metadata (strand, substrand, or yearGroup)`);
+                return;
+            }
+
             if (!grouped[strand]) {
                 grouped[strand] = {};
             }
@@ -262,6 +268,11 @@ class App {
         // Generate questions for each level (1-4)
         for (let level = 1; level <= 4; level++) {
             const levelQuestions = questionEngine.generate(moduleId, level, count);
+
+            // Skip levels with no questions (parameters not defined)
+            if (levelQuestions.length === 0) {
+                continue;
+            }
 
             // Add module info to each question for display purposes
             const questionsWithModuleInfo = levelQuestions.map(q => ({

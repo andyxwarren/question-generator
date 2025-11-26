@@ -21,8 +21,8 @@ const MIGRATED_PARAMS = {
 };
 
 export const M02_MODULES = {
-    'M02_Y1_MEAS': { id: 'M02_Y1_MEAS', name: 'M02_Y1: Scales', ref: 'M2', parameters: MIGRATED_PARAMS['M02_Y1_MEAS'] },
-    'M02_Y2_MEAS': { id: 'M02_Y2_MEAS', name: 'M02_Y2: Standard Units', ref: 'M2', parameters: MIGRATED_PARAMS['M02_Y2_MEAS'] },
-    'M02_Y3_MEAS': { id: 'M02_Y3_MEAS', name: 'M02_Y3: Precision', ref: 'M2', parameters: MIGRATED_PARAMS['M02_Y3_MEAS'] },
-    'M02_Y4_MEAS': { id: 'M02_Y4_MEAS', name: 'M02_Y4: Estimation', ref: 'M2', parameters: MIGRATED_PARAMS['M02_Y4_MEAS'] }
+    'M02_Y1_MEAS': { id: 'M02_Y1_MEAS', name: 'M02_Y1: Scales', ref: 'M2', yearGroup: 'Year 1', parameters: MIGRATED_PARAMS['M02_Y1_MEAS'] },
+    'M02_Y2_MEAS': { id: 'M02_Y2_MEAS', name: 'M02_Y2: Standard Units', ref: 'M2', yearGroup: 'Year 2', parameters: MIGRATED_PARAMS['M02_Y2_MEAS'] },
+    'M02_Y3_MEAS': { id: 'M02_Y3_MEAS', name: 'M02_Y3: Precision', ref: 'M2', yearGroup: 'Year 3', parameters: MIGRATED_PARAMS['M02_Y3_MEAS'] },
+    'M02_Y4_MEAS': { id: 'M02_Y4_MEAS', name: 'M02_Y4: Estimation', ref: 'M2', yearGroup: 'Year 4', parameters: MIGRATED_PARAMS['M02_Y4_MEAS'] }
 };

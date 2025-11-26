@@ -108,7 +108,9 @@ export const StrandSchemas = {
                 targets: { type: 'array<number>', optional: true },
                 tables: { type: 'array<number>', optional: true },
                 components: { type: 'object', optional: true },
-                config: { type: 'object', optional: true } // Specific flags like allowZero, regrouping
+                config: { type: 'object', optional: true }, // Specific flags like allowZero, regrouping
+                factors: { type: 'array<number>', optional: true }, // Factor ranges for C08_Y5
+                ops: { type: 'array<number>', optional: true } // Number of operations for multi-step problems
             }
         },
 

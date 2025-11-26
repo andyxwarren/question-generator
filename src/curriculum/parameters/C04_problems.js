@@ -34,7 +34,7 @@ const MIGRATED_PARAMS = {
 };
 
 export const C04_MODULES = {
-    'C04_Y1_CALC': { id: 'C04_Y1_CALC', name: 'C04_Y1_CALC: One-Step Problems', ref: 'C4', parameters: MIGRATED_PARAMS['C04_Y1_CALC'] },
-    'C04_Y2_CALC': { id: 'C04_Y2_CALC', name: 'C04_Y2_CALC: One-Step 100', ref: 'C4', parameters: MIGRATED_PARAMS['C04_Y2_CALC'] },
-    'C04_Y4_CALC': { id: 'C04_Y4_CALC', name: 'C04_Y4_CALC: Two-Step Problems', ref: 'C4', parameters: MIGRATED_PARAMS['C04_Y4_CALC'] }
+    'C04_Y1_CALC': { id: 'C04_Y1_CALC', name: 'C04_Y1_CALC: One-Step Problems', ref: 'C4', yearGroup: 'Year 1', parameters: MIGRATED_PARAMS['C04_Y1_CALC'] },
+    'C04_Y2_CALC': { id: 'C04_Y2_CALC', name: 'C04_Y2_CALC: One-Step 100', ref: 'C4', yearGroup: 'Year 2', parameters: MIGRATED_PARAMS['C04_Y2_CALC'] },
+    'C04_Y4_CALC': { id: 'C04_Y4_CALC', name: 'C04_Y4_CALC: Two-Step Problems', ref: 'C4', yearGroup: 'Year 4', parameters: MIGRATED_PARAMS['C04_Y4_CALC'] }
 };

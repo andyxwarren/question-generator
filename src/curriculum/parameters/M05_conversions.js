@@ -11,5 +11,5 @@ const MIGRATED_PARAMS = {
 };
 
 export const M05_MODULES = {
-    'M05_Y5_MEAS': { id: 'M05_Y5_MEAS', name: 'M05_Y5: Metric', ref: 'M5', parameters: MIGRATED_PARAMS['M05_Y5_MEAS'] }
+    'M05_Y5_MEAS': { id: 'M05_Y5_MEAS', name: 'M05_Y5: Metric', ref: 'M5', yearGroup: 'Year 5', parameters: MIGRATED_PARAMS['M05_Y5_MEAS'] }
 };

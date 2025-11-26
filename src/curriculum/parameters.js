@@ -31,6 +31,7 @@
  * - M09_problems.js - Measurement problem solving (Years 2-6)
  */
 
+import { validateParameters } from '../core/schemas/index.js';
 import { N01_MODULES } from './parameters/N01_counting.js';
 import { N02_MODULES } from './parameters/N02_readwrite.js';
 import { N03_MODULES } from './parameters/N03_placevalue.js';
@@ -98,14 +99,32 @@ export function getModule(moduleId) {
 
 /**
  * Get parameters for a specific module and level
+ *
+ * Validates parameters against strand-specific schemas on every call.
+ * Validation warnings are logged but do not prevent parameter retrieval.
+ *
  * @param {string} moduleId - The module identifier
  * @param {number} level - Difficulty level (1-4)
+ * @param {Object} options - Options object
+ * @param {boolean} options.validate - Whether to validate parameters (default: true)
  * @returns {Object|null} Parameters object for the specified level
  */
-export function getParameters(moduleId, level) {
+export function getParameters(moduleId, level, options = { validate: true }) {
     const module = MODULES[moduleId];
     if (!module) return null;
-    return module.parameters[level] || null;
+
+    const params = module.parameters[level];
+    if (!params) return null;
+
+    // Validate parameters against strand schema
+    if (options.validate) {
+        const errors = validateParameters(moduleId, level, params);
+        if (errors.length > 0) {
+            console.warn(`Parameter validation warnings for ${moduleId} level ${level}:`, errors);
+        }
+    }
+
+    return params;
 }
 
 /**
