@@ -279,7 +279,7 @@ export const N06_MODULES = {
         name: 'N06_Y2_NPV: Solve Number Problems',
         description: 'Use place value and number facts to solve problems',
         icon: '🧮',
-        yearGroup: 'Year 2',
+        yearGroup: '2',
         strand: 'Number and Place Value',
         substrand: 'Number problems',
         ref: 'N6',
@@ -290,7 +290,7 @@ export const N06_MODULES = {
         name: 'N06_Y3_NPV: Number & Practical Problems',
         description: 'Solve number problems and practical problems involving 3N1-3N4',
         icon: '🧮',
-        yearGroup: 'Year 3',
+        yearGroup: '3',
         strand: 'Number and Place Value',
         substrand: 'Number problems',
         ref: 'N6',
@@ -301,7 +301,7 @@ export const N06_MODULES = {
         name: 'N06_Y4_NPV: Number & Practical Problems',
         description: 'Solve number and practical problems that involve 4N1-4N5 and with increasingly large positive numbers',
         icon: '🧮',
-        yearGroup: 'Year 4',
+        yearGroup: '4',
         strand: 'Number and Place Value',
         substrand: 'Number problems',
         ref: 'N6',
@@ -312,7 +312,7 @@ export const N06_MODULES = {
         name: 'N06_Y5_NPV: Number & Practical Problems',
         description: 'Solve number problems and practical problems that involve 5N1-5N5',
         icon: '🧮',
-        yearGroup: 'Year 5',
+        yearGroup: '5',
         strand: 'Number and Place Value',
         substrand: 'Number problems',
         ref: 'N6',
@@ -323,10 +323,10 @@ export const N06_MODULES = {
         name: 'N06_Y6_NPV: Number & Practical Problems',
         description: 'Solve number problems and practical problems that involve 6N2-6N5',
         icon: '🧮',
-        yearGroup: 'Year 6',
+        yearGroup: '6',
         strand: 'Number and Place Value',
         substrand: 'Number problems',
         ref: 'N6',
         parameters: MIGRATED_PARAMS['N06_Y6_NPV']
     }
-};
+};

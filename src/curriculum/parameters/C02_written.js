@@ -118,9 +118,9 @@ const MIGRATED_PARAMS = {
 };
 
 export const C02_MODULES = {
-    'C02_Y1_CALC': { id: 'C02_Y1_CALC', name: 'C02_Y1_CALC: Add & Subtract to 20', description: 'Add/subtract one-digit and two-digit numbers', yearGroup: 'Year 1', strand: 'Addition, subtraction', ref: 'C2', parameters: MIGRATED_PARAMS['C02_Y1_CALC'] },
-    'C02_Y2_CALC': { id: 'C02_Y2_CALC', name: 'C02_Y2_CALC: 2-Digit Add & Subtract', description: 'Add/subtract 2-digit numbers', yearGroup: 'Year 2', strand: 'Addition, subtraction', ref: 'C2', parameters: MIGRATED_PARAMS['C02_Y2_CALC'] },
-    'C02_Y3_CALC': { id: 'C02_Y3_CALC', name: 'C02_Y3_CALC: 3-Digit Columnar', description: 'Columnar addition/subtraction 3-digit', yearGroup: 'Year 3', strand: 'Addition, subtraction', ref: 'C2', parameters: MIGRATED_PARAMS['C02_Y3_CALC'] },
-    'C02_Y4_CALC': { id: 'C02_Y4_CALC', name: 'C02_Y4_CALC: 4-Digit Columnar', description: 'Columnar addition/subtraction 4-digit', yearGroup: 'Year 4', strand: 'Addition, subtraction', ref: 'C2', parameters: MIGRATED_PARAMS['C02_Y4_CALC'] },
-    'C02_Y5_CALC': { id: 'C02_Y5_CALC', name: 'C02_Y5_CALC: Large Columnar', description: 'Columnar addition/subtraction large numbers', yearGroup: 'Year 5', strand: 'Addition, subtraction', ref: 'C2', parameters: MIGRATED_PARAMS['C02_Y5_CALC'] }
-};
+    'C02_Y1_CALC': { id: 'C02_Y1_CALC', name: 'C02_Y1_CALC: Add & Subtract to 20', description: 'Add/subtract one-digit and two-digit numbers', yearGroup: '1', strand: 'Calculation', substrand: 'Written methods', ref: 'C2', parameters: MIGRATED_PARAMS['C02_Y1_CALC'] },
+    'C02_Y2_CALC': { id: 'C02_Y2_CALC', name: 'C02_Y2_CALC: 2-Digit Add & Subtract', description: 'Add/subtract 2-digit numbers', yearGroup: '2', strand: 'Calculation', substrand: 'Written methods', ref: 'C2', parameters: MIGRATED_PARAMS['C02_Y2_CALC'] },
+    'C02_Y3_CALC': { id: 'C02_Y3_CALC', name: 'C02_Y3_CALC: 3-Digit Columnar', description: 'Columnar addition/subtraction 3-digit', yearGroup: '3', strand: 'Calculation', substrand: 'Written methods', ref: 'C2', parameters: MIGRATED_PARAMS['C02_Y3_CALC'] },
+    'C02_Y4_CALC': { id: 'C02_Y4_CALC', name: 'C02_Y4_CALC: 4-Digit Columnar', description: 'Columnar addition/subtraction 4-digit', yearGroup: '4', strand: 'Calculation', substrand: 'Written methods', ref: 'C2', parameters: MIGRATED_PARAMS['C02_Y4_CALC'] },
+    'C02_Y5_CALC': { id: 'C02_Y5_CALC', name: 'C02_Y5_CALC: Large Columnar', description: 'Columnar addition/subtraction large numbers', yearGroup: '5', strand: 'Calculation', substrand: 'Written methods', ref: 'C2', parameters: MIGRATED_PARAMS['C02_Y5_CALC'] }
+};

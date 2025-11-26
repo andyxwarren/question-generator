@@ -94,6 +94,6 @@ const MIGRATED_PARAMS = {
 };
 
 export const C05_MODULES = {
-    'C05_Y5_CALC': { id: 'C05_Y5_CALC', name: 'Properties of Number', description: 'Multiples, factors, primes, squares, cubes', yearGroup: 'Year 5', strand: 'Properties', ref: 'C5', parameters: MIGRATED_PARAMS['C05_Y5_CALC'] },
-    'C05_Y6_CALC': { id: 'C05_Y6_CALC', name: 'Common Factors/Multiples', description: 'Common factors, multiples, primes', yearGroup: 'Year 6', strand: 'Properties', ref: 'C5', parameters: MIGRATED_PARAMS['C05_Y6_CALC'] }
-};
+    'C05_Y5_CALC': { id: 'C05_Y5_CALC', name: 'Properties of Number', description: 'Multiples, factors, primes, squares, cubes', yearGroup: '5', strand: 'Calculation', substrand: 'Properties of number', ref: 'C5', parameters: MIGRATED_PARAMS['C05_Y5_CALC'] },
+    'C05_Y6_CALC': { id: 'C05_Y6_CALC', name: 'Common Factors/Multiples', description: 'Common factors, multiples, primes', yearGroup: '6', strand: 'Calculation', substrand: 'Properties of number', ref: 'C5', parameters: MIGRATED_PARAMS['C05_Y6_CALC'] }
+};

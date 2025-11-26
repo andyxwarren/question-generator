@@ -101,7 +101,7 @@ export const C01_MODULES = {
         name: 'C01_Y1_CALC: Number Bonds to 20',
         description: 'Represent and use number bonds and related subtraction facts within 20',
         icon: '➕',
-        yearGroup: 'Year 1',
+        yearGroup: '1',
         strand: 'Addition, subtraction, multiplication and division (calculations)',
         substrand: 'add / subtract mentally',
         ref: 'C1',
@@ -112,7 +112,7 @@ export const C01_MODULES = {
         name: 'C01_Y2_CALC: Mental Facts to 100',
         description: 'Recall and use addition and subtraction facts to 20 fluently, and derive and use related facts up to 100',
         icon: '➕',
-        yearGroup: 'Year 2',
+        yearGroup: '2',
         strand: 'Addition, subtraction, multiplication and division (calculations)',
         substrand: 'add / subtract mentally',
         ref: 'C1',
@@ -123,7 +123,7 @@ export const C01_MODULES = {
         name: 'C01_Y3_CALC: Mental 3-Digit Calculations',
         description: 'Add and subtract numbers mentally, including: a three-digit number and ones, a three-digit number and tens, a three-digit number and hundreds',
         icon: '➕',
-        yearGroup: 'Year 3',
+        yearGroup: '3',
         strand: 'Addition, subtraction, multiplication and division (calculations)',
         substrand: 'add / subtract mentally',
         ref: 'C1',
@@ -134,10 +134,10 @@ export const C01_MODULES = {
         name: 'C01_Y5_CALC: Mental Calculations with Large Numbers',
         description: 'Add and subtract numbers mentally with increasingly large numbers',
         icon: '➕',
-        yearGroup: 'Year 5',
+        yearGroup: '5',
         strand: 'Addition, subtraction, multiplication and division (calculations)',
         substrand: 'add / subtract mentally',
         ref: 'C1',
         parameters: MIGRATED_PARAMS['C01_Y5_CALC']
     }
-};
+};

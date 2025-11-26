@@ -198,7 +198,7 @@ export const N01_MODULES = {
         name: 'N01_Y3_NPV: Counting from 0',
         description: 'Count from 0 in multiples of 4, 8, 50 and 100',
         icon: '🔢',
-        yearGroup: 'Year 3',
+        yearGroup: '3',
         strand: 'Number and Place Value',
         substrand: 'Counting (in multiples)',
         ref: 'N1',

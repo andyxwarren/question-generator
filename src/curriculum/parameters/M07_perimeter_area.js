@@ -19,8 +19,8 @@ const MIGRATED_PARAMS = {
 };
 
 export const M07_MODULES = {
-    'M07_Y3_MEAS': { id: 'M07_Y3_MEAS', name: 'M07_Y3: Simple Perimeter', ref: 'M7', yearGroup: 'Year 3', parameters: MIGRATED_PARAMS['M07_Y3_MEAS'] },
-    'M07_Y4_MEAS': { id: 'M07_Y4_MEAS', name: 'M07_Y4: Perimeter/Area', ref: 'M7', yearGroup: 'Year 4', parameters: MIGRATED_PARAMS['M07_Y4_MEAS'] },
-    'M07_Y5_MEAS': { id: 'M07_Y5_MEAS', name: 'M07_Y5: Composite', ref: 'M7', yearGroup: 'Year 5', parameters: MIGRATED_PARAMS['M07_Y5_MEAS'] },
-    'M07_Y6_MEAS': { id: 'M07_Y6_MEAS', name: 'M07_Y6: Formulas', ref: 'M7', yearGroup: 'Year 6', parameters: MIGRATED_PARAMS['M07_Y6_MEAS'] }
-};
+    'M07_Y3_MEAS': { id: 'M07_Y3_MEAS', name: 'M07_Y3: Simple Perimeter', ref: 'M7', yearGroup: '3', strand: 'Measurement', substrand: 'Perimeter and area', parameters: MIGRATED_PARAMS['M07_Y3_MEAS'] },
+    'M07_Y4_MEAS': { id: 'M07_Y4_MEAS', name: 'M07_Y4: Perimeter/Area', ref: 'M7', yearGroup: '4', strand: 'Measurement', substrand: 'Perimeter and area', parameters: MIGRATED_PARAMS['M07_Y4_MEAS'] },
+    'M07_Y5_MEAS': { id: 'M07_Y5_MEAS', name: 'M07_Y5: Composite', ref: 'M7', yearGroup: '5', strand: 'Measurement', substrand: 'Perimeter and area', parameters: MIGRATED_PARAMS['M07_Y5_MEAS'] },
+    'M07_Y6_MEAS': { id: 'M07_Y6_MEAS', name: 'M07_Y6: Formulas', ref: 'M7', yearGroup: '6', strand: 'Measurement', substrand: 'Perimeter and area', parameters: MIGRATED_PARAMS['M07_Y6_MEAS'] }
+};

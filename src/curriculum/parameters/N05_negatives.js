@@ -136,7 +136,7 @@ export const N05_MODULES = {
         name: 'N05_Y4_NPV: Counting Through Zero',
         description: 'Count backwards through zero to include negative numbers',
         icon: '➖',
-        yearGroup: 'Year 4',
+        yearGroup: '4',
         strand: 'Number and Place Value',
         substrand: 'negative numbers',
         ref: 'N5',
@@ -147,7 +147,7 @@ export const N05_MODULES = {
         name: 'N05_Y5_NPV: Negative Numbers in Context',
         description: 'Interpret negative numbers in context, count forwards and backwards with positive and negative whole numbers, including through zero',
         icon: '🌡️',
-        yearGroup: 'Year 5',
+        yearGroup: '5',
         strand: 'Number and Place Value',
         substrand: 'negative numbers',
         ref: 'N5',
@@ -158,10 +158,10 @@ export const N05_MODULES = {
         name: 'N05_Y6_NPV: Intervals Across Zero',
         description: 'Use negative numbers in context, and calculate intervals across zero',
         icon: '📏',
-        yearGroup: 'Year 6',
+        yearGroup: '6',
         strand: 'Number and Place Value',
         substrand: 'negative numbers',
         ref: 'N5',
         parameters: MIGRATED_PARAMS['N05_Y6_NPV']
     }
-};
+};

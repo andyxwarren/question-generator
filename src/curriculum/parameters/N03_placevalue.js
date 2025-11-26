@@ -191,7 +191,7 @@ export const N03_MODULES = {
         name: 'N03_Y2_NPV: Two-Digit Place Value',
         description: 'Recognise the place value of each digit in a two-digit number (tens, ones)',
         icon: '🔢',
-        yearGroup: 'Year 2',
+        yearGroup: '2',
         strand: 'Number and Place Value',
         substrand: 'Place value; roman numerals',
         ref: 'N3',
@@ -202,7 +202,7 @@ export const N03_MODULES = {
         name: 'N03_Y3_NPV: Three-Digit Place Value',
         description: 'Recognise the place value of each digit in a three-digit number (hundreds, tens, ones)',
         icon: '🔢',
-        yearGroup: 'Year 3',
+        yearGroup: '3',
         strand: 'Number and Place Value',
         substrand: 'Place value; roman numerals',
         ref: 'N3',
@@ -213,7 +213,7 @@ export const N03_MODULES = {
         name: 'N03_Y4_NPV: Four-Digit Place Value & Roman Numerals to 100',
         description: 'recognise the place value of each digit in a four-digit number (thousands, hundreds, tens and ones); read Roman numerals to 100 (I to C) and know that over time, the numeral system changed to include the concept of zero and place value',
         icon: '🔢',
-        yearGroup: 'Year 4',
+        yearGroup: '4',
         strand: 'Number and Place Value',
         substrand: 'Place value; roman numerals',
         ref: 'N3',
@@ -224,7 +224,7 @@ export const N03_MODULES = {
         name: 'N03_Y5_NPV: Place Value to 1,000,000 & Roman Numerals to 1000',
         description: 'determine the value of each digit in numbers up to 1,000,000; read Roman numerals to 1,000 (M) and recognise years written in Roman numerals',
         icon: '🔢',
-        yearGroup: 'Year 5',
+        yearGroup: '5',
         strand: 'Number and Place Value',
         substrand: 'Place value; roman numerals',
         ref: 'N3',
@@ -235,10 +235,10 @@ export const N03_MODULES = {
         name: 'N03_Y6_NPV: Place Value to 10,000,000',
         description: 'Determine the value of each digit in numbers up to 10,000,000',
         icon: '🔢',
-        yearGroup: 'Year 6',
+        yearGroup: '6',
         strand: 'Number and Place Value',
         substrand: 'Place value; roman numerals',
         ref: 'N3',
         parameters: MIGRATED_PARAMS['N03_Y6_NPV']
     }
-};
+};

@@ -21,7 +21,12 @@
       "Bash(tree:*)",
       "Bash(rm:*)",
       "Bash(del test_sample.patch)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill //F //PID 42392)",
+      "Bash(taskkill //F //PID 32412)",
+      "Bash(taskkill //F //PID 31540)"
     ],
     "deny": [],
     "ask": []

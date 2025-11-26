@@ -13,6 +13,6 @@ const MIGRATED_PARAMS = {
 };
 
 export const M08_MODULES = {
-    'M08_Y5_MEAS': { id: 'M08_Y5_MEAS', name: 'M08_Y5: Estimate', ref: 'M8', yearGroup: 'Year 5', parameters: MIGRATED_PARAMS['M08_Y5_MEAS'] },
-    'M08_Y6_MEAS': { id: 'M08_Y6_MEAS', name: 'M08_Y6: Calculate', ref: 'M8', yearGroup: 'Year 6', parameters: MIGRATED_PARAMS['M08_Y6_MEAS'] }
-};
+    'M08_Y5_MEAS': { id: 'M08_Y5_MEAS', name: 'M08_Y5: Estimate', ref: 'M8', yearGroup: '5', strand: 'Measurement', substrand: 'Volume', parameters: MIGRATED_PARAMS['M08_Y5_MEAS'] },
+    'M08_Y6_MEAS': { id: 'M08_Y6_MEAS', name: 'M08_Y6: Calculate', ref: 'M8', yearGroup: '6', strand: 'Measurement', substrand: 'Volume', parameters: MIGRATED_PARAMS['M08_Y6_MEAS'] }
+};

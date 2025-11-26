@@ -65,9 +65,17 @@ class App {
                 grouped[strand][substrand] = {};
             }
 
-            // Extract year number from yearGroup (e.g., "Year 1" -> 1)
-            const yearMatch = module.yearGroup.match(/Year (\d+)/);
-            const year = yearMatch ? parseInt(yearMatch[1]) : null;
+            // Extract year number from yearGroup (supports "Year 1" or "1" format)
+            let year = null;
+            if (typeof module.yearGroup === 'string') {
+                const yearMatch = module.yearGroup.match(/Year (\d+)/);
+                if (yearMatch) {
+                    year = parseInt(yearMatch[1]);
+                } else if (/^\d+$/.test(module.yearGroup)) {
+                    // Handle simplified format "1", "2", etc.
+                    year = parseInt(module.yearGroup);
+                }
+            }
 
             if (year) {
                 grouped[strand][substrand][year] = module;

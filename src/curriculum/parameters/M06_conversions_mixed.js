@@ -19,7 +19,7 @@ const MIGRATED_PARAMS = {
 };
 
 export const M06_MODULES = {
-    'M06_Y4_MEAS': { id: 'M06_Y4_MEAS', name: 'M06_Y4: Mixed', ref: 'M6', yearGroup: 'Year 4', parameters: MIGRATED_PARAMS['M06_Y4_MEAS'] },
-    'M06_Y5_MEAS': { id: 'M06_Y5_MEAS', name: 'M06_Y5: Imperial', ref: 'M6', yearGroup: 'Year 5', parameters: MIGRATED_PARAMS['M06_Y5_MEAS'] },
-    'M06_Y6_MEAS': { id: 'M06_Y6_MEAS', name: 'M06_Y6: Standard', ref: 'M6', yearGroup: 'Year 6', parameters: MIGRATED_PARAMS['M06_Y6_MEAS'] }
-};
+    'M06_Y4_MEAS': { id: 'M06_Y4_MEAS', name: 'M06_Y4: Mixed', ref: 'M6', yearGroup: '4', strand: 'Measurement', substrand: 'Conversions', parameters: MIGRATED_PARAMS['M06_Y4_MEAS'] },
+    'M06_Y5_MEAS': { id: 'M06_Y5_MEAS', name: 'M06_Y5: Imperial', ref: 'M6', yearGroup: '5', strand: 'Measurement', substrand: 'Conversions', parameters: MIGRATED_PARAMS['M06_Y5_MEAS'] },
+    'M06_Y6_MEAS': { id: 'M06_Y6_MEAS', name: 'M06_Y6: Standard', ref: 'M6', yearGroup: '6', strand: 'Measurement', substrand: 'Conversions', parameters: MIGRATED_PARAMS['M06_Y6_MEAS'] }
+};
