@@ -1,0 +1,26 @@
+{
+  "name": "question-generator",
+  "version": "2.0.0",
+  "description": "UK National Curriculum mathematics question generator CLI",
+  "type": "module",
+  "main": "src/export/index.js",
+  "bin": {
+    "qgen": "./generate.js"
+  },
+  "scripts": {
+    "generate": "node generate.js",
+    "test": "node test-schemas.js"
+  },
+  "keywords": [
+    "mathematics",
+    "education",
+    "uk-curriculum",
+    "question-generator",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

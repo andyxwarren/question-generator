@@ -226,7 +226,8 @@ const M04_SCHEMA = {
                 structure: {
                     hours: 'object',   // {min, max}
                     minutes: 'object',
-                    years: 'object'
+                    years: 'object',
+                    weeks: 'object'
                 },
                 allowUnknown: false
             },
@@ -253,11 +254,14 @@ const M04_VALID_VALUES = {
         'convert_12hour_formats', 'convert_hours_to_minutes', 'convert_to_24hour',
         'convert_minutes_to_seconds', 'convert_years_to_months',
         'convert_simple_problems', 'hours_minutes_problems', 'convert_problems',
-        'duration_problems', 'mixed_unit_problems', 'multi_step_problems'
+        'duration_problems', 'mixed_unit_problems', 'multi_step_problems',
+        'read_quarter_to', 'before_after', 'time_facts', 'duration_simple',
+        'convert_weeks_to_days', 'timetable_problems'
     ],
-    types: ['oclock', 'half_past', 'quarter_past', 'five_minute_intervals', '12_hour', '24_hour'],
-    facts: ['minutes_in_hour', 'hours_in_day', 'seconds_in_minute', 'days_in_week', 'days_in_year'],
-    problemTypes: ['hours_to_minutes', 'minutes_to_seconds', 'simple_duration', 'duration_calculation', 'multi_step']
+    types: ['oclock', 'half_past', 'quarter_past', 'five_minute_intervals', '12_hour', '24_hour',
+            'quarter_to', 'word_problems'],
+    facts: ['minutes_in_hour', 'hours_in_day', 'seconds_in_minute', 'days_in_week', 'days_in_year', 'days_in_month'],
+    problemTypes: ['hours_to_minutes', 'minutes_to_seconds', 'simple_duration', 'duration_calculation', 'multi_step', 'timetable_reading']
 };
 
 // =============================================================================
@@ -300,7 +304,7 @@ const M05_SCHEMA = {
 };
 
 const M05_VALID_VALUES = {
-    operations: ['direct_conversion', 'reverse_conversion', 'word_problem'],
+    operations: ['direct_conversion', 'reverse_conversion', 'word_problem', 'multi_step_conversion'],
     types: ['length', 'mass', 'capacity'],
     conversions: {
         length: ['km_to_m', 'm_to_cm', 'cm_to_mm'],
@@ -355,7 +359,8 @@ const M06_VALID_VALUES = {
     operations: [
         'direct_metric_conversion', 'time_conversion', 'reverse_metric_conversion', 'word_problem',
         'approximate_conversion_metric_to_imperial', 'metric_conversion_larger_to_smaller',
-        'metric_conversion_smaller_to_larger', 'imperial_metric_conversion'
+        'metric_conversion_smaller_to_larger', 'imperial_metric_conversion',
+        'multi_step', 'multi_step_conversion'
     ],
     types: ['length', 'mass', 'capacity', 'time'],
     valueType: ['whole_only', 'whole', 'decimal', 'decimal_1dp', 'decimal_2dp']
@@ -392,7 +397,15 @@ const M07_SCHEMA = {
             mixedUnits: 'boolean',
             squareUnits: 'boolean',
             complexity: 'string',
-            formulaRecog: 'boolean'
+            formulaRecog: 'boolean',
+            radius: {
+                type: 'object',
+                required: false,
+                structure: {
+                    min: 'number',
+                    max: 'number'
+                }
+            }
         }
     },
     presentation: {
@@ -408,10 +421,12 @@ const M07_VALID_VALUES = {
     operations: [
         'rectangle_perimeter', 'square_perimeter', 'rectilinear_perimeter', 'count_squares',
         'rectangle_area', 'square_area', 'composite_perimeter',
-        'parallelogram_area', 'triangle_area'
+        'parallelogram_area', 'triangle_area',
+        'rectilinear_simple', 'missing_side', 'estimate_area', 'area_comparison',
+        'irregular_shapes', 'composite_area', 'missing_dimension', 'circle_area', 'composite_shapes'
     ],
     units: ['cm', 'm', 'mm', 'km'],
-    complexity: ['simple', 'medium', 'complex']
+    complexity: ['simple', 'medium', 'complex', 'moderate']
 };
 
 // =============================================================================
@@ -446,7 +461,8 @@ const M08_SCHEMA = {
 };
 
 const M08_VALID_VALUES = {
-    operations: ['count_unit_cubes', 'estimate_capacity', 'calculate_volume', 'cube_volume'],
+    operations: ['count_unit_cubes', 'estimate_capacity', 'calculate_volume', 'cube_volume',
+                 'compare_volumes', 'irregular_cubes', 'cuboid_volume', 'composite_volumes'],
     units: ['cm', 'mm', 'm']
 };
 
@@ -486,14 +502,39 @@ const M09_SCHEMA = {
                     range: 'any'  // Can be array or {min, max}
                 }
             },
+            mass: {
+                type: 'object',
+                required: false,
+                structure: {
+                    unit: 'string',
+                    range: 'any'  // Can be array or {min, max}
+                }
+            },
+            capacity: {
+                type: 'object',
+                required: false,
+                structure: {
+                    unit: 'string',
+                    range: 'any'  // Can be array or {min, max}
+                }
+            },
             mult: 'array<number>',
             decimal: 'any',  // Can be number or array
+            ratio: {
+                type: 'object',
+                required: false,
+                structure: {
+                    simple: 'array<number>',
+                    compound: 'boolean'
+                }
+            },
             conversions: {
                 type: 'object',
                 required: false,
                 structure: {
                     length: 'array<string>',
-                    mass: 'array<string>'
+                    mass: 'array<string>',
+                    capacity: 'array<string>'
                 }
             }
         }
@@ -512,9 +553,11 @@ const M09_VALID_VALUES = {
     operations: [
         'add_money', 'subtract_money', 'add_measure', 'subtract_measure',
         'multiply_measure', 'divide_measure', 'multiply_decimal', 'add_decimal',
-        'convert_length', 'convert_mass'
+        'convert_length', 'convert_mass',
+        'find_change', 'compare_money', 'compare_measures', 'multi_step', 'mixed_operations',
+        'subtract_decimal', 'divide_decimal', 'convert_capacity', 'ratio_problems'
     ],
-    contexts: ['shopping', 'measuring', 'recipes', 'science', 'DIY'],
+    contexts: ['shopping', 'measuring', 'recipes', 'science', 'DIY', 'savings', 'cooking', 'construction', 'engineering'],
     moneyFormat: ['pence_only', 'whole_pounds', 'mixed'],
     unit: ['pence_only', 'cm', 'm', 'km']
 };

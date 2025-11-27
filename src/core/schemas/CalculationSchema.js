@@ -218,7 +218,13 @@ const C03_SCHEMA = {
                     multiples10: 'boolean',
                     use3digit: 'boolean',
                     includeMult: 'boolean',
-                    tables: 'array<number>'
+                    tables: 'array<number>',
+                    allowTwoDigit: 'boolean',
+                    crossTens: 'boolean',
+                    crossHundreds: 'boolean',
+                    multipleSteps: 'boolean',
+                    allowMultiStep: 'boolean',
+                    multiStepProblems: 'boolean'
                 },
                 allowUnknown: false
             }
@@ -228,7 +234,8 @@ const C03_SCHEMA = {
         type: 'object',
         required: false,
         structure: {
-            formats: 'array<string>'
+            formats: 'array<string>',
+            contexts: 'array<string>'
         }
     }
 };
@@ -237,10 +244,12 @@ const C03_VALID_VALUES = {
     operations: [
         'identify_inverse_check', 'missing_number_inverse', 'true_false_check', 'complete_fact_family',
         'estimate_by_rounding', 'check_with_inverse', 'is_reasonable', 'find_error', 'choose_rounding_place',
-        'estimate_4digit', 'check_multiply_with_divide', 'check_divide_with_multiply', 'choose_best_estimate'
+        'estimate_4digit', 'check_multiply_with_divide', 'check_divide_with_multiply', 'choose_best_estimate',
+        'check_calculation', 'find_error_inverse', 'multi_step_check'
     ],
-    calcTypes: ['addition', 'subtraction', 'multiplication', 'division'],
-    formats: ['multiple_choice', 'true_false', 'text_input']
+    calcTypes: ['addition', 'subtraction', 'multiplication', 'division', 'mixed'],
+    formats: ['multiple_choice', 'true_false', 'text_input'],
+    contexts: ['abstract', 'word_problem', 'measures', 'money', 'real_world']
 };
 
 // =============================================================================
@@ -262,11 +271,18 @@ const C04_SCHEMA = {
                 }
             },
             steps: 'number',  // Scalar (not object) in C04
+            tables: 'array<number>',
+            multiplier: 'number',
+            divisor: 'number',
+            scaleFactor: 'number',
             config: {
                 type: 'object',
                 required: false,
                 structure: {
-                    allowZero: 'boolean'
+                    allowZero: 'boolean',
+                    allowSingleCarry: 'boolean',
+                    allowMultiCarry: 'boolean',
+                    ensureDivisible: 'boolean'
                 }
             }
         }
@@ -276,7 +292,8 @@ const C04_SCHEMA = {
         required: false,
         structure: {
             contexts: 'array<string>',
-            format: 'string'
+            format: 'string',
+            styles: 'array<string>'
         }
     }
 };
@@ -284,10 +301,16 @@ const C04_SCHEMA = {
 const C04_VALID_VALUES = {
     operations: [
         'simple_addition_word', 'simple_subtraction_word', 'missing_addend', 'reversed_equation',
-        'money_problems_simple', 'combine_then_remove', 'remove_then_add'
+        'money_problems_simple', 'combine_then_remove', 'remove_then_add',
+        'money_problems_mixed', 'multiplication_arrays', 'division_grouping', 'two_step_simple',
+        'multiply_then_add', 'multiply_then_subtract', 'divide_then_add', 'divide_then_subtract',
+        'scaling_problem', 'correspondence_problem', 'three_step_mixed'
     ],
-    contexts: ['objects', 'money_pence', 'money_pounds', 'measures'],
-    format: ['multiple_choice', 'text_input']
+    contexts: ['objects', 'money_pence', 'money_pounds', 'measures', 'toys', 'fruit',
+               'money_mixed', 'length_cm', 'length_m', 'mass_kg', 'capacity_l',
+               'quantities', 'money', 'real_world', 'abstract'],
+    format: ['multiple_choice', 'text_input'],
+    styles: ['equation', 'word_problem', 'reasoning']
 };
 
 // =============================================================================
@@ -442,7 +465,9 @@ const C06_SCHEMA = {
                 structure: {
                     maxOps: 'number',
                     parentheses: 'boolean',
-                    squares: 'boolean'
+                    squares: 'boolean',
+                    cubes: 'boolean',
+                    nestedDepth: 'number'
                 }
             }
         }
@@ -462,9 +487,11 @@ const C06_VALID_VALUES = {
         'fact_families_mult', 'multiply_by_0_1', 'multiply_three', 'factor_pairs', 'commutativity',
         'multiply_by_10', 'divide_by_10', 'multiply_by_100', 'divide_by_100', 'multiply_by_1000', 'divide_by_1000',
         'partition_multiply', 'two_operation_add_mult', 'parentheses_simple', 'four_operations',
-        'parentheses_nested', 'order_of_operations', 'squares_in_calc'
+        'parentheses_nested', 'order_of_operations', 'squares_in_calc',
+        'inverse_reasoning', 'mixed_operations', 'three_operations', 'cubes_in_calc', 'mixed_indices'
     ],
-    styles: ['equation', 'word_problem', 'reasoning', 'multi_step']
+    styles: ['equation', 'word_problem', 'reasoning', 'multi_step', 'abstract', 'mixed_operations',
+             'missing_number', 'expression_evaluation']
 };
 
 // =============================================================================
@@ -505,11 +532,13 @@ const C07_SCHEMA = {
                 allowUnknown: false
             },
             digits: 'any',  // Can be array<number> or object { mult: [...] }
+            divisors: 'array<number>',
             factors: {
                 type: 'object',
                 required: false,
                 structure: {
-                    mult: 'array<number>'
+                    mult: 'array<number>',
+                    divisor: 'number'
                 }
             },
             config: {
@@ -518,7 +547,12 @@ const C07_SCHEMA = {
                 structure: {
                     carry: 'any',  // Can be boolean or string "sometimes"
                     remainders: 'boolean',
-                    remainderType: 'array<string>'
+                    remainderType: 'array<string>',
+                    maxCarries: 'number',
+                    allowLargeProducts: 'boolean',
+                    largeProducts: 'boolean',
+                    interpret_remainders: 'boolean',
+                    require_reasoning: 'boolean'
                 },
                 allowUnknown: false
             }
@@ -528,7 +562,8 @@ const C07_SCHEMA = {
         type: 'object',
         required: false,
         structure: {
-            styles: 'array<string>'
+            styles: 'array<string>',
+            contexts: 'array<string>'
         }
     }
 };
@@ -536,10 +571,13 @@ const C07_SCHEMA = {
 const C07_VALID_VALUES = {
     operations: [
         'write_multiplication', 'calculate_multiply', 'columnar_multiply', 'grid_method',
-        'columnar_multiply_1digit', 'short_division', 'long_multiply_2digit', 'long_division'
+        'columnar_multiply_1digit', 'short_division', 'long_multiply_2digit', 'long_division',
+        'divide_recall', 'missing_factor', 'commutativity', 'word_problem', 'reasoning',
+        'remainder_interpretation'
     ],
-    styles: ['equation', 'columnar', 'long_division', 'grid'],
-    remainderType: ['whole', 'fraction', 'decimal']
+    styles: ['equation', 'columnar', 'long_division', 'grid', 'word_problem', 'reasoning', 'grid_method'],
+    remainderType: ['whole', 'fraction', 'decimal'],
+    contexts: ['abstract', 'measures', 'money', 'real_world', 'shopping']
 };
 
 // =============================================================================
@@ -574,7 +612,30 @@ const C08_SCHEMA = {
             // Y5: factor range for factor/multiple problems
             factors: 'array<number>',
             // Y6: operation count range for multi-step problems
-            ops: 'array<number>'
+            ops: 'array<number>',
+            factorPairs: {
+                type: 'object',
+                required: false,
+                structure: {
+                    range: 'array<number>'
+                }
+            },
+            threeNumbers: {
+                type: 'object',
+                required: false,
+                structure: {
+                    maxValue: 'number',
+                    maxProduct: 'number'
+                }
+            },
+            config: {
+                type: 'object',
+                required: false,
+                structure: {
+                    includeZero: 'boolean',
+                    includeOne: 'boolean'
+                }
+            }
         }
     },
     presentation: {
@@ -582,7 +643,9 @@ const C08_SCHEMA = {
         required: false,
         structure: {
             visuals: 'boolean',
-            format: 'string'
+            format: 'string',
+            styles: 'array<string>',
+            contexts: 'array<string>'
         }
     }
 };
@@ -590,9 +653,12 @@ const C08_SCHEMA = {
 const C08_VALID_VALUES = {
     operations: [
         'equal_groups_visual', 'equal_groups', 'array_multiplication', 'integer_scaling',
-        'distributive_simple', 'factor_problems', 'multiple_problems', 'two_step_mixed', 'ratio_problems'
+        'distributive_simple', 'factor_problems', 'multiple_problems', 'two_step_mixed', 'ratio_problems',
+        'factor_pairs', 'commutativity', 'three_numbers'
     ],
-    format: ['multiple_choice', 'text_input']
+    format: ['multiple_choice', 'text_input'],
+    styles: ['equation', 'word_problem', 'reasoning'],
+    contexts: ['abstract', 'measures', 'shopping', 'quantities', 'real_world']
 };
 
 // =============================================================================
