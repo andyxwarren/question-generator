@@ -166,6 +166,42 @@ Return a valid JSON object with this structure:
 
 ---
 
+## Measurement Strand Pattern (M01-M09) - With Locale Support
+
+For measurement modules, include BOTH metric and imperial sections to support localization:
+
+```javascript
+{
+    math: {
+        // Shared parameters (apply to both systems)
+        types: ['length', 'mass', 'capacity'],
+        comparisonType: 'same_unit',
+        orderCount: 2,
+
+        // Metric (UK - en-GB) - REQUIRED
+        metric: {
+            units: { length: ['m', 'cm'], mass: ['kg', 'g'] },
+            ranges: { m: { min: 1, max: 10 }, cm: { min: 10, max: 100 } }
+        },
+
+        // Imperial (US - en-US) - REQUIRED for locale support
+        imperial: {
+            units: { length: ['ft', 'in'], mass: ['lb', 'oz'] },
+            ranges: { ft: { min: 1, max: 10 }, in: { min: 6, max: 36 } }
+        }
+    },
+    presentation: { ... }
+}
+```
+
+**Imperial equivalence principle:**
+- Imperial ranges should produce **skill-equivalent difficulty**, not converted values
+- Don't convert metric values to imperial - design native imperial ranges
+- Example: Level 1 metric "1-10 kg" ≈ Level 1 imperial "1-10 lb" (same difficulty, different system)
+- Mixed units should match complexity: `mixed_m_cm` ≈ `mixed_ft_in`
+
+---
+
 ## Self-Verification Checklist
 
 Before outputting, verify:
@@ -178,6 +214,8 @@ Before outputting, verify:
 6. [ ] **YEAR 5+ COUNTING**: Uses `powersOf10` NOT `steps`?
 7. [ ] **JSON VALID**: Is the output parseable JSON?
 8. [ ] **VISUAL TYPE**: If visual question, `visualType` specified in presentation?
+9. [ ] **MEASUREMENT MODULES**: Has both `metric` AND `imperial` sections?
+10. [ ] **IMPERIAL RANGES**: Skill-equivalent to metric (not converted values)?
 
 ---
 

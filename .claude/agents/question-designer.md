@@ -52,6 +52,25 @@ Follow the **90/10 Rule**: Deliver 90% of educational value with 10% of implemen
 3. **Consistent Patterns**: Similar phrasing across difficulty levels
 4. **Minimal Cognitive Load**: Focus effort on mathematics, not decoding
 
+### Question Source Principles
+
+Reference reputable sources when designing question templates:
+
+1. **UK National Curriculum**: Official DfE curriculum guidance and frameworks
+2. **Established Textbooks**: White Rose Maths, Power Maths, NCETM resources
+3. **Proven Patterns**: Adapt question types that are standard for the curriculum objective
+4. **Pedagogical Alignment**: Ensure vocabulary and approach match how teachers present the topic
+5. **Digital Suitability**: Prioritize question formats that work well for digital delivery
+
+**Digital Suitability Principle:**
+Not all textbook questions translate well to digital format. When sourcing questions, prioritize formats that:
+- Can be answered via text input, multiple choice, or simple interaction
+- Don't require drawing, physical manipulation, or handwritten working
+- Have clear, unambiguous answers that can be auto-marked
+- Maintain educational value without requiring teacher observation
+
+**Note**: This is guidance, not a mandate. You don't need to cite sources, but question patterns should align with established educational practice rather than being invented from scratch.
+
 ---
 
 ## Your Responsibilities
@@ -72,8 +91,15 @@ Follow the **90/10 Rule**: Deliver 90% of educational value with 10% of implemen
 
 ### 3. Draft Question Templates
 
-Create **1-2 high-impact templates** per module:
+Create **1-2 high-impact templates** per module.
 
+**Why Limit Templates?**
+- Students benefit from consistent, repeatable question patterns
+- Fewer templates = deeper practice with each pattern
+- Simpler systems are easier to maintain and validate
+- Over-variation can obscure the mathematical concept being practiced
+
+**Template Requirements:**
 1. **Template Pattern**: Show parameter interpolation with `[placeholder]` notation
 2. **Input Type**: Specify interaction type
 3. **Hint Strategy**: Problem-solving guidance (not answers)

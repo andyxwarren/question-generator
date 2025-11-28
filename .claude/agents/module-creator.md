@@ -68,7 +68,7 @@ For implementation details, invoke these skills:
 2. **Provide** parameter JSON from Stage 1
 3. **Receive** design document with:
    - Visual strategy
-   - Question templates with parameter mapping
+   - **1-2 high-impact question templates** (avoid template proliferation)
    - Display metadata specification
    - Level progression examples
 
@@ -182,6 +182,41 @@ export default {
     moduleId: 'MODULE_ID',
     generate: generateQuestion
 };
+```
+
+#### For Measurement Modules: Locale-Aware Pattern
+
+Measurement modules (M01-M09) must support both metric and imperial systems:
+
+```javascript
+import { resolveParameters } from '../curriculum/parameterResolver.js';
+
+export function generateQuestion(params, level, locale = 'en-GB') {
+    // CRITICAL: Resolve metric/imperial based on locale
+    const resolvedParams = resolveParameters(params, locale);
+
+    const {
+        math: { types, units, ranges, comparisonType },
+        presentation: { questionTypes, visualType },
+        _resolvedSystem  // 'metric' or 'imperial'
+    } = resolvedParams;
+
+    const system = _resolvedSystem || 'metric';
+
+    // Pass system to helper functions
+    const measurement = generateMeasurement(unit, ranges, type, locale, system);
+
+    return {
+        text: '...',
+        type: 'text_input',
+        answer: '...',
+        module: 'M01_Y4_MEAS',
+        level: level,
+        values: {
+            v1: measurement.typed  // Includes _s: 'imperial' for US locale
+        }
+    };
+}
 ```
 
 #### 3. Register Generator

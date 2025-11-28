@@ -172,6 +172,58 @@ This pattern works well for units, conversions, and real-world contexts:
 }
 ```
 
+### Measurement Strand Pattern with Locale Support (M01-M09)
+
+For measurement modules that support both metric and imperial systems:
+
+```javascript
+{
+    math: {
+        // Shared parameters (applied to both systems)
+        types: ['length', 'mass', 'capacity'],
+        comparisonType: 'mixed_notation',
+        orderCount: 3,
+
+        // Metric system (UK - en-GB)
+        metric: {
+            units: {
+                length: ['m', 'cm', 'mm', 'km', 'mixed_m_cm'],
+                mass: ['kg', 'g', 'mixed_kg_g'],
+                capacity: ['l', 'ml', 'mixed_l_ml']
+            },
+            ranges: {
+                km: { min: 1, max: 10 },
+                m: { min: 1, max: 500 }
+            }
+        },
+
+        // Imperial system (US - en-US)
+        imperial: {
+            units: {
+                length: ['ft', 'in', 'yd', 'mi', 'mixed_ft_in'],
+                mass: ['lb', 'oz', 'mixed_lb_oz'],
+                capacity: ['pt', 'cup', 'gal', 'qt']
+            },
+            ranges: {
+                ft: { min: 1, max: 50 },
+                in: { min: 6, max: 120 }
+            }
+        }
+    },
+    presentation: {
+        visualType: 'text_only',
+        contexts: ['comparison', 'ordering']
+    }
+}
+```
+
+**Key points:**
+- Shared params (`types`, `comparisonType`, `orderCount`) stay at `math` root level
+- System-specific params (`units`, `ranges`) go inside `metric` or `imperial`
+- Parameter resolver (`src/curriculum/parameterResolver.js`) flattens based on locale
+- `en-GB` uses `metric`, `en-US` uses `imperial`
+- Imperial ranges should be skill-equivalent to metric (not converted values)
+
 ---
 
 ## Creating New Structures

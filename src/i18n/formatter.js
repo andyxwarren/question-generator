@@ -2,14 +2,54 @@
  * i18n Formatter
  *
  * Formats typed values according to locale settings.
+ * Supports both metric and imperial measurement systems.
  */
 
-import { isTypedValue, fromBaseUnits } from './types.js';
+import { isTypedValue, fromBaseUnits, getSystemFromHint } from './types.js';
 import { getLocale, DEFAULT_LOCALE } from './locales/index.js';
 
 /**
+ * Imperial display hints for detection
+ */
+const IMPERIAL_HINTS = {
+    length: ['in', 'ft', 'yd', 'mi', 'mixed_ft_in', 'mixed_yd_ft', 'mixed_mi_yd'],
+    mass: ['oz', 'lb', 'mixed_lb_oz'],
+    capacity: ['fl_oz', 'cup', 'pt', 'qt', 'gal', 'mixed_pt_cup', 'mixed_gal_qt']
+};
+
+/**
+ * Check if a display hint is imperial
+ * @param {string} type - Value type (length, mass, capacity)
+ * @param {string} hint - Display hint
+ * @returns {boolean}
+ */
+function isImperialHint(type, hint) {
+    return IMPERIAL_HINTS[type]?.includes(hint) || false;
+}
+
+/**
+ * Get units from locale for a specific measurement system
+ * @param {object} locale - Locale configuration
+ * @param {string} type - Value type (length, mass, capacity)
+ * @param {string} system - Measurement system ('metric' or 'imperial')
+ * @returns {object} Units object
+ */
+function getUnits(locale, type, system = 'metric') {
+    // New structure: locale.units.metric.length or locale.units.imperial.length
+    if (locale.units[system] && locale.units[system][type]) {
+        return locale.units[system][type];
+    }
+    // Fallback to old flat structure for backwards compatibility
+    if (locale.units[type]) {
+        return locale.units[type];
+    }
+    // Default empty object
+    return {};
+}
+
+/**
  * Format a typed value according to locale
- * @param {object} typedValue - Typed value object {_v, _t, _d}
+ * @param {object} typedValue - Typed value object {_v, _t, _d, _s}
  * @param {string} localeId - Locale identifier
  * @returns {string} Formatted string
  */
@@ -20,16 +60,28 @@ export function format(typedValue, localeId = DEFAULT_LOCALE) {
     }
 
     const locale = getLocale(localeId);
-    const { _v: value, _t: type, _d: hint } = typedValue;
+    const { _v: value, _t: type, _d: hint, _s: system } = typedValue;
+
+    // Determine system from hint if not explicitly set
+    const measurementSystem = system || (hint ? getSystemFromHint(type, hint) : 'metric');
 
     switch (type) {
         case 'currency':
             return formatCurrency(value, hint || 'major', locale);
         case 'length':
+            if (isImperialHint('length', hint)) {
+                return formatImperialLength(value, hint, locale);
+            }
             return formatLength(value, hint || 'mm', locale);
         case 'mass':
+            if (isImperialHint('mass', hint)) {
+                return formatImperialMass(value, hint, locale);
+            }
             return formatMass(value, hint || 'g', locale);
         case 'capacity':
+            if (isImperialHint('capacity', hint)) {
+                return formatImperialCapacity(value, hint, locale);
+            }
             return formatCapacity(value, hint || 'ml', locale);
         case 'fraction':
             return formatFraction(value, hint || 'numeric', locale);
@@ -89,91 +141,200 @@ function formatCurrency(minorUnits, displayHint, locale) {
 }
 
 /**
- * Format length value
+ * Format length value (metric)
  * @param {number} mm - Value in millimeters
  * @param {string} displayHint - Target unit or mixed format
  * @param {object} locale - Locale configuration
  */
 function formatLength(mm, displayHint, locale) {
-    const units = locale.units.length;
+    const units = getUnits(locale, 'length', 'metric');
 
     switch (displayHint) {
         case 'mm':
-            return `${mm}${units.mm}`;
+            return `${mm}${units.mm || 'mm'}`;
         case 'cm':
-            return `${mm / 10}${units.cm}`;
+            return `${mm / 10}${units.cm || 'cm'}`;
         case 'm':
-            return `${mm / 1000}${units.m}`;
+            return `${mm / 1000}${units.m || 'm'}`;
         case 'km':
-            return `${mm / 1000000}${units.km}`;
+            return `${mm / 1000000}${units.km || 'km'}`;
         case 'mixed_m_cm': {
             const m = Math.floor(mm / 1000);
             const cm = Math.round((mm % 1000) / 10);
-            if (cm === 0) return `${m}${units.m}`;
-            if (m === 0) return `${cm}${units.cm}`;
-            return `${m}${units.m} ${cm}${units.cm}`;
+            if (cm === 0) return `${m}${units.m || 'm'}`;
+            if (m === 0) return `${cm}${units.cm || 'cm'}`;
+            return `${m}${units.m || 'm'} ${cm}${units.cm || 'cm'}`;
         }
         case 'mixed_km_m': {
             const km = Math.floor(mm / 1000000);
             const m = Math.round((mm % 1000000) / 1000);
-            if (m === 0) return `${km}${units.km}`;
-            if (km === 0) return `${m}${units.m}`;
-            return `${km}${units.km} ${m}${units.m}`;
+            if (m === 0) return `${km}${units.km || 'km'}`;
+            if (km === 0) return `${m}${units.m || 'm'}`;
+            return `${km}${units.km || 'km'} ${m}${units.m || 'm'}`;
         }
         default:
-            return `${mm}${units.mm}`;
+            return `${mm}${units.mm || 'mm'}`;
     }
 }
 
 /**
- * Format mass value
+ * Format length value (imperial)
+ * @param {number} inches - Value in inches
+ * @param {string} displayHint - Target unit or mixed format
+ * @param {object} locale - Locale configuration
+ */
+function formatImperialLength(inches, displayHint, locale) {
+    const units = getUnits(locale, 'length', 'imperial');
+
+    switch (displayHint) {
+        case 'in':
+            return `${inches}${units.in || 'in'}`;
+        case 'ft':
+            return `${inches / 12}${units.ft || 'ft'}`;
+        case 'yd':
+            return `${inches / 36}${units.yd || 'yd'}`;
+        case 'mi':
+            return `${inches / 63360}${units.mi || 'mi'}`;
+        case 'mixed_ft_in': {
+            const ft = Math.floor(inches / 12);
+            const remainingIn = inches % 12;
+            if (remainingIn === 0) return `${ft}${units.ft || 'ft'}`;
+            if (ft === 0) return `${remainingIn}${units.in || 'in'}`;
+            return `${ft}${units.ft || 'ft'} ${remainingIn}${units.in || 'in'}`;
+        }
+        case 'mixed_yd_ft': {
+            const yd = Math.floor(inches / 36);
+            const remainingFt = Math.floor((inches % 36) / 12);
+            if (remainingFt === 0) return `${yd}${units.yd || 'yd'}`;
+            if (yd === 0) return `${remainingFt}${units.ft || 'ft'}`;
+            return `${yd}${units.yd || 'yd'} ${remainingFt}${units.ft || 'ft'}`;
+        }
+        case 'mixed_mi_yd': {
+            const mi = Math.floor(inches / 63360);
+            const remainingYd = Math.floor((inches % 63360) / 36);
+            if (remainingYd === 0) return `${mi}${units.mi || 'mi'}`;
+            if (mi === 0) return `${remainingYd}${units.yd || 'yd'}`;
+            return `${mi}${units.mi || 'mi'} ${remainingYd}${units.yd || 'yd'}`;
+        }
+        default:
+            return `${inches}${units.in || 'in'}`;
+    }
+}
+
+/**
+ * Format mass value (metric)
  * @param {number} g - Value in grams
  * @param {string} displayHint - Target unit or mixed format
  * @param {object} locale - Locale configuration
  */
 function formatMass(g, displayHint, locale) {
-    const units = locale.units.mass;
+    const units = getUnits(locale, 'mass', 'metric');
 
     switch (displayHint) {
         case 'g':
-            return `${g}${units.g}`;
+            return `${g}${units.g || 'g'}`;
         case 'kg':
-            return `${g / 1000}${units.kg}`;
+            return `${g / 1000}${units.kg || 'kg'}`;
         case 'mixed_kg_g': {
             const kg = Math.floor(g / 1000);
             const grams = g % 1000;
-            if (grams === 0) return `${kg}${units.kg}`;
-            if (kg === 0) return `${grams}${units.g}`;
-            return `${kg}${units.kg} ${grams}${units.g}`;
+            if (grams === 0) return `${kg}${units.kg || 'kg'}`;
+            if (kg === 0) return `${grams}${units.g || 'g'}`;
+            return `${kg}${units.kg || 'kg'} ${grams}${units.g || 'g'}`;
         }
         default:
-            return `${g}${units.g}`;
+            return `${g}${units.g || 'g'}`;
     }
 }
 
 /**
- * Format capacity value
+ * Format mass value (imperial)
+ * @param {number} oz - Value in ounces
+ * @param {string} displayHint - Target unit or mixed format
+ * @param {object} locale - Locale configuration
+ */
+function formatImperialMass(oz, displayHint, locale) {
+    const units = getUnits(locale, 'mass', 'imperial');
+
+    switch (displayHint) {
+        case 'oz':
+            return `${oz}${units.oz || 'oz'}`;
+        case 'lb':
+            return `${oz / 16}${units.lb || 'lb'}`;
+        case 'mixed_lb_oz': {
+            const lb = Math.floor(oz / 16);
+            const remainingOz = oz % 16;
+            if (remainingOz === 0) return `${lb}${units.lb || 'lb'}`;
+            if (lb === 0) return `${remainingOz}${units.oz || 'oz'}`;
+            return `${lb}${units.lb || 'lb'} ${remainingOz}${units.oz || 'oz'}`;
+        }
+        default:
+            return `${oz}${units.oz || 'oz'}`;
+    }
+}
+
+/**
+ * Format capacity value (metric)
  * @param {number} ml - Value in milliliters
  * @param {string} displayHint - Target unit or mixed format
  * @param {object} locale - Locale configuration
  */
 function formatCapacity(ml, displayHint, locale) {
-    const units = locale.units.capacity;
+    const units = getUnits(locale, 'capacity', 'metric');
 
     switch (displayHint) {
         case 'ml':
-            return `${ml}${units.ml}`;
+            return `${ml}${units.ml || 'ml'}`;
         case 'l':
-            return `${ml / 1000}${units.l}`;
+            return `${ml / 1000}${units.l || 'l'}`;
         case 'mixed_l_ml': {
             const l = Math.floor(ml / 1000);
             const milliliters = ml % 1000;
-            if (milliliters === 0) return `${l}${units.l}`;
-            if (l === 0) return `${milliliters}${units.ml}`;
-            return `${l}${units.l} ${milliliters}${units.ml}`;
+            if (milliliters === 0) return `${l}${units.l || 'l'}`;
+            if (l === 0) return `${milliliters}${units.ml || 'ml'}`;
+            return `${l}${units.l || 'l'} ${milliliters}${units.ml || 'ml'}`;
         }
         default:
-            return `${ml}${units.ml}`;
+            return `${ml}${units.ml || 'ml'}`;
+    }
+}
+
+/**
+ * Format capacity value (imperial)
+ * @param {number} flOz - Value in fluid ounces
+ * @param {string} displayHint - Target unit or mixed format
+ * @param {object} locale - Locale configuration
+ */
+function formatImperialCapacity(flOz, displayHint, locale) {
+    const units = getUnits(locale, 'capacity', 'imperial');
+
+    switch (displayHint) {
+        case 'fl_oz':
+            return `${flOz}${units.fl_oz || 'fl oz'}`;
+        case 'cup':
+            return `${flOz / 8}${units.cup || ' cup'}`;
+        case 'pt':
+            return `${flOz / 16}${units.pt || 'pt'}`;
+        case 'qt':
+            return `${flOz / 32}${units.qt || 'qt'}`;
+        case 'gal':
+            return `${flOz / 128}${units.gal || 'gal'}`;
+        case 'mixed_pt_cup': {
+            const pt = Math.floor(flOz / 16);
+            const remainingCups = Math.floor((flOz % 16) / 8);
+            if (remainingCups === 0) return `${pt}${units.pt || 'pt'}`;
+            if (pt === 0) return `${remainingCups}${units.cup || ' cup'}`;
+            return `${pt}${units.pt || 'pt'} ${remainingCups}${units.cup || ' cup'}`;
+        }
+        case 'mixed_gal_qt': {
+            const gal = Math.floor(flOz / 128);
+            const remainingQt = Math.floor((flOz % 128) / 32);
+            if (remainingQt === 0) return `${gal}${units.gal || 'gal'}`;
+            if (gal === 0) return `${remainingQt}${units.qt || 'qt'}`;
+            return `${gal}${units.gal || 'gal'} ${remainingQt}${units.qt || 'qt'}`;
+        }
+        default:
+            return `${flOz}${units.fl_oz || 'fl oz'}`;
     }
 }
 

@@ -134,7 +134,36 @@ Check that questions include sufficient display metadata:
 | place_value_chart | number, columns[] |
 | text_only | (none) |
 
-### 6. Generator Code Review (if implemented)
+### 6. Locale Support Validation (Measurement Modules)
+
+For M01-M09 measurement modules, verify dual-system support:
+
+```
+Parameter Structure:
+[ ] math.metric section exists
+[ ] math.imperial section exists
+[ ] Both sections have matching structure (units, ranges)
+[ ] Shared params at math root level (types, comparisonType, orderCount)
+
+Imperial Ranges:
+[ ] Imperial ranges are skill-equivalent to metric (not converted values)
+[ ] Example: metric 1-10 kg ≈ imperial 1-10 lb (same difficulty)
+[ ] Mixed units complexity matches: mixed_m_cm ≈ mixed_ft_in
+
+Generator Code:
+[ ] Imports resolveParameters from parameterResolver.js
+[ ] Calls resolveParameters(params, locale) before destructuring
+[ ] Extracts _resolvedSystem from resolved params
+[ ] Passes system parameter to helper functions
+
+Typed Values:
+[ ] Imperial measurements include _s: 'imperial' field
+[ ] Metric measurements omit _s field (default behavior)
+```
+
+**Locale Support Status**: COMPLETE / INCOMPLETE / MISSING
+
+### 7. Generator Code Review (if implemented)
 
 Verify correct destructuring pattern:
 
@@ -281,3 +310,22 @@ Before approving, verify:
 - Flat parameters used instead of nested structure
 - Operations/contexts not in schema VALID_VALUES
 - Level 3 doesn't match curriculum statement
+
+---
+
+## Best Practice Checks (Non-Blocking)
+
+These are recommendations, not hard requirements:
+
+**Template Quality:**
+- Module should use 1-2 high-impact templates, not many variations
+- Each template should serve a distinct pedagogical purpose
+
+**Source Alignment:**
+- Question patterns should align with UK National Curriculum guidance
+- Vocabulary should match established educational practice
+
+**Digital Suitability:**
+- Questions should be answerable via text input, multiple choice, or simple interaction
+- Avoid formats requiring drawing, physical manipulation, or handwritten working
+- Answers should be clear and auto-markable

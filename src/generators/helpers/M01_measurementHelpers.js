@@ -2,6 +2,7 @@
  * M01 Measurement Comparison Helper Functions
  *
  * Utilities for generating measurement comparison questions
+ * Supports both metric and imperial measurement systems
  */
 
 import {
@@ -12,6 +13,7 @@ import {
     format as i18nFormat,
     DEFAULT_LOCALE
 } from '../../i18n/index.js';
+import { getMeasurementSystem } from '../../curriculum/parameterResolver.js';
 
 /**
  * Select a random element from an array
@@ -31,55 +33,118 @@ export function randomInt(min, max) {
  * Conversion factors for measurement units
  */
 export const CONVERSIONS = {
-    // Length
+    // Metric - Length
     km_to_m: 1000,
     m_to_cm: 100,
     cm_to_mm: 10,
     km_to_cm: 100000,
     m_to_mm: 1000,
 
-    // Mass
+    // Metric - Mass
     kg_to_g: 1000,
 
-    // Capacity
+    // Metric - Capacity
     l_to_ml: 1000,
 
-    // Money
-    pounds_to_pence: 100
+    // Imperial - Length
+    mi_to_yd: 1760,
+    yd_to_ft: 3,
+    ft_to_in: 12,
+    mi_to_ft: 5280,
+    yd_to_in: 36,
+    mi_to_in: 63360,
+
+    // Imperial - Mass
+    lb_to_oz: 16,
+
+    // Imperial - Capacity
+    gal_to_qt: 4,
+    qt_to_pt: 2,
+    pt_to_cup: 2,
+    cup_to_fl_oz: 8,
+    gal_to_pt: 8,
+    gal_to_cup: 16,
+    gal_to_fl_oz: 128,
+    pt_to_fl_oz: 16,
+
+    // Money (universal)
+    major_to_minor: 100
 };
 
 /**
  * Convert a measurement to base units (smallest unit)
+ * Metric: mm (length), g (mass), ml (capacity)
+ * Imperial: in (length), oz (mass), fl_oz (capacity)
+ *
  * @param {number} value - The measurement value
  * @param {string} unit - The unit type
  * @param {string} measureType - Type of measurement (length, mass, capacity, money)
+ * @param {string} [system='metric'] - Measurement system ('metric' or 'imperial')
  * @returns {number} Value in base units
  */
-export function toBaseUnits(value, unit, measureType) {
+export function toBaseUnits(value, unit, measureType, system = 'metric') {
     switch (measureType) {
         case 'length':
-            switch (unit) {
-                case 'km': return value * 1000 * 100 * 10; // to mm
-                case 'm': return value * 100 * 10; // to mm
-                case 'cm': return value * 10; // to mm
-                case 'mm': return value;
-                default: return value;
+            if (system === 'imperial') {
+                // Imperial: convert to inches
+                switch (unit) {
+                    case 'mi': return value * 63360; // to inches
+                    case 'yd': return value * 36; // to inches
+                    case 'ft': return value * 12; // to inches
+                    case 'in': return value;
+                    default: return value;
+                }
+            } else {
+                // Metric: convert to mm
+                switch (unit) {
+                    case 'km': return value * 1000000; // to mm
+                    case 'm': return value * 1000; // to mm
+                    case 'cm': return value * 10; // to mm
+                    case 'mm': return value;
+                    default: return value;
+                }
             }
         case 'mass':
-            switch (unit) {
-                case 'kg': return value * 1000; // to g
-                case 'g': return value;
-                default: return value;
+            if (system === 'imperial') {
+                // Imperial: convert to ounces
+                switch (unit) {
+                    case 'lb': return value * 16; // to oz
+                    case 'oz': return value;
+                    default: return value;
+                }
+            } else {
+                // Metric: convert to g
+                switch (unit) {
+                    case 'kg': return value * 1000; // to g
+                    case 'g': return value;
+                    default: return value;
+                }
             }
         case 'capacity':
-            switch (unit) {
-                case 'l': return value * 1000; // to ml
-                case 'ml': return value;
-                default: return value;
+            if (system === 'imperial') {
+                // Imperial: convert to fluid ounces
+                switch (unit) {
+                    case 'gal': return value * 128; // to fl_oz
+                    case 'qt': return value * 32; // to fl_oz
+                    case 'pt': return value * 16; // to fl_oz
+                    case 'cup': return value * 8; // to fl_oz
+                    case 'fl_oz': return value;
+                    default: return value;
+                }
+            } else {
+                // Metric: convert to ml
+                switch (unit) {
+                    case 'l': return value * 1000; // to ml
+                    case 'ml': return value;
+                    default: return value;
+                }
             }
         case 'money':
             switch (unit) {
-                case 'pounds': return value * 100; // to pence
+                case 'major': return value * 100; // to minor units
+                case 'minor': return value;
+                // Legacy support
+                case 'pounds': return value * 100;
                 case 'pence': return value;
                 default: return value;
             }
@@ -90,20 +155,21 @@ export function toBaseUnits(value, unit, measureType) {
 
 /**
  * Generate a measurement value in specified unit
- * @param {string} unit - Unit type (e.g., 'm', 'kg', 'pounds_decimal')
+ * @param {string} unit - Unit type (e.g., 'm', 'kg', 'ft', 'lb')
  * @param {Object} ranges - Ranges object from parameters
  * @param {string} measureType - Type of measurement (length, mass, capacity, money)
  * @param {string} [locale=DEFAULT_LOCALE] - Locale for display text generation
+ * @param {string} [system='metric'] - Measurement system ('metric' or 'imperial')
  * @returns {Object} { value, unit, displayUnit, measureType, baseValue, typed, displayText }
  */
-export function generateMeasurement(unit, ranges, measureType, locale = DEFAULT_LOCALE) {
+export function generateMeasurement(unit, ranges, measureType, locale = DEFAULT_LOCALE, system = 'metric') {
     let value, displayUnit, baseValue, typed;
 
-    // Handle mixed notation units
+    // ============ METRIC MIXED NOTATIONS ============
     if (unit === 'mixed_m_cm') {
         const meters = randomInt(1, 5);
         const centimeters = randomInt(0, 99);
-        baseValue = toBaseUnits(meters, 'm', 'length') + toBaseUnits(centimeters, 'cm', 'length');
+        baseValue = toBaseUnits(meters, 'm', 'length', 'metric') + toBaseUnits(centimeters, 'cm', 'length', 'metric');
         typed = length(baseValue, 'mixed_m_cm');
         return {
             value: { whole: meters, part: centimeters },
@@ -119,7 +185,7 @@ export function generateMeasurement(unit, ranges, measureType, locale = DEFAULT_
     if (unit === 'mixed_kg_g') {
         const kilograms = randomInt(1, 5);
         const grams = randomInt(0, 999);
-        baseValue = toBaseUnits(kilograms, 'kg', 'mass') + toBaseUnits(grams, 'g', 'mass');
+        baseValue = toBaseUnits(kilograms, 'kg', 'mass', 'metric') + toBaseUnits(grams, 'g', 'mass', 'metric');
         typed = mass(baseValue, 'mixed_kg_g');
         return {
             value: { whole: kilograms, part: grams },
@@ -135,7 +201,7 @@ export function generateMeasurement(unit, ranges, measureType, locale = DEFAULT_
     if (unit === 'mixed_l_ml') {
         const litres = randomInt(1, 5);
         const millilitres = randomInt(0, 999);
-        baseValue = toBaseUnits(litres, 'l', 'capacity') + toBaseUnits(millilitres, 'ml', 'capacity');
+        baseValue = toBaseUnits(litres, 'l', 'capacity', 'metric') + toBaseUnits(millilitres, 'ml', 'capacity', 'metric');
         typed = capacity(baseValue, 'mixed_l_ml');
         return {
             value: { whole: litres, part: millilitres },
@@ -148,26 +214,10 @@ export function generateMeasurement(unit, ranges, measureType, locale = DEFAULT_
         };
     }
 
-    if (unit === 'mixed_pounds_pence') {
-        const pounds = randomInt(1, 10);
-        const pence = randomInt(0, 99);
-        baseValue = toBaseUnits(pounds, 'pounds', 'money') + toBaseUnits(pence, 'pence', 'money');
-        typed = currency(baseValue, 'mixed');
-        return {
-            value: { whole: pounds, part: pence },
-            unit: 'mixed_pounds_pence',
-            displayUnit: '£ and p',
-            baseValue,
-            measureType: 'money',
-            typed,
-            displayText: i18nFormat(typed, locale)
-        };
-    }
-
     if (unit === 'mixed_km_m') {
         const kilometres = randomInt(1, 10);
         const metres = randomInt(0, 999);
-        baseValue = toBaseUnits(kilometres, 'km', 'length') + toBaseUnits(metres, 'm', 'length');
+        baseValue = toBaseUnits(kilometres, 'km', 'length', 'metric') + toBaseUnits(metres, 'm', 'length', 'metric');
         typed = length(baseValue, 'mixed_km_m');
         return {
             value: { whole: kilometres, part: metres },
@@ -180,17 +230,137 @@ export function generateMeasurement(unit, ranges, measureType, locale = DEFAULT_
         };
     }
 
-    // Handle pounds_decimal specially
-    if (unit === 'pounds_decimal') {
-        const pounds = randomInt(ranges.pounds.min, ranges.pounds.max);
-        const pence = randomInt(0, 99);
-        value = pounds + (pence / 100);
-        displayUnit = '£';
-        baseValue = Math.round(value * 100); // Convert to pence
+    // ============ IMPERIAL MIXED NOTATIONS ============
+    if (unit === 'mixed_ft_in') {
+        const feet = randomInt(1, 10);
+        const inches = randomInt(0, 11);
+        baseValue = toBaseUnits(feet, 'ft', 'length', 'imperial') + toBaseUnits(inches, 'in', 'length', 'imperial');
+        typed = length(baseValue, 'mixed_ft_in');
+        typed._s = 'imperial';
+        return {
+            value: { whole: feet, part: inches },
+            unit: 'mixed_ft_in',
+            displayUnit: 'ft and in',
+            baseValue,
+            measureType: 'length',
+            typed,
+            displayText: i18nFormat(typed, locale)
+        };
+    }
+
+    if (unit === 'mixed_yd_ft') {
+        const yards = randomInt(1, 10);
+        const feet = randomInt(0, 2);
+        baseValue = toBaseUnits(yards, 'yd', 'length', 'imperial') + toBaseUnits(feet, 'ft', 'length', 'imperial');
+        typed = length(baseValue, 'mixed_yd_ft');
+        typed._s = 'imperial';
+        return {
+            value: { whole: yards, part: feet },
+            unit: 'mixed_yd_ft',
+            displayUnit: 'yd and ft',
+            baseValue,
+            measureType: 'length',
+            typed,
+            displayText: i18nFormat(typed, locale)
+        };
+    }
+
+    if (unit === 'mixed_mi_yd') {
+        const miles = randomInt(1, 5);
+        const yards = randomInt(0, 100);
+        baseValue = toBaseUnits(miles, 'mi', 'length', 'imperial') + toBaseUnits(yards, 'yd', 'length', 'imperial');
+        typed = length(baseValue, 'mixed_mi_yd');
+        typed._s = 'imperial';
+        return {
+            value: { whole: miles, part: yards },
+            unit: 'mixed_mi_yd',
+            displayUnit: 'mi and yd',
+            baseValue,
+            measureType: 'length',
+            typed,
+            displayText: i18nFormat(typed, locale)
+        };
+    }
+
+    if (unit === 'mixed_lb_oz') {
+        const pounds = randomInt(1, 10);
+        const ounces = randomInt(0, 15);
+        baseValue = toBaseUnits(pounds, 'lb', 'mass', 'imperial') + toBaseUnits(ounces, 'oz', 'mass', 'imperial');
+        typed = mass(baseValue, 'mixed_lb_oz');
+        typed._s = 'imperial';
+        return {
+            value: { whole: pounds, part: ounces },
+            unit: 'mixed_lb_oz',
+            displayUnit: 'lb and oz',
+            baseValue,
+            measureType: 'mass',
+            typed,
+            displayText: i18nFormat(typed, locale)
+        };
+    }
+
+    if (unit === 'mixed_gal_qt') {
+        const gallons = randomInt(1, 5);
+        const quarts = randomInt(0, 3);
+        baseValue = toBaseUnits(gallons, 'gal', 'capacity', 'imperial') + toBaseUnits(quarts, 'qt', 'capacity', 'imperial');
+        typed = capacity(baseValue, 'mixed_gal_qt');
+        typed._s = 'imperial';
+        return {
+            value: { whole: gallons, part: quarts },
+            unit: 'mixed_gal_qt',
+            displayUnit: 'gal and qt',
+            baseValue,
+            measureType: 'capacity',
+            typed,
+            displayText: i18nFormat(typed, locale)
+        };
+    }
+
+    if (unit === 'mixed_pt_cup') {
+        const pints = randomInt(1, 5);
+        const cups = randomInt(0, 1);
+        baseValue = toBaseUnits(pints, 'pt', 'capacity', 'imperial') + toBaseUnits(cups, 'cup', 'capacity', 'imperial');
+        typed = capacity(baseValue, 'mixed_pt_cup');
+        typed._s = 'imperial';
+        return {
+            value: { whole: pints, part: cups },
+            unit: 'mixed_pt_cup',
+            displayUnit: 'pt and cup',
+            baseValue,
+            measureType: 'capacity',
+            typed,
+            displayText: i18nFormat(typed, locale)
+        };
+    }
+
+    // ============ MONEY (universal) ============
+    if (unit === 'mixed' || unit === 'mixed_pounds_pence') {
+        const major = randomInt(1, 10);
+        const minor = randomInt(0, 99);
+        baseValue = toBaseUnits(major, 'major', 'money') + toBaseUnits(minor, 'minor', 'money');
+        typed = currency(baseValue, 'mixed');
+        return {
+            value: { whole: major, part: minor },
+            unit: 'mixed',
+            displayUnit: 'mixed',
+            baseValue,
+            measureType: 'money',
+            typed,
+            displayText: i18nFormat(typed, locale)
+        };
+    }
+
+    if (unit === 'major' || unit === 'pounds_decimal') {
+        const majorRange = ranges.major || ranges.pounds || { min: 1, max: 10 };
+        const majorVal = randomInt(majorRange.min, majorRange.max);
+        const minorVal = randomInt(0, 99);
+        value = majorVal + (minorVal / 100);
+        displayUnit = 'major';
+        baseValue = Math.round(value * 100); // Convert to minor units
         typed = currency(baseValue, 'major');
         return {
             value,
-            unit: 'pounds',
+            unit: 'major',
             displayUnit,
             baseValue,
             measureType: 'money',
@@ -199,15 +369,15 @@ export function generateMeasurement(unit, ranges, measureType, locale = DEFAULT_
         };
     }
 
-    // Handle pence
-    if (unit === 'pence') {
-        value = randomInt(ranges.pence.min, ranges.pence.max);
-        displayUnit = 'p';
+    if (unit === 'minor' || unit === 'pence') {
+        const minorRange = ranges.minor || ranges.pence || { min: 50, max: 500 };
+        value = randomInt(minorRange.min, minorRange.max);
+        displayUnit = 'minor';
         baseValue = value;
         typed = currency(baseValue, 'minor');
         return {
             value,
-            unit: 'pence',
+            unit: 'minor',
             displayUnit,
             baseValue,
             measureType: 'money',
@@ -216,7 +386,7 @@ export function generateMeasurement(unit, ranges, measureType, locale = DEFAULT_
         };
     }
 
-    // Standard units
+    // ============ STANDARD UNITS ============
     const range = ranges[unit];
     if (!range) {
         throw new Error(`No range defined for unit: ${unit}`);
@@ -224,21 +394,34 @@ export function generateMeasurement(unit, ranges, measureType, locale = DEFAULT_
 
     value = randomInt(range.min, range.max);
     displayUnit = unit;
-    baseValue = toBaseUnits(value, unit, measureType);
+    baseValue = toBaseUnits(value, unit, measureType, system);
 
     // Create typed value based on measure type
+    // Detect if this is an imperial unit
+    const imperialLengthUnits = ['in', 'ft', 'yd', 'mi'];
+    const imperialMassUnits = ['oz', 'lb'];
+    const imperialCapacityUnits = ['fl_oz', 'cup', 'pt', 'qt', 'gal'];
+    const isImperial =
+        imperialLengthUnits.includes(unit) ||
+        imperialMassUnits.includes(unit) ||
+        imperialCapacityUnits.includes(unit);
+
     switch (measureType) {
         case 'length':
             typed = length(baseValue, unit);
+            if (isImperial) typed._s = 'imperial';
             break;
         case 'mass':
             typed = mass(baseValue, unit);
+            if (isImperial) typed._s = 'imperial';
             break;
         case 'capacity':
             typed = capacity(baseValue, unit);
+            if (isImperial) typed._s = 'imperial';
             break;
         default:
             typed = { _v: baseValue, _t: measureType, _d: unit };
+            if (isImperial) typed._s = 'imperial';
     }
 
     return {
@@ -257,9 +440,10 @@ export function generateMeasurement(unit, ranges, measureType, locale = DEFAULT_
  * @param {string} measureType - Type of measurement
  * @param {Object} mathParams - Math parameters
  * @param {string} [locale=DEFAULT_LOCALE] - Locale for display text generation
+ * @param {string} [system='metric'] - Measurement system ('metric' or 'imperial')
  * @returns {Object[]} Array of two measurement objects
  */
-export function generateComparisonPair(measureType, mathParams, locale = DEFAULT_LOCALE) {
+export function generateComparisonPair(measureType, mathParams, locale = DEFAULT_LOCALE, system = 'metric') {
     const { units, ranges, comparisonType } = mathParams;
     const availableUnits = units[measureType];
 
@@ -274,13 +458,13 @@ export function generateComparisonPair(measureType, mathParams, locale = DEFAULT
         unit1 = randomChoice(availableUnits.filter(u => !u.startsWith('mixed_')));
         unit2 = unit1;
 
-        measure1 = generateMeasurement(unit1, ranges, measureType, locale);
-        measure2 = generateMeasurement(unit2, ranges, measureType, locale);
+        measure1 = generateMeasurement(unit1, ranges, measureType, locale, system);
+        measure2 = generateMeasurement(unit2, ranges, measureType, locale, system);
 
         // Ensure they're different
         let attempts = 0;
         while (measure1.baseValue === measure2.baseValue && attempts < 10) {
-            measure2 = generateMeasurement(unit2, ranges, measureType, locale);
+            measure2 = generateMeasurement(unit2, ranges, measureType, locale, system);
             attempts++;
         }
     } else if (comparisonType === 'simple_conversion') {
@@ -291,21 +475,21 @@ export function generateComparisonPair(measureType, mathParams, locale = DEFAULT
             unit1 = pair[0];
             unit2 = pair[1];
 
-            measure1 = generateMeasurement(unit1, ranges, measureType, locale);
-            measure2 = generateMeasurement(unit2, ranges, measureType, locale);
+            measure1 = generateMeasurement(unit1, ranges, measureType, locale, system);
+            measure2 = generateMeasurement(unit2, ranges, measureType, locale, system);
         } else {
             // Fallback to same unit
             unit1 = randomChoice(availableUnits.filter(u => !u.startsWith('mixed_')));
-            measure1 = generateMeasurement(unit1, ranges, measureType, locale);
-            measure2 = generateMeasurement(unit1, ranges, measureType, locale);
+            measure1 = generateMeasurement(unit1, ranges, measureType, locale, system);
+            measure2 = generateMeasurement(unit1, ranges, measureType, locale, system);
         }
     } else {
         // Mixed notation - can use any units including mixed
         unit1 = randomChoice(availableUnits);
         unit2 = randomChoice(availableUnits);
 
-        measure1 = generateMeasurement(unit1, ranges, measureType, locale);
-        measure2 = generateMeasurement(unit2, ranges, measureType, locale);
+        measure1 = generateMeasurement(unit1, ranges, measureType, locale, system);
+        measure2 = generateMeasurement(unit2, ranges, measureType, locale, system);
     }
 
     return [measure1, measure2];
@@ -321,6 +505,7 @@ function getSimpleConversionPairs(measureType, availableUnits) {
     const pairs = [];
 
     if (measureType === 'length') {
+        // Metric pairs
         if (availableUnits.includes('km') && availableUnits.includes('m')) {
             pairs.push(['km', 'm']);
         }
@@ -330,15 +515,49 @@ function getSimpleConversionPairs(measureType, availableUnits) {
         if (availableUnits.includes('cm') && availableUnits.includes('mm')) {
             pairs.push(['cm', 'mm']);
         }
+        // Imperial pairs
+        if (availableUnits.includes('mi') && availableUnits.includes('yd')) {
+            pairs.push(['mi', 'yd']);
+        }
+        if (availableUnits.includes('yd') && availableUnits.includes('ft')) {
+            pairs.push(['yd', 'ft']);
+        }
+        if (availableUnits.includes('ft') && availableUnits.includes('in')) {
+            pairs.push(['ft', 'in']);
+        }
     } else if (measureType === 'mass') {
+        // Metric pairs
         if (availableUnits.includes('kg') && availableUnits.includes('g')) {
             pairs.push(['kg', 'g']);
         }
+        // Imperial pairs
+        if (availableUnits.includes('lb') && availableUnits.includes('oz')) {
+            pairs.push(['lb', 'oz']);
+        }
     } else if (measureType === 'capacity') {
+        // Metric pairs
         if (availableUnits.includes('l') && availableUnits.includes('ml')) {
             pairs.push(['l', 'ml']);
         }
+        // Imperial pairs
+        if (availableUnits.includes('gal') && availableUnits.includes('qt')) {
+            pairs.push(['gal', 'qt']);
+        }
+        if (availableUnits.includes('qt') && availableUnits.includes('pt')) {
+            pairs.push(['qt', 'pt']);
+        }
+        if (availableUnits.includes('pt') && availableUnits.includes('cup')) {
+            pairs.push(['pt', 'cup']);
+        }
+        if (availableUnits.includes('cup') && availableUnits.includes('fl_oz')) {
+            pairs.push(['cup', 'fl_oz']);
+        }
     } else if (measureType === 'money') {
+        // Universal money pairs
+        if (availableUnits.includes('major') && availableUnits.includes('minor')) {
+            pairs.push(['major', 'minor']);
+        }
+        // Legacy support
         if (availableUnits.includes('pounds_decimal') && availableUnits.includes('pence')) {
             pairs.push(['pounds_decimal', 'pence']);
         }
@@ -353,9 +572,10 @@ function getSimpleConversionPairs(measureType, availableUnits) {
  * @param {Object} mathParams - Math parameters
  * @param {number} count - Number of measurements to generate
  * @param {string} [locale=DEFAULT_LOCALE] - Locale for display text generation
+ * @param {string} [system='metric'] - Measurement system ('metric' or 'imperial')
  * @returns {Object[]} Array of measurement objects
  */
-export function generateMeasurementsForOrdering(measureType, mathParams, count, locale = DEFAULT_LOCALE) {
+export function generateMeasurementsForOrdering(measureType, mathParams, count, locale = DEFAULT_LOCALE, system = 'metric') {
     const { units, ranges, comparisonType } = mathParams;
     const availableUnits = units[measureType];
 
@@ -365,13 +585,13 @@ export function generateMeasurementsForOrdering(measureType, mathParams, count, 
     if (comparisonType === 'same_unit') {
         const unit = randomChoice(availableUnits.filter(u => !u.startsWith('mixed_')));
         for (let i = 0; i < count; i++) {
-            measurements.push(generateMeasurement(unit, ranges, measureType, locale));
+            measurements.push(generateMeasurement(unit, ranges, measureType, locale, system));
         }
     } else {
         // Mix units
         for (let i = 0; i < count; i++) {
             const unit = randomChoice(availableUnits);
-            measurements.push(generateMeasurement(unit, ranges, measureType, locale));
+            measurements.push(generateMeasurement(unit, ranges, measureType, locale, system));
         }
     }
 
@@ -389,7 +609,7 @@ export function generateMeasurementsForOrdering(measureType, mathParams, count, 
     // If we don't have enough unique measurements, generate more
     while (uniqueMeasurements.length < count) {
         const unit = randomChoice(availableUnits);
-        const newMeasure = generateMeasurement(unit, ranges, measureType, locale);
+        const newMeasure = generateMeasurement(unit, ranges, measureType, locale, system);
         if (!baseValues.has(newMeasure.baseValue)) {
             baseValues.add(newMeasure.baseValue);
             uniqueMeasurements.push(newMeasure);

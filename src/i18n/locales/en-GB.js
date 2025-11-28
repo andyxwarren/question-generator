@@ -1,10 +1,15 @@
 /**
  * UK English (en-GB) Locale
+ *
+ * Uses metric measurement system (UK National Curriculum standard).
  */
 
 export default {
     id: 'en-GB',
     name: 'English (UK)',
+
+    // Default measurement system for this locale
+    measurementSystem: 'metric',
 
     currency: {
         code: 'GBP',
@@ -18,20 +23,33 @@ export default {
     },
 
     units: {
-        length: {
-            mm: 'mm',
-            cm: 'cm',
-            m: 'm',
-            km: 'km'
-        },
-        mass: {
-            g: 'g',
-            kg: 'kg'
-        },
-        capacity: {
-            ml: 'ml',
-            l: 'l'
+        // Metric units (default for UK)
+        metric: {
+            length: {
+                mm: 'mm',
+                cm: 'cm',
+                m: 'm',
+                km: 'km'
+            },
+            mass: {
+                g: 'g',
+                kg: 'kg'
+            },
+            capacity: {
+                ml: 'ml',
+                l: 'l'
+            }
         }
+        // Note: UK curriculum introduces some imperial (miles, pints) from Year 5
+        // Could add imperial section here for future en-GB-mixed locale
+    },
+
+    // Mixed notation format patterns for metric
+    mixedPatterns: {
+        'mixed_m_cm': '{whole}m {part}cm',
+        'mixed_km_m': '{whole}km {part}m',
+        'mixed_kg_g': '{whole}kg {part}g',
+        'mixed_l_ml': '{whole}l {part}ml'
     },
 
     // UK spelling variants

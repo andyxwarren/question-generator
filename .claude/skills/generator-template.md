@@ -291,6 +291,92 @@ export function generateQuestion(params, level) {
 }
 ```
 
+### Locale-Aware Measurement Generator
+
+For measurement modules supporting both metric and imperial systems:
+
+#### 1. Import Parameter Resolver
+
+```javascript
+import { resolveParameters } from '../curriculum/parameterResolver.js';
+```
+
+#### 2. Resolve Parameters First
+
+```javascript
+export function generateQuestion(params, level, locale = 'en-GB') {
+    // CRITICAL: Resolve parameters for locale (flattens metric/imperial)
+    const resolvedParams = resolveParameters(params, locale);
+
+    // Destructure resolved params (metric/imperial now flattened to units/ranges)
+    const {
+        math: { types, units, ranges, comparisonType },
+        presentation: { visualType },
+        _resolvedSystem  // 'metric' or 'imperial'
+    } = resolvedParams;
+
+    const system = _resolvedSystem || 'metric';
+    // ...
+}
+```
+
+#### 3. Pass System to Helpers
+
+```javascript
+// Helper functions need system for correct base unit conversions
+const measurement = generateMeasurement(unit, ranges, measureType, locale, system);
+const [m1, m2] = generateComparisonPair(measureType, mathParams, locale, system);
+```
+
+#### 4. Typed Values Include System
+
+```javascript
+// For imperial measurements, typed values include _s field
+{
+    _v: 63,           // Value in base units (inches for length)
+    _t: 'length',     // Measurement type
+    _d: 'mixed_ft_in', // Display hint
+    _s: 'imperial'    // System indicator (omitted for metric)
+}
+```
+
+#### Complete Example
+
+```javascript
+import { resolveParameters } from '../curriculum/parameterResolver.js';
+import { generateComparisonPair, compareMeasurements } from './helpers/M01_measurementHelpers.js';
+
+export function generateQuestion(params, level, locale = 'en-GB') {
+    // 1. Resolve metric/imperial based on locale
+    const resolvedParams = resolveParameters(params, locale);
+
+    const {
+        math: { types, units, ranges, comparisonType },
+        presentation: { questionTypes },
+        _resolvedSystem
+    } = resolvedParams;
+
+    const system = _resolvedSystem || 'metric';
+    const measureType = randomChoice(types);
+
+    // 2. Pass system to helpers
+    const [m1, m2] = generateComparisonPair(measureType, { units, ranges }, locale, system);
+
+    // 3. Measurements have typed values with system indicator
+    return {
+        text: `Which is greater: ${m1.displayText} or ${m2.displayText}?`,
+        type: 'multiple_choice',
+        answer: compareMeasurements(m1, m2) === 'greater' ? m1.displayText : m2.displayText,
+        module: 'M01_Y4_MEAS',
+        level: level,
+        values: {
+            v1: m1.typed,  // { _v: 100, _t: 'length', _d: 'cm' } or { _v: 36, _t: 'length', _d: 'in', _s: 'imperial' }
+            v2: m2.typed
+        }
+    };
+}
+```
+
 ---
 
 ## Parameter File Structure

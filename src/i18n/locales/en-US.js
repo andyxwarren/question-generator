@@ -1,10 +1,16 @@
 /**
  * US English (en-US) Locale
+ *
+ * Uses imperial measurement system by default for everyday measurements.
+ * Metric units still available for scientific contexts.
  */
 
 export default {
     id: 'en-US',
     name: 'English (US)',
+
+    // Default measurement system for this locale
+    measurementSystem: 'imperial',
 
     currency: {
         code: 'USD',
@@ -18,20 +24,53 @@ export default {
     },
 
     units: {
-        length: {
-            mm: 'mm',
-            cm: 'cm',
-            m: 'm',
-            km: 'km'
+        // Metric units (for scientific contexts)
+        metric: {
+            length: {
+                mm: 'mm',
+                cm: 'cm',
+                m: 'm',
+                km: 'km'
+            },
+            mass: {
+                g: 'g',
+                kg: 'kg'
+            },
+            capacity: {
+                ml: 'mL',   // US prefers uppercase L
+                l: 'L'
+            }
         },
-        mass: {
-            g: 'g',
-            kg: 'kg'
-        },
-        capacity: {
-            ml: 'mL',   // US prefers uppercase L
-            l: 'L'
+        // Imperial units (default for US)
+        imperial: {
+            length: {
+                in: 'in',
+                ft: 'ft',
+                yd: 'yd',
+                mi: 'mi'
+            },
+            mass: {
+                oz: 'oz',
+                lb: 'lb'
+            },
+            capacity: {
+                fl_oz: 'fl oz',
+                cup: 'cup',
+                pt: 'pt',
+                qt: 'qt',
+                gal: 'gal'
+            }
         }
+    },
+
+    // Mixed notation format patterns for imperial
+    mixedPatterns: {
+        'mixed_ft_in': '{whole}ft {part}in',
+        'mixed_yd_ft': '{whole}yd {part}ft',
+        'mixed_mi_yd': '{whole}mi {part}yd',
+        'mixed_lb_oz': '{whole}lb {part}oz',
+        'mixed_pt_cup': '{whole}pt {part}cup',
+        'mixed_gal_qt': '{whole}gal {part}qt'
     },
 
     // US spelling variants

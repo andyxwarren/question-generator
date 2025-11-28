@@ -3,6 +3,7 @@
  *
  * Year 4: Compare different measures, including money in pounds and pence
  * Supports i18n typed values for locale-aware rendering
+ * Supports both metric and imperial measurement systems via parameter resolver
  */
 
 import {
@@ -15,6 +16,7 @@ import {
     generateEquivalentMeasurement
 } from './helpers/M01_measurementHelpers.js';
 import { render as i18nRender, DEFAULT_LOCALE } from '../i18n/index.js';
+import { resolveParameters } from '../curriculum/parameterResolver.js';
 
 /**
  * Generate a measurement comparison question
@@ -24,6 +26,9 @@ import { render as i18nRender, DEFAULT_LOCALE } from '../i18n/index.js';
  * @returns {Object} Question object
  */
 export function generateQuestion(params, level, locale = 'en-GB') {
+    // CRITICAL: Resolve parameters for locale (flattens metric/imperial sections)
+    const resolvedParams = resolveParameters(params, locale);
+
     // CRITICAL: V2 NESTED DESTRUCTURING PATTERN
     const {
         math: {
@@ -37,8 +42,9 @@ export function generateQuestion(params, level, locale = 'en-GB') {
             questionTypes,
             visualType,
             showUnits
-        }
-    } = params;
+        },
+        _resolvedSystem
+    } = resolvedParams;
 
     // Select a random question type
     const questionType = randomChoice(questionTypes);
@@ -46,30 +52,33 @@ export function generateQuestion(params, level, locale = 'en-GB') {
     // Select a random measure type
     const measureType = randomChoice(types);
 
+    // Get resolved measurement system (metric or imperial)
+    const system = _resolvedSystem || 'metric';
+
     // Generate question based on type
     let question;
 
     switch (questionType) {
         case 'which_greater':
-            question = generateWhichGreaterQuestion(measureType, { units, ranges, comparisonType }, locale);
+            question = generateWhichGreaterQuestion(measureType, { units, ranges, comparisonType }, locale, system);
             break;
         case 'which_smaller':
-            question = generateWhichSmallerQuestion(measureType, { units, ranges, comparisonType }, locale);
+            question = generateWhichSmallerQuestion(measureType, { units, ranges, comparisonType }, locale, system);
             break;
         case 'order_ascending':
-            question = generateOrderAscendingQuestion(measureType, { units, ranges, comparisonType }, orderCount, locale);
+            question = generateOrderAscendingQuestion(measureType, { units, ranges, comparisonType }, orderCount, locale, system);
             break;
         case 'order_descending':
-            question = generateOrderDescendingQuestion(measureType, { units, ranges, comparisonType }, orderCount, locale);
+            question = generateOrderDescendingQuestion(measureType, { units, ranges, comparisonType }, orderCount, locale, system);
             break;
         case 'are_equal':
-            question = generateAreEqualQuestion(measureType, { units, ranges, comparisonType }, locale);
+            question = generateAreEqualQuestion(measureType, { units, ranges, comparisonType }, locale, system);
             break;
         case 'find_equivalent':
-            question = generateFindEquivalentQuestion(measureType, { units, ranges, comparisonType }, orderCount, locale);
+            question = generateFindEquivalentQuestion(measureType, { units, ranges, comparisonType }, orderCount, locale, system);
             break;
         default:
-            question = generateWhichGreaterQuestion(measureType, { units, ranges, comparisonType }, locale);
+            question = generateWhichGreaterQuestion(measureType, { units, ranges, comparisonType }, locale, system);
     }
 
     // Add module and level metadata
@@ -82,8 +91,8 @@ export function generateQuestion(params, level, locale = 'en-GB') {
 /**
  * Generate a "which is greater" question
  */
-function generateWhichGreaterQuestion(measureType, mathParams, locale = DEFAULT_LOCALE) {
-    const [measure1, measure2] = generateComparisonPair(measureType, mathParams, locale);
+function generateWhichGreaterQuestion(measureType, mathParams, locale = DEFAULT_LOCALE, system = 'metric') {
+    const [measure1, measure2] = generateComparisonPair(measureType, mathParams, locale, system);
 
     const comparison = compareMeasurements(measure1, measure2);
     const answerMeasure = comparison === 'greater' ? measure1 : measure2;
@@ -139,8 +148,8 @@ function generateWhichGreaterQuestion(measureType, mathParams, locale = DEFAULT_
 /**
  * Generate a "which is smaller" question
  */
-function generateWhichSmallerQuestion(measureType, mathParams, locale = DEFAULT_LOCALE) {
-    const [measure1, measure2] = generateComparisonPair(measureType, mathParams, locale);
+function generateWhichSmallerQuestion(measureType, mathParams, locale = DEFAULT_LOCALE, system = 'metric') {
+    const [measure1, measure2] = generateComparisonPair(measureType, mathParams, locale, system);
 
     const comparison = compareMeasurements(measure1, measure2);
     const answerMeasure = comparison === 'smaller' ? measure1 : measure2;
@@ -194,8 +203,8 @@ function generateWhichSmallerQuestion(measureType, mathParams, locale = DEFAULT_
 /**
  * Generate an "order ascending" question
  */
-function generateOrderAscendingQuestion(measureType, mathParams, count, locale = DEFAULT_LOCALE) {
-    const measurements = generateMeasurementsForOrdering(measureType, mathParams, count, locale);
+function generateOrderAscendingQuestion(measureType, mathParams, count, locale = DEFAULT_LOCALE, system = 'metric') {
+    const measurements = generateMeasurementsForOrdering(measureType, mathParams, count, locale, system);
     const sorted = sortMeasurements(measurements, 'ascending');
 
     const displayList = measurements.map(m => m.displayText).join(', ');
@@ -241,8 +250,8 @@ function generateOrderAscendingQuestion(measureType, mathParams, count, locale =
 /**
  * Generate an "order descending" question
  */
-function generateOrderDescendingQuestion(measureType, mathParams, count, locale = DEFAULT_LOCALE) {
-    const measurements = generateMeasurementsForOrdering(measureType, mathParams, count, locale);
+function generateOrderDescendingQuestion(measureType, mathParams, count, locale = DEFAULT_LOCALE, system = 'metric') {
+    const measurements = generateMeasurementsForOrdering(measureType, mathParams, count, locale, system);
     const sorted = sortMeasurements(measurements, 'descending');
 
     const displayList = measurements.map(m => m.displayText).join(', ');
@@ -288,8 +297,8 @@ function generateOrderDescendingQuestion(measureType, mathParams, count, locale 
 /**
  * Generate an "are equal" question
  */
-function generateAreEqualQuestion(measureType, mathParams, locale = DEFAULT_LOCALE) {
-    const [measure1, measure2] = generateComparisonPair(measureType, mathParams, locale);
+function generateAreEqualQuestion(measureType, mathParams, locale = DEFAULT_LOCALE, system = 'metric') {
+    const [measure1, measure2] = generateComparisonPair(measureType, mathParams, locale, system);
 
     const comparison = compareMeasurements(measure1, measure2);
     const answer = comparison === 'equal' ? 'yes' : 'no';
@@ -341,8 +350,8 @@ function generateAreEqualQuestion(measureType, mathParams, locale = DEFAULT_LOCA
 /**
  * Generate a "find equivalent" question
  */
-function generateFindEquivalentQuestion(measureType, mathParams, count, locale = DEFAULT_LOCALE) {
-    const measurements = generateMeasurementsForOrdering(measureType, mathParams, count, locale);
+function generateFindEquivalentQuestion(measureType, mathParams, count, locale = DEFAULT_LOCALE, system = 'metric') {
+    const measurements = generateMeasurementsForOrdering(measureType, mathParams, count, locale, system);
 
     // Try to create at least one pair of equivalent measurements
     // by generating an equivalent for one of them

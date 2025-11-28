@@ -328,6 +328,34 @@ Self-Contained:
 
 ---
 
+## Typed Values with Measurement System
+
+For measurement modules, typed values may include a system indicator:
+
+```javascript
+// Metric measurement (UK - en-GB) - no _s field needed
+{
+    _v: 150,          // Value in base units (cm)
+    _t: 'length',     // Measurement type
+    _d: 'cm'          // Display hint
+}
+
+// Imperial measurement (US - en-US) - includes _s field
+{
+    _v: 63,           // Value in base units (inches)
+    _t: 'length',     // Measurement type
+    _d: 'mixed_ft_in', // Display hint
+    _s: 'imperial'    // System indicator
+}
+```
+
+**Key points:**
+- `_s: 'imperial'` is ONLY present for imperial measurements
+- Display apps should check `_s` to determine which unit symbols to use
+- Metric is the default; absence of `_s` means metric system
+
+---
+
 ## Parameter to Display Mapping
 
 The `presentation` object in parameters hints at display needs:
