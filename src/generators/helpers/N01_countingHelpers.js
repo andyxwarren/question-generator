@@ -1,112 +1,212 @@
 /**
- * Counting Helpers
+ * Helper functions for N01 Counting modules
  *
- * Shared utility functions for N01 question generators
- * (Counting in multiples)
+ * Supports sequence generation, gap positioning, and start value strategies
+ * Supports i18n typed values for locale-aware rendering
  */
 
+import {
+    integer as createIntegerTyped,
+    decimal as createDecimalTyped,
+    format as i18nFormat,
+    DEFAULT_LOCALE
+} from '../../i18n/index.js';
+
 /**
- * Choose random item from array
+ * Create a typed integer value
+ * @param {number} value - Integer value
+ * @param {string} [displayAs='plain'] - Display hint
+ * @returns {object} Typed value
  */
-export function randomChoice(array) {
-    return array[Math.floor(Math.random() * array.length)];
+export function createInteger(value, displayAs = 'plain') {
+    return createIntegerTyped(value, displayAs);
 }
 
 /**
- * Generate random integer in range [min, max]
+ * Create a typed decimal value
+ * @param {number} value - Decimal value
+ * @param {string} [displayAs='plain'] - Display hint
+ * @returns {object} Typed value
  */
-export function randomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+export function createDecimal(value, displayAs = 'plain') {
+    return createDecimalTyped(value, displayAs);
 }
 
 /**
- * Get starting value based on start strategy
- * Updated for V2 Schema: Accepts explicit range object { min, max, strategy }
- * instead of a flat params object.
+ * Create typed sequence values array
+ * @param {number[]} sequence - Array of numbers
+ * @param {number[]} gapIndices - Indices where gaps are
+ * @returns {object[]} Array of typed values with nulls at gap positions
  */
-export function getStartValue(config, step) {
-    const { startStrategy, min, max } = config;
+export function createTypedSequence(sequence, gapIndices) {
+    return sequence.map((num, idx) => {
+        if (gapIndices.includes(idx)) {
+            return null;
+        }
+        return Number.isInteger(num) ? createIntegerTyped(num) : createDecimalTyped(num);
+    });
+}
 
-    if (startStrategy === 'zero_only') {
-        return 0;
-    } else if (startStrategy === 'zero_or_twenty') {
-        // For Y1 Level 1
-        return 0;
-    } else if (startStrategy === 'zero_or_multiple') {
-        const multiples = [0, step, step * 2, step * 3, step * 4];
-        return randomChoice(multiples.filter(m => m <= max / 2));
-    } else if (startStrategy === 'any') {
-        // Calculate from min/max
-        const range = max - min;
-        const rawStart = min + randomInt(0, Math.floor(range / 2));
-        return Math.floor(rawStart / step) * step;
+/**
+ * Get start value based on strategy
+ * @param {Object} config - Configuration object
+ * @param {string} config.startStrategy - Strategy: 'zero_only', 'zero_or_one', 'any_multiple', 'zero_or_tens', 'zero_or_any_tens', 'any'
+ * @param {number} config.min - Minimum range value
+ * @param {number} config.max - Maximum range value
+ * @param {number} step - The step size for counting
+ * @returns {number} Start value
+ */
+export function getStartValue({ startStrategy, min, max }, step) {
+    switch (startStrategy) {
+        case 'zero_only':
+            return 0;
+
+        case 'zero_or_one':
+            return randomChoice([0, 1]);
+
+        case 'any_multiple': {
+            // Get all valid multiples of step within range
+            const multiples = [];
+            for (let i = min; i <= max; i += step) {
+                multiples.push(i);
+            }
+            return randomChoice(multiples);
+        }
+
+        case 'zero_or_tens': {
+            // For step=10, allow any multiple of 10; for other steps, start from 0
+            if (step === 10) {
+                const multiples = [];
+                for (let i = 0; i <= max; i += 10) {
+                    multiples.push(i);
+                }
+                return randomChoice(multiples);
+            }
+            return 0;
+        }
+
+        case 'zero_or_any_tens': {
+            // For step=10, allow any number; for other steps (2,3,5), start from 0
+            if (step === 10) {
+                return randomInt(min, max);
+            }
+            return 0;
+        }
+
+        case 'any': {
+            // Any number within range (not necessarily a multiple)
+            // For large ranges, sample reasonably
+            const range = max - min;
+            if (range > 1000) {
+                // For large ranges, generate a random number that allows for a complete sequence
+                const maxStart = max - (step * 5); // Ensure room for sequence
+                return randomInt(min, Math.max(min, maxStart));
+            } else {
+                return randomInt(min, max);
+            }
+        }
+
+        default:
+            return 0;
     }
-
-    return 0;
 }
 
 /**
- * Generate sequence array
+ * Generate a counting sequence
+ * @param {number} start - Starting value
+ * @param {number} step - Step size
+ * @param {number} length - Number of elements in sequence
+ * @param {string} direction - 'forwards' or 'backwards'
+ * @returns {number[]} Array of numbers in sequence
  */
 export function generateSequence(start, step, length, direction) {
     const sequence = [];
-    const multiplier = direction === 'forwards' ? 1 : -1;
+    const increment = direction === 'backwards' ? -step : step;
 
     for (let i = 0; i < length; i++) {
-        sequence.push(start + (i * step * multiplier));
+        sequence.push(start + (i * increment));
     }
 
     return sequence;
 }
 
 /**
- * Get single gap position for fill-in-the-blank questions
- * Used by simplified N01 modules
+ * Get gap position index based on position strategy
+ * @param {number} length - Sequence length
+ * @param {string} position - Position strategy: 'end', 'middle', 'random'
+ * @returns {number} 0-indexed position for the gap
  */
-export function getGapPosition(sequenceLength, gapPosition) {
-    if (gapPosition === 'end') {
-        return sequenceLength - 1;
-    } else if (gapPosition === 'start') {
-        return 0;
-    } else if (gapPosition === 'middle') {
-        return Math.floor(sequenceLength / 2);
-    } else if (gapPosition === 'random') {
-        return randomInt(0, sequenceLength - 1);
+export function getGapPosition(length, position) {
+    switch (position) {
+        case 'end':
+            return length - 1;
+
+        case 'middle': {
+            // For even length, prefer middle-left (e.g., length 4 -> index 1)
+            // For odd length, use exact middle (e.g., length 5 -> index 2)
+            return Math.floor((length - 1) / 2);
+        }
+
+        case 'random':
+            // Random position except first (to avoid giving away the pattern)
+            return randomInt(1, length - 1);
+
+        default:
+            return length - 1;
     }
-    return 0; // Default to start if unknown position
 }
 
 /**
- * Get multiple gap positions for fill-in-the-blank questions
- * Used by N05 modules and other generators that support multiple gaps
+ * Get multiple gap positions for a sequence
+ * @param {number} length - Sequence length
+ * @param {number} count - Number of gaps needed
+ * @param {string} position - Position strategy: 'end', 'middle', 'random'
+ * @returns {number[]} Array of 0-indexed positions for the gaps
  */
-export function getGapPositions(sequenceLength, gapsCount, gapPosition) {
-    const positions = [];
-
-    if (gapPosition === 'end') {
-        positions.push(sequenceLength - 1);
-    } else if (gapPosition === 'start') {
-        positions.push(0);
-    } else if (gapPosition === 'middle') {
-        positions.push(Math.floor(sequenceLength / 2));
-    } else if (gapPosition === 'random') {
-        // Generate unique random positions
-        const available = Array.from({length: sequenceLength}, (_, i) => i);
-        for (let i = 0; i < gapsCount; i++) {
-            const idx = randomInt(0, available.length - 1);
-            positions.push(available[idx]);
-            available.splice(idx, 1);
-        }
+export function getMultipleGapPositions(length, count, position) {
+    if (count === 1) {
+        return [getGapPosition(length, position)];
     }
 
-    return positions.slice(0, gapsCount).sort((a, b) => a - b);
+    const positions = new Set();
+
+    // Never put gap at index 0 (preserve pattern)
+    while (positions.size < count && positions.size < length - 1) {
+        const pos = randomInt(1, length - 1);
+        positions.add(pos);
+    }
+
+    return Array.from(positions).sort((a, b) => a - b);
 }
 
-export default {
-    randomChoice,
-    randomInt,
-    getStartValue,
-    generateSequence,
-    getGapPosition,
-    getGapPositions
-};
+/**
+ * Format sequence with gap for display
+ * @param {number[]} sequence - Full sequence
+ * @param {number|number[]} gapIndex - Index or array of indices for gap positions
+ * @returns {string} Formatted string like "2, 4, __, 8"
+ */
+export function formatSequence(sequence, gapIndex) {
+    const gapIndices = Array.isArray(gapIndex) ? gapIndex : [gapIndex];
+    return sequence
+        .map((num, idx) => gapIndices.includes(idx) ? '__' : num.toString())
+        .join(', ');
+}
+
+/**
+ * Select random element from array
+ * @param {any[]} array - Array to select from
+ * @returns {any} Random element
+ */
+export function randomChoice(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+/**
+ * Generate random integer in range [min, max] inclusive
+ * @param {number} min - Minimum value
+ * @param {number} max - Maximum value
+ * @returns {number} Random integer
+ */
+export function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}

@@ -19,6 +19,9 @@ node generate.js --module C02_Y3_CALC --format csv --output questions.csv
 # List available modules
 node generate.js --list --strand Calculation
 
+# Run tests (schema validation)
+npm test
+
 # Show help
 node generate.js --help
 ```
@@ -33,6 +36,8 @@ node generate.js --help
 - `--format <type>` - Output format: json, csv, pretty (default: json)
 - `--output <file>` - Write to file instead of stdout
 - `--list` - List available modules
+
+---
 
 ## Architecture Overview
 
@@ -51,7 +56,6 @@ This is a UK National Curriculum-aligned mathematics question generator followin
 - All generators must export: `{ moduleId, generate }`
 
 ### 3. Core Layer (`src/core/`)
-- `schemas/` - Strand-specific parameter validation (see Schema Validation section)
 - `questionEngine.js` - Registry pattern for generators, orchestrates question creation
 - `validator.js` - Validates student answers (handles text, numbers, multi-gap)
 
@@ -66,52 +70,74 @@ This is a UK National Curriculum-aligned mathematics question generator followin
 - **Parameter-Driven**: All question constraints come from parameters, not hardcoded
 - **Singleton**: QuestionEngine is exported as a singleton instance
 - **V2 Nested Schema**: Strict separation of `math` and `presentation` concerns
+- **Module = Schema**: Each generator defines its own display metadata structure inline
 - **Universal ES6 Modules**: Core logic works in Node.js and browsers
+
+---
+
+## Module Naming Convention
+
+Module IDs follow a strict pattern: `{SERIES}_{YEAR}_{STRAND}`
+
+**Examples:**
+- `N01_Y3_NPV` = Number series 01, Year 3, Number and Place Value
+- `C02_Y4_CALC` = Calculation series 02, Year 4, Calculation
+- `M04_Y2_MEAS` = Measurement series 04, Year 2, Measurement
+
+**Strand Codes:**
+- `NPV` = Number and Place Value
+- `CALC` = Calculation
+- `MEAS` = Measurement
+
+**Series Numbers:**
+- `N01` = Counting, `N02` = Read/Write, `N03` = Place Value, etc.
+- `C01` = Mental Add/Sub, `C02` = Written Add/Sub, etc.
+- `M01` = Comparison, `M02` = Measurement Scales, `M03` = Money, `M04` = Time, etc.
 
 ---
 
 ## V2 Nested Parameter Schema
 
 **CRITICAL**: All modules use the V2 "Nested" architecture. Parameters are strictly separated into:
-- `operations`: Array of operation types to generate (root level)
 - `math`: Mathematical constraints (ranges, steps, units)
 - `presentation`: Visual/contextual settings (gaps, styles, contexts)
 
 ### Schema Structure by Strand
 
 ```javascript
-// src/core/schema.js defines these structures:
-
 // NUMBER STRAND (N)
 {
-    operations: ['count_forwards', 'count_backwards', 'fill_gap'],
     math: {
         range: { min: 0, max: 100 },
         sequence: {
-            steps: [2, 5, 10],
+            steps: [2, 5, 10],           // Y1-4 counting increments
+            powersOf10: [10, 100, 1000], // Y5+ use this instead of steps
             length: 4,
             directions: ['forwards', 'backwards'],
-            startStrategy: 'zero_or_multiple'
+            startStrategy: 'zero_only'   // zero_only | any | zero_or_multiple
         },
         placeValue: { places: ['ones', 'tens'], includeZero: false },
         rounding: { bases: [10, 100] }
     },
     presentation: {
         gaps: { position: 'middle', count: 1 },
-        numberLine: { show: true, labeled: true },
+        visualType: 'sequence',  // For display metadata
         contexts: ['counting', 'sequences']
     }
 }
 
 // CALCULATION STRAND (C)
 {
-    operations: ['addition_no_carry', 'subtraction_with_borrow'],
     math: {
-        range: { max: 999, result: [0, 1999] },
+        range: { max: 999, resultMax: 1999 },
         components: { ones: [1, 9], tens: [10, 90] },
         tables: [2, 5, 10],
         targets: [20, 50, 100],
-        config: { allowZero: true, regrouping: 'single' }
+        config: {
+            noCarry: true,
+            noBorrow: true,
+            allowSingleCarry: false
+        }
     },
     presentation: {
         styles: ['equation', 'word_problem', 'columnar'],
@@ -123,51 +149,104 @@ This is a UK National Curriculum-aligned mathematics question generator followin
 
 // MEASUREMENT STRAND (M)
 {
-    operations: ['direct_conversion', 'word_problem'],
     math: {
         types: ['length', 'mass', 'capacity'],
         units: { length: ['km', 'm', 'cm'], mass: ['kg', 'g'] },
         ranges: { km: { min: 1, max: 10 } },
         conversions: { length: ['km_to_m', 'm_to_cm'] },
-        scale: { min: 0, max: 100, interval: 10 }
+        valueType: ['whole_only']
     },
     presentation: {
         contexts: ['shopping', 'recipes'],
-        visuals: true,
-        format: 'word_problem'
+        visualType: 'text_only',
+        wordProblems: true
     }
 }
 ```
 
 ---
 
+## Question Parts System
+
+**Philosophy**: Questions are exported with structured parts so external rendering apps can build the UI. This tool doesn't render visuals - it provides the data needed for other apps to do so.
+
+### The 4 Rendering Principles
+
+| Principle | Description | Example |
+|-----------|-------------|---------|
+| **Reconstruction** | Include ALL data to draw visual from scratch | Sequence needs: values, gapIndices, step, direction |
+| **Type Identification** | Always include part `type` | `type: "sequence"` |
+| **Raw Values** | Use numbers, not formatted strings | `values: [0, 5, null]` not `"0, 5, __"` |
+| **Self-Contained** | Don't rely on text parsing | Include `step: 5` even if text says "in 5s" |
+
+### Common Part Types
+
+| Type | Required Fields | Use Case |
+|------|-----------------|----------|
+| `text` | `value` | Instruction/prompt text |
+| `sequence` | `values[]`, `gapIndices[]`, `step`, `direction` | Counting sequences |
+| `number_line` | `start`, `end`, `interval`, `targetValue`, `showLabels` | Number position |
+| `columnar` | `num1`, `num2`, `operator`, `missingDigits[]` | Written calculations |
+| `clock` | `hours`, `minutes`, `showHourHand`, `showMinuteHand` | Telling time |
+| `place_value_chart` | `number`, `columns[]`, `highlightedColumn` | Place value |
+
+### Module = Schema Approach
+
+Each generator defines its own `questionParts` structure inline. No central schema to maintain.
+
+```javascript
+// Generator outputs:
+return {
+    text: "What number is the arrow pointing to? [arrow at 450]",
+    type: "text_input",
+    answer: "450",
+
+    // QUESTION PARTS - generator defines the structure
+    questionParts: [
+        { type: 'text', value: 'What number is the arrow pointing to?' },
+        {
+            type: 'number_line',
+            start: 0,
+            end: 1000,
+            interval: 50,
+            targetValue: 450,
+            showLabels: true
+        }
+    ]
+};
+```
+
+---
+
 ## Adding New Curriculum Modules
 
-### 1. Define Parameters (V2 Format)
+### Method 1: Manual Implementation (4 Steps)
+
+#### 1. Define Parameters (V2 Format)
 
 Create or update a parameter file in `src/curriculum/parameters/`:
 
 ```javascript
 // Example: src/curriculum/parameters/N01_counting.js
 
-const MIGRATED_PARAMS = {
-    N01_Y3_NPV: {
-        1: {
-            math: {
-                range: { min: 0, max: 100 },
-                sequence: {
-                    steps: [4, 8, 50],
-                    length: 4,
-                    directions: ['forwards'],
-                    startStrategy: 'zero_only'
-                }
-            },
-            presentation: {
-                gaps: { position: 'end', count: 1 }
+const N01_Y3_NPV_PARAMS = {
+    1: {
+        description: "Beginning - short sequences, forwards only...",
+        math: {
+            range: { min: 0, max: 100 },
+            sequence: {
+                steps: [4, 8, 50],
+                length: 4,
+                directions: ['forwards'],
+                startStrategy: 'zero_only'
             }
         },
-        // ... levels 2, 3, 4
-    }
+        presentation: {
+            gaps: { position: 'end', count: 1 },
+            visualType: 'sequence'
+        }
+    },
+    // ... levels 2, 3, 4
 };
 
 export const N01_MODULES = {
@@ -179,12 +258,12 @@ export const N01_MODULES = {
         strand: 'Number and Place Value',
         substrand: 'Counting (in multiples)',
         ref: 'N1',
-        parameters: MIGRATED_PARAMS['N01_Y3_NPV']
+        parameters: N01_Y3_NPV_PARAMS
     }
 };
 ```
 
-### 2. Create Generator (V2 Pattern)
+#### 2. Create Generator (V2 Pattern)
 
 Create generator in `src/generators/`:
 
@@ -202,7 +281,8 @@ export function generateQuestion(params, level) {
             sequence: { steps, length, directions, startStrategy }
         },
         presentation: {
-            gaps: { position }
+            gaps: { position },
+            visualType
         }
     } = params;
 
@@ -211,15 +291,38 @@ export function generateQuestion(params, level) {
     const direction = randomChoice(directions);
     let start = getStartValue({ startStrategy, min, max }, step);
 
-    // ... generation logic ...
+    // 3. Generate sequence and gap
+    const sequence = generateSequence(start, step, length, direction);
+    const gapIndex = getGapPosition(position, length);
+    const answer = sequence[gapIndex];
 
+    // Create display values with null for gap
+    const displayValues = [...sequence];
+    displayValues[gapIndex] = null;
+
+    // Format text for human readability
+    const formattedSequence = sequence.map((v, i) => i === gapIndex ? '__' : v).join(', ');
+
+    // 4. Return question with questionParts
     return {
-        text: `What is the missing number? ${displaySequence.join(', ')}`,
+        text: `What is the missing number? ${formattedSequence}`,
         type: 'text_input',
         answer: answer.toString(),
         hint: `The pattern counts ${direction} in ${step}s`,
         module: 'N01_Y3_NPV',
-        level: level
+        level: level,
+
+        // Question parts - ordered array for UI rendering
+        questionParts: [
+            { type: 'text', value: 'What is the missing number?' },
+            {
+                type: 'sequence',
+                values: displayValues,
+                gapIndices: [gapIndex],
+                step: step,
+                direction: direction
+            }
+        ]
     };
 }
 
@@ -229,7 +332,7 @@ export default {
 };
 ```
 
-### 3. Register Generator
+#### 3. Register Generator
 
 In `src/core/questionEngine.js`:
 
@@ -242,11 +345,73 @@ registerDefaultGenerators() {
 }
 ```
 
-### 4. Test via CLI
+#### 4. Test via CLI
 
 ```bash
 node generate.js --module N01_Y3_NPV --level 3 --count 5 --format pretty
+npm test  # Run schema validation
 ```
+
+### Method 2: Using AI Agents (Recommended)
+
+The project includes specialized AI agents to automate module creation. See **AI Agent System** section below.
+
+---
+
+## AI Agent System
+
+Four specialized agents help create and validate curriculum modules:
+
+### module-creator
+**Purpose**: Complete end-to-end module creation - from curriculum objective to working code
+
+**Usage**: When you need to implement a new module from scratch
+```
+Use the module-creator agent when the user asks to:
+- "Add a module for Year 3 fractions"
+- "Create a multiplication tables practice module"
+- "Implement the Year 5 negative numbers curriculum objective"
+```
+
+**Workflow**:
+1. Parameter Design (calls `parameter-designer`)
+2. Question Design (calls `question-designer`)
+3. Validation Loop (calls `module-validator`, max 3 iterations)
+4. Code Implementation (implements generator, parameters, registration)
+5. Report (provides testing instructions)
+
+### parameter-designer
+**Purpose**: Design mathematical parameters for 4-level difficulty progression
+
+**Usage**: When you need just the parameter definitions
+- Outputs V2 nested JSON with `math` and `presentation`
+- Detects when objectives need splitting into multiple modules
+- Ensures Level 3 matches curriculum exactly
+
+### question-designer
+**Purpose**: Design question phrasing, interaction types, and visual display
+
+**Usage**: When you have parameters and need question templates
+- Maps V2 parameters to question placeholders
+- Specifies display metadata structure
+- Designs level progression examples
+
+### module-validator
+**Purpose**: Validate modules against UK National Curriculum standards
+
+**Usage**: Before or after implementation
+- Checks V2 schema compliance
+- Validates curriculum alignment
+- Ensures display metadata completeness
+- Assesses parameter appropriateness by level
+
+### Skills Reference
+
+Agents can invoke these skills for implementation details:
+- `/project:nested-schema` - Parameter structure reference
+- `/project:display-metadata` - Display metadata principles and types
+- `/project:generator-template` - Code patterns for generators
+- `/project:primitives` - Core primitive types and utilities
 
 ---
 
@@ -256,12 +421,24 @@ All generators return objects with this structure. The export layer enriches the
 
 ```javascript
 {
-    // Core question fields
-    text: string,           // Question text
-    type: 'text_input' | 'multiple_choice',
+    // Core question fields (from generator)
+    text: string,           // Human-readable question text (for debugging)
+    type: 'text_input' | 'multiple_choice' | 'fill_blanks',
     answer: string,         // Correct answer (always string)
     hint: string,           // Optional hint
     options: number[],      // For multiple choice
+
+    // Question parts - ordered array for UI rendering
+    questionParts: [
+        { type: 'text', value: 'What is the missing number?' },
+        {
+            type: 'sequence',     // Part type for UI dispatch
+            values: [0, 5, null], // Raw data with null for gaps
+            gapIndices: [2],      // Positions of gaps
+            step: 5,              // Mathematical metadata
+            direction: 'forwards'
+        }
+    ],
 
     // Added by QuestionEngine
     id: string,             // Unique ID
@@ -277,47 +454,30 @@ All generators return objects with this structure. The export layer enriches the
         ref: string,
         description: string
     },
-    params: object,         // V2 parameters used for generation
-    presentation: object    // Presentation metadata for display apps
+    params: object         // V2 parameters used for generation
 }
 ```
 
----
+### Question Parts Pattern
 
-## File Structure
+The `questionParts` array contains ordered, typed parts that the UI renders in sequence. Each module defines its own part types (consistent with "Module = Schema" philosophy).
 
-```
-question-generator/
-├── generate.js                   # CLI entry point
-├── package.json                  # ES6 module configuration
-├── ARCHITECTURE-CLI.md           # Full architecture documentation
-├── src/
-│   ├── export/                   # Export utilities
-│   │   ├── index.js              # Main export API
-│   │   ├── filters.js            # Module filtering
-│   │   └── formatters.js         # JSON/CSV/Pretty formatters
-│   ├── curriculum/
-│   │   ├── parameters.js         # Central module registry
-│   │   └── parameters/           # Parameter files by series
-│   │       ├── N01_counting.js
-│   │       ├── C02_written.js
-│   │       └── ...
-│   ├── generators/
-│   │   ├── N01_Y3_NPV_counting.js
-│   │   └── helpers/
-│   │       ├── N01_countingHelpers.js
-│   │       └── ...
-│   └── core/
-│       ├── questionEngine.js     # Generator registry
-│       ├── validator.js          # Answer validation
-│       └── schemas/              # Parameter validation
-│           ├── index.js
-│           ├── NumberSchema.js
-│           ├── CalculationSchema.js
-│           └── MeasurementSchema.js
-└── .claude/
-    └── agents/                   # AI agent definitions
-```
+**Key Principles:**
+1. **Ordered parts** - UI renders in array order
+2. **Typed parts** - Each part has a `type` for UI dispatch
+3. **Self-describing** - Each part contains all data needed to render it
+4. **Module-specific** - No universal schema; each generator defines its parts
+
+**Common Part Types:**
+
+| Type | Purpose | Example Fields |
+|------|---------|----------------|
+| `text` | Static instruction/prompt text | `value` |
+| `sequence` | Number sequence with gaps | `values`, `gapIndices`, `step`, `direction` |
+| `number_line` | Visual number line | `start`, `end`, `interval`, `targetValue` |
+| `equation` | Math equation | `expression`, `operator`, `operands` |
+| `clock` | Clock visual | `hours`, `minutes` |
+| `place_value_chart` | Place value grid | `number`, `columns` |
 
 ---
 
@@ -332,7 +492,7 @@ export function generateQuestion(params, level) {
 
     // Then destructure specific values
     const { range, sequence, config } = math;
-    const { gaps, styles, contexts } = presentation;
+    const { gaps, styles, contexts, visualType } = presentation;
 
     // OR use deep destructuring:
     const {
@@ -341,7 +501,8 @@ export function generateQuestion(params, level) {
             sequence: { steps, length }
         },
         presentation: {
-            gaps: { position, count }
+            gaps: { position, count },
+            visualType
         }
     } = params;
 
@@ -351,26 +512,43 @@ export function generateQuestion(params, level) {
 
 ---
 
-## Schema Validation System
-
-Parameters are validated against strand-specific schemas on every `getParameters()` call.
-
-### Architecture
+## File Structure
 
 ```
-src/core/schemas/
-├── index.js              # Unified entry point - validateParameters(), getSchema()
-├── validators.js         # Type-checking utilities (isNumber, isArray, etc.)
-├── NumberSchema.js       # N01-N06 schemas and validation
-├── CalculationSchema.js  # C01-C09 schemas and validation
-└── MeasurementSchema.js  # M01-M09 schemas and validation
-```
-
-### Testing
-
-Run schema validation across all modules:
-```bash
-node test-schemas.js
+question-generator/
+├── generate.js                   # CLI entry point
+├── package.json                  # ES6 module configuration
+├── README.md                     # Project overview and philosophy
+├── CLAUDE.md                     # This file (development guidance)
+├── src/
+│   ├── export/                   # Export utilities
+│   │   ├── index.js              # Main export API
+│   │   ├── filters.js            # Module filtering
+│   │   └── formatters.js         # JSON/CSV/Pretty formatters
+│   ├── curriculum/
+│   │   ├── parameters.js         # Central module registry
+│   │   └── parameters/           # Parameter files by series
+│   │       ├── N01_counting.js
+│   │       └── ...
+│   ├── generators/
+│   │   ├── N01_Y1_NPV_counting.js
+│   │   └── helpers/
+│   │       ├── N01_countingHelpers.js
+│   │       └── ...
+│   └── core/
+│       ├── questionEngine.js     # Generator registry
+│       └── validator.js          # Answer validation
+└── .claude/
+    ├── agents/                   # AI agent definitions
+    │   ├── module-creator.md
+    │   ├── parameter-designer.md
+    │   ├── question-designer.md
+    │   └── module-validator.md
+    └── skills/                   # Reusable knowledge modules
+        ├── nested-schema.md
+        ├── display-metadata.md
+        ├── generator-template.md
+        └── primitives.md
 ```
 
 ---
@@ -404,6 +582,7 @@ All files use ES6 modules:
 - Minimal scaffolding
 - All directions, any start
 - Full operation coverage
+- **This level should exactly match the UK National Curriculum statement**
 
 ### Level 4 (Exceeding)
 - Extended ranges (not new concepts)

@@ -4,6 +4,8 @@
  * Provides formatting functions for JSON, CSV, and Pretty terminal output.
  */
 
+import { format as i18nFormat, render as i18nRender, DEFAULT_LOCALE, isTypedValue } from '../i18n/index.js';
+
 /**
  * Format questions as JSON
  * @param {Object[]} questions - Array of question objects
@@ -31,9 +33,10 @@ export function formatAsJson(questions, metadata = {}) {
 /**
  * Format questions as CSV
  * @param {Object[]} questions - Array of question objects
+ * @param {string} [locale='en-GB'] - Locale for rendering typed values
  * @returns {string} CSV string with headers
  */
-export function formatAsCsv(questions) {
+export function formatAsCsv(questions, locale = DEFAULT_LOCALE) {
     // CSV headers
     const headers = [
         'id',
@@ -86,13 +89,24 @@ export function formatAsCsv(questions) {
 /**
  * Format questions for pretty terminal display
  * @param {Object[]} questions - Array of question objects
- * @param {Object} options - Display options
- * @param {boolean} [options.showAnswers=true] - Whether to show answers
- * @param {boolean} [options.showHints=true] - Whether to show hints
- * @param {boolean} [options.groupByModule=true] - Group questions by module
+ * @param {string|Object} [localeOrOptions='en-GB'] - Locale string or options object
+ * @param {Object} [optionsParam] - Display options (if locale is first param)
  * @returns {string} Formatted string for terminal
  */
-export function formatAsPretty(questions, options = {}) {
+export function formatAsPretty(questions, localeOrOptions = DEFAULT_LOCALE, optionsParam = {}) {
+    // Handle both calling conventions:
+    // formatAsPretty(questions, locale) - new style
+    // formatAsPretty(questions, options) - old style (options is an object)
+    let locale = DEFAULT_LOCALE;
+    let options = {};
+
+    if (typeof localeOrOptions === 'string') {
+        locale = localeOrOptions;
+        options = optionsParam;
+    } else if (typeof localeOrOptions === 'object' && localeOrOptions !== null) {
+        options = localeOrOptions;
+    }
+
     const {
         showAnswers = true,
         showHints = true,

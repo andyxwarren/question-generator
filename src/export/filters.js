@@ -5,7 +5,7 @@
  * Filters combine with AND logic when multiple criteria are specified.
  */
 
-import { MODULES } from '../curriculum/parameters.js';
+import { ALL_MODULES as MODULES } from '../curriculum/parameters.js';
 
 /**
  * Filter modules by various criteria

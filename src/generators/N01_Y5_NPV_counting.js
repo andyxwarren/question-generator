@@ -1,95 +1,127 @@
 /**
- * Year 5 Counting in Powers of 10 Question Generator
+ * N01_Y5_NPV: Counting in Powers of 10
  *
- * Generates counting sequence questions based on UK National Curriculum
- * Module: N01_Y5_NPV - "count forwards or backwards in steps of powers of 10 for any given number up to 1,000,000"
- * Schema: V2 (Nested Parameters)
+ * Year 5: Count forwards or backwards in steps of powers of 10 for any given number up to 1,000,000
  */
 
 import {
     randomChoice,
-    randomInt,
+    getStartValue,
     generateSequence,
-    getGapPosition
+    getMultipleGapPositions,
+    formatSequence,
+    randomInt
 } from './helpers/N01_countingHelpers.js';
 
 /**
- * Generate question
+ * Generate a counting question with powers of 10
+ * @param {Object} params - V2 nested parameters with math and presentation
+ * @param {number} level - Difficulty level (1-4)
+ * @returns {Object} Question object
  */
 export function generateQuestion(params, level) {
-    // 1. Destructure V2 Schema
+    // CRITICAL: V2 NESTED DESTRUCTURING PATTERN
     const {
         math: {
             range: { min, max },
-            sequence: { steps, length, directions } // 'steps' now holds powers_of_10 data
+            sequence: { steps, length, directions, startStrategy }
         },
         presentation: {
-            gaps: { position }
+            gaps: { position, count },
+            visualType
         }
     } = params;
 
-    // Y5 uses powers_of_10 which are mapped to 'steps' in the schema migration
+    // Select random values from parameter options
     const step = randomChoice(steps);
     const direction = randomChoice(directions);
 
-    // 2. Get starting value (Custom logic for Y5 to allow "any number")
-    const range = max - min;
-    const rawStart = min + randomInt(0, Math.floor(range / 2));
-    
-    // Snap start to grid to ensure integers are clean
-    let start = Math.floor(rawStart / step) * step;
+    // Get start value based on strategy
+    let start = getStartValue({ startStrategy, min, max }, step);
 
-    // 3. Ensure sequence stays within bounds
-    if (direction === 'forwards') {
-        const maxStart = max - (step * (length - 1));
-        start = Math.min(start, maxStart);
-        start = Math.max(start, min);
-    } else {
-        const minStart = min + (step * (length - 1));
-        start = Math.max(start, minStart);
-        start = Math.min(start, max);
-    }
-
-    // 4. Generate and Validate Sequence
-    let fullSequence = generateSequence(start, step, length, direction);
-
-    // VALIDATION: Ensure ALL values in sequence are within [min, max]
-    const allValuesValid = fullSequence.every(val => val >= min && val <= max);
-
-    if (!allValuesValid) {
-        // If invalid, clamp start point conservatively
-        if (direction === 'forwards') {
-            const safeMaxStart = max - (step * length);
-            start = Math.max(min, Math.min(start, safeMaxStart));
-        } else {
-            const safeMinStart = min + (step * length);
-            start = Math.min(max, Math.max(start, safeMinStart));
+    // For backwards sequences, ensure we have enough room
+    if (direction === 'backwards') {
+        const minRequired = step * (length - 1);
+        // If start is too low for backwards counting, adjust
+        if (start < minRequired) {
+            // Find a suitable starting point that allows full backward sequence
+            start = randomInt(minRequired, Math.min(max, minRequired + (step * 10)));
         }
-        // Regenerate
-        fullSequence = generateSequence(start, step, length, direction);
-        
-        // Force clamp if still failing
-        fullSequence = fullSequence.map(val => Math.max(min, Math.min(val, max)));
     }
 
-    const gapIndex = getGapPosition(length, position);
-    const answer = fullSequence[gapIndex];
+    // For forwards sequences with large steps, ensure we don't exceed max
+    if (direction === 'forwards') {
+        const maxEnd = start + (step * (length - 1));
+        if (maxEnd > max) {
+            // Adjust start to stay within range
+            const maxStart = max - (step * (length - 1));
+            start = randomInt(min, Math.max(min, maxStart));
+        }
+    }
 
-    const displaySequence = fullSequence.map((num, idx) =>
-        idx === gapIndex ? '__' : num.toString()
-    );
+    // Generate full sequence
+    const fullSequence = generateSequence(start, step, length, direction);
+
+    // Determine gap positions (single or multiple)
+    const gapIndices = getMultipleGapPositions(length, count, position);
+
+    // Extract answers for all gaps
+    const answers = gapIndices.map(idx => fullSequence[idx]);
+
+    // Create display array with null at gap positions
+    const displayValues = [...fullSequence];
+    gapIndices.forEach(idx => {
+        displayValues[idx] = null;
+    });
+
+    // Format question text
+    const questionText = count > 1
+        ? `What are the missing numbers? ${formatSequence(fullSequence, gapIndices)}`
+        : `What is the missing number? ${formatSequence(fullSequence, gapIndices)}`;
+
+    // Generate hint based on step size
+    let stepDescription;
+    if (step >= 1000) {
+        stepDescription = step === 1000 ? 'thousand' : `${step / 1000} thousand`;
+    } else if (step >= 100) {
+        stepDescription = step === 100 ? 'hundred' : `${step / 100} hundred`;
+    } else {
+        stepDescription = step.toString();
+    }
+
+    const hint = `The pattern counts ${direction} in ${stepDescription}s`;
+
+    // Format answer - single value or comma-separated for multiple gaps
+    const answerString = answers.join(', ');
+
+    // Determine instruction text based on gap count
+    const instructionText = count > 1
+        ? 'What are the missing numbers?'
+        : 'What is the missing number?';
 
     return {
-        text: `What is the missing number? ${displaySequence.join(', ')}`,
-        type: 'text_input',
-        answer: answer.toString(),
-        hint: `The pattern counts ${direction} in ${step}s`,
+        text: questionText,
+        type: count > 1 ? 'fill_blanks' : 'text_input',
+        answer: answerString,
+        hint: hint,
         module: 'N01_Y5_NPV',
-        level: level
+        level: level,
+
+        // Question parts - ordered array for UI rendering
+        questionParts: [
+            { type: 'text', value: instructionText },
+            {
+                type: 'sequence',
+                values: displayValues,
+                gapIndices: gapIndices,
+                step: step,
+                direction: direction
+            }
+        ]
     };
 }
 
 export default {
     moduleId: 'N01_Y5_NPV',
     generate: generateQuestion
-};
+};

@@ -1,0 +1,109 @@
+{
+  "module_id_suggestion": "F01_Y4_FRAC",
+  "split_recommendation": "Single module - all concepts are tightly integrated",
+  "parameters": {
+    "1": {
+      "description": "Beginning - Simple hundredths counting forwards only, 1-10 range, single steps, fraction notation only",
+      "math": {
+        "fractionType": "hundredths",
+        "range": { "min": 1, "max": 10 },
+        "sequence": {
+          "steps": [1],
+          "length": 4,
+          "directions": ["forwards"],
+          "startStrategy": "low_values"
+        },
+        "operations": {
+          "division": false,
+          "conversion": false
+        }
+      },
+      "presentation": {
+        "gaps": { "position": "end", "count": 1 },
+        "notation": ["fraction"],
+        "visualType": "sequence",
+        "contexts": ["abstract"]
+      }
+    },
+    "2": {
+      "description": "Developing - Sequences up to 50/100, forwards and backwards, introduce division by 100 concept",
+      "math": {
+        "fractionType": "hundredths",
+        "range": { "min": 1, "max": 50 },
+        "sequence": {
+          "steps": [1, 5, 10],
+          "length": 5,
+          "directions": ["forwards", "backwards"],
+          "startStrategy": "any_multiple"
+        },
+        "operations": {
+          "division": true,
+          "divisionTypes": ["whole_by_100"],
+          "conversion": false
+        }
+      },
+      "presentation": {
+        "gaps": { "position": "middle", "count": 1 },
+        "notation": ["fraction", "decimal"],
+        "visualType": "sequence",
+        "contexts": ["abstract", "division"]
+      }
+    },
+    "3": {
+      "description": "Meeting - Full curriculum: count up/down in hundredths 1-100, understand division by 100, tenths÷10 relationship",
+      "math": {
+        "fractionType": "hundredths",
+        "range": { "min": 1, "max": 100 },
+        "sequence": {
+          "steps": [1, 5, 10],
+          "length": 5,
+          "directions": ["forwards", "backwards"],
+          "startStrategy": "any"
+        },
+        "operations": {
+          "division": true,
+          "divisionTypes": ["whole_by_100", "tenths_by_10"],
+          "conversion": true,
+          "conversionTypes": ["tenths_to_hundredths"]
+        }
+      },
+      "presentation": {
+        "gaps": { "position": "middle", "count": 1 },
+        "notation": ["fraction", "decimal", "mixed"],
+        "visualType": "sequence",
+        "contexts": ["abstract", "division", "conversion", "word_problem"]
+      }
+    },
+    "4": {
+      "description": "Exceeding - Extended range to 120, longer sequences, complex conversions, multiple gaps, word problems",
+      "math": {
+        "fractionType": "hundredths",
+        "range": { "min": 1, "max": 120 },
+        "sequence": {
+          "steps": [1, 2, 5, 10, 25],
+          "length": 6,
+          "directions": ["forwards", "backwards"],
+          "startStrategy": "any"
+        },
+        "operations": {
+          "division": true,
+          "divisionTypes": ["whole_by_100", "tenths_by_10"],
+          "conversion": true,
+          "conversionTypes": ["tenths_to_hundredths", "hundredths_to_tenths"]
+        }
+      },
+      "presentation": {
+        "gaps": { "position": "random", "count": 1 },
+        "notation": ["fraction", "decimal", "mixed"],
+        "visualType": "sequence",
+        "contexts": ["abstract", "division", "conversion", "word_problem", "mixed"]
+      }
+    }
+  },
+  "design_notes": {
+    "math_separation": "All mathematical constraints (fraction type, ranges, operations, conversion types) in math object",
+    "presentation_separation": "All visual/contextual choices (notation, contexts, gap positions) in presentation object",
+    "level_3_alignment": "Level 3 exactly matches curriculum: count up/down in hundredths, division by 100, tenths÷10",
+    "progression": "Gradual introduction: L1 basic sequences, L2 adds division, L3 adds conversions, L4 extends complexity"
+  }
+}

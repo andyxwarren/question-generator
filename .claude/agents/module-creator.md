@@ -186,15 +186,38 @@ export default {
 
 #### 3. Register Generator
 
+**CRITICAL: Use Static Imports, NOT Dynamic Imports**
+
 In `src/core/questionEngine.js`:
 
 ```javascript
+// At top of file with other imports
 import newModuleGenerator from '../generators/MODULE_ID_*.js';
 
 registerDefaultGenerators() {
-    // ... existing
+    // ... existing registrations
     this.register(newModuleGenerator);
 }
+```
+
+**Why Static Imports?**
+- ✅ **Synchronous**: Generator loads during module initialization
+- ✅ **Guaranteed availability**: Registered before engine is used
+- ✅ **No race conditions**: Deterministic loading order
+- ❌ **NEVER use dynamic imports** (`import().then()`) for generators
+  - Dynamic imports are async and create race conditions
+  - CLI may try to use generator before it's registered
+  - Only use dynamic imports for optional/lazy-loaded features
+
+**Pattern Comparison:**
+```javascript
+// ✅ CORRECT - Static import at top
+import N01_Y1_generator from '../generators/N01_Y1_NPV_counting.js';
+this.register(N01_Y1_generator);
+
+// ❌ WRONG - Dynamic import creates race condition
+import('../generators/N01_Y1_NPV_counting.js')
+    .then(module => this.register(module.default));
 ```
 
 ### Stage 5: Completion Report

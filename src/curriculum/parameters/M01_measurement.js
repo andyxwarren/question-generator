@@ -1,39 +1,145 @@
 /**
- * M01: Comparison
- * Years 1-4
- * Schema: V2
+ * M01: Measurement - Compare, describe and order measures
+ *
+ * V2 Nested Schema: All parameters use math/presentation separation
  */
 
-const MIGRATED_PARAMS = {
-    M01_Y1_MEAS: {
-        1: { operations: ["compare_two"], math: { types: ["length", "height", "mass"] }, presentation: { useDescriptors: false } },
-        2: { operations: ["compare_two", "complete_comparative"], math: { types: ["length", "height", "mass", "capacity"] }, presentation: { useDescriptors: false } },
-        3: { operations: ["compare_two", "complete_comparative", "identify_more_less"], math: { types: ["length", "height", "mass", "capacity", "time"] }, presentation: { useDescriptors: false } },
-        4: { operations: ["compare_two", "complete_comparative", "identify_more_less"], math: { types: ["length", "height", "mass", "capacity", "time"] }, presentation: { useDescriptors: true } }
+const M01_Y4_MEAS_PARAMS = {
+    1: {
+        description: "Beginning - Compare measures in the same unit. Simple comparisons with clear differences (e.g., 500g vs 300g, £2.50 vs £1.75). Focus on two values only.",
+        math: {
+            types: ['length', 'mass', 'capacity', 'money'],
+            units: {
+                length: ['m', 'cm'],
+                mass: ['kg', 'g'],
+                capacity: ['l', 'ml'],
+                money: ['pounds_decimal']  // Only £2.50 format
+            },
+            ranges: {
+                m: { min: 1, max: 10 },
+                cm: { min: 10, max: 100 },
+                kg: { min: 1, max: 10 },
+                g: { min: 100, max: 1000 },
+                l: { min: 1, max: 5 },
+                ml: { min: 100, max: 1000 },
+                pounds: { min: 1, max: 10 }
+            },
+            comparisonType: 'same_unit',  // Only compare within same unit
+            orderCount: 2  // Just two items
+        },
+        presentation: {
+            questionTypes: ['which_greater', 'which_smaller'],
+            visualType: 'text_only',
+            showUnits: true
+        }
     },
-    M01_Y2_MEAS: {
-        1: { operations: ["compare_with_symbols", "order_two"], math: { types: ["length", "mass"], range: { min: 1, max: 20 }, useUnits: false, allowEquals: false } },
-        2: { operations: ["compare_with_symbols", "order_two", "order_three"], math: { types: ["length", "mass", "capacity"], range: { min: 1, max: 50 }, useUnits: true, units: { length: ["cm"], mass: ["g"], capacity: ["ml"] }, allowEquals: false } },
-        3: { operations: ["compare_with_symbols", "order_three", "complete_comparison"], math: { types: ["length", "mass", "capacity"], range: { min: 1, max: 100 }, useUnits: true, units: { length: ["cm"], mass: ["g"], capacity: ["ml"] }, allowEquals: true } },
-        4: { operations: ["compare_with_symbols", "order_three", "order_four", "complete_comparison"], math: { types: ["length", "mass", "capacity"], range: { min: 1, max: 100 }, useUnits: true, units: { length: ["cm", "m"], mass: ["g", "kg"], capacity: ["ml", "l"] }, allowEquals: true } }
+    2: {
+        description: "Developing - Compare with simple conversions (e.g., 1kg vs 800g, 100p vs £1.50). Include mixed unit comparisons with obvious answers. Order 2-3 items.",
+        math: {
+            types: ['length', 'mass', 'capacity', 'money'],
+            units: {
+                length: ['m', 'cm', 'km'],
+                mass: ['kg', 'g'],
+                capacity: ['l', 'ml'],
+                money: ['pounds_decimal', 'pence']  // £2.50 and 250p
+            },
+            ranges: {
+                km: { min: 1, max: 5 },
+                m: { min: 1, max: 100 },
+                cm: { min: 50, max: 500 },
+                kg: { min: 1, max: 10 },
+                g: { min: 500, max: 2000 },
+                l: { min: 1, max: 10 },
+                ml: { min: 500, max: 3000 },
+                pounds: { min: 1, max: 20 },
+                pence: { min: 50, max: 500 }
+            },
+            comparisonType: 'simple_conversion',  // e.g., 1kg vs 800g
+            orderCount: 3  // Up to 3 items
+        },
+        presentation: {
+            questionTypes: ['which_greater', 'which_smaller', 'order_ascending'],
+            visualType: 'text_only',
+            showUnits: true
+        }
     },
-    M01_Y3_MEAS: {
-        1: { operations: ["compare_same_units", "order_same_units"], math: { types: ["length", "mass", "capacity"], units: { length: ["cm", "m"], mass: ["g", "kg"], capacity: ["ml", "l"] }, ranges: { cm: { min: 1, max: 100 }, m: { min: 1, max: 10 }, g: { min: 10, max: 500 }, kg: { min: 1, max: 10 }, ml: { min: 10, max: 500 }, l: { min: 1, max: 5 } }, sameUnitOnly: true } },
-        2: { operations: ["compare_same_units", "order_same_units", "compare_mixed_units_simple"], math: { types: ["length", "mass", "capacity"], units: { length: ["mm", "cm", "m"], mass: ["g", "kg"], capacity: ["ml", "l"] }, ranges: { mm: { min: 10, max: 200 }, cm: { min: 1, max: 200 }, m: { min: 1, max: 20 }, g: { min: 10, max: 1000 }, kg: { min: 1, max: 20 }, ml: { min: 10, max: 1000 }, l: { min: 1, max: 10 } }, simpleConversions: true } },
-        3: { operations: ["compare_same_units", "compare_mixed_units", "order_mixed_units"], math: { types: ["length", "mass", "capacity"], units: { length: ["mm", "cm", "m"], mass: ["g", "kg"], capacity: ["ml", "l"] }, ranges: { mm: { min: 10, max: 500 }, cm: { min: 1, max: 500 }, m: { min: 1, max: 100 }, g: { min: 10, max: 2000 }, kg: { min: 1, max: 50 }, ml: { min: 10, max: 2000 }, l: { min: 1, max: 20 } } } },
-        4: { operations: ["compare_same_units", "compare_mixed_units", "order_mixed_units"], math: { types: ["length", "mass", "capacity"], units: { length: ["mm", "cm", "m"], mass: ["g", "kg"], capacity: ["ml", "l"] }, ranges: { mm: { min: 10, max: 1000 }, cm: { min: 1, max: 1000 }, m: { min: 1, max: 200 }, g: { min: 10, max: 5000 }, kg: { min: 1, max: 100 }, ml: { min: 10, max: 5000 }, l: { min: 1, max: 50 } } }, presentation: { itemsToOrder: 4 } }
+    3: {
+        description: "Meeting - Full curriculum: compare mixed units and money notation (e.g., 2m 50cm vs 240cm, £4.20 vs 450p). Order 3 items with mixed representations.",
+        math: {
+            types: ['length', 'mass', 'capacity', 'money'],
+            units: {
+                length: ['m', 'cm', 'mm', 'km', 'mixed_m_cm'],
+                mass: ['kg', 'g', 'mixed_kg_g'],
+                capacity: ['l', 'ml', 'mixed_l_ml'],
+                money: ['pounds_decimal', 'pence', 'mixed_pounds_pence']
+            },
+            ranges: {
+                km: { min: 1, max: 10 },
+                m: { min: 1, max: 500 },
+                cm: { min: 10, max: 999 },
+                mm: { min: 10, max: 500 },
+                kg: { min: 1, max: 20 },
+                g: { min: 100, max: 5000 },
+                l: { min: 1, max: 20 },
+                ml: { min: 100, max: 5000 },
+                pounds: { min: 1, max: 50 },
+                pence: { min: 50, max: 999 }
+            },
+            comparisonType: 'mixed_notation',  // e.g., 2m 50cm vs 240cm
+            orderCount: 3
+        },
+        presentation: {
+            questionTypes: ['which_greater', 'which_smaller', 'order_ascending', 'are_equal'],
+            visualType: 'text_only',
+            showUnits: true
+        }
     },
-    M01_Y4_MEAS: {
-        1: { operations: ["compare_measures", "order_measures", "compare_money"], math: { types: ["length", "mass", "capacity", "money"], units: { length: ["mm", "cm", "m"], money: ["p", "£"] }, ranges: { mm: { min: 10, max: 500 }, cm: { min: 1, max: 500 }, p: { min: 1, max: 99 }, pounds: { min: 1, max: 20 } }, moneyFormat: "simple" } },
-        2: { operations: ["compare_measures", "order_measures", "compare_money", "order_money"], math: { types: ["length", "mass", "capacity", "money"], units: { length: ["mm", "cm", "m", "km"], money: ["p", "£", "mixed"] }, ranges: { mm: { min: 10, max: 1000 }, km: { min: 1, max: 10 }, pounds: { min: 1, max: 50 } }, moneyFormat: "mixed" } },
-        3: { operations: ["compare_measures", "order_measures", "compare_money", "order_money"], math: { types: ["length", "mass", "capacity", "money"], units: { length: ["mm", "cm", "m", "km"], mass: ["g", "kg"], capacity: ["ml", "l"], money: ["p", "£", "mixed"] }, ranges: { mm: { min: 10, max: 2000 }, cm: { min: 1, max: 1000 }, m: { min: 1, max: 1000 }, km: { min: 1, max: 50 }, g: { min: 10, max: 5000 }, kg: { min: 1, max: 100 }, ml: { min: 10, max: 5000 }, l: { min: 1, max: 50 }, p: { min: 1, max: 99 }, pounds: { min: 1, max: 100 } }, moneyFormat: "mixed" }, presentation: { itemsToOrder: 4 } },
-        4: { operations: ["compare_measures", "order_measures", "compare_money", "order_money"], math: { types: ["length", "mass", "capacity", "money"], units: { length: ["mm", "cm", "m", "km"], mass: ["g", "kg"], capacity: ["ml", "l"], money: ["p", "£", "mixed"] }, ranges: { mm: { min: 10, max: 5000 }, cm: { min: 1, max: 2000 }, m: { min: 1, max: 2000 }, km: { min: 1, max: 100 }, g: { min: 10, max: 10000 }, kg: { min: 1, max: 200 }, ml: { min: 10, max: 10000 }, l: { min: 1, max: 100 }, p: { min: 1, max: 99 }, pounds: { min: 1, max: 200 } }, moneyFormat: "mixed" }, presentation: { itemsToOrder: 5, contexts: ["word_problem", "reasoning"] } }
+    4: {
+        description: "Exceeding - Order 4 measures with complex mixed notation. Include equivalence questions and reasoning (e.g., 'Which two are equal?'). Larger ranges and more challenging conversions.",
+        math: {
+            types: ['length', 'mass', 'capacity', 'money'],
+            units: {
+                length: ['m', 'cm', 'mm', 'km', 'mixed_m_cm', 'mixed_km_m'],
+                mass: ['kg', 'g', 'mixed_kg_g'],
+                capacity: ['l', 'ml', 'mixed_l_ml'],
+                money: ['pounds_decimal', 'pence', 'mixed_pounds_pence']
+            },
+            ranges: {
+                km: { min: 1, max: 100 },
+                m: { min: 1, max: 9999 },
+                cm: { min: 10, max: 999 },
+                mm: { min: 10, max: 999 },
+                kg: { min: 1, max: 100 },
+                g: { min: 100, max: 9999 },
+                l: { min: 1, max: 100 },
+                ml: { min: 100, max: 9999 },
+                pounds: { min: 1, max: 100 },
+                pence: { min: 50, max: 9999 }
+            },
+            comparisonType: 'complex_mixed',  // Multiple mixed notations
+            orderCount: 4
+        },
+        presentation: {
+            questionTypes: ['which_greater', 'which_smaller', 'order_ascending', 'order_descending', 'are_equal', 'find_equivalent'],
+            visualType: 'text_only',
+            showUnits: true
+        }
     }
 };
 
+/**
+ * M01 Module Definitions
+ */
 export const M01_MODULES = {
-    'M01_Y1_MEAS': { id: 'M01_Y1_MEAS', name: 'M01_Y1: Comparing', ref: 'M1', yearGroup: '1', strand: 'Measurement', substrand: 'Compare and order', parameters: MIGRATED_PARAMS['M01_Y1_MEAS'] },
-    'M01_Y2_MEAS': { id: 'M01_Y2_MEAS', name: 'M01_Y2: Order Measures', ref: 'M1', yearGroup: '2', strand: 'Measurement', substrand: 'Compare and order', parameters: MIGRATED_PARAMS['M01_Y2_MEAS'] },
-    'M01_Y3_MEAS': { id: 'M01_Y3_MEAS', name: 'M01_Y3: Compare Units', ref: 'M1', yearGroup: '3', strand: 'Measurement', substrand: 'Compare and order', parameters: MIGRATED_PARAMS['M01_Y3_MEAS'] },
-    'M01_Y4_MEAS': { id: 'M01_Y4_MEAS', name: 'M01_Y4: Different Measures', ref: 'M1', yearGroup: '4', strand: 'Measurement', substrand: 'Compare and order', parameters: MIGRATED_PARAMS['M01_Y4_MEAS'] }
+    'M01_Y4_MEAS': {
+        id: 'M01_Y4_MEAS',
+        name: 'M01_Y4_MEAS: Compare Measures',
+        description: 'Compare different measures, including money in pounds and pence',
+        icon: '⚖️',
+        yearGroup: '4',
+        strand: 'Measurement',
+        substrand: 'Compare, describe and order measures',
+        ref: 'M1',
+        parameters: M01_Y4_MEAS_PARAMS
+    }
 };

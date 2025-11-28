@@ -8,6 +8,7 @@
 import engine from '../core/questionEngine.js';
 import { filterModules, listModules, getStrands, getSubstrands, getYearGroups, getModuleSummary } from './filters.js';
 import { formatAsJson, formatAsCsv, formatAsPretty, formatModuleList } from './formatters.js';
+import { DEFAULT_LOCALE } from '../i18n/index.js';
 
 /**
  * Generate questions for specified modules and levels
@@ -15,9 +16,10 @@ import { formatAsJson, formatAsCsv, formatAsPretty, formatModuleList } from './f
  * @param {Object[]} options.modules - Array of module objects (from filterModules)
  * @param {number[]} options.levels - Array of difficulty levels (1-4)
  * @param {number} [options.count=10] - Questions per module/level combination
+ * @param {string} [options.locale='en-GB'] - Locale for formatting
  * @returns {Object[]} Array of enriched question objects
  */
-export function generate({ modules, levels, count = 10 }) {
+export function generate({ modules, levels, count = 10, locale = DEFAULT_LOCALE }) {
     const questions = [];
 
     for (const module of modules) {
@@ -28,7 +30,7 @@ export function generate({ modules, levels, count = 10 }) {
             }
 
             try {
-                const batch = engine.generate(module.id, level, count);
+                const batch = engine.generate(module.id, level, count, locale);
 
                 // Enrich each question with curriculum metadata and params
                 batch.forEach(q => {
@@ -48,6 +50,9 @@ export function generate({ modules, levels, count = 10 }) {
                     if (!q.presentation && module.parameters[level].presentation) {
                         q.presentation = module.parameters[level].presentation;
                     }
+
+                    // Store locale for downstream rendering
+                    q.locale = locale;
                 });
 
                 questions.push(...batch);

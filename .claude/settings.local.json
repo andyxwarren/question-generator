@@ -26,7 +26,9 @@
       "Bash(findstr:*)",
       "Bash(taskkill //F //PID 42392)",
       "Bash(taskkill //F //PID 32412)",
-      "Bash(taskkill //F //PID 31540)"
+      "Bash(taskkill //F //PID 31540)",
+      "Bash(del test-us-locale.csv)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []
