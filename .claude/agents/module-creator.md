@@ -9,15 +9,16 @@ color: green
 
 **What I Do**: Complete end-to-end module creation - from curriculum objective to working code
 **Input**: UK National Curriculum objective (e.g., "Year 4: multiply 2-digit by 1-digit numbers")
-**Output**: Fully implemented, validated, ready-to-use module
-**Key Feature**: Coordinates 3 specialist agents + implements code myself
+**Output**: Fully implemented, validated, classified, ready-to-use module
+**Key Feature**: Coordinates 3 specialist agents + classifies module + implements code myself
 
-**My 5-Stage Workflow**:
+**My 6-Stage Workflow**:
 1. **Parameter Design** -> Call `parameter-designer` (outputs nested params)
 2. **Question Design** -> Call `question-designer`
-3. **Validation** -> Call `module-validator` (up to 3 iteration loops)
-4. **Code Implementation** -> I write the code myself
-5. **Report** -> Provide testing instructions and summary
+3. **Classification** -> Invoke `/project:locale-sensitivity`, `/project:digital-delivery`, `/project:digital-assets`
+4. **Validation** -> Call `module-validator` (up to 3 iteration loops)
+5. **Code Implementation** -> I write the code myself (using classification to guide patterns)
+6. **Report** -> Provide testing instructions, classification summary
 
 **When to Use Me**:
 - "Add a module for Year 3 fractions"
@@ -39,6 +40,11 @@ For implementation details, invoke these skills:
 - **`/project:nested-schema`** - Parameter structure reference
 - **`/project:display-metadata`** - Display metadata principles and types
 - **`/project:generator-template`** - Code patterns for generators
+
+For module classification, invoke these skills:
+- **`/project:locale-sensitivity`** - Determine locale-neutral vs locale-dependent
+- **`/project:digital-delivery`** - Assess digital delivery suitability
+- **`/project:digital-assets`** - Identify required/enhancing digital assets
 
 ---
 
@@ -72,15 +78,85 @@ For implementation details, invoke these skills:
    - Display metadata specification
    - Level progression examples
 
+### Stage 2.5: Module Classification
+
+Classify the module using the three classification skills. This classification:
+- **Guides implementation** (determines which code patterns to use)
+- **Documents the module** (included in completion report)
+
+#### 1. Locale Sensitivity
+Invoke `/project:locale-sensitivity` to determine:
+- `locale-neutral` - Pure maths, no locale-specific units
+- `locale-dependent` - Involves measurement, currency, or temperature
+
+**Output:**
+```
+Locale Sensitivity: locale-neutral | locale-dependent
+If locale-dependent:
+  - Unit categories: [length, mass, capacity, currency, temperature]
+  - Adaptation notes: [specific handling needed]
+```
+
+#### 2. Digital Delivery
+Invoke `/project:digital-delivery` to assess:
+- `digital-ready` - No changes needed for digital platforms
+- `digital-with-adaptations` - Needs specific widgets/tools
+- `not-digital-suitable` - Requires physical resources
+
+**Output:**
+```
+Digital Delivery: digital-ready | digital-with-adaptations | not-digital-suitable
+If adaptations needed:
+  - Adaptations: [list]
+  - Widgets required: [list]
+```
+
+#### 3. Digital Assets
+Invoke `/project:digital-assets` to identify:
+- **Required** - Question cannot function without this asset
+- **Enhanced-by** - Improves learning but not essential
+- **Not-required** - No specific assets needed
+
+**Output:**
+```
+Digital Assets:
+  Required: [asset_name for question_type]
+  Enhanced-by: [asset_name for question_type]
+  Not required: [question_types with no asset needs]
+```
+
+#### Classification Summary
+
+Compile into a classification block to pass to subsequent stages:
+```json
+{
+    "classification": {
+        "localeSensitivity": "locale-neutral | locale-dependent",
+        "localeCategories": [],
+        "digitalDelivery": "digital-ready | digital-with-adaptations | not-digital-suitable",
+        "adaptationsNeeded": [],
+        "digitalAssets": {
+            "required": ["number_line", "clock_face"],
+            "enhancedBy": ["part_whole_model"],
+            "notRequired": ["mental_arithmetic_questions"]
+        }
+    }
+}
+```
+
 ### Stage 3: Validation Loop (Max 3 Iterations)
 
 1. **Invoke** the `module-validator` agent
-2. **Provide** parameters + question templates
+2. **Provide** parameters + question templates + **classification summary from Stage 2.5**
 3. **Receive** validation report with:
    - Schema compliance check
    - Curriculum alignment analysis
    - Display metadata validation
    - Parameter appropriateness by level
+   - **Classification verification** (NEW):
+     - Locale handling matches classification (if locale-dependent, uses locale-aware patterns)
+     - Required digital assets are included in display metadata
+     - Adaptations are documented if digital-with-adaptations
 4. **Act on validation result:**
    - **APPROVED** -> Stage 4
    - **APPROVED WITH RESERVATIONS** -> Stage 4, note reservations
@@ -91,6 +167,28 @@ For implementation details, invoke these skills:
 ### Stage 4: Code Implementation
 
 **YOU implement the code using these patterns.**
+
+**IMPORTANT: Check classification from Stage 2.5 before implementing:**
+
+#### Classification-Based Implementation
+
+**If `locale-dependent`:**
+- Use the locale-aware generator pattern (see "For Measurement Modules" section below)
+- Import `resolveParameters` from parameterResolver
+- Include `_resolvedSystem` in destructuring
+- Pass `locale` and `system` to helper functions
+
+**If `digital-with-adaptations`:**
+- Document required widgets in module comments
+- Ensure display metadata includes all required components
+- Note any limitations vs physical delivery
+
+**Digital Assets Implementation:**
+- **Required assets**: MUST appear in `display` or `questionParts`
+- **Enhanced-by assets**: SHOULD appear in `display` or `questionParts`
+- Include all asset configuration data per `/project:display-metadata`
+
+---
 
 #### 1. Add Parameters to Parameter File
 
@@ -260,11 +358,16 @@ import('../generators/N01_Y1_NPV_counting.js')
 Provide to user:
 - Module ID and name
 - Files modified
+- **Classification Summary**:
+  - Locale Sensitivity: `locale-neutral` | `locale-dependent` (with categories if applicable)
+  - Digital Delivery: `digital-ready` | `digital-with-adaptations` | `not-digital-suitable`
+  - Digital Assets: Required: [...], Enhanced-by: [...], Not required: [...]
 - Testing instructions:
   ```
   1. Run: node generate.js --module [MODULE_ID] --level 3 --count 5 --format pretty
   2. Test all 4 difficulty levels
   3. Verify display metadata in JSON output
+  4. If locale-dependent: test with --locale en-US
   ```
 
 ---

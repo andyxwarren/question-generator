@@ -8,16 +8,8 @@
 import { getParameters } from '../curriculum/parameters.js';
 
 // Import all generators statically for synchronous registration
-import N01_Y1_NPV_generator from '../generators/N01_Y1_NPV_counting.js';
-import N01_Y2_NPV_generator from '../generators/N01_Y2_NPV_counting.js';
-import N01_Y3_NPV_generator from '../generators/N01_Y3_NPV_counting.js';
-import N01_Y4_NPV_generator from '../generators/N01_Y4_NPV_counting.js';
-import N01_Y5_NPV_generator from '../generators/N01_Y5_NPV_counting.js';
-import F01_Y1_FRAC_generator from '../generators/F01_Y1_FRAC_fractions.js';
-import F01_Y2_FRAC_generator from '../generators/F01_Y2_FRAC_fractions.js';
-import F01_Y3_FRAC_generator from '../generators/F01_Y3_FRAC_fractions.js';
-import F01_Y4_FRAC_generator from '../generators/F01_Y4_FRAC_fractions.js';
-import M01_Y4_MEAS_generator from '../generators/M01_Y4_MEAS_comparison.js';
+import C01_Y1_CALC_generator from '../generators/C01_Y1_CALC_bonds.js';
+import C01_Y2_CALC_generator from '../generators/C01_Y2_CALC_mental_facts.js';
 
 /**
  * Question Engine Class
@@ -105,21 +97,9 @@ class QuestionEngine {
      * to ensure synchronous registration before the engine is used
      */
     registerDefaultGenerators() {
-        // Register N01 generators
-        this.register(N01_Y1_NPV_generator);
-        this.register(N01_Y2_NPV_generator);
-        this.register(N01_Y3_NPV_generator);
-        this.register(N01_Y4_NPV_generator);
-        this.register(N01_Y5_NPV_generator);
-
-        // Register F01 generators
-        this.register(F01_Y1_FRAC_generator);
-        this.register(F01_Y2_FRAC_generator);
-        this.register(F01_Y3_FRAC_generator);
-        this.register(F01_Y4_FRAC_generator);
-
-        // Register M01 generators
-        this.register(M01_Y4_MEAS_generator);
+        // Register C01 generators
+        this.register(C01_Y1_CALC_generator);
+        this.register(C01_Y2_CALC_generator);
     }
 
     /**

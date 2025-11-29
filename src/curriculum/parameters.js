@@ -6,17 +6,13 @@
  */
 
 // Import module series
-import { N01_MODULES } from './parameters/N01_counting.js';
-import { F01_MODULES } from './parameters/F01_fractions.js';
-import { M01_MODULES } from './parameters/M01_measurement.js';
+import { C01_MODULES } from './parameters/C01_mental.js';
 
 /**
  * All modules indexed by module ID
  */
 export const ALL_MODULES = {
-    ...N01_MODULES,
-    ...F01_MODULES,
-    ...M01_MODULES
+    ...C01_MODULES
 };
 
 /**

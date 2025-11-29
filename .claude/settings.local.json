@@ -28,7 +28,10 @@
       "Bash(taskkill //F //PID 32412)",
       "Bash(taskkill //F //PID 31540)",
       "Bash(del test-us-locale.csv)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(dir \"C:\\Users\\Andyx\\Documents\\projects\\question-generator\\src\\generators\")",
+      "Bash(npm test)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

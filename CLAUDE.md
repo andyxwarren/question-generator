@@ -373,12 +373,18 @@ Use the module-creator agent when the user asks to:
 - "Implement the Year 5 negative numbers curriculum objective"
 ```
 
-**Workflow**:
+**Workflow** (6 stages):
 1. Parameter Design (calls `parameter-designer`)
 2. Question Design (calls `question-designer`)
-3. Validation Loop (calls `module-validator`, max 3 iterations)
-4. Code Implementation (implements generator, parameters, registration)
-5. Report (provides testing instructions)
+3. **Classification** (invokes classification skills - see below)
+4. Validation Loop (calls `module-validator`, max 3 iterations)
+5. Code Implementation (uses classification to guide patterns)
+6. Report (includes classification summary + testing instructions)
+
+**Classification Output** (Stage 3):
+- **Locale Sensitivity**: `locale-neutral` or `locale-dependent`
+- **Digital Delivery**: `digital-ready`, `digital-with-adaptations`, or `not-digital-suitable`
+- **Digital Assets**: Required, Enhanced-by, or Not-required per question type
 
 ### parameter-designer
 **Purpose**: Design mathematical parameters for 4-level difficulty progression
@@ -412,6 +418,11 @@ Agents can invoke these skills for implementation details:
 - `/project:display-metadata` - Display metadata principles and types
 - `/project:generator-template` - Code patterns for generators
 - `/project:primitives` - Core primitive types and utilities
+
+**Classification Skills** (used in module-creator Stage 3):
+- `/project:locale-sensitivity` - Determine if module is locale-neutral or locale-dependent
+- `/project:digital-delivery` - Assess digital delivery suitability (ready/adaptations/unsuitable)
+- `/project:digital-assets` - Identify required/enhancing digital assets per question type
 
 ---
 
@@ -548,7 +559,10 @@ question-generator/
         ├── nested-schema.md
         ├── display-metadata.md
         ├── generator-template.md
-        └── primitives.md
+        ├── primitives.md
+        ├── locale-sensitivity.md  # Classification: locale-neutral vs dependent
+        ├── digital-delivery.md    # Classification: digital readiness
+        └── digital-assets.md      # Classification: required/enhancing assets
 ```
 
 ---
